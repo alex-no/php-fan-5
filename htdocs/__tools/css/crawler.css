@@ -1,0 +1,112 @@
+h2 {
+	text-align: center;
+	color: #747500;
+}
+h2.finished {
+	color: #008000;
+}
+#site_crawler div {
+	margin: 8px 0 0;
+	overflow: hidden;
+}
+#site_crawler span {
+	display: block;
+	float: left;
+	width: 40%;
+	padding: 0px 10px;
+	text-align: right;
+}
+#site_crawler input {
+	width: 40%;
+	padding: 1px 3px;
+}
+#site_crawler select {
+	width: 25%;
+}
+#site_crawler input, #site_crawler select {
+	border: 1px solid #001F5D;
+}
+#site_crawler button {
+	display: block;
+	margin: 5px auto;
+}
+
+#cr_list {
+	width: 95%;
+	height: 750px;
+	overflow: auto;
+	padding: 0 5px 0 0;
+	margin: 0 auto;
+}
+
+#cr_list table{
+	width: 98%;
+	margin: 0px auto;
+}
+#cr_list td, #cr_list th{
+	border: 1px solid #FFFFFF;
+	padding: 1px 5px 1px 10px;
+}
+#cr_list th{
+	background-color: #CDCDCD;
+	padding: 2px 5px 2px 5px;
+}
+#cr_list .zb0{
+	background-color: #EEEEEE;
+}
+#cr_list .zb1{
+	background-color: #E1E1E1;
+}
+
+#result .status{
+	width: 50px;
+	white-space: nowrap;
+}
+#result .url, #result .refers{
+	width: 45%;
+}
+#result a {
+	display: block;
+	width: 100%;
+	height: 18px;
+	color: #44693A;
+	text-decoration: none;
+	white-space: nowrap;
+	overflow: hidden;
+}
+#result a:hover {
+	color: #880000;
+	text-decoration: underline;
+}
+
+#result .refers span{
+	display: block;
+	cursor: pointer;
+	font-weight: bold;
+}
+#result .refers ul{
+	display: none;
+	margin: 3px 0 0 0;
+}
+#result .refers li{
+	margin: 0 0 0 5px;
+	list-style: none;
+}
+
+.stat_prepared {
+	color: #595959;
+	font-style: italic;
+}
+.stat_loading {
+	color: #666600;
+}
+.stat_ok {
+	color: #006600;
+	font-weight: bold;
+}
+.stat_curl_error, .stat_unknown_error {
+	color: #660000;
+}
+.stat_404_error, .stat_403_error {
+	color: #990000;
+}

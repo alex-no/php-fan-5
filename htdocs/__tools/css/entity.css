@@ -1,0 +1,28 @@
+#create_entity {
+	width: 430px;
+	margin: 0px auto;
+}
+#create_entity li {
+	margin-top: 5px; 
+}
+#create_entity li span {
+	padding: 0px 8px;
+}
+
+.is_ett {
+	font-weight: bold;
+}
+.ett_green {
+	color: #006633;
+}
+.ett_yellow {
+	color: #99AA22;
+}
+.ett_red {
+	color: #CC0000;
+}
+
+#create_entity button {
+	display: block;
+	margin: 10px auto 20px;
+}

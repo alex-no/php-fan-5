@@ -1,0 +1,56 @@
+h2 {
+	margin-top: 28px;
+	color: #000066;
+}
+
+
+div#main {
+	width: auto;
+	border-left: none;
+	border-right: none;
+}
+div#footer {
+	width: auto;
+	height: 0px;
+	margin: -2px 0 0;
+	overflow: hidden;
+}
+#mainContent {
+	padding: 3px 10px;
+}
+#finish {
+	position: fixed;
+	top: 20px;
+	left: 20%;
+}
+#finish h4{
+	font-size: 1.6em;
+}
+#finish .success{
+	color: #00532A;
+}
+#finish .error{
+	color: #DF0000;
+}
+#finish .error a{
+	color: #800000;
+}
+#finish .success a{
+	color: #002200;
+}
+
+
+.sc_error {
+	border: 1px dashed #FF3300;
+	background-color: #FFE3D0;
+	padding: 10px;
+	margin: 20px 0 0;
+}
+.sc_error h2{
+	margin-top: 5px;
+	color: #CC0000;
+}
+.sc_error pre{
+	padding: 0px 10px;
+	color: #0000CC;
+}

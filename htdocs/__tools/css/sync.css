@@ -1,0 +1,41 @@
+h3 {
+	margin: 0px 0px 0px 10px;
+}
+ul {
+	margin: 0px 0px 0px 15px;
+}
+.oper_d {
+	color: #CC0000;
+}
+.oper_u {
+	color: #808000;
+}
+.oper_a {
+	color: #008000;
+}
+fieldset {
+	display: block;
+	width: 75%;
+	margin: 10px auto;
+	border: 2px solid #3E007D;
+	padding: 5px;
+	background-color: #FFFFFF;
+}
+fieldset div {
+	display: block;
+	margin-left: 25px;
+}
+legend {
+	padding: 0px 5px;
+	font-weight: bold;
+	color: #4D009B;
+}
+.ignoreList li {
+	margin: 5px 0px 5px 25px;
+	list-style: none;
+	color: #660000;
+}
+button {
+	display: block;
+	margin: 10px auto;
+}

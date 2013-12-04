@@ -1,0 +1,48 @@
+/* Debug c-panel */
+#debug_cpanel_1, #debug_cpanel_2 {
+	position: absolute !important;
+	top: 0px;
+	border: 1px solid #575757;
+        z-index:100000;
+}
+#debug_cpanel_1 {
+	right: 0px;
+	width: 5px;
+	height: 18px;
+	background-color: #DDDDDD;
+	cursor: pointer;
+}
+#debug_cpanel_2 {
+	display: none;
+	right: 8px;
+	width: 90px;
+	height: 72px;
+	background-color: #F0F0F0;
+}
+#debug_cpanel_2 div{
+	float: left;
+	border: 1px solid;
+	width: 20px;
+	height: 20px;
+	margin: 5px 10px;
+	cursor: pointer;
+	padding: 2px 0px 0px;
+	text-align: center;
+}
+div#debug_cb_1s, div#debug_cb_1m {
+	background-color: #FFE1E1;
+	border-color: #FF7373;
+}
+div#debug_cb_2s, div#debug_cb_2m {
+	background-color: #FFE3FF;
+	border-color: #C500C6;
+}
+div#debug_cb_1m, div#debug_cb_2m {
+	border-right-width: 3px;
+	border-bottom-width: 3px;
+	font-weight: bold;
+}
+#debug_cpanel_2 .debug_current_button {
+	background-color: #DADADA !important;
+	border-color: #6F6F6F;
+}

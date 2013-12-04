@@ -1,0 +1,430 @@
+body,html {width: 100%; height:100%; background: #D5DDDD;}
+body {
+	font-family: Tahoma, Verdana, Geneva, Helvetica, Arial, sans-serif;
+}
+
+/* Main and footer */
+#main, #footer {
+	width: 950px;
+	color: #0E0E0E;
+	background-color: #FFFFFF;
+	border: 2px solid #3D598B;
+	border-top: none;
+}
+#main {
+	margin: 0px auto;
+	min-height: 100%;
+	border-bottom: none;
+}
+#footer {
+	margin: -30px auto 0px;
+	height: 28px;
+}
+#footer div{
+	width: 60%;
+	min-width: 300px;
+	margin: 0px auto;
+	padding: 0px 0px 3px;
+	text-align: center;
+	font-size: 11px;
+	color: #999999;
+}
+#footer div a{
+	color: #888888;
+	text-decoration: none;
+	font-weight: bold;
+}
+#footer div a:hover{
+	text-decoration: underline;
+	color: #000066;
+}
+
+/* Top */
+#header {
+	border-top: 2px solid #3D598B;
+	padding: 3px 8px 0px;
+   border-bottom: 2px solid #3D598B;
+	overflow: auto;
+}
+#main_menu {
+	max-height: 38px;
+	float: left;
+	overflow: hidden;
+}
+#main_menu li{
+	/*padding: 3px 8px 0px;*/
+	margin: 0px 2px;
+	list-style: none;
+	float: left;
+}
+#main_menu a{
+	display: block;
+	padding: 2px 8px;
+	border: 1px solid #898989;
+	border-bottom: none;
+	background-color: #EEEEEE;
+	color: #333333;
+	font-size: 12px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+#main_menu .current a{
+	background-color: #FFFFCC;
+	color: #000066;
+	font-weight: bold;
+}
+#main_menu a:hover{
+	color: #000066;
+}
+#header select{
+}
+#header option{
+}
+
+.cbox {
+	padding-left: 10px;
+}
+
+/* select parameters */
+#select_param {
+	margin: 0px 5px 0px 10px;
+	float: right;
+	overflow: hidden;
+	font-size: 11px;
+	width: 580px;
+}
+#select_param select{
+	border: 1px solid #808080;
+	font-size: 11px;
+	font-weight: bold;
+}
+#select_param option{
+	font-size: 11px;
+	padding: 0px 8px 0px 2px;
+	font-weight: normal;
+}
+#delete_rec {
+	display: block;
+	padding: 0px 3px;
+	float: right;
+	background-color: #FFCC99;
+	border: 1px solid #BD5F00;
+}
+#inv_select {
+	display: block;
+	padding: 0px 3px;
+	margin: 0px 5px 0px 0px;
+	float: right;
+	color: #006206;
+	background-color: #DBFFDC;
+	border: 1px solid #006206;
+}
+
+/* Content */
+#content{
+	height: 300px;
+	padding: 10px 0px;
+	overflow: auto;
+	border: 1px solid #B9B9B9;
+	border-left: none;
+	border-right: none;
+}
+h1{
+	margin: 5px 0px 3px;
+	text-align: center;
+	color: #354C75;
+}
+h1 b{
+	color: #660000;
+}
+h1 i{
+	color: #660000;
+	font-style: normal;
+}
+
+.record {
+	padding: 8px 10px 5px;
+	border-bottom: 3px double #7185A8;
+}
+.zebraO0 {
+	background-color: #FFFFFF;
+}
+.zebraO1 {
+	background-color: #F9F9F9;
+}
+.zebraN0 {
+	background-color: #EFEFFF;
+}
+.zebraN1 {
+	background-color: #E8E8FF;
+}
+.zebraN0 h2, .zebraN1 h2 {
+	color: #0048D7;
+}
+.pid_select {
+	background-color: #FFF0E1;
+}
+
+.rec_param1{
+	overflow: hidden;
+}
+.rec_param1 span{
+	display: block;
+	float: left;
+	margin: 2px 5px 0px 0px;
+	font-size: 10px;
+}
+.rec_param1 input{
+	display: block;
+	float: right;
+	margin: 2px 10px 0px 2px;
+}
+.rec_param1 .rec_pid {
+	float: right;
+	font-weight: bold;
+	color: #006600;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.rec_time {
+	font-weight: bold;
+}
+.rec_type {
+	width: 50px;
+}
+h2{
+	margin: 0px 0px 3px;
+	font-size: 12px;
+	float: left;
+	color: #003399;
+}
+
+.rec_param2{
+	clear: left;
+	overflow: hidden;
+	margin: -3px 0px 5px;
+}
+.rec_method{
+	display: block;
+	float: left;
+	color: #000066;
+	font-size: 10px;
+	font-weight: bold;
+	margin-right: 8px;
+}
+.rec_param2 a, .rec_method{
+	display: block;
+	float: left;
+	max-width: 350px;
+	height: 12px;
+	overflow: hidden;
+	color: #000066;
+	font-size: 10px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+.rec_param2 a:hover{
+	max-width: 95%;
+	color: #660000;
+	text-decoration: underline;
+}
+
+.rec_msg{
+	padding: 3px 0px 0px;
+	width: 100%;
+	overflow: auto;
+	font-size: 12px;
+	border-top: 1px solid #D8E0E5;
+}
+
+.rec_msg a{
+	text-decoration: none;
+}
+
+.rec_note{
+	max-height: 100px;
+	overflow: auto;
+	margin: 4px 0px 0px 0px;
+	padding: 2px 5px;
+	font-size: 11px;
+	background: #F5F5E6;
+	border: 1px solid #E4E4BE;
+	color: #552B00;
+}
+
+/* Data elements */
+.rec_data{
+	margin: 2px 0px 1px;
+	padding: 3px 4px 2px;
+	overflow: auto;
+	background-color: #EEFFEE;
+	font-size: 12px;
+	border: 1px solid #D8E0E5;
+}
+.rec_data div{
+	float: left;
+	overflow: hidden;
+}
+.dt_type {
+	margin: 2px 0px 0px;
+	font-size: 11px;
+	color: #444444;
+}
+.dt_type span{
+	font-style: italic;
+}
+.dt_value {
+	margin: 0px 0px 0px 8px;
+	font-weight: bold;
+	color: #CC0000;
+	float: left;
+}
+.dt_row {
+	clear:left;
+}
+.dt_key {
+	font-weight: bold;
+	color: #0000CC;
+}
+.dt_arrow {
+	color: #00017B;
+	margin: 0px 5px 0px 4px;
+}
+
+/* Trace */
+.rec_trace{
+	margin: 4px 0px 5px;
+	padding: 2px 4px 3px 6px;
+	overflow: auto;
+	background-color: #ECF4F4;
+	border: 1px solid #D8E5E5;
+}
+.rec_trace div{
+	float: left;
+	overflow: hidden;
+	font-size: 11px;
+}
+.tr_word {
+	font-weight: bold;
+}
+.trace_list {
+	max-width: 855px;
+}
+.rec_trace_file, .rec_trace_function{
+	clear: left;
+}
+.rec_trace_function{
+	margin: 0px 0px 8px;
+}
+.tr_file {
+	color: #660000;
+}
+.tr_func {
+	color: #000099;
+}
+
+/* Pager */
+#pager_cont{
+	overflow: auto;
+	height: 36px;
+	padding: 2px 5px 0px;
+	border-bottom: 1px solid #B9B9B9;
+}
+#pager td{
+	font-size: 11px;
+	height: 12px;
+	padding: 1px 2px;
+}
+#pager a{
+	display: block;
+	color: #434343;
+	text-decoration: none;
+	padding: 1px 2px;
+}
+#pager .current a{
+	font-weight: bold;
+	color: #990000;
+	background-color: #F2F2F2;
+	border: 1px solid #767676;
+}
+
+/* ======= SOAP logs ======= */
+/* -- global -- */
+.soap_log {
+	border: 1px solid #C0C0C0;
+	padding: 1px 3px;
+}
+.soap_log+.soap_log {
+	margin-top: 7px;
+}
+.soap_log legend{
+	padding: 0px 5px;
+	margin-left: 5px;
+	font-weight: bold;
+	font-size: 10px;
+	color: #444444;
+}
+/* -- Headers+XML -- */
+.soap_log fieldset {
+	border: 1px solid #717ACE;
+	padding: 4px 7px;
+	width: 890px;
+}
+.soap_log fieldset legend{
+	margin-left: 10px;
+	color: #3D49B4;
+}
+.soap_log div{
+	font-size: 11px;
+	width: 890px;
+	max-height: 65px;
+	overflow: auto;
+}
+/* -- XML -- */
+.soap_log fieldset+fieldset {
+	border: 1px solid #CD788D;
+}
+.soap_log fieldset+fieldset legend{
+	color: #990000;
+}
+.soap_log pre{
+	font-family: "Courier New", Courier, monospace;
+	width: 890px;
+	max-height: 250px;
+	overflow: auto;
+}
+
+/* Other elements */
+.switch {
+	margin: 3px 3px 0px 2px;
+	width: 7px;
+	height: 7px;
+	border: 2px outset;
+	background-color: #DBDBDB;
+	cursor: pointer;
+}
+.switch span {
+	display: block;
+	margin: -2px 0px 0px 1px;
+	font: 10px Courier, monospace;
+}
+.foc {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-size: 15px;
+}
+.is_loading {
+	position: absolute;
+	top: 150px;
+	left: 50%;
+}
+.is_loading img{
+	display: block;
+	width: 66px;
+	height: 66px;
+	margin-left: -33px;
+}
+
+#patterns{
+	display: none;
+}

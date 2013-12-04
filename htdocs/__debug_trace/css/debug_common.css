@@ -1,0 +1,177 @@
+/* Detail information */
+.debug_detail {
+	display: none;
+	position: absolute !important;
+	top: 25px;
+	left: 2px;
+	min-height: 20px;
+	min-width: 780px;
+	border: 1px solid #990000;
+	background-color: #FFFFCC;
+	padding: 3px 8px;
+	z-index: 999998;
+}
+.debug_row {
+	white-space: nowrap;
+	clear: both;
+}
+.debug_row label{
+	display: block;
+	float: left;
+	width: 65px;
+	height: 18px;
+	font-size: 14px;
+	color: #000066;
+}
+.debug_row span{
+	display: block;
+	float: left;
+	height: 18px;
+	font-size: 10px;
+	color: #454545;
+}
+.debug_row b{
+	font-size: 14px;
+	color: #000000;
+}
+
+
+/* Parent list */
+.debug_parents {
+	clear: both;
+	padding: 8px 0px;
+	color: #000099;
+	font-weight: bold;
+	margin: 0px 0px 30px;
+}
+.debug_parents ul {
+	clear: both;
+	/*overflow: hidden;*/
+	color: #454545;
+	font-weight: normal;
+	padding: 0px 0px 0px 10px;
+}
+.debug_parents li {
+	float: left;
+	list-style: none;
+	margin: 0px 4px 0px 0px;
+}
+.debug_parents i {
+	color: #006633;
+	font-style: normal;
+	font-weight: bold;
+}
+.debug_parents .debug_parent_class {
+	color: #935800;
+}
+.debug_parents div {
+	display: none;
+	position: absolute !important;
+	top: 14px;
+	left: -15px;
+	z-index: 999999;
+	padding: 2px;
+	background-color: #FFFFE5;
+	border: 1px solid #A15100;
+	font-size: 10px;
+}
+.debug_parents span {
+	display: block;
+	white-space: nowrap;
+}
+.debug_parents div b{
+	color: #000000;
+	font-size: 12px;
+}
+
+/* Meta-data */
+.debug_meta {
+	clear: both;
+	padding: 0px 0px 5px;
+}
+.debug_result_meta {
+	padding-bottom: 10px;
+	margin-bottom: 8px;
+	border-bottom: 3px double #D3794E;
+}
+.debug_meta_label, .debug_meta_none {
+	font-weight: bold;
+	background-color: #FFFFDD;
+	padding: 1px 4px;
+}
+.debug_meta_label {
+	color: #000099;
+	cursor: pointer;
+}
+.debug_meta_none {
+	color: #660000;
+}
+.debug_result_meta .debug_meta_label {
+	color: #006600;
+}
+.debug_array {
+	display: none;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 12px;
+	color: #9E9E9E;
+	background-color: #FFFFF0;
+	border: 1px dashed #ABAC00;
+	margin: 2px 0px 0px 8px;
+	padding: 2px 4px;
+}
+.debug_array li{
+	list-style: none;
+	margin-left:28px;
+}
+.debug_array span{
+	color: #000000;
+}
+.debug_array .debug_array_key {
+	color: #330066;
+}
+.debug_array .debug_array_val {
+	color: #336633;
+}
+.debug_redefined {
+	text-decoration: line-through;
+	color: #7E2222;
+}
+
+/* Debug global*/
+.debug_detail .debug_darkred {
+	color: #800000;
+}
+.debug_html, .debug_view {
+	display: none;
+	position: absolute !important;
+	top: 25px;
+	left: 2px;
+	min-width: 50%;
+	min-height: 20px;
+	border: 1px solid;
+	padding: 3px 8px;
+	z-index: 999998;
+	background-color: #FFFFFF;
+}
+.debug_html {
+	border-color: #418400;
+}
+.debug_view {
+	border-color: #007C7D;
+}
+
+.debug_info_but {
+	color: #4A4A00;
+	background-color: #FFFFCC;
+	border-color: #969700;
+}
+.debug_html_but {
+	color: #234600;
+	background-color: #CCFF99;
+	border-color: #418400;
+}
+.debug_view_but {
+	color: #005859;
+	background-color: #CCFFFF;
+	border-color: #007C7D;
+}
