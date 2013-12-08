@@ -24,9 +24,10 @@ abstract class html extends \core\block\base
     {
         $sBrowserClass = '';
         foreach ($this->getMeta('browserClasses', array()) as $sBrowser => $aParam) {
+            $aMatch = null;
             if (preg_match($aParam['regExp'], $this->request->get('HTTP_USER_AGENT', 'H', ''), $aMatch)) {
                 $sBrowserClass = $sBrowser;
-                if (@$aMatch[1]) {
+                if (!empty($aMatch[1])) {
                     foreach ($aParam['olderVer'] as $sAddClass => $nBeforeVer) {
                         if ($aMatch[1] < $nBeforeVer) {
                             $sBrowserClass .= ' ' . $sAddClass;

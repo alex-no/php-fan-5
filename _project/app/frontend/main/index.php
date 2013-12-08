@@ -1,4 +1,4 @@
-<?php namespace app\www_global\main;
+<?php namespace app\frontend\main;
 /**
  * Test class index
  * @version 1.1
@@ -10,8 +10,7 @@ class index extends \project\block\common\simple
      */
     public function init()
     {
-        $this->view['User-Agent'] = $this->request->get('User-Agent', 'H');
-        $this->view->date = date('Y-m-d H:m:s');
+        $this->view->hello = 'Hello world!';
     } // function init
 
 } // class \app\www_global\main\index

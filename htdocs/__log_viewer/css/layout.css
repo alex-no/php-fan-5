@@ -17,8 +17,9 @@ body {
 	border-bottom: none;
 }
 #footer {
-	margin: -30px auto 0px;
+	margin: -33px auto 0px;
 	height: 28px;
+    padding-bottom: 3px;
 }
 #footer div{
 	width: 60%;
@@ -38,7 +39,11 @@ body {
 	text-decoration: underline;
 	color: #000066;
 }
-
+/*
+#footerClear {
+	height: 33px;
+}
+*/
 /* Top */
 #header {
 	border-top: 2px solid #3D598B;
