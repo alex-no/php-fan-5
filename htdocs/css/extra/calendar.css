@@ -1,0 +1,236 @@
+.calendar_ini {
+	display:none;
+	width: 19px;
+	height: 20px;
+	cursor: pointer;
+	margin: 11px 0px 0px 5px;
+}
+
+.calendar{
+	position: absolute;
+	z-index: 100;
+	left: 250px;
+	padding: 2px 3px 3px 3px;
+   border: 1px solid #8D8D8D;
+	border-right: 2px solid #2E2E2E;
+	border-bottom: 2px solid #2E2E2E;
+   background: #FFFFFF;
+	font-size: 10px;
+	display: none;
+}
+.calendar a{
+	color: #000066;
+	text-decoration: none;
+}
+
+.calendar a:hover, .calendar a:active {
+	text-decoration: none;
+	color: #0066FF;
+}
+
+.clndr_set{
+   padding: 2px 0px 0px;
+	overflow: auto;
+	margin-bottom: 5px;
+}
+
+.clndr_set a {
+	display: block;
+	float: left;
+	font-weight: bold;
+	margin-top: 2px;
+	width: 9px;
+	text-align: center;
+}
+
+.clndr_month {
+	width: 53px;
+	float: left;
+	margin: 0px 3px;
+}
+
+.clndr_year {
+	width: 27px;
+	float: left;
+	margin: 0px 3px 0px 15px;
+}
+.clndr_month, .clndr_year {
+	display: block;
+	color: #000000;
+	border: 1px solid #B4B4B4;
+}
+.clndr_month {
+	background: #FBFDFF url(/image/extra/arr_calend.gif) no-repeat 5px 5px;
+	padding: 1px 3px 0 18px;
+}
+.clndr_year {
+	background: #FBFDFF url(/image/extra/arr_calend.gif) no-repeat 5px 5px;
+	padding: 1px 3px 0 14px;
+}
+.calendar table {
+	background-color: #FBFDFF;
+	border: 1px solid #B4B4B4;
+	border-top: none;
+	border-left: none;
+	margin: 0px 0px 0px 2px;
+	clear: both;
+}
+
+.calendar td, .calendar th{
+	padding: 0px;
+	vertical-align: middle;
+	border: 1px solid #B4B4B4;
+	border-bottom: none;
+	border-right: none;
+}
+.calendar td a{
+	display: block;
+	width: 14px;
+	height: 12px;
+	padding: 2px 5px 2px 5px;
+	text-align: right;
+}
+
+.calendar td a.currday
+{
+	background-color: #CDE9F2;
+	border: 1px solid #868686;
+	width:  auto;
+	height: 9px;
+	padding: 1px 4px 4px 4px;
+}
+
+.clndr_ie6 td a.currday
+{
+	padding: 1px 4px 1px 4px;
+}
+
+.calendar td a:hover, .calendar td a:active{
+	color: #0000FF;
+	background-color: #DEE5E7;
+	width:  auto;
+}
+.calendar td.weekend a:hover, .calendar.weekend td a:active{
+	color: #FF0000;
+	background-color: #DEE5E7;
+}
+.calendar td a:active{
+	font-weight: bold;
+}
+.weekend, .weekend a {
+	color: #D04D4D;
+}
+
+.topyearbut {
+	display: block;
+	border: 0px;
+	width: 17px;
+	float: left;
+	margin: 0px;
+	padding: 0px;
+}
+
+.topyearbut a {
+	display: block;
+	font-size: 1px;
+	text-decoration: none;
+	width: 15px;
+	height: 7px;
+	margin-top: 0px;
+}
+
+.ty_up {
+	background: #E5E5E5 url(/image/extra/year_up.gif) no-repeat;
+	margin-bottom: 2px;
+}
+
+.ty_down {
+	background: #E5E5E5 url(/image/extra/year_dn.gif) no-repeat;
+}
+
+a.ty_up:active {
+	background: #868686 url(/image/extra/year_up_a.gif) no-repeat;
+}
+
+a.ty_down:active {
+	background: #868686 url(/image/extra/year_dn_a.gif) no-repeat;
+}
+
+.year_input {
+	font-size: 10px;
+	border: none;
+	background: none;
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+}
+
+.isIE7 .year_input{
+	margin-left: -14px;
+}
+
+.isIE6 .year_input{
+	margin-left: -8px;
+}
+
+.isIE7 .clndr_year {
+	margin-left: 15px;
+	width: 41px;
+}
+
+.isIE6 .clndr_year {
+	width: 32px;
+	margin-left: 13px;
+}
+
+.isIE .clndr_year {
+	padding: 0px;
+	height: 14px;
+}
+
+.clndr_ie .year_input {
+	width: 26px;
+	height: 11px;
+	margin-left: -10px;
+	margin-top: -1px;
+}
+
+.year_list, .month_list {
+	display: none;
+	position: absolute;
+	top: 21px;
+	left: 120px;
+	z-index: 3;
+	width: 52px;
+	height: 144px;
+	padding: 3px;
+	border: 1px solid #5C5C5C;
+	background-color: #FFFFFF;
+	overflow: auto;
+}
+
+.month_list {
+	width: 70px;
+	left: 15px;
+}
+
+.year_list a, .month_list a {
+	display: block;
+	width: 100%;
+	font-size: 10px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.cldr_error {
+	margin: 7px;
+	padding: 2px 3px;
+	background: #FFF6F6;
+	color: #990000;
+	font-weight: bold;
+	width: 171px;
+	font-size: 11px;
+}

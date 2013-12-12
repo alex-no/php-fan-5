@@ -10,8 +10,19 @@ class index extends \project\block\common\simple
      */
     public function init()
     {
-        $this->view->hello = 'Hello world!';
+        $sDir = \bootstrap::parsePath('{PROJECT}\app\frontend\main\\');
+        $this->view->test_dir = str_replace('\\', \core\bootstrap\loader::DEFAULT_DIR_SEPARATOR, $sDir);
+        $this->view->tests    = array(
+            'test_view_data' => array(
+                'ru' => 'Проверка установки данных для view',
+                'en' => 'Test of setting view data',
+            ),
+            'test_service_request/aaa-bbb' => array(
+                'ru' => 'Main/Add request. Сервис request',
+                'en' => 'Main/Add request. Service of request',
+            ),
+        );
     } // function init
 
-} // class \app\www_global\main\index
+} // class \app\frontend\main\index
 ?>
