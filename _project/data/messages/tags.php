@@ -29,7 +29,7 @@ return array (
   ),
   'fc-size' => 
   array (
-    'tag' => '{\app\www_global\main\contact_us:getMaxFileSize:}',
+    'tag' => '{\app\frontend\main\contact_us:getMaxFileSize:}',
     'isFunc' => true,
   ),
 );

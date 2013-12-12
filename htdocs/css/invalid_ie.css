@@ -1,10 +1,10 @@
 a.korz {
-	background:url(/_images/1x1.gif);
-	filter:progid:dximagetransform.microsoft.alphaimageloader(src='/_images/korz.png', sizingmethod='crop');
+	background:url(/image/1x1.gif);
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='/image/korz.png', sizingmethod='crop');
 	cursor:pointer;
 }
 
-#header li{ 
+#header li{
 	background-image: expression( (this===this.parentNode.childNodes[0]) ? "none" : "auto");
 	padding-left: expression( (this===this.parentNode.childNodes[0]) ? "0" : "auto");
 }

@@ -26,7 +26,7 @@ h1 {
 	margin: 15px 0px 2px;
 	text-align: center;
 }
-	
+
 h2 {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 1.15em;
@@ -46,24 +46,19 @@ td, th{
 	border: none;
 }
 
-/*li {margin-left: 21px;}*/
+li {margin-left: 21px;}
 
-
-.clear{clear: both;}
-div.clear{ width: auto; height: 1px; font-size: 1px;}
-
-#messBefore, #messAfter  {
-	margin: 5px 20px;
-	text-align: center;
-}
 
 .left { text-align: left; }
 .center { text-align: center; }
 .right { text-align: right; }
+.justify { text-align: justify; }
 
-.f_left { display: block; float: left; }
-.f_none { float: none; }
-.f_right { display: block; float: right; }
+.f_left, .fleft { display: block; float: left; }
+.f_none, .fnone { float: none; }
+.f_right, .fright { display: block; float: right; }
+
+.clear{clear: both;}
 
 .img_left {
 	display: block;
@@ -84,5 +79,11 @@ div.clear{ width: auto; height: 1px; font-size: 1px;}
 .w300 {width: 300px;}
 .w400 {width: 400px;}
 .w500 {width: 500px;}
-	
+
 .hidden {display: none;}
+
+
+#messBefore, #messAfter  {
+	margin: 5px 20px;
+	text-align: center;
+}

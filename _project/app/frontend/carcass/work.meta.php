@@ -12,7 +12,7 @@ return array(
             'footer'     => '{CAPP}/design/footer',
         ),
         'externalCss' => array( // css files
-            'new' => array('/css/layout.css'),
+            //'new' => array('/css/layout.css'),
         ),
         'template' => 'work.tpl',
     ),

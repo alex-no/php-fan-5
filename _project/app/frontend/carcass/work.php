@@ -1,9 +1,9 @@
-<?php namespace app\www_global\carcass;
+<?php namespace app\frontend\carcass;
 /**
  * main_carcass block
  * @version 1.0
  */
-class work extends \app\www_global\carcass\footer_only
+class work extends \app\frontend\carcass\footer_only
 {
-} // class \app\www_global\carcass\work
+} // class \app\frontend\carcass\work
 ?>
