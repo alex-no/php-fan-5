@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  */
 class upload_image extends base
 {
@@ -193,7 +193,7 @@ class upload_image extends base
      */
     public function checkMainTableId(&$oMainEtt, &$aData, $aMain, $aLink)
     {
-        $oMainEtt = $this->_getRow($aMain['table_name'], @$aData['mId']);
+        $oMainEtt = $this->_getRow($aMain['entity'], @$aData['mId']);
         if (@$aData['imgId'] && !$aLink) {
             $sMethod = 'get_' . $aMain['img_id'];
             return $oMainEtt->$sMethod(null, true) == $aData['imgId'];
@@ -207,10 +207,10 @@ class upload_image extends base
     public function checkLinkTableId(&$oLinkEtt, &$aData, $aMain, $aLink)
     {
         if (!@$aData['imgId']) {
-            $oLinkEtt = $this->_getRow($aLink['table_name']);
+            $oLinkEtt = $this->_getRow($aLink['entity']);
             return true;
         } else {
-            $oLinkEtt = $this->_getRow($aLink['table_name'], array($aLink['main_id'] => $aData['mId'], $aLink['img_id'] => $aData['imgId']));
+            $oLinkEtt = $this->_getRow($aLink['entity'], array($aLink['main_id'] => $aData['mId'], $aLink['img_id'] => $aData['imgId']));
             return $oLinkEtt->checkIsLoad();
         }
     } // function checkMainTableId
@@ -222,7 +222,7 @@ class upload_image extends base
     {
         $aRet = array();
         $i = 0;
-        $aLstId = $this->_getEntity($aLink['table_name'])->getRowsetByParam(array($aLink['main_id'] => $aData['mId']))->toArray();
+        $aLstId = $this->_getEntity($aLink['entity'])->getRowsetByParam(array($aLink['main_id'] => $aData['mId']))->toArray();
         foreach ($aLstId as $v) {
             $aRet[$i] = $this->getImageData($v[$aLink['img_id']]);
             if (isset($v['order_num'])) {
@@ -239,7 +239,7 @@ class upload_image extends base
     public function getImageOneData($oMainEtt, $aMain, $aLink)
     {
         if ($aLink) {
-            $aLstId = $this->_getEntity($aLink['table_name'])->getRowsetByParam($aLink['main_id'])->getColumn($aLink['img_id']);
+            $aLstId = $this->_getEntity($aLink['entity'])->getRowsetByParam($aLink['main_id'])->getColumn($aLink['img_id']);
             return $this->getImageData(@$aLstId[0]);
         } else {
             $sMethod = 'get_' . $aMain['img_id'];

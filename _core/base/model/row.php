@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -294,7 +294,7 @@ class row implements \ArrayAccess, \Serializable
      * Gets All Fields by array
      * @return array Fields
      */
-    public function getFields($mKeys = null, $bAllExists = false)
+    public function getFields($mKeys = null, $bAllExists = true)
     {
         if (is_null($mKeys)) {
             if ($bAllExists) {

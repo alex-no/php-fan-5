@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.009 (11.08.2011)
+ * @version of file: 05.002 (17.12.2013)
  */
 return array(
     'own' => array(
@@ -88,9 +88,9 @@ return array(
                 ),
                 'image' => array(
                     'image_one_simple'  => '<div class="adm_img"><a href="#" title="Preview image" id="{EVENT_id1}" class="preview">\\xA0</a><a href="#" title="Delete image" id="{EVENT_id2}" class="del_img">\\xA0</a><a href="#" title="Upload image" id="{EVENT_id3}" class="upload">\\xA0</a></div>',
-                    'image_one_nail'    => '<div class="adm_img"><img src="/admin/nail.php?id={VALUE}&amp;con={CONNECTION}&amp;rand={RAND}" id="{EVENT_id5}" class="adm_nail" /><div class="adm_img_but"><a href="#" title="Preview image" id="{EVENT_id1}" class="preview">\\xA0</a><a href="#" title="Delete image" id="{EVENT_id2}" class="del_img">\\xA0</a><a href="#" title="Upload image" id="{EVENT_id3}" class="upload">\\xA0</a></div></div>',
+                    'image_one_nail'    => '<div class="adm_img"><img src="/adm_nail.php?id={VALUE}&amp;con={CONNECTION}&amp;rand={RAND}" id="{EVENT_id5}" class="adm_nail" /><div class="adm_img_but"><a href="#" title="Preview image" id="{EVENT_id1}" class="preview">\\xA0</a><a href="#" title="Delete image" id="{EVENT_id2}" class="del_img">\\xA0</a><a href="#" title="Upload image" id="{EVENT_id3}" class="upload">\\xA0</a></div></div>',
                     'image_line_simple' => '<div class="adm_img_ln">[<div class="adm_img"><span class="img_num img_num_s{NUM_show}"><a href="#img-{IMG_code}" id="{EVENT_id4}">img-{IMG_num}</a></span><a href="#" title="Preview image" id="{EVENT_id1}" class="preview">\\xA0</a><a href="#" title="Delete image" id="{EVENT_id2}" class="del_img">\\xA0</a><a href="#" title="Upload image" id="{EVENT_id3}" class="upload">\\xA0</a></div>]</div>',
-                    'image_line_nail'   => '<div class="adm_img_ln">[<div class="adm_img"><div class="img_num img_num_s{NUM_show}"><a href="#img-{IMG_code}" id="{EVENT_id4}">img-{IMG_num}</a></div><img src="/admin/nail.php?id={VALUE}&amp;con={CONNECTION}&amp;rand={RAND}" id="{EVENT_id5}" class="adm_nail" /><div class="adm_img_but"><a href="#" title="Preview image" id="{EVENT_id1}" class="preview">\\xA0</a><a href="#" title="Delete image" id="{EVENT_id2}" class="del_img">\\xA0</a><a href="#" title="Upload image" id="{EVENT_id3}" class="upload">\\xA0</a></div></div>]</div>',
+                    'image_line_nail'   => '<div class="adm_img_ln">[<div class="adm_img"><div class="img_num img_num_s{NUM_show}"><a href="#img-{IMG_code}" id="{EVENT_id4}">img-{IMG_num}</a></div><img src="/adm_nail.php?id={VALUE}&amp;con={CONNECTION}&amp;rand={RAND}" id="{EVENT_id5}" class="adm_nail" /><div class="adm_img_but"><a href="#" title="Preview image" id="{EVENT_id1}" class="preview">\\xA0</a><a href="#" title="Delete image" id="{EVENT_id2}" class="del_img">\\xA0</a><a href="#" title="Upload image" id="{EVENT_id3}" class="upload">\\xA0</a></div></div>]</div>',
                 ),
                 'flash' => array(
                     'flash_upload_1' => '<div class="adm_flash"><a href="/file.php?id={VALUE}" target="_blank" style="display:{STYLE_DISPLAY}" id="{EVENT_id1}" class="file_name">{FILE_NAME}</a><a href="#" title="Delete flash" id="{EVENT_id2}" class="del_file">\\xA0</a><a href="#" title="Upload flash" id="{EVENT_id3}" class="upload">\\xA0</a></div>',

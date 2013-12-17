@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.002 (17.12.2013)
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFirstName()
@@ -265,6 +265,15 @@ abstract class base implements \Serializable
         }
         return $this->oFacade;
     } // function load
+    /**
+     * Logout User
+     * @return \core\service\user
+     */
+    public function logout()
+    {
+        return $this->oFacade;
+    } // function logout
+
     /**
      * Save User data
      * @return \core\service\user

@@ -14,7 +14,7 @@ use \project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  * @method mixed getId()
  * @method string getLogin()
  * @method string getNickName()
@@ -312,6 +312,7 @@ class user extends \core\base\service\multi implements \Serializable
             unset(self::$aCurrentUsers[$this->sUserSpace]);
             self::_getSession()->set('currents', self::$aCurrentUsers);
             if ($this->_isCorrespondApp()) {
+                $this->oUserData->logout();
                 $oUser = self::getCurrent();
                 if (empty($oUser)) {
                     $this->_broadcastMessage('logoutUser', $this);

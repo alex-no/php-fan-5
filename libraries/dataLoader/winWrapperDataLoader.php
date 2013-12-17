@@ -15,8 +15,8 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version:  3.01.05
- * @modified: 2008-10-31 19:43:00
+ * @version:  3.01.06
+ * @modified: 2013-12-13 01:20:00
  */
 class winWrapperDataLoader {
     /**
@@ -228,8 +228,8 @@ class winWrapperDataLoader {
      */
     protected function send_xml()
     {
-        header("Content-Type: text/plain; charset=UTF-8");
-        return $this->sHandler . ',' . $this->makeJsObject($this->aJsonData) . ',' . $this->makeTextStr($this->sXmlData) . ',' . $this->makeTextStr($this->sTextData);
+        header("Content-Type: application/json; charset=utf-8");
+        return '[' . $this->getHandlerVal() . ',' . $this->makeJsObject($this->aJsonData) . ',' . $this->makeTextStr($this->sXmlData) . ',' . $this->makeTextStr($this->sTextData) . ']';
     }// function send_xml
 
     /**
@@ -237,8 +237,8 @@ class winWrapperDataLoader {
      */
     protected function send_js()
     {
-        header("Content-Type: text/javascript; charset=UTF-8");
-        return 'try {ldWrHandler(' . $this->sHandler . ',' . $this->makeJsObject($this->aJsonData) . ',' . $this->makeTextStr($this->sXmlData) . ',' . $this->makeTextStr($this->sTextData) . ');} catch(e) {if(window.loadWrapper) {loadWrapper.prototype.errMsg("Error!\n"+e.message);}}';
+        header("Content-Type: text/javascript; charset=utf-8");
+        return 'try {ldWrHandler(' . $this->getHandlerVal() . ',' . $this->makeJsObject($this->aJsonData) . ',' . $this->makeTextStr($this->sXmlData) . ',' . $this->makeTextStr($this->sTextData) . ');} catch(e) {if(window.loadWrapper) {loadWrapper.prototype.errMsg("Error!\n"+e.message);}}';
     }// function send_js
 
     /**
@@ -246,7 +246,7 @@ class winWrapperDataLoader {
      */
     protected function send_frm()
     {
-        header("Content-Type: text/html; charset=UTF-8");
+        header("Content-Type: text/html; charset=utf-8");
         return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -255,7 +255,7 @@ class winWrapperDataLoader {
 <body><div>' . $this->sXmlData . '</div>
 <script type="text/javascript">
 <!--//--><![CDATA[//><!--
-try {parent.ldWrHandler(' . $this->sHandler . ',' . $this->makeJsObject($this->aJsonData) . ',document,' . $this->makeTextStr($this->sTextData) . ');} catch(e) {if(window.parent && parent.loadWrapper) {parent.loadWrapper.prototype.errMsg("Error!\n"+e.message);}}' .
+try {parent.ldWrHandler(' . $this->getHandlerVal() . ',' . $this->makeJsObject($this->aJsonData) . ',document,' . $this->makeTextStr($this->sTextData) . ');} catch(e) {if(window.parent && parent.loadWrapper) {parent.loadWrapper.prototype.errMsg("Error!\n"+e.message);}}' .
 '//--><!]]>
 </script>
 </body></html>';
@@ -267,7 +267,7 @@ try {parent.ldWrHandler(' . $this->sHandler . ',' . $this->makeJsObject($this->a
     protected function send_img()
     {
         if($this->bImgError) {
-            header("Content-Type: text/plain; charset=UTF-8");
+            header("Content-Type: text/plain; charset=utf-8");
             return "error";
         } else {
             header('Content-Type: image/gif');
@@ -350,5 +350,14 @@ try {parent.ldWrHandler(' . $this->sHandler . ',' . $this->makeJsObject($this->a
     {
         $mElm = stripslashes($mElm);
     } // function stripslashes
+
+    /**
+     * Get Handler Value
+     * @return string
+     */
+    protected function getHandlerVal()
+    {
+        return is_null($this->sHandler) ? 'null' : $this->sHandler;
+    } // function getHandlerVal
 } // class winWrapperLoader
 ?>

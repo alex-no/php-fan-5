@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  */
 class entity extends \core\base\service\multi
 {
@@ -87,10 +87,15 @@ class entity extends \core\base\service\multi
      */
     public function get($sName, $aParam = array())
     {
-        $sName = trim($sName, '\\');
         if (!isset($this->aEntities[$sName])) {
-
-            $sClass = $this->getNsPrefix() . $sName . '\entity';
+            $sPrefix = $this->getNsPrefix();
+            if (substr($sName, 0, strlen($sPrefix)) == $sPrefix) {
+                $sClass = $sName . '\entity';
+                $sName  = substr($sName, strlen($sPrefix));
+            } else {
+                $sName = trim($sName, '\\');
+                $sClass = $sPrefix . $sName . '\entity';
+            }
             $this->aEntities[$sName] = $this->_getEntity($sClass, $aParam, $sName);
         }
         return $this->aEntities[$sName];
