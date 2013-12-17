@@ -573,7 +573,7 @@ class tab extends \core\base\service\single
         $this->_initBlocks($this->_getInitBlocks());
         $nInitTime = microtime(true);
 
-        // Get block code
+        // Get output Content
         $this->sStage   = 'output';
         $this->mContent = $this->_getFinalContent($this->oRootBlock);
         $this->_fixPerformance($nStartTime, $nInitTime);
