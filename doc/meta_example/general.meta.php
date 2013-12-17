@@ -47,6 +47,8 @@ return array(
         /**
          * It is recommend to set 'title' in main-content block only
          */
+        'default_view_format' => 'html' OR 'json' OR 'xml' OR 'etc', // NR. null: Define default view format
+
         'title'       => 'Title of page',
 
         'meta_tag' => array( // Meta tags

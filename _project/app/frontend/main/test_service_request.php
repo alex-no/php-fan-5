@@ -10,7 +10,8 @@ class test_service_request extends \project\block\common\simple
      */
     public function init()
     {
-        $oRequest = service('request');
+        //$oRequest = service('request');
+        $oRequest = $this->request;
         /* @var $oRequest \core\service\request */
         $this->view->request0 = $this->array_values($oRequest->getAll('H'));
 

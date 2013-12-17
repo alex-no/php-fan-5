@@ -17,9 +17,14 @@ class index extends \project\block\common\simple
                 'ru' => 'Проверка установки данных для view',
                 'en' => 'Test of setting view data',
             ),
-            'test_service_request/aaa-bbb' => array(
-                'ru' => 'Main/Add request. Сервис request',
-                'en' => 'Main/Add request. Service of request',
+            'test_service_request' => array(
+                'ru'   => 'Main/Add request. Сервис request',
+                'en'   => 'Main/Add request. Service of request',
+                'link' => 'test_service_request/aaa-bbb',
+            ),
+            'test_format' => array(
+                'ru' => 'Проверка форматов view',
+                'en' => 'Test of view format',
             ),
         );
     } // function init
