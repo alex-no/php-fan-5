@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -471,7 +471,7 @@ class tab extends \core\base\service\single
                          ->checkTabRoles();
 
                     // Set View Class. Set Meta data for Other block by Main block. Set Default Meta by View-type. Make Tab-content.
-                    $this->_setViewClass($this->oMainBlock->getViewSuffix())
+                    $this->_setViewClass($this->oMainBlock->getViewParserName())
                          ->_setBlocksMetaByMain()
                          ->_setDefaultMeta()
                          ->_makeContent();

@@ -1,5 +1,6 @@
 <?php namespace core\service;
 use \core\service\config\row as row;
+use project\exception\service\fatal as fatalException;
 /**
  * Configuration manager service
  *
@@ -13,7 +14,7 @@ use \core\service\config\row as row;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  */
 final class config extends \core\base\service\multi
 {
@@ -53,7 +54,7 @@ final class config extends \core\base\service\multi
     private $sSourceType = null;
 
     /**
-     * @var array Global configuration data
+     * @var \core\service\config\row Row of configuration data
      */
     private $oConfData;
 
@@ -154,6 +155,23 @@ final class config extends \core\base\service\multi
     } // function set
 
     /**
+     * Merge new config data with previous values
+     * @param array|\core\service\config\row $aData
+     * @param booulean $bPriority
+     * @return \core\service\config
+     */
+    public function merge($aData, $bPriority = true)
+    {
+        if (!is_array($aData) && !(is_object($aData) && $aData instanceof row)) {
+            throw new fatalException($this, 'Incorrect data for merge configs');
+        }
+        if (!empty($aData)) {
+            $this->oConfData->mergeData($aData, $bPriority);
+        }
+        return $this;
+    } // function merge
+
+    /**
      * Reset Data applicaiton's config
      * @param string $sName Service's name
      * @param mixed $mKey Key of parameter
@@ -171,6 +189,15 @@ final class config extends \core\base\service\multi
         }
         return $this;
     } // function reset
+
+    /**
+     * Get Type of current Config
+     * @return string
+     */
+    public function getConfigType()
+    {
+        return $this->sConfigType;
+    } // function getConfigType
 
     /**
      * Get Service Config by Instace of Service
@@ -195,7 +222,7 @@ final class config extends \core\base\service\multi
         return $this->oConfData[$sName];
     } // function getServiceConfig
     /**
-     *
+     * Get configs of plain/cli controllers
      * @param object $oCtrl
      * @param string $sName
      * @return \core\service\config\row

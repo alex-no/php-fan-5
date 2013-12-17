@@ -55,7 +55,7 @@ class entity extends base
         foreach ($oConf->get('IDENTIFYERS') as $v) {
             $oUser = ge($oConf->get('ENGINE_KEY'))->getRowByParam(array($v => $this->mIdentifyer));
             if ($oUser->checkIsLoad()) {
-                $this->oRow = $oUser;
+                $this->oRow  = $oUser;
                 $this->mData = $this->_getEntityData();
                 return true;
             }

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  */
 class row extends \core\base\data
 {
@@ -63,7 +63,9 @@ class row extends \core\base\data
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
-            $this->_setSetter($oFacade);
+            if (in_array($oFacade->getConfigType(), array('service', 'entity', 'cli', 'plain'))) {
+                $this->_setSetter($oFacade);
+            }
         }
         foreach ($this->_getSubData() as $v) {
             $v->setFacade($oFacade);
@@ -213,6 +215,15 @@ class row extends \core\base\data
         return $oSubData;
     } // function _makeSubData
 
+    /**
+     * Check Setter
+     * @return boolean
+     */
+    protected function _checkSetter()
+    {
+        //$this->oFacade->
+        return parent::_checkSetter();
+    } // function _checkSetter
     // ======== The magic methods ======== \\
     /**
      * Clone config

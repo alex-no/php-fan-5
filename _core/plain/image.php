@@ -13,7 +13,7 @@ use project\exception\plain\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.020 (24.07.2011)
+ * @version of file: 05.002 (17.12.2013)
  * @abstract
  */
 class image extends db_file
@@ -85,7 +85,7 @@ class image extends db_file
         if (!empty($this->mId)) {
             list($this->nWidth, $this->nHeight) = $this->_getNailSize();
             if (empty($this->nWidth) && empty($this->nHeight)) {
-                throw new fatalException($this, 'There isn\'t poin width or height of nail.');
+                throw new fatalException($this, 'There isn\'t point width or height of nail.');
             } else {
                 $sDirMask = $this->oConfig->get('nail_dir', '{TEMP}/nail');
                 $this->sNailDir = $this->_getNailDir($sDirMask, false);
@@ -100,6 +100,9 @@ class image extends db_file
      */
     protected function _getNailSize()
     {
+        if ($this->sImageType == 'adm_nail') {
+            return array(60, 60);
+        }
         $oSR = \project\service\request::instance();
         return array($oSR->get('w', 'GPA'), $oSR->get('h', 'GPA'));
     } // function _getNailSize

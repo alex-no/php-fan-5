@@ -19,8 +19,8 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version:  03.01.06 Alpha
- * @modified: 2009-01-12 03:20:00
+ * @version:  03.01.07
+ * @modified: 2013-12-13 01:20:00
  */
 /**
  * mode:
@@ -94,7 +94,7 @@ implement(loadWrapper_xml.prototype, [{
         if (xmlReq.readyState == 4 && !this.isAbort) {
             if (xmlReq.status == 200) {
                 try {
-                    eval("data=[" + xmlReq.responseText + "]");
+                    eval('data=' + xmlReq.responseText);
                     if (data.length != 4) {
                         loadWr._responseError(this.hk, "JSbroken", [xmlReq.responseText]);
                         return;

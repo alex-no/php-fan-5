@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  *
  * @abstract
  *
@@ -389,16 +389,16 @@ abstract class base
     } // function getRoleCondition
 
     /**
-     * Get Suffix of View-Class
+     * Get Suffix of Class of View-Parser (withot namespace)
      * This method can be redefined in Main-block
      *   and must return suffix of class-name of View-parcer
      * @return string
      */
-    public function getViewSuffix()
+    public function getViewParserName()
     {
         $oDefiner = $this->oTab->getViewDefiner();
-        return $oDefiner->getViewSuffix();
-    } // function getViewSuffix
+        return $oDefiner->getViewParserName();
+    } // function getViewParserName
 
     /**
      * Get View Type
@@ -890,8 +890,8 @@ abstract class base
                 'Incorrect call unknown method "<b>' . $sMethod . '</b>" ' .
                 'in block "<b>'    . $this->sBlockName  . '</b>", ' .
                 'class "<nobr><b>' . get_class($this)   . '</b></nobr>",<br />' .
-                'file "<nobr><b>'  . $aTrace[1]['file'] . '</b></nobr>", ' .
-                'line <b>'         . $aTrace[1]['line'] . '</b>.',
+                (isset($aTrace[1]['file']) ? 'file "<nobr><b>'  . $aTrace[1]['file'] . '</b></nobr>", ' : 'No file') .
+                (isset($aTrace[1]['line']) ? 'line <b>'         . $aTrace[1]['line'] . '</b>.' : ''),
                 E_USER_ERROR
         );
     } // function __call
