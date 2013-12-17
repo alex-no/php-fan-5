@@ -67,7 +67,7 @@ class runner
             return $mRet;
         } catch (\core\exception\base $e) {
         } catch (\Exception $e) {
-            \bootstrap::logError("Unrecognized fatal error.\n" . print_r($e, true));
+            \bootstrap::logError("Unrecognized fatal error.\n" . print_r($e, true)); // ToDo: There can be out of memory when $e too bir or has recourcive properties
         }
 
         ob_end_clean();

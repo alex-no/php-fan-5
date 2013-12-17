@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.002 (17.12.2013)
  */
 class xml extends \core\view\parser
 {
@@ -36,7 +36,7 @@ class xml extends \core\view\parser
     {
         $oDom = new \DOMDocument('1.0', 'iso-8859-1');
         $oEelement = new \DOMElement($this->oRootBlock->getBlockName());
-        $oEelement = $oDom->appendChild($oEelement);
+        $oDom->appendChild($oEelement);
         $this->_makeDomElements($oEelement, $this->aResult);
         $sResult = $oDom->saveXML();
         $this->_setHeaders($sResult, 'text/xml', '');
@@ -53,8 +53,11 @@ class xml extends \core\view\parser
     protected function _makeDomElements(\DOMNode $oParent, $aData)
     {
         foreach ($aData as $k => $v) {
+            if (is_numeric($k)) { // It is mend. //ToDo: Do numeric keys as several elements with the same name
+                continue;
+            }
             $oEelement = new \DOMElement($k);
-            $oEelement = $oParent->appendChild($oEelement);
+            $oParent->appendChild($oEelement);
             if (is_scalar($v)) {
                 $oEelement->appendChild(new \DOMText($v));
             } elseif (is_array($v)) {
