@@ -57,7 +57,6 @@ if ($bIsError) {
  */
 function makeReqDir($aStruct, $sParentDir, $nLevel = 0)
 {
-    global $bIsError;
     foreach ($aStruct as $k => $v) {
         $sDir = $sParentDir . '/' . $k;
 
@@ -73,6 +72,7 @@ function makeReqDir($aStruct, $sParentDir, $nLevel = 0)
 
 /**
  * Make directory structure
+ * @global boolean $bIsError
  * @param string $sParentzDir
  * @param string $sDomain
  */
@@ -85,12 +85,18 @@ function makeApacheConf($sRootDir, $sDomain)
     }
 
     $sConfFile = $sConfDir . '/' . str_replace('.', '_', $sDomain) . '.conf';
-    for ($i = 0; $i < 20; $i++) {
-        if (!is_file($sConfFile)) {
-            break;
+    do {
+        for ($i = 0; $i < 20; $i++) {
+            if (!is_file($sConfFile)) {
+                break 2;
+            }
+            $sConfFile = substr($sConfFile, 0, -5) . '[' . $i . '].conf';
         }
-        $sConfFile = substr($sConfFile, 0, -5) . '[' . $i . '].conf';
-    }
+        echo 'Error! To many file created for domain: ' . $sDomain;
+        $bIsError = true;
+    } while (false);
+
+    // Make content of config
     if (substr($sDomain, 0, 4) == 'www.') {
         $sDomain = substr($sDomain, 4);
     }
@@ -117,6 +123,14 @@ function makeApacheConf($sRootDir, $sDomain)
     echo 'Config file for Apache is saved to: ' . $sConfFile . "\n";
 } // function makeApacheConf
 
+/**
+ * Check required Directory or Create it
+ * @global boolean $bIsError
+ * @param string $sDir
+ * @param numeric $nMode
+ * @param boolean $bWrRequired
+ * @return boolean
+ */
 function checkDir($sDir, $nMode, $bWrRequired = true)
 {
     global $bIsError;
