@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.003 (23.12.2013)
  */
 class debug extends \core\base\service\single {
 
@@ -39,17 +39,22 @@ class debug extends \core\base\service\single {
     public function setExtFiles($oRoot, $nMode)
     {
         if ($this->bEnabled) {
-            $oRoot->setExternalCss($this->getConfig('CSS_CONTROL',  '/__debug_trace/css/debug_control.css'));
-            if ($nMode) {
-                $oRoot->setExternalCss($this->getConfig('CSS_DEBUG0',  '/__debug_trace/css/debug_common.css'));
-                $oRoot->setExternalCss($this->getConfig('CSS_DEBUG1',  '/__debug_trace/css/debug_mode1.css'));
+            if (method_exists($oRoot, 'setExternalCss')) {
+                $oRoot->setExternalCss($this->getConfig('CSS_CONTROL',  '/__debug_trace/css/debug_control.css'));
+                if ($nMode) {
+                    $oRoot->setExternalCss($this->getConfig('CSS_DEBUG0',  '/__debug_trace/css/debAcug_common.css'));
+                    $oRoot->setExternalCss($this->getConfig('CSS_DEBUG1',  '/__debug_trace/css/debug_mode1.css'));
+                }
             }
-
-            $oRoot->setExternalJs($this->getConfig('JS_WRAPPER', '/js/js-wrapper.js'));
-            $oRoot->setExternalJs($this->getConfig('JS_FILE',    '/__debug_trace/js/debug_trace.js'));
-            $oRoot->setExternalJs('/js/debug.js');
-            $oRoot->setEmbedJs('debug_trace.init(' . $nMode . ');');
-            $oRoot->setEmbedJs('basicBroadcaster.prototype.config.DebugMode = true', 'head', -1);
+            if (method_exists($oRoot, 'setExternalJs')) {
+                $oRoot->setExternalJs($this->getConfig('JS_WRAPPER', '/js/js-wrapper.js'));
+                $oRoot->setExternalJs($this->getConfig('JS_FILE',    '/__debug_trace/js/debug_trace.js'));
+                $oRoot->setExternalJs('/js/debug.js');
+            }
+            if (method_exists($oRoot, 'setEmbedJs')) {
+                $oRoot->setEmbedJs('debug_trace.init(' . $nMode . ');');
+                $oRoot->setEmbedJs('basicBroadcaster.prototype.config.DebugMode = true', 'head', -1);
+            }
         }
     } // function setExtFiles
 
@@ -205,7 +210,7 @@ debug_trace.init(2);
      */
     protected function _reduceMetaArray($aMeta)
     {
-        foreach ($aMeta as $k => $v) {
+        foreach (adduceToArray($aMeta) as $k => $v) {
             if ($k != 'common' && $k != 'own') {
                 unset($aMeta[$k]);
             }

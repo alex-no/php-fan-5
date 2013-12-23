@@ -13,7 +13,7 @@ use project\exception\plain\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  * @abstract
  */
 class image extends db_file
@@ -166,7 +166,7 @@ class image extends db_file
      */
     protected function _getStubFileData()
     {
-        $sNailStub = \bootstrap::parsePath($this->oConfig->get('nail_stub', '{PROJECT}/data/image/adm_nail_stub.gif'));
+        $sNailStub = \bootstrap::parsePath($this->oConfig->get('nail_stub', '{PROJECT}/data/image/empti_nail.gif'));
         if (!empty($sNailStub) && is_readable($sNailStub)) {
             $aImgData = getimagesize($sNailStub);
             if (!empty($aImgData)) {

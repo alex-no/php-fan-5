@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.030 (23.07.2011)
+ * @version of file: 05.003 (23.12.2013)
  */
 
 class db_file
@@ -177,23 +177,21 @@ class db_file
             \project\service\application::instance()->setAppName($this->sApp);
         }
 
-        if (!empty($this->mId)) {
-            $aData = $this->_getFileData();
-            if (!empty($aData)) {
-                $this->sFilePath = $aData['filePath'];
-                foreach (array('contentType', 'filename', 'modified', 'length', 'legthRange', 'cacheLimit') as $k) {
-                    if (!empty($aData['headers'][$k])) {
-                        $this->oHandler->setHeader($k, $aData['headers'][$k]);
-                    }
+        $aData = $this->_getFileData();
+        if (!empty($aData)) {
+            $this->sFilePath = $aData['filePath'];
+            foreach (array('contentType', 'filename', 'modified', 'length', 'legthRange', 'cacheLimit') as $k) {
+                if (!empty($aData['headers'][$k])) {
+                    $this->oHandler->setHeader($k, $aData['headers'][$k]);
                 }
             }
+        }
 
-            if (class_exists('\core\service\database', false)) {
-                \project\service\database::close();
-            }
-            if (!empty($this->sFilePath) || !empty($this->sPlainContent)) {
-                return $this;
-            }
+        if (class_exists('\core\service\database', false)) {
+            \project\service\database::close();
+        }
+        if (!empty($this->sFilePath) || !empty($this->sPlainContent)) {
+            return $this;
         }
 
         if (!$this->oHandler->isError()) {
@@ -210,6 +208,9 @@ class db_file
      */
     protected function _getFileData($bIdIsEncrypt = null)
     {
+        if (empty($this->mId)) {
+            return null;
+        }
         $oCache = \project\service\cache::instance('file_store');
         $aData  = $oCache->get($this->mId);
         if (!empty($aData)) {
@@ -252,7 +253,7 @@ class db_file
     protected function _getRow($bIdIsEncrypt = null)
     {
         if (is_null($this->oRow)) {
-            $this->oRow = gr('file_data');
+            $this->oRow = gr(service('entity')->getFileNsPrefix() . 'file_data');
             if (is_null($bIdIsEncrypt)) {
                 $this->oRow->loadById($this->mId, false); // !is_numeric($this->mId)
                 if (!$this->oRow->checkIsLoad()) {

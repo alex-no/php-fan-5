@@ -1,4 +1,5 @@
 <?php namespace core\service\entity;
+use project\exception\model\entity\fatal as fatalException;
 /**
  * Description of SQL-snippet
  *
@@ -12,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.003 (23.12.2013)
  */
 class snippet
 {
@@ -102,10 +103,11 @@ class snippet
     } // function getSnippetQuery
 
     /**
-     *
+     * Prepare Data
      * @param array $aData
      * @param array $aUsedKeys
      * @return array
+     * @throws fatalException
      */
     public function prepareData(&$sQuery, $aData, $aUsedKeys = null)
     {
@@ -115,7 +117,7 @@ class snippet
 
         $nQttQuery = substr_count($sQuery, '?');
         if ($nQttQuery > count($aUsedKeys)) {
-            throw new \project\exception\model\entity\fatal($this->getEntity(), 'Quantity of "question mark" more than UsedKeys.');
+            throw new fatalException($this->getEntity(), 'Quantity of "question mark" more than UsedKeys.');
         }
 
         $aAdjustedParam = array();
@@ -197,7 +199,7 @@ class snippet
      * Parse Condition
      * @param string $sCondition
      * @return array
-     * @throws \project\exception\model\entity\fatal
+     * @throws fatalException
      */
     protected function _parseCondition($sCondition)
     {
@@ -223,7 +225,7 @@ class snippet
 
             $aData = array();
             if (!@eval($sResult)) {// Just check syntax of $sResult with empty data
-                throw new \project\exception\model\entity\fatal($this->getEntity(), 'Incorrect SQL-Condition: "' . $sCondition . '".');
+                throw new fatalException($this->getEntity(), 'Incorrect SQL-Condition: "' . $sCondition . '".');
             }
         }
         return $sResult;
@@ -253,7 +255,7 @@ class snippet
      * Parse Callback
      * @param string $sCallback
      * @return string|array
-     * @throws \project\exception\model\entity\fatal
+     * @throws fatalException
      */
     protected function _parseCallback($sCallback)
     {
@@ -277,7 +279,7 @@ class snippet
         }
 
         if (!is_callable($mCallback)) {
-            throw new \project\exception\model\entity\fatal($oEntity, 'Incorrect Callback function: "' . $sCallback . '".');
+            throw new fatalException($oEntity, 'Incorrect Callback function: "' . $sCallback . '".');
         }
         return $mCallback;
     } // function _parseCallback

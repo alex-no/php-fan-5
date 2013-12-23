@@ -1,4 +1,5 @@
 <?php namespace core\base\model;
+use project\exception\model\entity\fatal as fatalException;
 /**
  * Loader of Source SQL-requests for \core\service\entity\designer\request
  *
@@ -12,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.003 (23.12.2013)
  */
 class request
 {
@@ -54,6 +55,7 @@ class request
      * @param string $sMethod method name
      * @param array $aArgs arguments
      * @return mixed Value return by engine
+     * @throws fatalException
      */
     public function __call($sMethod, $aArgs)
     {
@@ -62,7 +64,7 @@ class request
         } elseif (substr($sMethod, 0, 4) == 'get_') {
             return $this->get(substr($sMethod, 4), isset($aArgs[0]) ? $aArgs[0] : null, isset($aArgs[1]) ? $aArgs[1] : false);
         } else {
-            throw new \project\exception\model\entity\fatal($this->getEntity(), 'Incorrect call of instance SQL-request loader!');
+            throw new fatalException($this->getEntity(), 'Incorrect call of instance SQL-request loader!');
         }
     } // function __call
 

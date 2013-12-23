@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  */
 class upload_image extends base
 {
@@ -26,6 +26,11 @@ class upload_image extends base
      * @var string Error message
      */
     protected $sError = '';
+
+    /**
+     * @var string Namespace of
+     */
+    protected $sFileNs = null;
 
     /**
      * Block constructor
@@ -93,6 +98,7 @@ class upload_image extends base
         }
         $aLink = $this->getMeta('link_table');
 
+        $oMainEtt = null;
         if (!$this->checkMainTableId($oMainEtt, $aData, $aMain, $aLink)) {
             $this->setText('Incorrect main table ID');
             return;
@@ -107,19 +113,19 @@ class upload_image extends base
             $oLinkEtt = null;
         }
 
-        $oImg = $this->_getRow('image', @$aData['imgId']);
-        if ($aData['op'] == 'dl' && @$aData['imgId']) { // Operation: Delete
+        $oImg = $this->_getRow($this->_getEttImageName(), @$aData['imgId']);
+        if ($aData['op'] == 'dl' && !empty($aData['imgId'])) { // Operation: Delete
             $this->operationDeleteImage($aData, $oMainEtt, $oLinkEtt, $oImg, $aMain, $aLink);
         } elseif ($aData['op'] == 'ul' && $this->aImage) { // Operation: Upload
             $this->operationUploadImage($aData, $oMainEtt, $oLinkEtt, $oImg, $aMain, $aLink);
-        } elseif ($aData['op'] == 'sa' && @$aData['imgId']) { // Operation: Set attributes
+        } elseif ($aData['op'] == 'sa' && !empty($aData['imgId'])) { // Operation: Set attributes
             $this->operationSetAttributes($aData, $oImg);
         }
 
         $this->setJson(array(
-            'data'    => @$aData['line'] ?
-                $this->getImageLineData($aData, $aLink) :
-                $this->getImageOneData($oMainEtt, $aMain, $aLink),
+            'data'    => empty($aData['line']) ?
+                    $this->getImageOneData($oMainEtt, $aMain, $aLink):
+                    $this->getImageLineData($aData, $aLink),
             'refresh' => $aData['op'] != 'ad' && $aData['op'] != 'sa',
             'op'      => $aData['op'],
         ));
@@ -144,7 +150,7 @@ class upload_image extends base
             } else {
                 $oMainEtt->setFields(array($aMain['img_id'] => null), true);
             }
-            $oImg->delete('image', $aData['imgId']);
+            $oImg->delete($this->_getEttImageName(), $aData['imgId']);
         }
     } // function operationDeleteImage
 
@@ -255,7 +261,7 @@ class upload_image extends base
         if (!$imgId) {
             return null;
         }
-        $oImg = $this->_getRow('image', $imgId);
+        $oImg = $this->_getRow($this->_getEttImageName(), $imgId);
         if (!$oImg->checkIsLoad()) {
             return null;
         }
@@ -289,6 +295,18 @@ class upload_image extends base
         $mConnection = $this->getMeta('connection');
         return empty($mConnection) ? ge($sEttName) : ge($sEttName, 1)->setConnection($mConnection);
     } // function getAggrByCon
+
+    /**
+     * Get Suffix of namespace of file entity
+     * @return string
+     */
+    private function _getEttImageName()
+    {
+        if (is_null($this->sFileNs)) {
+            $this->sFileNs = service('entity')->getFileNsSuffix() . 'image';
+        }
+        return $this->sFileNs;
+    } // function _getEttImageName
 
 
 } // class \core\block\admin\upload_image

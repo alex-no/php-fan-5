@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.003 (23.12.2013)
  * @abstract
  */
 abstract class html extends \core\block\base
@@ -40,6 +40,34 @@ abstract class html extends \core\block\base
         $this->_setViewVar('bodyClass', $sBrowserClass);
         $this->_setViewVar('poweredBy', $this->getMeta('show_power', true) ? \project\service\application::instance()->getCoreVersion() : null);
     } // function init
+
+    /**
+     * Additional Init for root-block
+     */
+    public function runAfterInit()
+    {
+        if (!$this->view['title']) {
+            $oMain = $this->_getBlock('main', false);
+            if ($oMain) {
+                if (method_exists($oMain, 'getTitle')) {
+                    $sTitle = $oMain->getTitle();
+                }
+                if (empty($sTitle)) {
+                    $sTitle = $oMain->getMeta('title');
+                }
+            }
+            if (empty($sTitle)) {
+                $oApp = service('application');
+                /* @var $oApp \core\service\application */
+                $sTitle  = $oApp->getConfig('PROJECT_NAME');
+                $sTitle .= (empty($sTitle) ? '' : ' | ') . $oApp->getAppName();
+                if ($oMain) {
+                    $sTitle .= ' | ' . get_class_name($oMain);
+                }
+            }
+            $this->view['title'] = $sTitle;
+        }
+    } // function runAfterInit
 
     /**
      * Set tab title

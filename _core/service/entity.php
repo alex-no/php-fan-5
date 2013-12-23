@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  */
 class entity extends \core\base\service\multi
 {
@@ -114,8 +114,8 @@ class entity extends \core\base\service\multi
     }
 
     /**
-     *
-     * @return type
+     * Name of directory with SQL-requests
+     * @return string
      */
     public function getSqlDir()
     {
@@ -123,11 +123,24 @@ class entity extends \core\base\service\multi
         return empty($sDir) ? 'sql' : $sDir;
     }
 
+    /**
+     * Get namespace prefix of all entity classes
+     * @return string
+     */
     public function getNsPrefix()
     {
         $sPrefix = $this->_getConfigParam('NS_PREFIX');
         return empty($sPrefix) ? '\project\model\\' : '\\' . trim($sPrefix, '\\') . '\\';
     }
+    /**
+     * Get namespace suffix of entity "file_data", "image", "flash", "video", etc
+     * @return string
+     */
+    public function getFileNsSuffix()
+    {
+        $sPrefix = $this->_getConfigParam('FILE_NS_PREFIX');
+        return empty($sPrefix) ? '' : trim($sPrefix, '\\') . '\\';
+    } // function getFileNsSuffix
 
     /**
      * Get Collection Key

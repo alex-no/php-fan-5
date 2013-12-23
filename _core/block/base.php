@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  *
  * @abstract
  *
@@ -201,14 +201,18 @@ abstract class base
     public function init()
     {
     } // function init
-
     /**
      * Required init block data
      */
     public function initRequired()
     {
     } // function initRequired
-
+    /**
+     * This method run ayer init all blocks, just only for "main", "carcass" and "root" blocks
+     */
+    public function runAfterInit()
+    {
+    } // function runAfterInit
 
 
     /**

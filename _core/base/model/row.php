@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -177,7 +177,7 @@ class row implements \ArrayAccess, \Serializable
      * Init Id Only without Loading (only for update part/full of Row-data)
      * @param type $mRowId
      * @return \core\base\model\row
-     * @throws \core\exception\model\entity\fatal
+     * @throws fatalException
      */
     public function initIdOnly($mRowId)
     {
@@ -410,6 +410,27 @@ class row implements \ArrayAccess, \Serializable
         $mResult = $bUseSourceValue && isset($this->aSrcData[$mIdKey]) ? $this->aSrcData[$mIdKey] : $this->_getFieldValue($mIdKey, null, $bAllowException);
         return $bAlwaysArray ? array($mIdKey => $mResult) : $mResult;
     } // function getId
+
+    /**
+     * Set Id
+     * @param mixed $mIdVal
+     * @throws fatalException
+     */
+    public function setId($mIdVal)
+    {
+        $mIdKey = $this->getEntity()->description->getPrimeryKey();
+        if(is_array($mIdKey)) {
+            foreach($mIdVal as $k => $v) {
+                if(!in_array($k, $mIdKey)) {
+                    throw new fatalException($this, 'Incorrect id name (as array)!');
+                }
+
+                $this->_setFieldValue($k, $v);
+            }
+        } else {
+            $this->_setFieldValue($mIdKey, $mIdVal);
+        }
+    } // function setId
 
     /**
      * Get instace of Entity

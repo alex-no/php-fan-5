@@ -15,8 +15,8 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version:  3.01.06
- * @modified: 2013-12-13 01:20:00
+ * @version:  3.01.07
+ * @modified: 2013-12-19 23:50:00
  */
 class winWrapperDataLoader {
     /**
@@ -24,8 +24,8 @@ class winWrapperDataLoader {
      * @var array
      */
     private $aParamKeys = array(
-        "dataKey"    => "dl_data",
-        "controlKey" => "dl_ctrl",
+        'dataKey'    => 'dl_data',
+        'controlKey' => 'dl_ctrl',
     );
 
     /**
@@ -38,13 +38,13 @@ class winWrapperDataLoader {
      * XML-text of JavaScript object
      * @var string
      */
-    private $sXmlData = "";
+    private $sXmlData = '';
 
     /**
      * Text for JavaScript object
      * @var string
      */
-    private $sTextData = "";
+    private $sTextData = '';
 
     /**
      * Type of transport for file transmit (xml, js, frm, img)
@@ -59,11 +59,27 @@ class winWrapperDataLoader {
     private $sHandler;
 
     /**
+     * Send HTML-Header by methods of this class
+     * @var boolean
+     */
+    private $bSendHeader = false;
+
+    /**
      * Set error for img-transport
      * @var boolean
      */
     private $bImgError = false;
 
+    /**
+     * Content Types for each transports
+     * @var array
+     */
+    private static $aContentTypes = array(
+        'xml' => 'application/json; charset=utf-8',
+        'js'  => 'text/javascript; charset=utf-8',
+        'frm' => 'text/html; charset=utf-8',
+        'img' => 'image/gif',
+    );
     /**
      * Scanned Value for replace before sending in JavaScript
      * @var array
@@ -74,40 +90,46 @@ class winWrapperDataLoader {
      * @var array
      */
     private static $aReplVal = array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"');
+    /**
+     * Binary code for Image-transport
+     * @var string
+     */
+    private static $sImg = '47494638396101000100800100000000FFFFFF21F90401000001002C00000000010001000002024C01003B';
 
     /**
      * Module constructor
      * @param array $aData - sent data array with keys ("json", "html", "text")
      * @param boolean $bAutoSend - send data automatically
      */
-    public function __construct($aData = array(), $bAutoSend = false)
+    public function __construct($aData = array(), $bAutoSend = false, $bSendHeader = true)
     {
         if($bAutoSend) {
-            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header("Cache-Control: no-cache, must-revalidate");
-            header("Cache-Control: post-check=0,pre-check=0");
-            header("Cache-Control: max-age=0");
-            header("Pragma: no-cache");
+            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Cache-Control: post-check=0,pre-check=0');
+            header('Cache-Control: max-age=0');
+            header('Pragma: no-cache');
         }
+        $this->bSendHeader = $bAutoSend || $bSendHeader;
 
-        $sCtrl = @$_REQUEST[$this->aParamKeys["controlKey"]];
+        $sCtrl = @$_REQUEST[$this->aParamKeys['controlKey']];
         if($sCtrl) {
-            list($this->sTransport, $this->sHandler) = explode("-", $sCtrl, 3);
+            list($this->sTransport, $this->sHandler) = explode('-', $sCtrl, 3);
         }
 
-        if (!in_array($this->sTransport, array("xml", "js", "frm", "img"))) {
-            $this->sTransport =  "xml";
+        if (!in_array($this->sTransport, array('xml', 'js', 'frm', 'img'))) {
+            $this->sTransport =  'xml';
         }
 
         if($aData) {
-            if(isset($aData["json"])) {
-                $this->setJson($aData["json"]);
+            if(isset($aData['json'])) {
+                $this->setJson($aData['json']);
             }
-            if(isset($aData["html"])) {
-                $this->setHtml($aData["html"]);
+            if(isset($aData['html'])) {
+                $this->setHtml($aData['html']);
             }
-            if(isset($aData["text"])) {
-                $this->setText($aData["text"]);
+            if(isset($aData['text'])) {
+                $this->setText($aData['text']);
             }
         }
         if($bAutoSend) {
@@ -121,8 +143,8 @@ class winWrapperDataLoader {
      */
     public function getData()
     {
-        if (isset($_REQUEST[$this->aParamKeys["dataKey"]])) {
-            $aRet = $_REQUEST[$this->aParamKeys["dataKey"]];
+        if (isset($_REQUEST[$this->aParamKeys['dataKey']])) {
+            $aRet = $_REQUEST[$this->aParamKeys['dataKey']];
             if (is_array($aRet) && get_magic_quotes_gpc()) {
                 array_walk_recursive($aRet, array($this, 'stripslashes'));
             }
@@ -160,13 +182,25 @@ class winWrapperDataLoader {
     }// function getJsObject
 
     /**
+     * Get Content Type
+     * @return string
+     */
+    public function getContentType()
+    {
+        if ($this->bImgError) {
+            self::$aContentTypes['img'] = 'text/plain; charset=utf-8';
+        }
+        return isset(self::$aContentTypes[$this->sTransport]) ? self::$aContentTypes[$this->sTransport] : 'text/plain; charset=utf-8';
+    }// function getContentType
+
+    /**
      * Set object data
      * @param array $aJsonData Data as hash
      */
     public function setJson($aJsonData, $clearPrev = false)
     {
         if(!is_array($aJsonData)) {
-            $this->errorLog("set_json", "Data isn't array.");
+            $this->errorLog('set_json', 'Data isn\'t array.');
         }
         $this->aJsonData = $clearPrev ? $aJsonData : array_merge_recursive($this->aJsonData, $aJsonData);
     }// function setJson
@@ -177,7 +211,7 @@ class winWrapperDataLoader {
      */
     public function setText($sTextData, $clearPrev = false)
     {
-        $this->sTextData = ($clearPrev ? "" : $this->sTextData) . $sTextData;
+        $this->sTextData = ($clearPrev ? '' : $this->sTextData) . $sTextData;
     }// function setText
 
     /**
@@ -186,7 +220,7 @@ class winWrapperDataLoader {
      */
     public function setHtml($sXmlData, $clearPrev = false)
     {
-        $this->sXmlData = ($clearPrev ? "" : $this->sXmlData) . $sXmlData;
+        $this->sXmlData = ($clearPrev ? '' : $this->sXmlData) . $sXmlData;
     }// function setHtml
 
     /**
@@ -196,7 +230,7 @@ class winWrapperDataLoader {
     public function setHtmlFile($sFilePath)
     {
         if(!is_file($sFilePath)) {
-            $this->errorLog("set_html_file", "File " . $sFilePath . " doesn't exist.");
+            $this->errorLog('set_html_file', 'File ' . $sFilePath . ' doesn\'t exist.');
         } else {
             $this->sXmlData = file_get_contents($sFilePath);
         }
@@ -215,7 +249,10 @@ class winWrapperDataLoader {
      */
     public function send($bIsEcho = true)
     {
-        $sMethod = "send_" . $this->sTransport;
+        if ($this->bSendHeader) {
+            header('Content-Type: ' . $this->getContentType());
+        }
+        $sMethod = 'send_' . $this->sTransport;
         $sRet = $this->$sMethod();
         if ($bIsEcho) {
             echo $sRet;
@@ -228,7 +265,6 @@ class winWrapperDataLoader {
      */
     protected function send_xml()
     {
-        header("Content-Type: application/json; charset=utf-8");
         return '[' . $this->getHandlerVal() . ',' . $this->makeJsObject($this->aJsonData) . ',' . $this->makeTextStr($this->sXmlData) . ',' . $this->makeTextStr($this->sTextData) . ']';
     }// function send_xml
 
@@ -237,7 +273,6 @@ class winWrapperDataLoader {
      */
     protected function send_js()
     {
-        header("Content-Type: text/javascript; charset=utf-8");
         return 'try {ldWrHandler(' . $this->getHandlerVal() . ',' . $this->makeJsObject($this->aJsonData) . ',' . $this->makeTextStr($this->sXmlData) . ',' . $this->makeTextStr($this->sTextData) . ');} catch(e) {if(window.loadWrapper) {loadWrapper.prototype.errMsg("Error!\n"+e.message);}}';
     }// function send_js
 
@@ -246,7 +281,6 @@ class winWrapperDataLoader {
      */
     protected function send_frm()
     {
-        header("Content-Type: text/html; charset=utf-8");
         return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -266,13 +300,7 @@ try {parent.ldWrHandler(' . $this->getHandlerVal() . ',' . $this->makeJsObject($
      */
     protected function send_img()
     {
-        if($this->bImgError) {
-            header("Content-Type: text/plain; charset=utf-8");
-            return "error";
-        } else {
-            header('Content-Type: image/gif');
-            return file_get_contents(dirname(__FILE__) . '/1x1.gif');
-        }
+        return $this->bImgError ? 'error' : pack('H*', self::$sImg);
     }// function send_img
 
     /**
@@ -295,7 +323,7 @@ try {parent.ldWrHandler(' . $this->getHandlerVal() . ',' . $this->makeJsObject($
 
         if (is_scalar($mData)) {
             if (is_float($mData)) {
-                return str_replace(",", ".", strval($mData));
+                return str_replace(',', '.', strval($mData));
             }
             return is_integer($mData) ? $mData : $this->makeTextStr($mData);
         }
@@ -334,10 +362,10 @@ try {parent.ldWrHandler(' . $this->getHandlerVal() . ',' . $this->makeJsObject($
      */
     protected function errorLog($sType, $sMessage)
     {
-        if(version_compare(PHP_VERSION, "5.0", "ge")) {
+        if(version_compare(PHP_VERSION, '5.0', 'ge')) {
             eval('throw new Exception($sType . ". " . $sMessage);');
         } else {
-            error_log(date("d.m.y H:i:s ") . $sType . ":\n\t" . $sMessage, 0);
+            error_log(date('d.m.y H:i:s ') . $sType . ":\n\t" . $sMessage, 0);
             exit();
         }
     } // function errorLog

@@ -1,4 +1,5 @@
 <?php namespace core\service\entity;
+use project\exception\model\entity\fatal as fatalException;
 /**
  * Designer of SQL-request
  *
@@ -12,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.003 (23.12.2013)
  */
 abstract class designer
 {
@@ -216,13 +217,13 @@ abstract class designer
      * @param type $sPartName
      * @param type $bAllowException
      * @return boolean
-     * @throws \project\exception\model\entity\fatal
+     * @throws fatalException
      */
     protected function _checkPartName($sPartName, $bAllowException)
     {
         if (!array_key_exists($sPartName, $this->aQueryParts)) {
             if ($bAllowException) {
-                throw new \project\exception\model\entity\fatal($this->getEntity(), 'Incorrect key of SQL-part: "' . $sPartName . '".');
+                throw new fatalException($this->getEntity(), 'Incorrect key of SQL-part: "' . $sPartName . '".');
             }
             return false;
         }

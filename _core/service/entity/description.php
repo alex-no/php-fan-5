@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.003 (23.12.2013)
  *
  * @property-read string|array $primeryKey
  * @method \core\service\entity\description setPrimeryKey() setPrimeryKey(array|string $mKey)
@@ -229,7 +229,7 @@ class description
      * @param string $sPropName
      * @param boolean $bAllowException
      * @return boolean
-     * @throws \core\exception\model\entity\fatal
+     * @throws fatalException
      */
     protected function _checkPropertyName($sPropName, $bAllowException = true)
     {

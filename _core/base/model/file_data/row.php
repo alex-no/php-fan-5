@@ -1,4 +1,5 @@
 <?php namespace core\base\model\file_data;
+use project\exception\model\entity\fatal as fatalException;
 /**
  * Row of file data
  *
@@ -12,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  */
 abstract class row extends \core\base\model\row
 {
@@ -49,8 +50,10 @@ abstract class row extends \core\base\model\row
     {
         parent::__construct($oEntity, $aData, $oRowset);
         $this->sStorePath = \bootstrap::parsePath($oEntity->getConfig('file_store'));
-        $this->bSaveInfo  = $oEntity->getConfig('ALLOW_INFO_FILE', false);
-        $this->setAllowLoadInfo(@$_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache' || !$oEntity->getConfig('ALLOW_CLEAR_INFO', false));
+        //$this->bSaveInfo  = $oEntity->getConfig('ALLOW_INFO_FILE', false);
+        //$this->setAllowLoadInfo(@$_SERVER['HTTP_CACHE_CONTROL'] != 'no-cache' || !$oEntity->getConfig('ALLOW_CLEAR_INFO', false));
+        $this->bSaveInfo = false;
+        $this->bLoadInfo = false;
     } // function __construct
 
     /**
@@ -60,12 +63,15 @@ abstract class row extends \core\base\model\row
      */
     protected function getInfoPath($mIdVal)
     {
+        /*
         if (is_null($this->sInfoPath) && !empty($mIdVal)) {
             $sPath = $this->getMainFilePath($mIdVal);
             $this->sInfoPath = empty($sPath) || !$this->bSaveInfo ?
                 '' :
-                load_runner::parse_path($this->getConfig('INFO_FILE_PATH', '{PROJECT}/data/file_info/')) . $sPath . '.php';
+                \bootstrap::parsePath($this->getEntity()->getConfig('INFO_FILE_PATH', '{TEMP}/file_data/file_info/')) . $sPath . '.php';
         }
+         */
+        $this->sInfoPath = '';
         return $this->sInfoPath;
     } // function getInfoPath
 
@@ -75,7 +81,8 @@ abstract class row extends \core\base\model\row
      */
     public function setAllowLoadInfo($bLoadInfo = true)
     {
-        $this->bLoadInfo = $bLoadInfo && $this->bSaveInfo;
+        $this->bLoadInfo = false;
+        //$this->bLoadInfo = $bLoadInfo && $this->bSaveInfo;
     } // function setAllowLoadInfo
 
     /**
@@ -86,8 +93,12 @@ abstract class row extends \core\base\model\row
      */
     public function loadById($mIdVal = null, $bIdIsEncrypt = false)
     {
+        if (empty($mIdVal)) {
+            return null;
+        }
+
         if ($bIdIsEncrypt) {
-            $mIdVal = $this->decrypt_id($mIdVal);
+            $mIdVal = $this->getEntity()->getService()->getEncapsulant()->decryptId($mIdVal);
         }
         $sPath = $this->getInfoPath($mIdVal);
 
@@ -114,6 +125,7 @@ abstract class row extends \core\base\model\row
      */
     protected function saveInfoFile($sPath, $bAddCond = true)
     {
+        /*
         if (!empty($sPath)) {
             $bIsInfFile = file_exists($sPath);
             if ($bAddCond && $this->bSaveInfo) {
@@ -138,6 +150,7 @@ return ' . var_export($aRow, true) . ';
                 unlink($sPath);
             }
         }
+         */
         return false;
     }// function saveInfoFile
 
@@ -153,15 +166,16 @@ return ' . var_export($aRow, true) . ';
         if ($nId) {
             $bCheckAddCondition = false;
         } else {
-            $nId = $this->getId(true);
+            $nId = $this->getId(false);
         }
         $sPath = $this->getMainFilePath($nId);
         if (!empty($sPath) && (!$bCheckAddCondition || $this->get_is_accessible() && !$this->get_is_deleted())) {
-            $sPath = $this->getEntity()->getConfig('file_store') . $sPath;
-            $aParts = pathinfo($this->get_src_name($sSrcName, true));
+            $sPath = \bootstrap::parsePath($this->getEntity()->getConfig('file_store') . $sPath);
+            $aParts = pathinfo($this->get_src_name($sSrcName, false));
             $sPath .= '.' . (empty($aParts['extension']) || $aParts['extension'] == 'php' ? $this->getEntity()->getConfig('file_ext') : $aParts['extension']);
+            return $sPath;
         }
-        return $sPath;
+        return null;
     }// function getFilePath
 
     /**
@@ -187,7 +201,7 @@ return ' . var_export($aRow, true) . ';
      * Check created dir
      * @param  string  $sFilePath
      * @return string
-     * @throws exception_error_entity_fatal
+     * @throws fatalException
      * @access public
      */
     public function checkCreatedDir($sFilePath)
@@ -203,27 +217,27 @@ return ' . var_export($aRow, true) . ';
                     break 2;
                 }
                 if (!is_link($sLnk)) {
-                    throw new exception_error_entity_fatal($this, 'Incorrect link to file: "' . $sFilePath . '". This "' . $sLnk . '" isn\'t directory.');
+                    throw new fatalException($this, 'Incorrect link to file: "' . $sFilePath . '". This "' . $sLnk . '" isn\'t directory.');
                 }
             }
-            throw new exception_error_entity_fatal($this, 'To many links to directory for file: "' . $sFilePath . '".');
+            throw new fatalException($this, 'To many links to directory for file: "' . $sFilePath . '".');
         }
 
         // If directory already exists
         if (is_dir($sDir) || is_link($sDir)) {
             if (!is_writable($sDir)) {
-                throw new exception_error_entity_fatal($this, 'Directory: ' . $sDir . ' is not writable.');
+                throw new fatalException($this, 'Directory: ' . $sDir . ' is not writable.');
             }
             return $sDir;
         }
         // If file exists instead of directory
         if (is_file($sDir)) {
-            throw new exception_error_entity_fatal($this, 'It is inpossible create directory: ' . $sDir . ', because it is file there.');
+            throw new fatalException($this, 'It is inpossible create directory: ' . $sDir . ', because it is file there.');
         }
         // Try to create directory if it is not exist
         $this->checkCreatedDir($sDir);
         if (!mkdir($sDir)) {
-            throw new exception_error_entity_fatal($this, 'Can\'t create directory: ' . $sDir . '.');
+            throw new fatalException($this, 'Can\'t create directory: ' . $sDir . '.');
         }
         return $sDir;
     } // function checkCreatedDir
@@ -248,12 +262,13 @@ return ' . var_export($aRow, true) . ';
     {
         $sFilePath = $this->getFilePath();
         if ($sFilePath && file_exists($sFilePath)) {
-            $oSH = service_headers::instance();
-            $oSH->set_header('set_content_type', array($this->get_mime_type()));
-            $oSH->set_header('set_filename',     array($this->get_src_name(), is_null($bContentDisposition) ? $this->getContentDisposition() : $bContentDisposition));
-            $oSH->set_header('set_length',       array(filesize($sFilePath)));
-            $oSH->set_header('set_time',         array(filemtime($sFilePath)));
-            $oSH->set_header('set_cache',        array(0));
+            $oSH = service('headers');
+            /* @var $oSH \core\service\header */
+            $oSH->addHeader('set_content_type', array($this->get_mime_type()));
+            $oSH->addHeader('set_filename',     array($this->get_src_name(), is_null($bContentDisposition) ? $this->getContentDisposition() : $bContentDisposition));
+            $oSH->addHeader('set_length',       array(filesize($sFilePath)));
+            $oSH->addHeader('set_time',         array(filemtime($sFilePath)));
+            $oSH->addHeader('set_cache',        array(0));
             return $sFilePath;
         }
         return null;
@@ -292,7 +307,7 @@ return ' . var_export($aRow, true) . ';
      */
     public function setUrlFile($sUrl, $sFileType = 'other', $sDecription = '')
     {
-        $oCurl = service_curl::instance($sUrl);
+        $oCurl = service('curl', $sUrl);
         $sData = $oCurl->exec();
         if (!$oCurl->getError() && $sData) {
             $this->deleteCurrentFile();
@@ -374,7 +389,7 @@ return ' . var_export($aRow, true) . ';
      */
     protected function getFileField($sKeyType, $sFormKey, $aAddKeys = array())
     {
-        $sRet = service_request::instance()->get($sFormKey, 'F');
+        $sRet = service('request')->get($sFormKey, 'F');
         $sRet = $sRet[$sKeyType];
         foreach ($aAddKeys as $k) {
             $sRet = $sRet[$k];
@@ -391,7 +406,7 @@ return ' . var_export($aRow, true) . ';
     {
         if (!$sFilePath) {
             $sFilePath = $this->getFilePath();
-            $sInfoPath = $this->getInfoPath($this->getId(true));
+            $sInfoPath = $this->getInfoPath($this->getId(false));
         }
         if ($sFilePath && file_exists($sFilePath)) {
             unlink($sFilePath);
@@ -414,9 +429,9 @@ return ' . var_export($aRow, true) . ';
     public function setAccessType($sKey, $bSave = true)
     {
         if ($sKey) {
-            $this->oAT = se('entity_file_access_type')->loadByParam(array('access_type' => $sKey));
+            $this->oAT = ge('file_access_type')->getRowByParam(array('access_type' => $sKey));
             if (!$this->oAT->checkIsLoad()) {
-                throw new exception_error_entity_fatal($this, 'Incorrect Access Type Key!');
+                throw new fatalException($this, 'Incorrect Access Type Key!');
             }
             $this->set_id_file_access_type($this->oAT->getId());
         } else {
@@ -460,7 +475,7 @@ return ' . var_export($aRow, true) . ';
     {
         $aPA = ge('file_personal_access')->getRowsetByParam(array('id_file_data' => $this->getId()));
         if ($nRemoveType > 1 && !$nMembId) {
-            throw new exception_error_entity_fatal($this, 'Member Id for remove access doesn\'t set!');
+            throw new fatalException($this, 'Member Id for remove access doesn\'t set!');
         }
         foreach ($aPA as $e) {
             if (!$nRemoveType || $nRemoveType == 1 && $e->get_member_type() != 'owner' || $nRemoveType == 2 && $e->get_id_member() == $nMembId || $nRemoveType == 3 && $e->get_id_member() != $nMembId) {
@@ -492,7 +507,7 @@ return ' . var_export($aRow, true) . ';
                             break;
                         }
                     } else {
-                        throw new exception_error_entity_fatal($this, 'Incorret role rule "' . $sRule . '"');
+                        throw new fatalException($this, 'Incorret role rule "' . $sRule . '"');
                     }
                 }
             }
