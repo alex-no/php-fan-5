@@ -34,5 +34,14 @@ class test_service_request extends \project\block\common\simple
         return is_array($mSource) ? substr($sResult, 8, -2) : $mSource;
 
     } // function array_values
+
+    /**
+     * Get Title
+     * @return string
+     */
+    public function getTitle()
+    {
+        return 'PHP-FAN.5: Main/Add request. Service of request';
+    } // function getTitle
 } // class \app\frontend\main\test_service_request
 ?>

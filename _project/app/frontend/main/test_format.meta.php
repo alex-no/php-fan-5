@@ -5,7 +5,7 @@
  */
 return array(
     'own' => array(
-        'title' => 'Test format',
+        'title' => 'PHP-FAN.5: Test of embeded block and view format',
 
         'embeddedBlocks' => array(
             'extra' => '{CAPP}/extra/test_format',
