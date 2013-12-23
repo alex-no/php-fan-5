@@ -40,7 +40,7 @@
 {/nostrip}{/if}
 {@$headAfter}
 </head>
-<body>{if @$carcass}{$carcass}{else}{@$mainContent}{/if}
+<body>{if @$carcass}{$carcass}{else}{@$main}{/if}
 {*
 
 ====== Embeded body JavaScript (is not advisable) ====== *}

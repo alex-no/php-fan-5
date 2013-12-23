@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFirstName()
@@ -142,6 +142,14 @@ abstract class base implements \Serializable
                 throw new fatalException($this->oFacade, 'User Engine has empty config!');
             }
             $this->oConfig = $oConfig;
+/*
+            if (empty($this->mData)) {
+                $aIdent = adduceToArray($this->oConfig['IDENTIFYERS']);
+                if (count($aIdent) == 1) {
+                    $this->mData[$aIdent[0]] = $this->mIdentifyer;
+                }
+            }
+ */
         }
         return $this;
     } // function setConfig
@@ -246,9 +254,20 @@ abstract class base implements \Serializable
     {
         $sHashe = $this->makePasswordHash($sPassword);
         $this->bIsValid = !empty($this->mData['password']) && $this->mData['password'] == $sHashe;
+
+        // Log Error Authentication if it is allowed
         if (!$this->bIsValid && $this->oConfig['LOG_ERR_AUTH']) {
-            service('error')->logErrorMessage('Error password for "' . $this->getId() . '" at ' . date('Y-m-d H:i:s'), 'Error authentication', $sHashe);
+            if (empty($this->mData)) {
+                $sErrMsg = 'Data for "' . $this->getId() . '" isn\'t present.';
+                $sNote   = '';
+            } else {
+                $sErrMsg = 'Error password for "' . $this->getId() . '".';
+                $sNote   = 'Hashe: ' . $sHashe . "\n" . 'NS: ' . $this->oFacade->getUserSpace();
+            }
+            $sErrMsg .= "\nTime: " . date('Y-m-d H:i:s') . "\nClient IP: " . $_SERVER['REMOTE_ADDR'];
+            service('error')->logErrorMessage($sErrMsg, 'Error authentication', $sNote);
         }
+
         return $this->bIsValid;
     } // function checkPassword
 

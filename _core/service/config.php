@@ -14,7 +14,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  */
 final class config extends \core\base\service\multi
 {
@@ -107,8 +107,8 @@ final class config extends \core\base\service\multi
     // ======== Main Interface methods ======== \\
     /**
      * Get configuration data for $sName
-     * @param string $sName
-     * @param mixed $mKey - key of variable
+     * @param string $sName - name of section of config-file
+     * @param string|array $mKey - key of variable
      * @return array
      */
     public function get($sName, $mKey = null)

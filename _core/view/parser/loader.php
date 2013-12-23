@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  */
 class loader extends \core\view\parser
 {
@@ -54,7 +54,7 @@ class loader extends \core\view\parser
         $oLoader->setHtml($this->aResult['html'], true);
         $sResult = $oLoader->send(false);
 
-        $this->_setHeaders($sResult, 'application/json');
+        $this->_setHeaders($sResult, $oLoader->getContentType(array(), false, false), false);
         return $sResult;
     } // function getFinalContent
 

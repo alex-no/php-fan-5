@@ -12,14 +12,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.002
+ * @version of file: 05.003 (23.12.2013)
  */
 return array(
     'own' => array(
         'embeddedBlocks' => array(
-            'header'      => '{CAPP}/design/header',
-            'mainContent' => '{MAIN}',
-            'footer'      => '{CAPP}/design/footer',
+            'header' => '{CAPP}/design/header',
+            'main'   => '{MAIN}',
+            'footer' => '{CAPP}/design/footer',
         ),
 
         'externalCss' => array(

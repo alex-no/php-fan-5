@@ -32,9 +32,9 @@ return array(
          * "embeddedBlocks","carcass","root" can be set in "own"-part only!!!
          */
         'embeddedBlocks' => array( // Key - template var; Value - path to block
-            'menuTop'     => '{CAPP}/menu/main',
-            'menuLeft'    => '{CAPP}/menu/left',
-            'mainContent' => '{MAIN}',
+            'menuTop'  => '{CAPP}/menu/main',
+            'menuLeft' => '{CAPP}/menu/left',
+            'main'     => '{MAIN}',
         ),
         /**
          * It is recommend to set "carcass" and "root" blocks in tab.ini as default value and in main-content block for other value
@@ -47,6 +47,8 @@ return array(
         /**
          * It is recommend to set 'title' in main-content block only
          */
+        'default_view_format' => 'html' OR 'json' OR 'xml' OR 'etc', // NR. null: Define default view format
+
         'title'       => 'Title of page',
 
         'meta_tag' => array( // Meta tags

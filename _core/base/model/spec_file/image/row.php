@@ -12,7 +12,8 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
+ * @abstract
  */
 abstract class row extends \core\base\model\spec_file\row
 {

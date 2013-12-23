@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.003 (23.12.2013)
  */
 class session extends \core\base\service\multi
 {
@@ -92,36 +92,24 @@ class session extends \core\base\service\multi
      * @return \core\service\session
      * @throws \project\exception\fatal
      */
-    public static function instance($sNameSpace = null, $sGroup = 'app')
+    public static function instance($sNameSpace = null, $sGroup = 'custom')
     {
         if (is_null($sGroup)) {
             throw new \project\exception\fatal('Unset group name for \core\service\session.');
         }
         if (is_null($sNameSpace)) {
-            $oConfig  = \project\service\config::instance()->get('session');
-            if ($sGroup == 'app' || $sGroup == 'role') {
-                $sNameSpace = \project\service\application::instance()->getAppName();
-                $sRepName = $oConfig->get(array('REPLACE_APP', $sNameSpace));
-                if ($sRepName) {
-                    $sNameSpace = $sRepName;
-                }
-            } else {
-                $sNameSpace = $oConfig->get('DEFAULT_NAME', 'DEFAULT_SESSION');
+            $oConfig    = \project\service\config::instance()->get('session');
+            $sGroup     = 'app';
+            $sNameSpace = \project\service\application::instance()->getAppName();
+            $sRepName   = $oConfig->get(array('REPLACE_APP', $sNameSpace));
+            if ($sRepName) {
+                $sNameSpace = $sRepName;
             }
         }
         if (!isset(self::$aInstances[$sGroup][$sNameSpace])) {
             new self($sNameSpace, $sGroup);
         }
         return self::$aInstances[$sGroup][$sNameSpace];
-    } // function instance
-
-    /**
-     * Get Service's instance of current service as "Custom-group"
-     * @return \core\service\session
-     */
-    public static function instanceCustom($sSesName = null)
-    {
-        return \project\service\session::instance($sSesName, 'custom');
     } // function instance
 
     // ======== The magic methods ======== \\

@@ -13,5 +13,5 @@ class index extends \project\block\common\simple
         $this->view->hello = 'Hello world!';
     } // function init
 
-} // class \app\www_global\main\index
+} // class \app\frontend\main\index
 ?>

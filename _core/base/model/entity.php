@@ -1,4 +1,5 @@
 <?php namespace core\base\model;
+use project\exception\model\entity\fatal as fatalException;
 /**
  * Entity - table data
  *
@@ -14,7 +15,7 @@
  * @property-read \core\service\entity\description $description
  * @property-read \core\base\model\request $request
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.003 (23.12.2013)
  */
 abstract class entity
 {
@@ -123,16 +124,27 @@ abstract class entity
 
     // ======== The magic methods ======== \\
 
+    /**
+     * Magic method __set
+     * @param string $sKey
+     * @param mied $mValue
+     * @throws fatalException
+     */
     public function __set($sKey, $mValue)
     {
-        throw new \project\exception\model\entity\fatal($this, 'There is impossible to set property "' . $sKey . '".');
+        throw new fatalException($this, 'There is impossible to set property "' . $sKey . '".');
     }
 
+    /**
+     * Magic method __get
+     * @param string $sKey
+     * @throws fatalException
+     */
     public function __get($sKey)
     {
         $aProp = $this->_getPropertyList();
         if (!isset($aProp[$sKey])) {
-            throw new \project\exception\model\entity\fatal($this, 'There is impossible to get property "' . $sKey . '".');
+            throw new fatalException($this, 'There is impossible to get property "' . $sKey . '".');
         }
         return $this->{$aProp[$sKey]}();
     }
@@ -331,7 +343,7 @@ abstract class entity
      * @param mixed $mRowId
      * @param boolean $bIdIsEncrypt
      * @return \core\base\model\row
-     * @throws \project\exception\model\entity\fatal
+     * @throws fatalException
      */
     public function getParamById($mRowId, $bIdIsEncrypt = false)
     {
@@ -342,7 +354,7 @@ abstract class entity
             } elseif (is_object($mRowId) && method_exists($mRowId, '__toString')) {
                 $mParam[$mIdName] = $mRowId->__toString();
             } else {
-                throw new \project\exception\model\entity\fatal($this, 'Value of ID for select data from "' . $this->getTableName() . '" must have scalar value.');
+                throw new fatalException($this, 'Value of ID for select data from "' . $this->getTableName() . '" must have scalar value.');
             }
         } elseif (is_array($mRowId) && count($mIdName) == count($mRowId)) {
             sort($mIdName);
@@ -355,7 +367,7 @@ abstract class entity
                 $mParam = $mRowId;
             }
         } else {
-            throw new \project\exception\model\entity\fatal($this, 'Value of ID for select data from "' . $this->getTableName() . '" must be as array.');
+            throw new fatalException($this, 'Value of ID for select data from "' . $this->getTableName() . '" must be as array.');
         }
         return $mParam;
     } // function getParamById
@@ -384,7 +396,7 @@ abstract class entity
      * @param numeric $nOffset
      * @param boolean $bOnlyOne
      * @return array
-     * @throws \project\exception\model\entity\fatal
+     * @throws fatalException
      */
     public function &getDataByQuery($mQuery, $mParam = null, $nQtt = -1, $nOffset = -1, $bOnlyOne = false)
     {
@@ -450,7 +462,7 @@ abstract class entity
         } elseif (is_object($mConnection) && $mConnection instanceof \core\service\database) {
             $oConnection = $mConnection;
         } else {
-            throw new \project\exception\model\entity\fatal($this, 'Incorrect connection.');
+            throw new fatalException($this, 'Incorrect connection.');
         }
 
         $this->oConnection  = $oConnection;
@@ -556,7 +568,6 @@ abstract class entity
      * Get SQL-designer
      * @param string $sType
      * @return \core\service\entity\designer
-     * @throws \project\exception\model\entity\fatal
      */
     public function getDesigner($sType = 'select')
     {
@@ -666,6 +677,7 @@ abstract class entity
      * Define Table Name
      * @param array $aParam
      * @return string
+     * @throws fatalException
      */
     protected function _defineTableName($aParam = array())
     {
@@ -677,7 +689,7 @@ abstract class entity
         if (preg_match('/^(?:.+\\\\)?(\w+)$/', $sName, $aMatches)) {
             return $aMatches[1];
         }
-        throw new \project\exception\model\entity\fatal($this, 'Can\'t define the Table name for "' . get_class($this) . '".');
+        throw new fatalException($this, 'Can\'t define the Table name for "' . get_class($this) . '".');
     } // function _defineTableName
 
     /**
@@ -735,7 +747,7 @@ abstract class entity
      * Get Class Name for: "rowset", "row", "request"
      * @param string $sKey
      * @return string
-     * @throws \project\exception\model\entity\fatal
+     * @throws fatalException
      */
     protected function _getClassName($sKey)
     {
@@ -745,7 +757,7 @@ abstract class entity
         } else {
             $sPrefix = $this->getService()->getNsPrefix();
             if (empty($sPrefix)) {
-                throw new \project\exception\model\entity\fatal($this, 'In config prefix doesn\'t set for "' . $sKey . '".');
+                throw new fatalException($this, 'In config prefix doesn\'t set for "' . $sKey . '".');
             }
 
             $sClassName = $sPrefix . $sName . '\\' . $sKey;
@@ -762,7 +774,7 @@ abstract class entity
             $oReflection = $oReflection->getParentClass();
         } while(!empty($oReflection));
 
-        throw new \project\exception\model\entity\fatal($this, 'Class "' . $sClassName . '" must be instance of "\core\base\model\\' . $sKey . '".');
+        throw new fatalException($this, 'Class "' . $sClassName . '" must be instance of "\core\base\model\\' . $sKey . '".');
     } // function _getClassName
 
     /**
@@ -770,7 +782,7 @@ abstract class entity
      * @param string|\core\service\entity\designer $mQuery
      * @param mixed $mParam
      * @return string
-     * @throws \project\exception\model\entity\fatal
+     * @throws fatalException
      */
     protected function _getSqlAsString($mQuery, $mParam)
     {
@@ -779,7 +791,7 @@ abstract class entity
         } elseif (!is_string($mQuery)) {
             return array($mQuery, $mParam);
         }
-        throw new \project\exception\model\entity\fatal($this, 'Incorrect format of SQL-request.');
+        throw new fatalException($this, 'Incorrect format of SQL-request.');
     } // function _getSqlAsString
 } // class \core\base\model\entity
 ?>

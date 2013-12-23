@@ -12,7 +12,8 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
+ * @abstract
  */
 abstract class row extends \core\base\model\row
 {
@@ -53,7 +54,7 @@ abstract class row extends \core\base\model\row
             $this->oEntityFile = gr('\\' . $sNs . '\file_data');
             $this->oEntityFile->getEntity()->setConnection($this->getEntity()->getConnection()->getConnectionName());
             $this->oEntityFile->setAllowLoadInfo(false);
-            $this->oEntityFile->loadById($this->getId(true));
+            $this->oEntityFile->loadById($this->getId(false));
         }
         return $this->oEntityFile;
     }// function getEntityFile

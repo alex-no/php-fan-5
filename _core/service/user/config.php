@@ -13,16 +13,16 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.003 (23.12.2013)
  */
 class config extends base
 {
 
     /**
-     * Config Data
+     * Config of Authentication Data
      * @var \core\service\config\row
      */
-    protected $oConfigData;
+    protected $oAuthConfig;
 
     /**
      * Constructor of user engine
@@ -62,14 +62,14 @@ class config extends base
             return false;
         }
 
-        $this->oConfigData = \project\service\config::instance($sFile)->get($sKey);
+        $this->oAuthConfig = \project\service\config::instance($sFile)->get($sKey);
 
         $oRule = $this->_getAccessRule();
         if (empty($oRule)) {
             return false;
         }
 
-        $sMainRole = $this->oConfigData->main_role;
+        $sMainRole = $this->oAuthConfig->main_role;
         if (empty($sMainRole) || !is_string($sMainRole)) {
             throw new fatalException($this->oFacade, 'Main role isn\'t set in config-file "' . $sFile . '" for "' . $sKey . '"!');
         }
@@ -81,7 +81,7 @@ class config extends base
         } else {
             $this->mData = $this->_getAuthorizedData($oRule);
         }
-        return true;
+        return !empty($this->mData);
     } // function _loadData
 
     /**
@@ -100,7 +100,7 @@ class config extends base
             'roles'    => array(),
         );
 
-        $aData['roles'][$this->oConfigData->main_role] = null;
+        $aData['roles'][$this->oAuthConfig->main_role] = null;
 
         $this->_mergeRoles($aData['roles'], $oRule->add_roles);
         return $aData;
@@ -123,7 +123,7 @@ class config extends base
             }
         }
 
-        $aData['roles'][$this->oConfigData->main_role] = null;
+        $aData['roles'][$this->oAuthConfig->main_role] = null;
 
         $this->_mergeRoles($aData['roles'], $oRule->add_roles);
         $this->_mergeRoles($aData['roles'], $oAuth->roles);
@@ -155,8 +155,8 @@ class config extends base
     protected function _getAccessRule()
     {
         $aKeys = array('re_domain' => 'SERVER_NAME', 're_server_ip' => 'SERVER_ADDR', 're_client_ip' => 'REMOTE_ADDR');
-        if (!empty($this->oConfigData['RULE'])) {
-            foreach ($this->oConfigData['RULE'] as $oRule) {
+        if (!empty($this->oAuthConfig['RULE'])) {
+            foreach ($this->oAuthConfig['RULE'] as $oRule) {
                 foreach ($aKeys as $k0 => $k1) {
                     if (!empty($oRule[$k0]) && !preg_match($oRule[$k0], $_SERVER[$k1])) {
                         continue 2;
@@ -170,9 +170,11 @@ class config extends base
 
     protected function _getAuthentication()
     {
-        foreach ($this->oConfigData['AUTHENTICATION'] as $oAuth) {
-            if ($oAuth->login == $this->mIdentifyer) {
-                return $oAuth;
+        foreach ($this->oAuthConfig['AUTHENTICATION'] as $oAuth) {
+            foreach ($this->oConfig['IDENTIFYERS'] as $v) {
+                if ($oAuth->$v == $this->mIdentifyer) {
+                    return $oAuth;
+                }
             }
         }
         return null;

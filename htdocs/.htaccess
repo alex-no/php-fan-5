@@ -1,8 +1,5 @@
 RewriteEngine On
 
-#RewriteRule  ^img_(\w+)\.[a-zA-Z]{3}$ file.php?id=$1&type=image [L]
-#RewriteRule  ^video_(\w+)\.flv$ file.php?id=$1&type=video [L]
-#RewriteRule  ^nail_([0-9]+)_([0-9]+)-([0-9]+)\.[a-zA-Z]{3}$ nail.php?id=$1&w=$2&h=$3 [L]
 RewriteCond   %{REQUEST_FILENAME} !-f
 #RewriteCond   %{REQUEST_FILENAME} !-d
 RewriteRule  ^((.*\.(html?|php))|((.+\/)?[^\.\/]*))$ index.php?%{QUERY_STRING} [L]

@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -571,6 +571,11 @@ class tab extends \core\base\service\single
         // Init data blocks
         $this->sStage = 'init';
         $this->_initBlocks($this->_getInitBlocks());
+
+        // Additional init for base blocks
+        $this->sStage = 'after_init';
+        $this->_runAfterInit();
+
         $nInitTime = microtime(true);
 
         // Get output Content
@@ -640,6 +645,22 @@ class tab extends \core\base\service\single
         }
         return $this;
     } // _initBlocks
+    /**
+     * Additional init for "main", "carcass" and "root"
+     * @return \core\service\tab
+     */
+    protected function _runAfterInit()
+    {
+        $nStartTime = microtime(true);
+        foreach (array('main', 'carcass', 'root') as $sBlockName) {
+            $oBlock = $this->getTabBlock($sBlockName, false);
+            if ($oBlock) {
+                $oBlock->runAfterInit();
+            }
+        }
+        $this->aTimesStamp['after_init'] = microtime(true) - $nStartTime;
+        return $this;
+    } // _runAfterInit
 
     /**
      * Get Final View Content
@@ -653,6 +674,11 @@ class tab extends \core\base\service\single
             $sClass = '\project\view\parser\\' . ($nDebugMode == 1 && $this->oMainBlock->getViewType() == 'html' ? 'debug1' : 'debug2');
         } else {
             $sClass = $this->getViewClass();
+            if ($this->isDebugAllowed()) {
+                $oDebug = \project\service\debug::instance();
+                /* @var $oDebug \core\service\debug */
+                $oDebug->setExtFiles($oRootBlock, 0);
+            }
         }
         /* @var $oViewParser \core\view\parser */
         $oViewParser = new $sClass($this->oMainBlock);
@@ -865,6 +891,7 @@ class tab extends \core\base\service\single
         if ($this->bCheckPerformance) {
             $sCurTime = microtime(true);
             $this->aTimesStamp['init_sum'] = sprintf('%01.6f', $nInitTime - $nStartTime - $this->aTimesStamp['consruct']);
+            $this->aTimesStamp['add_init'] = sprintf('  %01.6f', $this->aTimesStamp['after_init']);
             $this->aTimesStamp['output']   = sprintf('  %01.6f', $sCurTime  - $nInitTime);
             $this->aTimesStamp['total']    = sprintf('   %01.6f', $sCurTime  - $nStartTime);
             $this->aTimesStamp['creating'] = sprintf('%01.6f', $this->aTimesStamp['consruct']);

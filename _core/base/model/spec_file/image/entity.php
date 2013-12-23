@@ -12,7 +12,8 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
+ * @abstract
  */
 abstract class entity extends \core\base\model\spec_file\entity
 {
@@ -72,7 +73,7 @@ abstract class entity extends \core\base\model\spec_file\entity
                 'num'   => 2,
                 'class' => 3,
             );
-            $aEtt = self::prepareImgEtt(&$aRepl, $aMatches, $aPos, $aLinkTbl, $sEntityName, $sKeyField, false);
+            $aEtt = self::prepareImgEtt($aRepl, $aMatches, $aPos, $aLinkTbl, $sEntityName, $sKeyField, false);
 
             // Replace image code
             foreach ($aEtt as $e) {
@@ -101,21 +102,21 @@ abstract class entity extends \core\base\model\spec_file\entity
                 'height' => 5,
                 'class'  => 6,
             );
-            $aEtt = self::prepareImgEtt(&$aRepl, $aMatches, $aLinkTbl, $sEntityName, $sKeyField, true);
+            $aEtt = self::prepareImgEtt($aRepl, $aMatches, $aLinkTbl, $sEntityName, $sKeyField, true);
 
             // Replace image code
             foreach ($aEtt as $e) {
                 foreach ($aRepl[$e->getId()] as $v) {
                     $v[2] = strtolower($v[2]);
                     $aParamTmp = $aParam;
-                    if (@$v[1]) {
+                    if (!empty($v[1])) {
                         $k = $v[2] == 'img' || $v[2] == 'nail' ? $v[2] : 'div';
-                        $aParamTmp[$k]['class'] = @$aParamTmp[$k]['class'] ? $aParamTmp[$k]['class'] . ' ' . $v[3] : $v[3];
+                        $aParamTmp[$k]['class'] = empty($aParamTmp[$k]['class']) ? $v[3] : $aParamTmp[$k]['class'] . ' ' . $v[3];
                     }
-                    if (@$v[3]) {
+                    if (!empty($v[3])) {
                         $aParamTmp['nail']['width'] = $v[3];
                     }
-                    if (@$v[4]) {
+                    if (!empty($v[4])) {
                         $aParamTmp['nail']['height'] = $v[4];
                     }
                     $sCode = str_replace($v[0], $e->advGetImgTag($v[2], $aParamTmp), $sCode);

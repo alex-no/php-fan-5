@@ -11,6 +11,10 @@
 	height: 18px;
 	background-color: #DDDDDD;
 	cursor: pointer;
+	opacity: .3;
+}
+#debug_cpanel_1:hover {
+	opacity: 1;
 }
 #debug_cpanel_2 {
 	display: none;

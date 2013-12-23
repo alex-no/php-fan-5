@@ -14,7 +14,7 @@ use \project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.003 (23.12.2013)
  * @method mixed getId()
  * @method string getLogin()
  * @method string getNickName()
@@ -397,6 +397,15 @@ class user extends \core\base\service\multi implements \Serializable
     {
         return $this->oUserData->getRoles($bForce);
     } // function getRoles
+
+    /**
+     * Get User Space
+     * @return string
+     */
+    public function getUserSpace()
+    {
+        return $this->sUserSpace;
+    } // function getUserSpace
 
     /**
      * Make Hash for Password
