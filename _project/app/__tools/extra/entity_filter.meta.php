@@ -9,8 +9,8 @@ return array(
             'action_method'  => 'GET',
             'request_type'   => 'G',
 
-            'form_key_name'  => 'entity_filter',
-            'form_id'        => 'entity_filter',
+            'form_key_name'  => 'filter',
+            'form_id'        => 'filter',
 
             'fields' => array(
                 'connection' => array(

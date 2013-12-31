@@ -7,7 +7,7 @@ class create_entity extends \project\block\form\usual
 {
 
     /**
-     * Object of service_database
+     * Object of database-service
      * @var \core\service\database
      */
     protected $oDb = null;

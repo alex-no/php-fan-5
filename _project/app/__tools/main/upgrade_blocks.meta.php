@@ -12,7 +12,7 @@ return array(
         ),
 */
         'src' => array(
-            'path' => '{PROJECT}/model',
+            'path' => '{PROJECT}/app/admin',
             'ns'   => 'app\\admin',
             'extends' => array(
                 'block_loader_admin_structure'    => '\project\block\admin\structure',
@@ -24,7 +24,9 @@ return array(
                 'block_loader_admin_upload_file'  => '\project\block\admin\upload_file',
                 'block_loader_base'               => '\project\block\loader\base',
                 'block_html_base'                 => '\project\block\common\simple',
+                'simple_template_block'           => '\project\block\common\simple',
                 'block_html_form_base'            => '\project\block\form\usual',
+                'block_form_base_input'           => '\project\block\form\usual',
                 'entity_base'                     => '\project\base\model\entity',
             ),
             'direct_replace' => array(
