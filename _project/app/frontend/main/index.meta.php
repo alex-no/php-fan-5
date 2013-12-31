@@ -31,11 +31,11 @@ return array(
                 'ru' => 'Test of session',
                 'en' => 'Проверка сессий',
             ),
-/*
             'test_cache' => array(
-                'ru' => '',
-                'en' => '',
+                'ru' => 'Проверка работы с кэшем',
+                'en' => 'Test of operation with cache',
             ),
+/*
             'test_config' => array(
                 'ru' => '',
                 'en' => '',
