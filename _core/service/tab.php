@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.004 (31.12.2013)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -407,13 +407,17 @@ class tab extends \core\base\service\single
         return $this->bAllowDebug;
     } // function isDebugAllowed
 
+    /**
+     * getSubscriber
+     * @return subscriber
+     */
     public function getSubscriber()
     {
         if (empty($this->aEngine['subscriber'])) {
             $this->aEngine['subscriber'] = $this->_getEngine('subscriber');
         }
         return $this->aEngine['subscriber'];
-    } // function isDebugAllowed
+    } // function getSubscriber
 
     // ----------- Methods of block cache ------------- \\
     /**

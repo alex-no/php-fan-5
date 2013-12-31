@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.004 (31.12.2013)
  */
 abstract class row extends \core\base\model\row
 {
@@ -40,6 +40,11 @@ abstract class row extends \core\base\model\row
      * @var boolean Allow to save Info-file
      */
     protected $bSaveInfo = true;
+
+    /**
+     * @var string Namespace of file
+     */
+    protected $sFileNs = null;
 
     /**
      * Row-data constructor
@@ -429,7 +434,7 @@ return ' . var_export($aRow, true) . ';
     public function setAccessType($sKey, $bSave = true)
     {
         if ($sKey) {
-            $this->oAT = ge('file_access_type')->getRowByParam(array('access_type' => $sKey));
+            $this->oAT = ge($this->_getFileNs() . 'file_access_type')->getRowByParam(array('access_type' => $sKey));
             if (!$this->oAT->checkIsLoad()) {
                 throw new fatalException($this, 'Incorrect Access Type Key!');
             }
@@ -473,7 +478,7 @@ return ' . var_export($aRow, true) . ';
      */
     public function removePersonalAccess($nRemoveType = 1, $nMembId = null)
     {
-        $aPA = ge('file_personal_access')->getRowsetByParam(array('id_file_data' => $this->getId()));
+        $aPA = ge($this->_getFileNs() . 'file_personal_access')->getRowsetByParam(array('id_file_data' => $this->getId()));
         if ($nRemoveType > 1 && !$nMembId) {
             throw new fatalException($this, 'Member Id for remove access doesn\'t set!');
         }
@@ -494,7 +499,7 @@ return ' . var_export($aRow, true) . ';
         $bRet = true;
         if ($this->get_id_file_access_type(false, true)) {
             if (!$this->oAT) {
-                $this->oAT = gr('file_access_type', $this->get_id_file_access_type());
+                $this->oAT = gr($this->_getFileNs() . 'file_access_type', $this->get_id_file_access_type());
             }
             $sRule = $this->oAT->get_access_rule();
             if ($sRule) { // Check access by rule
@@ -559,7 +564,7 @@ return ' . var_export($aRow, true) . ';
             }
             $nMembId = $oMember->getId();
         }
-        $oPA = ge('entity_file_personal_access')->getDataByParam(array(
+        $oPA = ge($this->_getFileNs() . 'file_personal_access')->getRowsetByParam(array(
             'id_file_data' => $this->getId(),
             'id_member'    => $nMembId,
         ));
@@ -594,6 +599,18 @@ return ' . var_export($aRow, true) . ';
         $this->checkCreatedDir($sFilePath);
         return $sFilePath;
     }// function prepareUpdateFile
+
+    /**
+     * Get Suffix of namespace of file entity
+     * @return string
+     */
+    protected function _getFileNs()
+    {
+        if (is_null($this->sFileNs)) {
+            $this->sFileNs = service('entity')->getFileNsSuffix();
+        }
+        return $this->sFileNs;
+    } // function _getFileNs
 
 } // class \core\base\model\file_data\row
 ?>

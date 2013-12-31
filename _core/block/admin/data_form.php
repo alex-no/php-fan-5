@@ -12,10 +12,15 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  */
 class data_form extends data
 {
+    /**
+     * Edited or Inserted entity
+     * @var object entity
+     */
+    protected $oRow;
 
     /**
      * Validate Data
@@ -45,14 +50,14 @@ class data_form extends data
         //$sEttAcces = $this->getMeta('check_access4edit'); // ToDo: Check for use it
         $aFields   = $this->getMeta(array('form_struct', 'rows'));
         if ($aEdit) {
-            $oRow = ge($this->getMeta('entity'))->getRowByParam($this->getCondition());
-            $this->saveRow($oRow, $aEdit, $aFields);
-            $this->checkDBerror($oRow, 'Can\'t update data: ');
+            $this->oRow = ge($this->getMeta('entity'))->getRowByParam($this->getCondition());
+            $this->saveRow($this->oRow, $aEdit, $aFields);
+            $this->checkDBerror($this->oRow, 'Can\'t update data: ');
         } elseif ($aInsert) {
             $aAddFields = array_keys($this->getMeta(array('addParam', 'default_val'), array()));
-            $oRow = gr($this->getMeta('entity'));
-            $this->saveRow($oRow, $aInsert, $aFields, $aAddFields);
-            $this->checkDBerror($oRow, 'Can\'t insert data: ');
+            $this->oRow = gr($this->getMeta('entity'));
+            $this->saveRow($this->oRow, $aInsert, $aFields, $aAddFields);
+            $this->checkDBerror($this->oRow, 'Can\'t insert data: ');
         }
         return $this;
     } // function parseData

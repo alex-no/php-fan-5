@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  */
 class bootstrap
 {
@@ -150,6 +150,9 @@ class bootstrap
      */
     public static function runCli($sClassName, $sMethodName = 'init')
     {
+        if (php_sapi_name() != 'cli') {
+            die('This script can be run in CLI mode only');
+        }
         self::$bIsCli = true;
         return self::getRunner()->runCli($sClassName, $sMethodName);
     } // function run

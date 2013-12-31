@@ -18,14 +18,14 @@ return array(
     'own' => array(
         'externalCss' => array(
             'new' => array(
-                'c00' => '/css/main.css',
+                'c00' => '~/main.css',
                 'c01' => '~/layout.css',
                 'c02' => '~/data.css',
                 'c03' => '~/elm.css',
                 'c04' => '/css/extra/calendar.css'
             ), // files are attached by @import-directive
             'ie'  => array(
-                'c00' => '~/css/ie.css'
+                'c00' => '~/ie.css'
             ), // files are used for IE5-IE7
             //'ie6' => array('~/ie6.css'), // files are used for IE5-IE6
         ),

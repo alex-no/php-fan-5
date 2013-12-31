@@ -26,12 +26,12 @@
                 <div id="vSeparator1"><div id="vSeparator1_" class="line_arrow1">&nbsp;</div></div>
                 <div id="blMainMenuContent"></div>
             </div>
-            <table summary="Main Content">
+            <table>
                 <tr>
                     <td id="blMain">
                         <div id="blMainContent">
                             <div id="blMainContent__">
-                                <table summary="Content Data Left" class="contentData">
+                                <table class="contentData">
                                     <tr><td class="contentDataTop" id="frameLeftTop">
                                     </td></tr>
                                     <tr><td class="contentDataBottom" id="frameLeftBottom">
@@ -45,7 +45,7 @@
                         <div id="blAddContent">
                             <div id="blAddSubSel"><div id="closeAdd"><a href="#" class="win_close"></a></div>{* *}<div id="blAddSubSelect"></div></div>
                             <div id="blAddContent__">
-                                <table summary="Content Data Right" class="contentData">
+                                <table class="contentData">
                                     <tr><td class="contentDataTop" id="frameRightTop">
                                     </td></tr>
                                     <tr><td class="contentDataBottom" id="frameRightBottom">

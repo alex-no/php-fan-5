@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  */
 class memcache extends base
 {
@@ -81,8 +81,8 @@ class memcache extends base
             }
             self::$aKeepers[$this->sType] = new \Memcache();
             self::$aKeepers[$this->sType]->addServer(
-                isset($this->aConfig['HOST']) ? $this->aConfig['HOST'] : 'localhost',
-                isset($this->aConfig['PORT']) ? $this->aConfig['PORT'] : 11211
+                array_val($this->aConfig, 'HOST', 'localhost'),
+                array_val($this->aConfig, 'PORT', 11211)
             );
         }
         return self::$aKeepers[$this->sType];

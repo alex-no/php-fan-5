@@ -1,4 +1,4 @@
-<table summary="sub Menu">
+<table>
 <tr>
     {foreach key=sKey item=menuItem from=$aMenu}
         <td{if $menuItem.key==$sCurrent} class="current"{/if}><a href="{$oBlock->getMenuUrl($menuItem['key'], $menuItem['add'])}" >{$menuItem['name']}</a></td>

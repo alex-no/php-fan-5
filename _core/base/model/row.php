@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.004 (31.12.2013)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -144,10 +144,17 @@ class row implements \ArrayAccess, \Serializable
     // ======== Static methods ======== \\
 
     // ======== Main Interface methods ======== \\
+    /**
+     * Load current entity by ID
+     * @param mixed $mRowId
+     * @param boolean $bIdIsEncrypt
+     * @return \core\base\model\row
+     */
     public function loadById($mRowId, $bIdIsEncrypt = false)
     {
         $mParam = is_null($mRowId) ? null : $this->getEntity()->getParamById($mRowId, $bIdIsEncrypt);
-        return $this->loadByParam($mParam, 0, null);
+        $this->loadByParam($mParam, 0, null);
+        return $this;
     } // function loadById
 
     /**
@@ -155,7 +162,7 @@ class row implements \ArrayAccess, \Serializable
      * @param array|object $mParam
      * @param numeric $nOffset
      * @param string $sOrderBy
-     * @return boolean
+     * @return \core\base\model\row
      */
     public function loadByParam($mParam, $nOffset = 0, $sOrderBy = null)
     {
@@ -170,7 +177,8 @@ class row implements \ArrayAccess, \Serializable
         } else {
             $aData =& $this->getEntity()->getDataByParam($mParam, 1, $nOffset, $sOrderBy, true);
         }
-        return $this->_fixLoadedData($aData);
+        $this->_fixLoadedData($aData);
+        return $this;
     } // function loadByParam
 
     /**

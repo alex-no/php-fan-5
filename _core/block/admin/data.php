@@ -210,7 +210,12 @@ abstract class data extends base
                 $aJson['extra'] = $aExtra;
             }
         }
-
+/*
+        // Flag for use Main Page
+        if ($bIsFirst || $this->getMeta('useMainPage')) {
+            $aJson['useMainPage'] = 1;
+        }
+*/
         return $aJson;
     } // function getMainData
 

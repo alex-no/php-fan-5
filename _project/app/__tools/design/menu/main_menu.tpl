@@ -1,4 +1,4 @@
-<table summary="main Menu">
+<table>
 <tr>
     {foreach item=menuItem from=$aMenu}
         <td{if $menuItem['key']==$sCurrent} class="current"{/if}>

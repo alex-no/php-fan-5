@@ -28,7 +28,7 @@ class upload_image extends base
     protected $sError = '';
 
     /**
-     * @var string Namespace of
+     * @var string Namespace of image
      */
     protected $sFileNs = null;
 

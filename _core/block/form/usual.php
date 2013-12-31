@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  * @abstract
  */
 abstract class usual extends \core\block\base
@@ -74,7 +74,7 @@ abstract class usual extends \core\block\base
      */
      public function getFieldsMeta()
     {
-        return $this->getMeta(array('form', 'fields'));
+        return $this->getMeta(array('form', 'fields'), array());
     } // function getFieldsMeta
 
     /**

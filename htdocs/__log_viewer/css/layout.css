@@ -327,6 +327,10 @@ h2{
 .tr_func {
 	color: #000099;
 }
+.tr_arg i {
+	font-size: 0.85em;
+	color: #7B7B7B;
+}
 
 /* Pager */
 #pager_cont{
