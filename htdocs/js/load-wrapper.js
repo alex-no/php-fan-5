@@ -19,7 +19,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version:  03.01.07
+ * @version:  03.01.08
  * @modified: 2013-12-13 01:20:00
  */
 /**
@@ -466,6 +466,7 @@ implement(loadWrapper.prototype, [basicBroadcaster.prototype, {
     _sendData   : null,
     _listeners  : null,
     _sendStack  : null,
+    _waiterTag  : null,
 
     __conTimer  : {},
     __cache     : {},
@@ -591,10 +592,26 @@ implement(loadWrapper.prototype, [basicBroadcaster.prototype, {
     },
 
     /**
+     * Set gif path to file
+     * default path in config
+     */
+    setWaiter : function(path)
+    {
+        if (!isDefined(path)) {
+            path = this.config.waiterGif;
+        }
+        this._waiterTag = this.winWr.makeElement('table', {'style' : this.config.waiterStyle}, null, false);
+        var cell = this._waiterTag.insertRow(0).insertCell(0);
+        cell.style.textAlign = 'center';
+        cell.appendChild(this.winWr.makeElement('img', {'src' : path}, null, false));
+    },
+
+    /**
      * Send request to server
      */
     send : function(data)
     {
+        this._showWaiter();
         var t, hk, reqObj;
         t = this;
 
@@ -779,7 +796,7 @@ implement(loadWrapper.prototype, [basicBroadcaster.prototype, {
             if(t.config.interceptErr) {
                 if(data[2]) alert(data[2]);
             } else {
-                this.broadcastMessage.apply(this, ["ondataerror", data[2]]);
+                t.broadcastMessage.apply(this, ["ondataerror", data[2]]);
             }
             return;
         }
@@ -803,6 +820,7 @@ implement(loadWrapper.prototype, [basicBroadcaster.prototype, {
             this.broadcastMessage.apply(this, ["ondataerror", msg[msgKey]]);
         }
         this._errMsg(msgKey, msgDt);
+        this._hideWaiter();
     },
 
     /**
@@ -818,6 +836,7 @@ implement(loadWrapper.prototype, [basicBroadcaster.prototype, {
             this.send(data[1]);
         }
         this._restartTimer(hk, false);
+        this._hideWaiter();
     },
     /**
      * Restart timer
@@ -907,12 +926,32 @@ implement(loadWrapper.prototype, [basicBroadcaster.prototype, {
     },
 
     /**
+     * Show ajax loader
+     */
+    _showWaiter : function()
+    {
+        if (this._waiterTag) {
+            this.winWr.doc.body.appendChild(this._waiterTag);
+        }
+    },
+
+    /**
+     * Hide ajax loader
+     */
+    _hideWaiter : function()
+    {
+        if (this._waiterTag) {
+            this.winWr.doc.body.removeChild(this._waiterTag);
+        }
+    },
+
+    /**
      * Integrate loadWrapper to winWrapper
      */
     __init : function()
     {
         if(!window.winWrapper || !winWrapper.prototype) {
-            this._errMsg("no_wrapper");
+            this._errMsg('no_wrapper');
             return false;
         } else {
             winWrapper.prototype.getAjax = winWrapper.prototype.getLoadWrapper = function (url, method, useCache)
@@ -935,63 +974,65 @@ implement(loadWrapper.prototype, [basicBroadcaster.prototype, {
 }]);
 
 implement(loadWrapper.prototype.config, {
-    connectTimeout : 21000,
-    handlerLimit   : 100,
-    broadcastTmErr : true,
-    interceptErr   : false,
-    dataKey        : "dl_data",
-    controlKey     : "dl_ctrl",
+    'connectTimeout' : 21000,
+    'handlerLimit'   : 100,
+    'broadcastTmErr' : true,
+    'interceptErr'   : false,
+    'dataKey'        : 'dl_data',
+    'controlKey'     : 'dl_ctrl',
+    'waiterStyle'    : 'opacity: 0.85; background-color: #FFFFFF; position: absolute; top: 0px; left: 0px; z-index:100; width: 100%; height: 100%;',
+    'waiterGif'      : '/_images/loader/ajax-loader.gif',
     alertMessages_en  : {
-        "JSbroken"    : 'JavaScript code is broken.',
-        "HTMLbroken"  : 'HTML-code is broken.',
-        "retrProbl"   : 'Load data error.',
-        "frmNotLoad"  : 'Form data isn\'t loaded!',
-        "imgNotLoad"  : 'Image isn\'t loaded!',
-        "loadTimeout" : null,
-        "retryReq"    : 'Time for get data from server is expired!\nWould you like to retry this request again?'
+        'JSbroken'    : 'JavaScript code is broken.',
+        'HTMLbroken'  : 'HTML-code is broken.',
+        'retrProbl'   : 'Load data error.',
+        'frmNotLoad'  : 'Form data isn\'t loaded!',
+        'imgNotLoad'  : 'Image isn\'t loaded!',
+        'loadTimeout' : null,
+        'retryReq'    : 'Time for get data from server is expired!\nWould you like to retry this request again?'
     },
     alertMessages_ru  : {
-        "JSbroken"   : '"JavaScript код некорректный.',
-        "HTMLbroken" : 'HTML-код некорректный.',
-        "retrProbl"  : 'Проблемы с получением данных:.',
-        "frmNotLoad" : 'Данные формы не были загружены!',
-        "imgNotLoad" : 'Рисунок не загружен!',
-        "loadTimeout" : null,
-        "retryReq" : 'Время для получения данных от сервера истекло!\nХотели-бы Вы повторить запрос еще раз?'
+        'JSbroken'    : 'JavaScript код некорректный.',
+        'HTMLbroken'  : 'HTML-код некорректный.',
+        'retrProbl'   : 'Проблемы с получением данных:.',
+        'frmNotLoad'  : 'Данные формы не были загружены!',
+        'imgNotLoad'  : 'Рисунок не загружен!',
+        'loadTimeout' : null,
+        'retryReq'    : 'Время для получения данных от сервера истекло!\nХотели-бы Вы повторить запрос еще раз?'
     },
     errMessages_en : {
-        "ingorRec"   : 'Incorrect request!\n{$0}',
-        "JSbroken"   : 'JavaScript code is broken!\n\n{$0}',
-        "HTMLbroken" : 'HTML-code is broken!\n\n{$0}',
-        "retrProbl"  : 'There was a problem of retrieving the XML data:\nError {$0}\n{$1}',
-        "frmNotLoad" : 'Form data isn\'t loaded!',
-        "imgNotLoad" : 'Image isn\'t loaded!',
-        "wwNotSet"   : 'Error!\nWindow Wrapper doesn\'t set!',
-        "jsPost"     : 'JS-transport isn\'t be use for POST-method!',
-        "imgPost"    : 'Image-transport isn\'t be use for POST-method!',
-        "unkMode"    : 'Unknown mode - {$0}!',
-        "objNotCrtd" : 'Error!\nObject for send data wasn\'t be created!',
-        "noKeyMthd"  : 'Do not use {$0}-method in mode "0" without key.',
-        "handLimit"  : 'Top out handler limit!',
-        "notBody"    : 'Can\'t create new tag without "body"!',
-        "no_wrapper" : '"Load-wrapper" isn\'t be used without "window Wrapper"!'
+        'ingorRec'   : 'Incorrect request!\n{$0}',
+        'JSbroken'   : 'JavaScript code is broken!\n\n{$0}',
+        'HTMLbroken' : 'HTML-code is broken!\n\n{$0}',
+        'retrProbl'  : 'There was a problem of retrieving the XML data:\nError {$0}\n{$1}',
+        'frmNotLoad' : 'Form data isn\'t loaded!',
+        'imgNotLoad' : 'Image isn\'t loaded!',
+        'wwNotSet'   : 'Error!\nWindow Wrapper doesn\'t set!',
+        'jsPost'     : 'JS-transport isn\'t be use for POST-method!',
+        'imgPost'    : 'Image-transport isn\'t be use for POST-method!',
+        'unkMode'    : 'Unknown mode - {$0}!',
+        'objNotCrtd' : 'Error!\nObject for send data wasn\'t be created!',
+        'noKeyMthd'  : 'Do not use {$0}-method in mode "0" without key.',
+        'handLimit'  : 'Top out handler limit!',
+        'notBody'    : 'Can\'t create new tag without "body"!',
+        'no_wrapper' : '"Load-wrapper" isn\'t be used without "window Wrapper"!'
     },
     errMessages_ru : {
-        "ingorRec"   : 'Некорректный запрос!\n{$0}',
-        "JSbroken"   : 'JavaScript код некорректный!\n\n{$0}',
-        "HTMLbroken" : 'HTML-код некорректный!\n\n{$0}',
-        "retrProbl"  : 'Проблемы с получением XML-данных:\nОшибка {$0}\n{$1}',
-        "wwNotSet"   : 'Ошибка!\n"Window Wrapper" не установлен!',
-        "jsPost"     : 'JS-транспорт не может использоваться для метода POST!',
-        "frmNotLoad" : 'Данные формы не были загружены!',
-        "imgNotLoad" : 'Рисунок не загружен!',
-        "imgPost"    : 'Image-транспорт не может использоваться для метода POST!',
-        "unkMode"    : 'Неизвестный режим - {$0}!',
-        "objNotCrtd" : 'Ошибка!\nОбъект для передачи данных не был создан!',
-        "noKeyMthd"  : 'Не используйте метод {$0} без ключа в режиме "0".',
-        "handLimit"  : 'Превышен лимит хендлеров!',
-        "notBody"    : 'Не могу создать новый тэг без "body"!',
-        "no_wrapper" : '"Load-wrapper" не может использоваться без "window Wrapper"!'
+        'ingorRec'   : 'Некорректный запрос!\n{$0}',
+        'JSbroken'   : 'JavaScript код некорректный!\n\n{$0}',
+        'HTMLbroken' : 'HTML-код некорректный!\n\n{$0}',
+        'retrProbl'  : 'Проблемы с получением XML-данных:\nОшибка {$0}\n{$1}',
+        'wwNotSet'   : 'Ошибка!\n"Window Wrapper" не установлен!',
+        'jsPost'     : 'JS-транспорт не может использоваться для метода POST!',
+        'frmNotLoad' : 'Данные формы не были загружены!',
+        'imgNotLoad' : 'Рисунок не загружен!',
+        'imgPost'    : 'Image-транспорт не может использоваться для метода POST!',
+        'unkMode'    : 'Неизвестный режим - {$0}!',
+        'objNotCrtd' : 'Ошибка!\nОбъект для передачи данных не был создан!',
+        'noKeyMthd'  : 'Не используйте метод {$0} без ключа в режиме "0".',
+        'handLimit'  : 'Превышен лимит хендлеров!',
+        'notBody'    : 'Не могу создать новый тэг без "body"!',
+        'no_wrapper' : '"Load-wrapper" не может использоваться без "window Wrapper"!'
     }
 });
 

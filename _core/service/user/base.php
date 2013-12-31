@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.004 (31.12.2013)
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFirstName()
@@ -258,10 +258,10 @@ abstract class base implements \Serializable
         // Log Error Authentication if it is allowed
         if (!$this->bIsValid && $this->oConfig['LOG_ERR_AUTH']) {
             if (empty($this->mData)) {
-                $sErrMsg = 'Data for "' . $this->getId() . '" isn\'t present.';
+                $sErrMsg = 'Data for "' . $this->mIdentifyer . '" isn\'t present.';
                 $sNote   = '';
             } else {
-                $sErrMsg = 'Error password for "' . $this->getId() . '".';
+                $sErrMsg = 'Error password for "' . $this->mIdentifyer . '".';
                 $sNote   = 'Hashe: ' . $sHashe . "\n" . 'NS: ' . $this->oFacade->getUserSpace();
             }
             $sErrMsg .= "\nTime: " . date('Y-m-d H:i:s') . "\nClient IP: " . $_SERVER['REMOTE_ADDR'];

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  */
 
 function get_class_name($oObject)
@@ -351,7 +351,7 @@ function le($sEntityName, $mRowId = null, $bIdIsEncrypt = false)
  */
 function dms($sKey, $mDefaultValue = null)
 {
-    $oEtt = ge('dynamic_meta')->loadOrCreate(array('data_key' => $sKey), array(
+    $oEtt = ge('dynamic_meta')->getRowOrCreate(array('data_key' => $sKey), array(
         'data_name' => str_replace('_', ' ', $sKey),
         'data_type' => 'scalar',
         'scalar_value' => null,

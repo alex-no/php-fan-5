@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  */
 class upload_file extends base
 {
@@ -81,7 +81,7 @@ class upload_file extends base
             }
         }
 
-        $oFile = gr('file_data', @$aData['fileId']);
+        $oFile = gr(service('entity')->getFileNsSuffix() . 'file_data', @$aData['fileId']);
         if ($aData['op'] == 'dl' && @$aData['fileId']) {
             if ($oFile->checkIsLoad()) {
                 if ($aLink) {

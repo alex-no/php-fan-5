@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.004 (31.12.2013)
  * @abstract
  */
 abstract class entity extends \core\base\model\spec_file\entity
@@ -148,7 +148,7 @@ abstract class entity extends \core\base\model\spec_file\entity
         if ($aLinkTbl) {
             foreach ($aMatches[$aPos['num']] as $k => $n) {
                 if ($n) {
-                    $oRow = se($aLinkTbl[0])->loadByParam(array(
+                    $oRow = gr($aLinkTbl[0])->loadByParam(array(
                         $aLinkTbl[1] => $aLinkTbl[2],
                         'order_num'  => $n,
                     ));

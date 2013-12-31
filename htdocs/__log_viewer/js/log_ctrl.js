@@ -266,7 +266,7 @@ var logCtrl = newObject({
                     if (isDefined(tr, "file")) {
                         html += this.pattern["trace_row1"].replace("_FILE_PATH_", tr.file).replace("_FILE_LINE_", tr.line);
                     }
-                    html += this.pattern["trace_row2"].replace("_FUNCTION_NAME_", tr.func).replace("_FUNCTION_ARGUMENTS_", isDefined(tr, "arg") ? tr.arg.toString().replace(/\,\s*/g, ", ") : "");
+                    html += this.pattern["trace_row2"].replace("_FUNCTION_NAME_", tr.func).replace("_FUNCTION_ARGUMENTS_", isDefined(tr, "arg") ? this.parseArguments(tr.arg) : '');
                 }
                 trc.setInnerHtml(html);
             } else {
@@ -284,6 +284,20 @@ var logCtrl = newObject({
             alert(txt);
         }
         this.cur_loadWr.remove();
+    },
+
+    parseArguments : function (src)
+    {
+        var res = '', i;
+        if (src) {
+            for (i in src) {
+                if (res) {
+                    res += ', ';
+                }
+                res += '<i>(' + src[i][0] + ')</i> ' + src[i][1];
+            }
+        }
+        return res;
     },
 
     makeContent : function (records, zebra_key)

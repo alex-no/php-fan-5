@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.004 (31.12.2013)
  */
 
 class db_file
@@ -253,7 +253,7 @@ class db_file
     protected function _getRow($bIdIsEncrypt = null)
     {
         if (is_null($this->oRow)) {
-            $this->oRow = gr(service('entity')->getFileNsPrefix() . 'file_data');
+            $this->oRow = gr(service('entity')->getFileNsSuffix() . 'file_data');
             if (is_null($bIdIsEncrypt)) {
                 $this->oRow->loadById($this->mId, false); // !is_numeric($this->mId)
                 if (!$this->oRow->checkIsLoad()) {

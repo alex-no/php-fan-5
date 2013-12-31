@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  */
 class upload_flash extends base
 {
@@ -80,7 +80,7 @@ class upload_flash extends base
                 return;
             }
         }
-        $oFlash = gr('flash', @$aData['flashId']);
+        $oFlash = gr(service('entity')->getFileNsSuffix() . 'flash', @$aData['flashId']);
         if ($aData['op'] == 'dl' && @$aData['flashId']) {
             if ($oFlash->checkIsLoad()) {
                 if ($aLink) {

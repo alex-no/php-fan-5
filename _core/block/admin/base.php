@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.004 (31.12.2013)
  * @abstract
  */
 abstract class base extends \core\block\loader\base
@@ -37,7 +37,7 @@ abstract class base extends \core\block\loader\base
     {
         $aRetData =array();
         foreach ($this->getRowset($aArg) as $e) {
-            $aRetData[$e->getOneField($aArg['key'])] = $e->getOneField($aArg['val']);
+            $aRetData[$e->get($aArg['key'])] = $e->get($aArg['val']);
         }
         if ($aArrMerge) {
             $aRetData = $bMergeBefore ? array_merge_recursive_alt($aArrMerge, $aRetData) : array_merge_recursive_alt($aRetData, $aArrMerge);
@@ -67,7 +67,8 @@ abstract class base extends \core\block\loader\base
         } else {
             $aTmp = $this->getRowset($aArgPrev);
             foreach ($aTmp as $e) {
-                $aRetData[$e->getOneField($aArgPrev['key'])] = array('val' => $e->getOneField($aArgPrev['val']));
+                /* @var $e \core\base\model\row */
+                $aRetData[$e->get($aArgPrev['key'])] = array('val' => $e->get($aArgPrev['val']));
             }
         }
         if (@$aArgPrev['select']) {
@@ -92,10 +93,10 @@ abstract class base extends \core\block\loader\base
                     break;
                 }
                 foreach ($aTmp as $e) {
-                    $k0 = $e->getOneField($aArg['parent']);
-                    $k1 = $e->getOneField($aArg['key']);
+                    $k0 = $e->get($aArg['parent']);
+                    $k1 = $e->get($aArg['key']);
                     if (isset($aParent[$k0])) {
-                        $aInterim[$k][$k1] = array('val' => $e->getOneField($aArg['val']));
+                        $aInterim[$k][$k1] = array('val' => $e->get($aArg['val']));
                         $aParent[$k0]['child'][$k1] =& $aInterim[$k][$k1];
                     }
                 }

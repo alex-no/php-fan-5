@@ -2,7 +2,7 @@
 
 <form action="#" method="get" id="content">&nbsp;</form>
 
-<div id="pager_cont"><table summary="Pager"><tr id="pager"><td class="current"><a href="#">1</a></td></tr></table></div>
+<div id="pager_cont"><table><tr id="pager"><td class="current"><a href="#">1</a></td></tr></table></div>
 
 <div id="patterns">
     <div id="pattern_record">
