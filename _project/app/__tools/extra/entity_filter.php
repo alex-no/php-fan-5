@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.005
+ * @version of file: 05.005 (14.01.2014)
  */
 class entity_filter extends \project\block\form\usual
 {
@@ -51,7 +51,7 @@ class entity_filter extends \project\block\form\usual
      */
     public function getDirList()
     {
-        $sPrefix = rtrim(service('entity')->getConfig()->get('NS_PREFIX', '\project\model'), '\\');
+        $sPrefix = rtrim(service('entity')->getNsPrefix(), '\\');
         $sText   = str_replace('\\', '/', $sPrefix);
         $aDir = array(array(
             'text'  => $sText,
@@ -73,6 +73,6 @@ class entity_filter extends \project\block\form\usual
             }
         }
         return $aDir;
-    } // function getDbList
+    } // function getDirList
 } // class \app\__tools\extra\entity_filter
 ?>

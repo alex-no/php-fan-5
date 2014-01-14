@@ -12,23 +12,49 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class fatal extends  \core\exception\base
 {
     /**
+     * Entity's object
+     * @var \core\base\model\entity
+     */
+    protected $oEntity = null;
+
+    /**
      * Exception's constructor
      * @param object $oEntity Object - instance of entity
-     * @param string $sLogMessage Log error message
-     * @param error $nCcode Error Code
+     * @param string $sLogErrMsg Log error message
+     * @param numeric $nCode Error Code
+     * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct($oEntity, $sLogMessage, $nCode = E_USER_ERROR)
+    public function __construct(\core\base\model\entity $oEntity, $sLogErrMsg, $nCode = E_USER_ERROR, $oPrevious = null)
     {
-        if (!headers_sent()) {
-            header('HTTP/1.1 500 Internal Server Error');
-        }
-        parent::__construct($sLogMessage, $nCode);
-        $this->logByService($sLogMessage, 'Entity fatal error (' . get_class($oEntity) . ').');
+        $this->oEntity = $oEntity;
+
+        parent::__construct($sLogErrMsg, $nCode, $oPrevious);
+
+        $this->_logByService($sLogErrMsg, 'Entity fatal error (' . get_class($oEntity) . ').');
     }
+
+    /**
+     * Get object of entity
+     * @return \core\base\model\entity
+     */
+    public function getEntity()
+    {
+        return $this->oEntity;
+    } // function getEntity
+
+    /**
+     * Get operation for Db (rollback) when exception occured
+     * @param string $sDbOper
+     * @return null|string
+     */
+    protected function _getDbOperation($sDbOper = 'rollback')
+    {
+        return parent::_getDbOperation($sDbOper);
+    } // function _getDbOperation
 } // class \core\exception\model\entity\fatal
 ?>

@@ -12,34 +12,49 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
-class local extends  \core\exception\base
+class local extends \core\exception\base
 {
     /**
-     * @var block_base Block's object
+     * Block's object
+     * @var \core\block\base
      */
     protected $oBlock = null;
 
     /**
      * Exception's constructor
      * @param \core\block\base $oBlock Object - instance of block
-     * @param string $sLogMessage Log error message
-     * @param error $nCcode Error Code
+     * @param string $sLogErrMsg Log error message
+     * @param numeric $nCode Error Code
+     * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct($oBlock, $sLogMessage, $nCode = E_USER_NOTICE)
+    public function __construct(\core\block\base $oBlock, $sLogErrMsg, $nCode = E_USER_NOTICE, $oPrevious = null)
     {
         $this->oBlock = $oBlock;
-        parent::__construct($sLogMessage, $nCode);
+        parent::__construct($sLogErrMsg, $nCode, $oPrevious = null);
     } // function __construct
 
     /**
      * Get object of block
-     * @return block_base
+     * @return \core\block\base
      */
     public function getBlock()
     {
         return $this->oBlock;
     } // function getBlock
+
+    /**
+     * Get operation for Db (rollback, commit or nothing) when exception occured
+     * @param string $sDbOper
+     * @return null|string
+     */
+    protected function _getDbOperation($sDbOper = null)
+    {
+        if (empty($sDbOper) && method_exists($this->oBlock, 'getExceptionDbOper')) {
+            $sDbOper = $this->oBlock->getExceptionDbOper();
+        }
+        return parent::_getDbOperation($sDbOper);
+    } // function _getDbOperation
 } // class \core\exception\block\local
 ?>

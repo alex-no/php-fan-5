@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
-class roles extends \core\base\service\single
+class role extends \core\base\service\single
 {
     /**
      * Key for mark common User space
@@ -96,8 +96,8 @@ class roles extends \core\base\service\single
         $this->_setStaticRoles();
 
         // Define Session roles
-        $oSes = \project\service\session::instance('roles', 'system');
-        $this->aSessionRoles =& $oSes->getByLink('session', array());
+        $oSes = \project\service\session::instance('role', 'system');
+        $this->aSessionRoles =& $oSes->getByLink('session',       array());
         $this->aFixQttRoles  =& $oSes->getByLink('fix_qtt_roles', array());
         $this->_removeSessionExpired();
 
@@ -144,7 +144,6 @@ class roles extends \core\base\service\single
      * @param mixed $mNewRoles array/string of new roles
      * @param number|string $mExpiredTime - live time of setted role (in second)
      * @param boolean $bInUserSpace - Set Role In User Space OR "_common_"
-     * @param boolean $bRefrashTime - Refrash live time
      * @return array User Roles
      */
     public function setSessionRoles($mNewRoles, $mExpiredTime = null, $bInUserSpace = true)
@@ -175,7 +174,7 @@ class roles extends \core\base\service\single
     /**
      * Kill session Role(s)
      * @param string|array $mKillRoles array/string of killed roles
-     * @param integer $iDestination 0 - everywhere; 1 - in User-Space; 2 - in "_common_"; 3 -  in User-Space and in "_common_"
+     * @param integer $iDestination 0 - everywhere; 1 - in User-Space; 2 - in "_common_"; 3 - in User-Space and in "_common_"
      * @return array Session Roles
      */
     public function killSessionRoles($mKillRoles = null, $iDestination = 3)
@@ -405,7 +404,7 @@ class roles extends \core\base\service\single
     /**
      * Set All Current Roles
      * @param type $bForce
-     * @return \core\service\roles
+     * @return \core\service\role
      */
     protected function _setCurrentRoles($bForce = false)
     {
@@ -434,7 +433,7 @@ class roles extends \core\base\service\single
 
     /**
      * Set Static Roles
-     * @return \core\service\roles
+     * @return \core\service\role
      */
     protected function _setStaticRoles()
     {
@@ -449,7 +448,7 @@ class roles extends \core\base\service\single
 
     /**
      * Remove expired Static roles
-     * @return \core\service\roles
+     * @return \core\service\role
      */
     protected function _removeStaticExpired()
     {
@@ -464,7 +463,7 @@ class roles extends \core\base\service\single
 
     /**
      * Remove expired Session roles
-     * @return \core\service\roles
+     * @return \core\service\role
      */
     protected function _removeSessionExpired()
     {
@@ -533,5 +532,5 @@ class roles extends \core\base\service\single
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\roles
+} // class \core\service\role
 ?>

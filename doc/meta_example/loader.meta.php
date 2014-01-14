@@ -38,7 +38,7 @@ return array(
         'roles' => array (
             array (
                 'condition'    => '(role_A|role_B)&!role_C',
-                'int_transfer' => 'transferURL',
+                'transfer_int' => 'transferURL',
             ),
         ),
     ),

@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  */
 class entity extends \core\base\service\multi
 {
@@ -114,6 +114,27 @@ class entity extends \core\base\service\multi
     }
 
     /**
+     * Get Object of Entity By Name of Table in DB
+     * @param string $sTableName
+     * @param string $sConnectionName
+     * @param boolean $bForce - do not use cache
+     * @return \core\base\model\entity|null
+     */
+    public function getEntityByTable($sTableName, $sConnectionName = null, $bForce = false)
+    {
+        $sName = $this->_getNameByTable($sTableName, $sConnectionName, $bForce);
+        if (empty($sName)) {
+            return null;
+        }
+        try {
+            $oEtt  = $this->get($sName);
+        } catch (fatalException $e) {
+            return null;
+        }
+        return $oEtt;
+    }
+
+    /**
      * Name of directory with SQL-requests
      * @return string
      */
@@ -138,8 +159,8 @@ class entity extends \core\base\service\multi
      */
     public function getFileNsSuffix()
     {
-        $sPrefix = $this->_getConfigParam('FILE_NS_PREFIX');
-        return empty($sPrefix) ? '' : trim($sPrefix, '\\') . '\\';
+        $sSuffix = $this->_getConfigParam('FILE_NS_SUFFIX');
+        return empty($sSuffix) ? '' : trim($sSuffix, '\\') . '\\';
     } // function getFileNsSuffix
 
     /**
@@ -203,6 +224,14 @@ class entity extends \core\base\service\multi
     } // function getEncapsulant
 
     // ======== Private/Protected methods ======== \\
+    /**
+     * Get Entity
+     * @param string $sClass
+     * @param array $aParam
+     * @param string $sName
+     * @return \core\service\entity
+     * @throws fatalException
+     */
     protected function _getEntity($sClass, $aParam, $sName = null)
     {
         if (!class_exists($sClass)) {
@@ -216,6 +245,11 @@ class entity extends \core\base\service\multi
         return $oEntity;
     } // function _getEntity
 
+    /**
+     * Get parameter from the config taking into account current collection name
+     * @param string $sKey
+     * @return mixed
+     */
     protected function _getConfigParam($sKey)
     {
         $mData0 = $this->getConfig($sKey, array());
@@ -223,6 +257,60 @@ class entity extends \core\base\service\multi
         $mData1 = is_object($oExtraConf) ? $oExtraConf->get($sKey) : null;
         return empty($mData1) ? $mData0 : $mData1;
     } // function _getConfigParam
+
+    /**
+     * Get entity name by table name
+     * @param string $sKey
+     * @return mixed
+     */
+    protected function _getNameByTable($sTableName, $sConnectionName, $bForce)
+    {
+        $aData = $bForce ? array() : $this->_getCacheData('reverce_link', array());
+
+        // Try to pull entity name from the cache
+        if (!empty($sConnectionName) && isset($aData[$sConnectionName][$sTableName])) {
+            return $aData[$sConnectionName][$sTableName];
+        }
+        if (empty($sConnectionName) && !empty($aData)) {
+            foreach ($aData as $v) {
+                if (isset($v[$sTableName])) {
+                    return $v[$sTableName];
+                }
+            }
+        }
+
+        // Make New data by FileSystem
+        $sNs   = rtrim($this->getNsPrefix(), '\\');
+        $aDirs = array(
+            $sNs => \bootstrap::getLoader()->getPathByNS($sNs),
+        );
+
+        while (!empty($aDirs)) {
+            reset($aDirs);
+            $sNs   = key($aDirs);
+            $sDir  = array_shift($aDirs);
+            $aList = scandir($sDir);
+            foreach ($aList as $v) {
+                $sCheck = $sDir . '/' . $v;
+                if ($v != '.' && $v != '..' && is_dir($sCheck)) {
+                    if (file_exists($sCheck . '/entity.php')) {
+                        try {
+                            $oEtt = $this->get($sNs . '\\' . $v);
+                        } catch (fatalException $e) {
+                            continue;
+                        }
+                        $aData[$oEtt->getConnectionName()][$oEtt->getTableName()] = $oEtt->getName();
+                    } else {
+                        $aDirs[$sNs . '\\' . $v] = $sCheck;
+                    }
+                }
+            }
+        }
+
+        // Save new data to the cache and return requested value
+        $this->_setCacheData('reverce_link', $aData);
+        return array_val($aData, array($sConnectionName, $sTableName));
+    } // function _getNameByTable
 
 } // class \core\service\entity
 ?>

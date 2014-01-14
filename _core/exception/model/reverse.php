@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
-class reverse extends  \Exception
+class reverse extends \core\exception\base
 {
     /**
      * @var \core\base\model\entity
@@ -24,12 +24,14 @@ class reverse extends  \Exception
     /**
      * Exception's constructor
      * @param \core\base\model\entity $oEntity
-     * @param string $sMessage
+     * @param string $sLogErrMsg
+     * @param error $nCode Error Code
+     * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct(\core\base\model\entity $oEntity, $sMessage = '')
+    public function __construct(\core\base\model\entity $oEntity, $sLogErrMsg, $nCode = null, $oPrevious = null)
     {
         $this->oEntity = $oEntity;
-        parent::__construct((string)$sMessage, null);
+        parent::__construct($sLogErrMsg, $nCode, $oPrevious);
     }
 
     /**
@@ -40,6 +42,16 @@ class reverse extends  \Exception
     {
         return $this->oEntity;
     } // function getEntity
+
+    /**
+     * Get operation for Db (rollback) when exception occured
+     * @param string $sDbOper
+     * @return null|string
+     */
+    protected function _getDbOperation($sDbOper = 'nothing')
+    {
+        return parent::_getDbOperation($sDbOper);
+    } // function _getDbOperation
 
 } // class \core\exception\model\reverse
 ?>

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  */
 class upload_flash extends base
 {
@@ -55,7 +55,7 @@ class upload_flash extends base
      */
     public function init()
     {
-        service('roles')->setSessionRoles('admin', $this->getMeta('login_timeout'));
+        service('role')->setSessionRoles('admin', $this->getMeta('login_timeout'));
 
         if($this->sError) {
             $this->setText($this->sError);

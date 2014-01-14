@@ -154,12 +154,16 @@ return array(
 
         'roles' => array (
             array (
-                'condition'    => '(role_A|role_B)&!role_C',
-                'int_transfer' => 'transferURL',
+                'condition'    => '(role_A&!role_B)|role_C',
+                'transfer_out' => 'transferURL',
             ),
             array (
-                'condition'    => '(role_A&!role_B)|role_C',
-                'out_transfer' => 'transferURL',
+                'condition'    => '(role_A|role_B)&!role_C',
+                'transfer_int' => 'transferURL',
+            ),
+            array (
+                'condition'     => '(role_A&!role_B)|role_C',
+                'transfer_sham' => 'transferURL',
             ),
         ),
     ),

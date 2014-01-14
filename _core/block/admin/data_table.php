@@ -22,9 +22,11 @@ class data_table extends data
      */
     protected $aInsEtt = array();
 
-
     /**
      * Validate Data
+     * @param array $aEdit
+     * @param array $aInsert
+     * @return boolean
      */
     public function validateData(&$aEdit, &$aInsert)
     {

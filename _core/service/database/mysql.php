@@ -13,7 +13,7 @@
  *
  * @author: Otchenashenko Sergey (dinvisible@gmail.com)
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class mysql extends base
 {
@@ -28,17 +28,12 @@ class mysql extends base
      */
     protected $sParsedSql = '';
 
-    /**
-     * @var string Error message
-     */
-    protected $sErrorMsg = null;
-
     // ======== Main Interface methods ======== \\
     /**
      * Restore closed database connection
      * @param array $aParam
      * @param boolean $bMakeException Make Exception if connection impossible
-     * @return type
+     * @return boolean
      */
     public function reconnect($aParam, $bMakeException = true)
     {
@@ -54,16 +49,31 @@ class mysql extends base
         if (count($aParamConnect) == 3) {
             $aParamConnect[] = true; //Always create new link
         }
-        $lConnent = @call_user_func_array ($aParam['PERSISTENT'] ? 'mysql_pconnect' : 'mysql_connect', $aParamConnect);
+        $sFunc    = $aParam['PERSISTENT'] ? 'mysql_pconnect' : 'mysql_connect';
+        $lConnent = @call_user_func_array($sFunc, $aParamConnect);
         if (empty($lConnent)) {
-            $this->_fixError('Connect to mysql server', 'Could not connect: ' . mysql_error(), mysql_errno(), $bMakeException);
-            return;
+            $this->_fixError(
+                    1,
+                    'Connect to mysql server.',
+                    mysql_errno(),
+                    'Could not connect: ' . mysql_error(),
+                    $bMakeException
+            );
+            return false;
         }
         if (@mysql_select_db($aParam['DATABASE'], $lConnent)) {
             $this->lConnent = $lConnent;
         } else {
-            $this->_fixError('Select mysql DB', 'Can\'t use DB "' . $aParam['DATABASE'] . '": ' . mysql_error(), mysql_errno($lConnent), $bMakeException);
+            $this->_fixError(
+                    2,
+                    'Select mysql DB.',
+                    mysql_errno($lConnent),
+                    'Can\'t use DB "' . $aParam['DATABASE'] . '": ' . mysql_error($lConnent),
+                    $bMakeException
+            );
+            return false;
         }
+        return true;
     } // function reconnect
 
     /**
@@ -79,25 +89,6 @@ class mysql extends base
     } // function connectionClose
 
     /**
-     * Return last error message
-     * @return string Error message
-     */
-    public function getErrorMessage()
-    {
-        return $this->sErrorMsg;
-    } // function getErrorMessage
-
-    /**
-     * Reset error message
-     * @return \core\service\database\mysql
-     */
-    public function resetError()
-    {
-        $this->sErrorMsg = '';
-        return $this;
-    } // function resetError
-
-    /**
      * Execute SQL query
      * @param string $sSql SQL query
      * @param array $aParam Input parameters
@@ -109,13 +100,25 @@ class mysql extends base
         $this->sParsedSql = '';
 
         if (empty($this->lConnent)) {
-            $this->_fixError('Prepare execute SQL', 'Connect to MySQL isn\'t set.', 0, true);
+            $this->_fixError(
+                    3,
+                    'Prepare to execute SQL.',
+                    0,
+                    'Connect to MySQL isn\'t set.',
+                    true
+            );
             return null;
         }
 
         $mResult = mysql_query($this->_parseSql($sSql, $aParam, true), $this->lConnent);
         if (empty($mResult)) {
-            $this->_fixError('Execute SQL', 'Invalid query: ' . mysql_error(), mysql_errno($this->lConnent), true);
+            $this->_fixError(
+                    4,
+                    'Execute SQL.',
+                    mysql_errno($this->lConnent),
+                    'Invalid query: ' . mysql_error($this->lConnent),
+                    false
+            );
             return null;
         }
 
@@ -401,19 +404,6 @@ class mysql extends base
         }
         return $sSql;
     } // function _parseSql
-
-    /**
-     * Fix Error
-     * @param string $sOperation
-     * @param string $sErrorMessage
-     * @param numeric $nErrorNum
-     * @param boolean $bMakeException
-     */
-    protected function _fixError($sOperation, $sErrorMessage, $nErrorNum, $bMakeException = false)
-    {
-        $this->sErrorMsg = $sErrorMessage;
-        $this->oFacade->fixError($sOperation, $nErrorNum, $sErrorMessage, $this->sParsedSql, $bMakeException);
-    } // function _fixError
 
 } // class \core\service\database\mysql
 ?>

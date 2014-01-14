@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 abstract class base
 {
@@ -34,17 +34,19 @@ abstract class base
     protected $aParam = null;
 
     /**
+     * @var string Error message
+     */
+    protected $aErrorData = null;
+
+    /**
      * Constructor of Database engine
      * @param \core\base\service $oFacade
      * @param array $aParam
      */
-    public function __construct(\core\service\database $oFacade, array $aParam, $bConnetToDb = true)
+    public function __construct(\core\service\database $oFacade, array $aParam)
     {
         $this->oFacade = $oFacade;
-        $this->aParam = $aParam;
-        if ($bConnetToDb) {
-            $this->reconnect($aParam);
-        }
+        $this->aParam  = $aParam;
         $this->setResultTypes();
     } // function __construct
 
@@ -76,12 +78,30 @@ abstract class base
 
     /**
      * Reconnect to Db
-     * @param array $aConfig
+     * @param array $aParam
+     * @param boolean $bMakeException Make Exception if connection impossible
+     * @return boolean
      */
-    abstract public function reconnect($aConfig);
+    abstract public function reconnect($aParam, $bMakeException = true);
+
     /**
-     * Set Result Types for methods: execute, getRow, getAll, getAllLimit
+     * Return last error data
+     * @return array Error data
      */
+    public function getErrorData()
+    {
+        return $this->aErrorData;
+    } // function getErrorData
+
+    /**
+     * Reset error message
+     * @return \core\service\database\mysql
+     */
+    public function resetError()
+    {
+        $this->aErrorData = null;
+        return $this;
+    } // function resetError
 
     /**
      * Validate
@@ -97,5 +117,25 @@ abstract class base
         );
         return in_array($iResultType, $aValidTypes);
     } // function _isValidType
+
+    /**
+     * Fix Error
+     * @param numeric $nOperCode
+     * @param string  $sOperMessage
+     * @param numeric $nErrorCode
+     * @param string  $sErrorMessage
+     * @param boolean $bMakeException
+     */
+    protected function _fixError($nOperCode, $sOperMessage, $nErrorCode, $sErrorMessage, $bMakeException = false)
+    {
+        $this->aErrorData = array(
+            'oper_code' => $nOperCode,
+            'oper_msg'  => $sOperMessage,
+            'err_code'  => $nErrorCode,
+            'err_msg'   => iconv('','UTF-8', $sErrorMessage),
+            'sql'       => $this->sParsedSql,
+        );
+        $this->oFacade->fixError($this, $bMakeException);
+    } // function _fixError
 } // class \core\service\database\base
 ?>

@@ -13,7 +13,7 @@
  *
  * @author: Otchenashenko Sergey (dinvisible@gmail.com)
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class mysqlImproved extends base
 {
@@ -35,25 +35,6 @@ class mysqlImproved extends base
     {
         return $this;
     } // function connectionClose
-
-    /**
-     * Return last error message
-     * @return string Error message
-     */
-    public function getErrorMessage()
-    {
-        return $this->sErrorMsg;
-    } // function getErrorMessage
-
-    /**
-     * Reset error message
-     * @return \core\service\database\mysql
-     */
-    public function resetError()
-    {
-        $this->sErrorMsg = '';
-        return $this;
-    } // function resetError
 
     /**
      * Execute SQL query

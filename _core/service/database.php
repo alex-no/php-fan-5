@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class database extends \core\base\service\multi
 {
@@ -48,7 +48,7 @@ class database extends \core\base\service\multi
     protected $oEngine = null;
 
     /**
-     * @var \project\exception\database Database exception
+     * @var \core\exception\service\database Database exception
      */
     protected $oException = null;
 
@@ -81,13 +81,14 @@ class database extends \core\base\service\multi
     /**
      * @var string Error message
      */
-    protected $sErrorMessage = '';
+    protected $sErrorMessage = null;
 
     /**
      * Service's constructor
      */
     protected function __construct($sConnectionName = null, $nExtraKey = 0, $aParam = null)
     {
+        $this->sExceptionDbOper = 'nothing';
         parent::__construct();
         $oConfig = $this->getConfig();
 
@@ -122,6 +123,7 @@ class database extends \core\base\service\multi
         $sEngine = empty($aParam['ENGINE']) ? $oConfig->get('DEFAULT_ENGINE') : $aParam['ENGINE'];
         $sClass  = $this->_getEngine($sEngine, false);
         $this->oEngine = new $sClass($this, $aParam);
+        $this->oEngine->reconnect($aParam, true);
 
         if(!$this->getIsError()) {
             $sScenario = isset($aParam['SCENARIO']) ? $aParam['SCENARIO'] : $oConfig->get('DEFAULT_SCENARIO');
@@ -161,11 +163,6 @@ class database extends \core\base\service\multi
             }
             self::$oCurrentInstance = self::$oDefaultInstance;
         }
-
-        if (!empty(self::$oCurrentInstance->oException)) {
-            throw self::$oCurrentInstance->oException;
-        }
-
         return self::$oCurrentInstance;
     } // function instance
 
@@ -183,8 +180,6 @@ class database extends \core\base\service\multi
         $sConnectionName = self::_getConnectionName($aParam);
         if (!isset(self::$aInstances[$sConnectionName][$nExtraKey])) {
             new self($sConnectionName, $nExtraKey, $aParam);
-        } elseif (!empty(self::$aInstances[$sConnectionName][$nExtraKey]->oException)) {
-            throw self::$aInstances[$sConnectionName][$nExtraKey]->oException;
         }
         return self::$aInstances[$sConnectionName][$nExtraKey];
     } // function instanceByParam
@@ -231,18 +226,20 @@ class database extends \core\base\service\multi
      */
     public static function commitAll()
     {
-        self::fixAll('commit');
+        self::fixAll('commit', false);
     } // function commitAll
     /**
      * Rollback all instances
+     * @param boolean $bSetError Set error flag
      */
     public static function rollbackAll($bSetError = true)
     {
         self::fixAll('rollback', $bSetError);
     } // function rollbackAll
     /**
-     * Commit/rollback all instances
+     * Commit/rollback all instances of this class
      * @param string $sOper operation name
+     * @param boolean $bSetError Set error flag
      */
     public static function fixAll($sOper, $bSetError = true)
     {
@@ -296,7 +293,11 @@ class database extends \core\base\service\multi
      */
     public function getErrorMessage()
     {
-        return $this->sErrorMessage ? $this->sErrorMessage : $this->oEngine->getErrorMessage();
+        if (is_null($this->sErrorMessage)) {
+            $aErrData = $this->oEngine->getErrorData();
+            $this->sErrorMessage = array_val($aErrData, 'err_msg');
+        }
+        return $this->sErrorMessage;
     } // function getErrorMessage
 
     /**
@@ -315,7 +316,8 @@ class database extends \core\base\service\multi
     public function resetError()
     {
         $this->bIsError      = false;
-        $this->sErrorMessage = '';
+        $this->sErrorMessage = null;
+        $this->oException    = null;
         $this->oEngine->resetError();
         return $this;
     } // function resetError
@@ -427,10 +429,10 @@ class database extends \core\base\service\multi
      */
     public function execute($sSql, $aParam = null)
     {
-        if ($this->bIsError) {
-            return;
-        }
         $this->_checkSql($sSql);
+        if ($this->bIsError) {
+            return null;
+        }
 
         if (!$this->bIsTransaction && $this->bAutoTransaction && preg_match('/^\s*(:?INSERT|UPDATE|DELETE|REPLACE)/i', $sSql)) {
             $this->startTransaction();
@@ -580,7 +582,7 @@ class database extends \core\base\service\multi
      */
     public function reconnect($bMakeException = true)
     {
-        $this->oEngine->reconnect($this->oConfig['DATABASES'][$this->sConnectionName]->toArray(), $bMakeException);
+        return $this->oEngine->reconnect($this->oConfig['DATABASES'][$this->sConnectionName]->toArray(), $bMakeException);
     } // function reconnect
 
     /**
@@ -605,17 +607,35 @@ class database extends \core\base\service\multi
 
     /**
      * Fix information about Error
-     * @return string
+     * @param \core\service\database\base $oEngine
+     * @param boolean $bMakeException
+     * @return \core\service\database
+     * @throws \core\exception\service\database
      */
-    public function fixError($sOperation, $nErrorNum, $sErrorMessage, $sParsedSql, $bMakeException = false)
+    public function fixError(\core\service\database\base $oEngine, $bMakeException)
     {
-        $this->bIsError      = true;
-        $this->sErrorMessage = $sErrorMessage;
-        if ($bMakeException) {
-            $this->oException = new \project\exception\database($this, $sOperation, $nErrorNum, $sErrorMessage, $sParsedSql);
-            throw $this->oException;
+        $oErr = \project\service\error::instance();
+        /* @var $oErr \core\service\error */
+        $aErrData = $oEngine->getErrorData();
+        if (!empty($aErrData) && empty($this->oException)) {
+            $this->bIsError      = true;
+            $this->sErrorMessage = $aErrData['err_msg'];
+            if ($bMakeException) {
+                $this->oException = new \project\exception\service\database(
+                        $this,
+                        $aErrData['oper_code'],
+                        $aErrData['oper_msg'],
+                        $aErrData['err_code'],
+                        $aErrData['err_msg'],
+                        $aErrData['sql']
+                );
+                throw $this->oException;
+            }
+            $oErr->logDatabaseError($this->sConnectionName, $aErrData['oper_msg'], $aErrData['err_msg'], $aErrData['err_code'], $aErrData['sql']);
+        } else {
+            $oErr->logErrorMessage('Incorrect call method "fixError". Error data is empty.', 'Incorrect call Database service');
         }
-        \project\service\error::instance()->logDatabaseError($this->sConnectionName, $sOperation, $sErrorMessage, $nErrorNum, $sParsedSql);
+        return $this;
     } // function fixError
 
     // ======== Private/Protected methods ======== \\
@@ -668,42 +688,36 @@ class database extends \core\base\service\multi
      */
     protected function _languageCorrection($sSql, $bIsCoalesce = true)
     {
-        $aTmp = array();
-        if ($this->getConfig('SQL_LNG_CORRECTION', true) && preg_match_all('/\W(\{((\w+\.)?\`?\w+)(\`?)\})\W/', $sSql, $aTmp)) {
+        $aMatches = array();
+        if ($this->getConfig('SQL_LNG_CORRECTION', true) && preg_match_all('/\W(\{((?:\w+\.)?\`?\w+)(\`?)\})\W/', $sSql, $aMatches, PREG_SET_ORDER)) {
             $oSL = \project\service\locale::instance();
             $sLngCur = '_' . $oSL->getLanguage();
             $sLngDef = '_' . $oSL->getDefaultLanguage();
 
-            foreach ($aTmp[1] as $k => $v) {
-                if (!isset($aReplKey[$v])) {
-                    $aReplKey[$v] = true;
-                    if ($sLngCur != $sLngDef && $bIsCoalesce) {
-                        //$sNewVal = 'COALESCE(' . $aTmp[2][$k] . $sLngCur . $aTmp[4][$k] . ', ' . $aTmp[2][$k] . $sLngDef . $aTmp[4][$k] . ')';
-                        $sNewVal = $aTmp[2][$k] . $sLngCur . $aTmp[4][$k];
-                    } else {
-                        $sNewVal = $aTmp[2][$k] . $sLngCur . $aTmp[4][$k];
-                    }
-                    $sSql = str_replace($v, $sNewVal, $sSql);
-
-                    if ($sLngCur != $sLngDef && !$bIsCoalesce) {
-                        if (preg_match('/^\s*(?:INSERT|REPLACE)/i', $sSql)) {
-                            if (preg_match('/\s+SET\s+/i', $sSql)) {
-                                $sSql .= ',' . $aTmp[2][$k] . $sLngDef . $aTmp[4][$k] . '=' . $sNewVal;
-                            }
-                        }
-                    } // check insert operation
+            foreach ($aMatches as $v) {
+                if (0 && $sLngCur != $sLngDef && $bIsCoalesce) { // "0 && " - is temporary hack: don't use "COALESCE"
+                    $sNewVal = 'COALESCE(' . $v[2] . $sLngCur . $v[3] . ', ' . $v[2] . $sLngDef . $v[3] . ')';
+                } else {
+                    $sNewVal = $v[2] . $sLngCur . $v[3];
                 }
+                $sSql = str_replace($v[1], $sNewVal, $sSql);
             }
-        } // check language-depended fields
+        }
         return $sSql;
     } // function _languageCorrection
 
     /**
      * Check SQL-request
      * @param string $sSql
+     * @return \core\service\database
+     * @throws \core\exception\service\database
+     * @throws fatalException
      */
     protected function _checkSql($sSql)
     {
+        if (!empty($this->oException)) {
+            throw $this->oException;
+        }
         if (empty($sSql)) {
             throw new fatalException($this, 'SQL-request is empty.');
         }

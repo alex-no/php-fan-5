@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  */
 class config extends base
 {
@@ -43,7 +43,8 @@ class config extends base
      */
     public function makePasswordHash($sPassword)
     {
-        return empty($this->mData['login']) ? '' : md5($this->mData['login'] . $sPassword . $this->oConfig->get('ENGINE_KEY'));
+        $sLogin = array_val($this->mData, 'login', $this->mIdentifyer);
+        return $sLogin ? md5($sLogin . $sPassword . $this->oConfig->get('ENGINE_KEY')) : '';
     } // function makePasswordHash
 
     // ======== Private/Protected methods ======== \\

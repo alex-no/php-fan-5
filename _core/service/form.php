@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class form extends \core\base\service\multi
 {
@@ -178,7 +178,7 @@ class form extends \core\base\service\multi
                         break;
                     } else {
                         if (!$this->_getFormMeta('not_role')) {
-                            \project\service\roles::instance()->setFixQttRoles($this->oBlock->getRoleName());
+                            \project\service\role::instance()->setFixQttRoles($this->oBlock->getRoleName());
                         }
 
                         //ToDo: Clear cache of some blocks there

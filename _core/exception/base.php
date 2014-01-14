@@ -12,66 +12,63 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  * @abstract
  */
 abstract class base extends \Exception
 {
     /**
-     * @var string Error file which be show to client
+     * File to show the error for the user
+     * @var string
      */
-    protected $sErrorFile = null;
+    protected $sShowErrFile = null;
 
     /**
-     * @var string Public error message
+     * Public error message for the user
+     * @var string
      */
-    protected $sErrorMessage = '';
+    protected $sShowErrMsg = '';
+
+    /**
+     * Public error message for the user
+     * @var string
+     */
+    protected $sLogErrMsg = '';
+
+    /**
+     * Operation with DB when exception occured
+     * Possible values: 'rollback', 'commit' or NULL
+     * @var string
+     */
+    private $sDbOperation = null;
 
     /**
      * Exception's constructor
-     * @param string $sMessage Error message
-     * @param error $nCcode Error Code
+     * @param string $sLogErrMsg Error message for log
+     * @param numeric $nCode Error Code
+     * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct($sMessage, $nCode = E_USER_ERROR, $sDbOperation = 'rollback')
+    public function __construct($sLogErrMsg, $nCode = E_USER_ERROR, $oPrevious = null)
     {
-        if ($sDbOperation) {
+        $this->sLogErrMsg = $sLogErrMsg;
+        if (empty($this->sShowErrMsg)) {
+            $this->sShowErrMsg = 'Please visit the site later.';
+        }
+        if (empty($this->sShowErrFile)) {
+            $this->sShowErrFile = 'error_500';
+        }
+
+        $sDbOperation = $this->_getDbOperation();
+        if (!empty($sDbOperation) && class_exists('\core\service\database', false)) {
             \project\service\database::fixAll($sDbOperation);
         }
-        if (empty($this->sErrorFile)) {
-            $this->sErrorFile = 'error_500';
+
+        if (!empty($oPrevious) && $oPrevious instanceof \Exception) {
+            parent::__construct((string)$sLogErrMsg, $nCode, $oPrevious);
+        } else {
+            parent::__construct((string)$sLogErrMsg, $nCode);
         }
-        $this->sErrorMessage = $sMessage;
-        parent::__construct((string)$sMessage, $nCode);
     } // function __construct
-
-    /**
-     * Log error by php
-     * @param string $sErrMsg Logged error message
-     * @param string $bExceptPos Fix or not exceptin position
-     */
-    protected function logByPhp($sErrMsg, $bExceptPos = TRUE)
-    {
-        if($bExceptPos) {
-            $sErrMsg .= ' Error at the ' . str_replace('\\', '/', $this->file) . ', line ' . $this->line;
-        }
-        \bootstrap::logError($sErrMsg);
-    } // function logByPhp
-
-    /**
-     * Log error by service
-     * @param string $sErrMsg Logged error message
-     * @param string $sErrTitle Error title
-     */
-    protected function logByService($sErrMsg, $sErrTitle = '', $sNote = '')
-    {
-        if (!$sNote) {
-            $sNote = \project\service\request::instance()->getInfoString();
-            if ($_POST) {
-                $sNote .= "\nPOST = " . print_r($_POST, true);
-            }
-        }
-        \project\service\error::instance()->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
-    } // function logByService
 
     /**
      * Get Error File
@@ -79,16 +76,16 @@ abstract class base extends \Exception
      */
     public function getErrorFile()
     {
-        return $this->sErrorFile;
+        return $this->sShowErrFile;
     } // function getErrorFile
 
     /**
      * Get error-message for log
      * @return string
      */
-    public function getErrorMessage()
+    public function getMessageForLog()
     {
-        return $this->sErrorMessage;
+        return $this->sLogErrMsg;
     } // function getErrorMessage
 
     /**
@@ -97,8 +94,56 @@ abstract class base extends \Exception
      */
     public function getMessageForShow()
     {
-        return 'Please visit the site later.';
+        return $this->sShowErrMsg;
     } // function getMessageForShow
+
+    /**
+     * Log error by php
+     * @param string $sErrMsg Logged error message
+     * @param string $bExceptPos Fix or not exceptin position
+     */
+    protected function _logByPhp($sErrMsg, $bExceptPos = true)
+    {
+        if($bExceptPos) {
+            $sErrMsg .= ' Error at the ' . str_replace('\\', '/', $this->file) . ', line ' . $this->line;
+        }
+        \bootstrap::logError($sErrMsg);
+        return $this;
+    } // function _logByPhp
+
+    /**
+     * Log error by service
+     * @param string $sErrMsg Logged error message
+     * @param string $sErrTitle Error title
+     * @param string $sNote
+     * @return \core\exception\base
+     */
+    protected function _logByService($sErrMsg, $sErrTitle = '', $sNote = '')
+    {
+        if (!$sNote) {
+            $sNote = \project\service\request::instance()->getInfoString();
+            if (!empty($_POST)) {
+                $sNote .= "\nPOST = " . print_r($_POST, true);
+            }
+        }
+        \project\service\error::instance()->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
+        return $this;
+    } // function _logByService
+
+    /**
+     * Get operation for Db (rollback, commit or nothing) when exception occured
+     * @param string $sDbOper
+     * @return null|string
+     */
+    protected function _getDbOperation($sDbOper = null)
+    {
+        if (in_array($sDbOper, array('rollback', 'commit'))) {
+            return (string)$sDbOper;
+        } elseif (!empty($sDbOper) && $sDbOper != 'nothing') {
+            trigger_error('Incorret DB-operation name for Ecxeption ' . get_class($this), E_USER_WARNING);
+        }
+        return null;
+    } // function _getDbOperation
 
 } // class \core\exception\base
 ?>

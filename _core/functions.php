@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  */
 
 function get_class_name($oObject)
@@ -88,6 +88,7 @@ function array_merge_recursive_alt($aArrFirst)
  * Check if value is available in array - return value else return Default Value
  * @param array|ArrayAccess $aArr
  * @param mixed $mKey
+ * @param mixed $mDefault
  * @return mixed
  */
 function array_val($aArr, $mKey, $mDefault = null)
@@ -385,7 +386,7 @@ function dma($sKey, $mDefaultValue = array())
  */
 function role($sRoleCondition)
 {
-    return \project\service\roles::instance()->check($sRoleCondition);
+    return \project\service\role::instance()->check($sRoleCondition);
 } // function role
 
 /**

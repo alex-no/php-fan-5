@@ -12,22 +12,25 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class error500 extends base
 {
     /**
      * Exception's constructor
-     * @param string $sMessage Error message
-     * @param error $nCcode Error Code
+     * @param string $sLogErrMsg Error message
+     * @param numeric $nCode Error Code
+     * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct($sMessage, $nCode = E_USER_ERROR)
+    public function __construct($sLogErrMsg, $nCode = E_USER_ERROR, $oPrevious = null)
     {
         if (!headers_sent()) {
             header('HTTP/1.1 500 Internal Server Error');
         }
-        $this->logByService($sMessage, 'Error 500');
-        parent::__construct($sMessage, $nCode);
+
+        parent::__construct($sLogErrMsg, $nCode, $oPrevious);
+
+        $this->_logByService($sLogErrMsg, 'Error 500');
     }
 } // class \core\exception\error500
 ?>
