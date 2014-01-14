@@ -56,7 +56,7 @@ return array(
         'roles' => array (
             array (
                 'condition'    => 'tools_access',
-                'out_transfer' => '~/',
+                'transfer_out' => '~/',
             ),
         ),
     ),

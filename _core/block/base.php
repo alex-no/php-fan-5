@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  *
  * @abstract
  *
@@ -98,6 +98,12 @@ abstract class base
      * @var array of Embedded Blocks
      */
     private $aEmbeddedBlocks = array();
+
+    /**
+     * DB-operation ('rollback', 'commit', 'nothing' OR null) when the Exception is occurred
+     * @var string
+     */
+    protected $sExceptionDbOper = null;
 
     /**
      * Request-service
@@ -489,6 +495,16 @@ abstract class base
     } // function getEmbeddedBlocks
 
     /**
+     * Get DB-operation ('rollback', 'commit', 'nothing' OR null) when the Exception is occurred
+     * If method return NULL operation can be defined another way
+     * @return string|null
+     */
+    public function getExceptionDbOper()
+    {
+        return $this->sExceptionDbOper;
+    } // function getExceptionDbOper
+
+    /**
      * Get instance of block's session
      * @return \core\service\session
      */
@@ -800,6 +816,25 @@ abstract class base
     {
         return $this->oTab->getTabBlock($sBlockName, $bAllowException);
     } // function _getBlock
+
+    /**
+     * Make Exception of Block
+     * @param sting $sLogErrMsg
+     * @param sting $sType
+     * @param sting $sExceptionDbOper
+     * @param numeric $nCode
+     * @param \Exception $oPrevious
+     * @throws \core\exception\block\local
+     */
+    protected function _makeBlockException($sLogErrMsg, $sType = 'local', $sExceptionDbOper = null, $nCode = E_USER_NOTICE, $oPrevious = null)
+    {
+        $sClass = '\project\exception\block\\' . $sType;
+        if (!class_exists($sClass)) {
+            $sClass = '\project\exception\block\fatal';
+        }
+        $this->sExceptionDbOper = empty($sExceptionDbOper) ? ($sClass == '\project\exception\block\local' ? 'nothing' : 'rollback' ) : $sExceptionDbOper;
+        throw new $sClass($this, $sLogErrMsg, $nCode, $oPrevious);
+    } // function _makeBlockException
 
     /**
      * Get other Blocks

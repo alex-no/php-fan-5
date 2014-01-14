@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -302,12 +302,12 @@ class tab extends \core\base\service\single
 
                 if ($sExpire_URL) {
                     transfer_out($sExpire_URL, null, $sDbOperation);
-                } elseif (!empty($aTransfer['sham_transfer'])) {
-                    transfer_sham($this->getURI($aTransfer['sham_transfer']), null, $sDbOperation);
-                } elseif (!empty($aTransfer['int_transfer'])) {
-                    transfer_int($this->getURI($aTransfer['int_transfer']), null, $sDbOperation);
-                } elseif (!empty($aTransfer['out_transfer'])) {
-                    transfer_out($this->getURI($aTransfer['out_transfer']), null, $sDbOperation);
+                } elseif (!empty($aTransfer['transfer_sham'])) {
+                    transfer_sham($this->getURI($aTransfer['transfer_sham']), null, $sDbOperation);
+                } elseif (!empty($aTransfer['transfer_int'])) {
+                    transfer_int($this->getURI($aTransfer['transfer_int']), null, $sDbOperation);
+                } elseif (!empty($aTransfer['transfer_out'])) {
+                    transfer_out($this->getURI($aTransfer['transfer_out']), null, $sDbOperation);
                 } else {
                     $this->_parseError403();
                 }

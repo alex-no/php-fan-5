@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class adodb extends base
 {
@@ -94,15 +94,6 @@ class adodb extends base
     {
         $this->oConn->NConnect($aConfig['HOST'], $aConfig['USER'], $aConfig['PASSWORD'], $aConfig['DATABASE']);
     } // function reconnect
-
-    /**
-     * Return last error message
-     * @return string Error message
-     */
-    public function getErrorMessage()
-    {
-        return $this->sErrorMsg;
-    } // function getErrorMessage
 
     /**
      * Execute SQL query
@@ -210,10 +201,10 @@ class adodb extends base
     public function getAllLimit($sSql, $aParams = null, $nQtt = -1, $nOffset = -1)
     {
         $cResult = $this->oConn->SelectLimit($sSql, $nQtt, $nOffset, $aParams);
-        $this->sErrorMsg = $this->oConn->ErrorMsg();
-        if ($this->sErrorMsg || !$cResult) {
-            if (!$this->sErrorMsg) {
-                $this->sErrorMsg = "No result!";
+        $this->aErrorData = $this->oConn->ErrorMsg();
+        if ($this->aErrorData || !$cResult) {
+            if (!$this->aErrorData) {
+                $this->aErrorData = "No result!";
             }
             return array();
         } // if Is Error
@@ -243,9 +234,9 @@ class adodb extends base
     {
         $cResult = $sMethod ? $this->oConn->$sMethod($sSql, $aParams) : true;
 
-        $this->sErrorMsg = $this->oConn->ErrorMsg();
+        $this->aErrorData = $this->oConn->ErrorMsg();
 
-        if ($this->sErrorMsg) {
+        if ($this->aErrorData) {
             return $sSql && $bRetArr ? array() : null;
         } // if Is Error
 

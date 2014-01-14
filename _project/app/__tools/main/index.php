@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class index extends \project\block\common\simple
 {
@@ -27,6 +27,8 @@ class index extends \project\block\common\simple
             $oUser->setCurrent();
             if (!role('tools_access')) {
                 transfer_int('~/request_password.html');
+            } else {
+                transfer_sham($this->oTab->getCurrentURI(false, true, true, true));
             }
         }
     } // init

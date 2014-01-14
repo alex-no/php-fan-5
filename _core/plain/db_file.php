@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  */
 
 class db_file
@@ -213,7 +213,7 @@ class db_file
         }
         $oCache = \project\service\cache::instance('file_store');
         $aData  = $oCache->get($this->mId);
-        if (!empty($aData)) {
+        if (!empty($aData) && $aData['fileDate'] == filemtime($aData['filePath']) && $aData['headers']['length'] == filesize($aData['filePath'])) {
             // ToDo: Check Access by Cache?
             return $aData;
         }
@@ -229,6 +229,7 @@ class db_file
                 $sFilePath = \bootstrap::parsePath($oRow->getFilePath());
                 $aData = array(
                     'filePath' => $sFilePath,
+                    'fileDate' => filemtime($sFilePath),
                     'headers' => array(
                         'contentType' => $oRow->get_mime_type(),
                         'filename'    => $oRow->get_src_name(),

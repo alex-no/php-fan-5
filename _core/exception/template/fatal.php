@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class fatal extends  \core\exception\base
 {
@@ -20,15 +20,17 @@ class fatal extends  \core\exception\base
      * Exception's constructor
      * @param object $oTemplate Object - instance of template
      * @param string $sLogMessage Log error message
-     * @param error $nCcode Error Code
+     * @param numeric $nCode Error Code
      */
     public function __construct($oTemplate, $sLogMessage, $nCode = E_USER_ERROR)
     {
         if (!headers_sent()) {
             header('HTTP/1.1 500 Internal Server Error');
         }
-        $this->logByService($sLogMessage, 'Template\'s exception (' . get_class($oTemplate) . ').');
+
         parent::__construct($sLogMessage, $nCode);
+
+        $this->_logByService($sLogMessage, 'Template\'s exception (' . get_class($oTemplate) . ').');
     }
 } // class \core\exception\template\fatal
 ?>

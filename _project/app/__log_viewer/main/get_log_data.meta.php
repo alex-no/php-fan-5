@@ -21,7 +21,7 @@ return array(
         'roles' => array (
             array (
                 'condition'     => 'log_access',
-                'sham_transfer' => '~/error403',
+                'transfer_sham' => '~/error403',
             ),
         ),
     ),

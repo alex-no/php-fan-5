@@ -225,6 +225,7 @@ class image extends db_file
     protected function _getCacheData($aMainData)
     {
         $oCache = \project\service\cache::instance('img_nail');
+        /* @var $oCache \core\service\cache */
 
         $sCacheKey = $this->mId;
         if (!empty($this->nWidth)) {

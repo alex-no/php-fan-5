@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -285,6 +285,14 @@ class row implements \ArrayAccess, \Serializable
 
         return $this;
     } // function set
+
+    /**
+     * Set some localized field by current local
+     * @param string $sName
+     * @param mixed $mValue
+     * @param boolean $bAllowException
+     * @return \core\base\data
+     */
     public function setByLocal($sName, $mValue = null, $bAllowException = true)
     {
         return $this->set('{' . $sName . '}', $mValue, $bAllowException);
@@ -328,6 +336,8 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Set All Fields together
      * @param array $aFields field -> value pairs
+     * @param boolean $bIsSave
+     * @return \core\base\model\row
      */
     public function setFields($aFields, $bIsSave = false)
     {
@@ -339,7 +349,80 @@ class row implements \ArrayAccess, \Serializable
         if ($bIsSave) {
             $this->save();
         }
+        return $this;
     } // function setFields
+
+    /**
+     * Get Row from Top linked table
+     * @param string $sByField
+     * @return \core\base\model\row
+     */
+    public function getTopRow($sByField)
+    {
+        $oErr = \project\service\error::instance();
+        /* @var $oErr \core\service\error */
+        $sErrHeader = 'Error while get Top Row';
+        $mVal = $this->get($sByField, null, false);
+        if (empty($mVal)) {
+            $oErr->logErrorMessage('Value for field "' . $sByField . '" is empty', $sErrHeader);
+            return null;
+        }
+
+        $oEtt = $this->oEntity;
+        $aTmp = $oEtt->description->relations;
+        $aRel = null;
+        foreach ($aTmp as $v) {
+            if ($v['field'] == $sByField) {
+                $aRel = $v;
+                break;
+            }
+        }
+        if (empty($aRel)) {
+            $oErr->logErrorMessage('Incorrect linked field "' . $sByField . '"', $sErrHeader);
+            return null;
+        }
+
+        $oTopEtt = $oEtt->getService()->getEntityByTable($aRel['ref_table'], $oEtt->getConnectionName());
+        if (empty($oTopEtt)) {
+            $oErr->logErrorMessage('Linked entity for field "' . $sByField . '" is not found', $sErrHeader);
+            return null;
+        }
+        return $oTopEtt->getRowByParam(array($v['field'] => $mVal));
+    } // function getTopRow
+
+    /**
+     * Get Rowset from linked tables
+     * @param string $sByField
+     * @return \core\base\model\row
+     */
+    public function getBottomRowset($sTableName, $nQtt = -1, $nOffset = -1, $sOrderBy = '')
+    {
+        $oErr = \project\service\error::instance();
+        /* @var $oErr \core\service\error */
+        $sErrHeader = 'Error while get Bottom Rowset';
+
+        $oCurEtt    = $this->getEntity();
+        $oBottomEtt = $oCurEtt->getService()->getEntityByTable($sTableName, $oCurEtt->getConnectionName());
+        if (empty($oBottomEtt)) {
+            $oErr->logErrorMessage('Can\'t get entity for table "' . $sTableName . '"', $sErrHeader);
+            return null;
+        }
+
+        $aTmp = $oBottomEtt->description->relations;
+        $aRel = null;
+        foreach ($aTmp as $v) {
+            if ($v['ref_table'] == $oCurEtt->getTableName()) {
+                $aRel = $v;
+                break;
+            }
+        }
+        if (empty($aRel)) {
+            $oErr->logErrorMessage('Incorrect linked table "' . $sTableName . '"', $sErrHeader);
+            return null;
+        }
+
+        return $oBottomEtt->getRowsetByParam(array($v['field'] => $this->getId()), $nQtt, $nOffset, $sOrderBy);
+    } // function getBottomRowset
 
     /**
      * Revert all changes of this row
@@ -351,6 +434,7 @@ class row implements \ArrayAccess, \Serializable
             $this->aData[$sFieldName] = $mValue;
         }
         $this->aChanged = array();
+        return $this;
     } // function revert
 
     /**

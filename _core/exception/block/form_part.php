@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
-class form_part extends fatal
+class form_part extends local
 {
     /**
      * @var block_html_form_base Parsed form block
@@ -30,13 +30,14 @@ class form_part extends fatal
      * Exception's constructor
      * @param block_html_form_base $oBlock Object - instance of form block
      * @param array $aErrorMsg Error message
-     * @param integer $nCcode Error Code
+     * @param integer $nCode Error Code
+     * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct($oBlock, $aErrorMsg, $nCode = E_USER_WARNING)
+    public function __construct(\core\block\base $oBlock, $aErrorMsg, $nCode = E_USER_WARNING, $oPrevious = null)
     {
         $this->oFormPart = $oBlock;
         $this->aErrorMsg = $aErrorMsg;
-        parent::__construct(implode('', $aErrorMsg), $nCode);
+        parent::__construct($oBlock, 'Form part error', $nCode, $oPrevious);
     } // function __construct
 
     /**
@@ -56,6 +57,16 @@ class form_part extends fatal
     {
         return $this->aErrorMsg;
     } // function getErrorMessages
+
+    /**
+     * Get operation for Db (nothing) when exception occured
+     * @param string $sDbOper
+     * @return null|string
+     */
+    protected function _getDbOperation($sDbOper = 'nothing')
+    {
+        return parent::_getDbOperation($sDbOper);
+    } // function _getDbOperation
 
 } // class \core\exception\block\form_part
 ?>

@@ -39,8 +39,8 @@ return array(
         ),
         'roles' => array (
             array (
-                'condition'    => 'tools_access',
-                'out_transfer' => '/',
+                'condition'     => 'tools_access',
+                'transfer_sham' => '~/',
             ),
         ),
     ),

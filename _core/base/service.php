@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  * @abstract
  */
 abstract class service
@@ -44,6 +44,18 @@ abstract class service
      * @var array
      */
     protected $aDelegateRule = array();
+
+    /**
+     * DB-operation ('rollback', 'commit', 'nothing' OR null) when the Exception is occurred
+     * @var string
+     */
+    protected $sExceptionDbOper = null;
+
+    /**
+     * Log-method using when the Exception is occurred
+     * @var string
+     */
+    private $sExceptionLog = null;
 
     /**
      * service's constructor
@@ -104,6 +116,38 @@ abstract class service
     } // function getConfig
 
     /**
+     * Get DB-operation ('rollback', 'commit', 'nothing' OR null) when the Exception is occurred
+     * If method return NULL operation can be defined another way
+     * @return string|null
+     */
+    public function getExceptionDbOper()
+    {
+        return $this->sExceptionDbOper;
+    } // function getExceptionDbOper
+
+    /**
+     * Get Type of logging Error-message ('php', 'service', 'nothing' OR null) when the Exception is occurred
+     * If method return NULL Method can be defined another way
+     * @return string
+     */
+    public function getExceptionLogType()
+    {
+        return empty($this->sExceptionLog) ? 'service' : $this->sExceptionLog;
+    } // function getExceptionLogType
+
+    /**
+     * Set Type of logging Error-message ('php', 'service', 'nothing' OR null)
+     * @return \core\base\service
+     */
+    public function setExceptionLogType($sExceptionLog)
+    {
+        if (in_array($sExceptionLog, array('php', 'service', 'nothing')) || is_null($sExceptionLog)) {
+            $this->sExceptionLog = $sExceptionLog;
+        }
+        return $this;
+    } // function setExceptionLogType
+
+    /**
      * Add listener to service
      * @param string $sEventName
      * @param callback $mCallBack
@@ -134,7 +178,37 @@ abstract class service
     {
         $this->oConfig = $this->_getConfigurator()->getServiceConfig($this);
         return $this;
-    } // function setConfig
+    } // function _setConfig
+
+    /**
+     * Get Cached Data for current service
+     * @param string $sKey
+     * @param mixed $mDefault
+     * @return mixed
+     */
+    protected function _getCacheData($sKey, $mDefault = null)
+    {
+        $oCache = \project\service\cache::instance('service_data');
+        /* @var $oCache \core\service\cache */
+        $aData  = $oCache->get(get_class_name($this), array());
+        return array_val($aData, $sKey, $mDefault);
+    } // function _getCacheData
+    /**
+     * Set Cached Data for current service
+     * @param string $sKey
+     * @param mixed $mValue
+     * @return \core\base\service
+     */
+    protected function _setCacheData($sKey, $mValue)
+    {
+        $oCache = \project\service\cache::instance('service_data');
+        /* @var $oCache \core\service\cache */
+        $sName  = get_class_name($this);
+        $aData  = $oCache->get($sName, array());
+        $aData[$sKey] = $mValue;
+        $oCache->set($sName, $aData);
+        return $this;
+    } // function _setCacheData
 
     /**
      * Get Configurator
@@ -189,6 +263,20 @@ abstract class service
         }
         return $this->aDelegate[$sClass];
     } // function _getDelegate
+
+    /**
+     * Make Exception of Service
+     * @param sting $sLogErrMsg
+     * @param sting $sExceptionDbOper
+     * @param numeric $nCode
+     * @param \Exception $oPrevious
+     * @throws \core\exception\block\local
+     */
+    protected function _makeServiceException($sLogErrMsg, $sExceptionDbOper = 'rollback', $nCode = E_USER_NOTICE, $oPrevious = null)
+    {
+        $this->sExceptionDbOper = $sExceptionDbOper;
+        throw new \core\exception\service\fatal($this, $sLogErrMsg, $nCode, $oPrevious);
+    } // function _makeServiceException
 
     /**
      * Subscribe For Service

@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.005 (14.01.2014)
  */
 class entity extends base
 {
@@ -27,7 +27,7 @@ class entity extends base
      * Allowed Get/Set Entity-Methods
      * @var array
      */
-    protected $aMethodList = array();
+    protected $aMapping = array();
 
     // ======== Static methods ======== \\
     // ======== Main Interface methods ======== \\
@@ -39,7 +39,8 @@ class entity extends base
      */
     public function makePasswordHash($sPassword)
     {
-        return empty($this->mData['login']) ? '' : md5($this->mData['login'] . $sPassword . $this->oConfig->get('ENGINE_KEY'));
+        $sLogin = array_val($this->mData, 'login', $this->mIdentifyer);
+        return $sLogin ? md5($sLogin . $sPassword . $this->oConfig->get('ENGINE_KEY')) : '';
     } // function makePasswordHash
 
     // ======== Private/Protected methods ======== \\
@@ -71,7 +72,7 @@ class entity extends base
     {
         $oRow  = $this->_getRow();
         if (!empty($oRow)) {
-            $aMethods = $this->_getMethodList('set');
+            $aMethods = $this->_getMethodList('Setting');
             if (!empty($aMethods)) {
                 foreach ($aMethods as $k => $v) {
                     $oRow->$v($this->mData[$k]);
@@ -99,20 +100,25 @@ class entity extends base
      */
     protected function _getEntityData()
     {
-        $aMethods = $this->_getMethodList('get');
-        if (empty($aMethods)) {
-            return array();
-        }
-        foreach (array('id', 'password', 'login', 'roles') as $v) {
-            if (!isset($aMethods[$v])) {
-                throw new fatalException($this->oFacade, 'Required key "' . $v . '" is not get by method "getMethodList".');
+        $aMethods = $this->_getMethodList('Getting');
+        if (!empty($aMethods)) {
+            $aRequired = array('id' => 0, 'password' => 0, 'login' => 0, 'roles' => 0);
+            if (count(array_intersect_key($aMethods, $aRequired)) < 4) {
+                throw new fatalException($this->oFacade, 'Required keys "' . implode('", "', $aRequired) . '" are not get by method "getGettingMap".');
             }
         }
 
         $aData = array();
         $oRow  = $this->_getRow();
-        foreach ($aMethods as $k => $v) {
-            $aData[$k] = $oRow->$v();
+        if (empty($aMethods)) {
+            foreach ($this->_getKeyList() as $k) {
+                $v = 'get_' . $v;
+                $aData[$k] = $oRow->$v(null, false);
+            }
+        } else {
+            foreach ($aMethods as $k => $v) {
+                $aData[$k] = $oRow->$v();
+            }
         }
 
         return $aData;
@@ -120,37 +126,38 @@ class entity extends base
 
     /**
      * Get List of Method
-     * @param type $sType
-     * @return null
+     * @param string $sType
+     * @return array|null
      * @throws fatalException
      */
     protected function _getMethodList($sType)
     {
-        while (!isset($this->aMethodList[$sType])) {
+        if (!in_array($sType, array('Getting', 'Setting'))) {
+            throw new fatalException($this->oFacade, 'Incorrect type of mapping "' . $sType . '".');
+        }
+
+        while (!isset($this->aMapping[$sType])) {
             $oRow = $this->_getRow();
             if (empty($oRow)) {
                 return null;
             }
 
-            $aKeys = $this->_getKeyList();
-            if (!method_exists($oRow, 'getMethodList')) {
-                throw new fatalException($this->oFacade, 'Method for get User-data "' . get_class($oRow) . '::getMethodList()" isn\'t set. Keys ("' . implode('", "', $aKeys) . '").');
+            $sMethod = 'get' . $sType . 'Map';
+            $aKeys   = array_flip($this->_getKeyList());
+            if (method_exists($oRow, $sMethod)) {
+                $aMap = $oRow->$sMethod($sType);
+            } elseif ($sType == 'Getting') {
+                $aMap = null;
+            } else {
+                $sErr  = 'Method for mapping User-data "' . get_class($oRow) . '::' . $sMethod . '()" isn\'t set.' . "\n";
+                $sErr .= 'Keys: ("' . implode('", "', array_keys($aKeys)) . '").';
+                throw new fatalException($this->oFacade, $sErr);
             }
 
-            $this->aMethodList[$sType] = array();
-            $aMethods = $oRow->getMethodList($sType);
-            if (empty($aMethods)) {
-                break;
-            }
-
-            foreach ($aKeys as $k) {
-                if (isset($aMethods[$k])) {
-                    $this->aMethodList[$sType][$k] = $aMethods[$k];
-                }
-            }
+            $this->aMapping[$sType] = empty($aMap) ? array() : array_intersect_key($aMap, $aKeys);
         }
 
-        return $this->aMethodList[$sType];
+        return $this->aMapping[$sType];
     } // function _getMethodList
 
     /**

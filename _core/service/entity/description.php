@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.005 (14.01.2014)
  *
  * @property-read string|array $primeryKey
  * @method \core\service\entity\description setPrimeryKey() setPrimeryKey(array|string $mKey)
@@ -158,7 +158,7 @@ class description
      */
     public function set($sKey, $mValue)
     {
-        if ($this->_checkPropertyName($sKey) && is_null($this->aProperty[$sKey])) {
+        if ($this->_checkPropertyName($sKey) && ($sKey == 'comment' || is_null($this->aProperty[$sKey]))) {
             $sMethod = 'set' . ucfirst($sKey);
             if (method_exists($this, $sMethod)) {
                 $this->$sMethod($mValue);
