@@ -46,21 +46,6 @@ CREATE TABLE IF NOT EXISTS `administrator_has_role` (
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `db_test`
---
-
-CREATE TABLE IF NOT EXISTS `db_test` (
-  `id_db_test` int(11) NOT NULL AUTO_INCREMENT,
-  `date` date DEFAULT NULL,
-  `header` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `content` text COLLATE utf8_unicode_ci,
-  `is_complete` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id_db_test`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci PACK_KEYS=0 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- Структура таблицы `dynamic_meta`
 --
 
@@ -281,16 +266,31 @@ CREATE TABLE IF NOT EXISTS `site_language` (
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `sub_test`
+-- Структура таблицы `test_primary`
 --
 
-CREATE TABLE IF NOT EXISTS `sub_test` (
-  `id_sub_test` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `id_db_test` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `test_primary` (
+  `id_test_primary` int(11) NOT NULL AUTO_INCREMENT,
+  `date` date DEFAULT NULL,
+  `header` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `content` text COLLATE utf8_unicode_ci,
+  `is_complete` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id_test_primary`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci PACK_KEYS=0 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `test_subtable`
+--
+
+CREATE TABLE IF NOT EXISTS `test_subtable` (
+  `id_test_subtable` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id_test_primary` int(11) NOT NULL,
   `sub_content` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id_sub_test`),
-  KEY `fk_sub_test_n1_idx` (`id_db_test`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+  PRIMARY KEY (`id_test_subtable`),
+  KEY `fk_test_subtable_n1_idx` (`id_test_primary`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 COMMENT = 'Some table description';
 
 -- --------------------------------------------------------
 
@@ -404,10 +404,10 @@ ALTER TABLE `role_embed_role`
   ADD CONSTRAINT `fk_role_embed_role_n2` FOREIGN KEY (`id_embedded_role`) REFERENCES `role` (`id_role`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ограничения внешнего ключа таблицы `sub_test`
+-- Ограничения внешнего ключа таблицы `test_subtable`
 --
-ALTER TABLE `sub_test`
-  ADD CONSTRAINT `fk_sub_test_n1` FOREIGN KEY (`id_db_test`) REFERENCES `db_test` (`id_db_test`) ON UPDATE CASCADE;
+ALTER TABLE `test_subtable`
+  ADD CONSTRAINT `fk_test_subtable_n1` FOREIGN KEY (`id_test_primary`) REFERENCES `test_primary` (`id_test_primary`) ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `video`
