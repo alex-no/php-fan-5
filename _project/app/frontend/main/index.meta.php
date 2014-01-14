@@ -44,10 +44,12 @@ return array(
                 'ru' => '',
                 'en' => '',
             ),
+*/
             'test_entity' => array(
-                'ru' => '',
-                'en' => '',
+                'ru' => 'Проверка работы с базой данных с помощью entity',
+                'en' => 'Test of operation with the database using entity',
             ),
+/*
             'test_form' => array(
                 'ru' => '',
                 'en' => '',

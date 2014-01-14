@@ -12,8 +12,7 @@
                 <a href="{=isset($description['link']) ? $description['link'] : $file_name}.html">{$file_name}.php</a>
             </dt>
             <dd>
-                <div>{$description['ru']}</div>
-                <div>{$description['en']}</div>
+                <div>{$description['en']} / <span>{$description['ru']}</span></div>
             </dd>
         {/foreach}
     </dl>
