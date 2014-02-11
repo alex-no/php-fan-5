@@ -14,7 +14,7 @@ return array(
         ),
 
         'embeddedBlocks' => array(
-            'entity_filter' => '{CAPP}/extra/entity_filter',
+            'entity_filter' => '{CAPP}/form/entity_filter',
         ),
 
         'form' => array(

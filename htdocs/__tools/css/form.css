@@ -1,5 +1,16 @@
 form button {
 	display: block;
-	margin: 10px auto;
-	padding: 3px 5px;
+	margin: 3px auto;
+	clear: both;
+}
+.formRow {
+	padding: 2px 0;
+}
+.formRow:after {
+	content: "";
+	display: block;
+	clear: both;
+}
+select, input {
+	border: 1px solid #000099;
 }

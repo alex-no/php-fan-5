@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.006 (11.02.2014)
  */
 class session extends \core\base\service\multi
 {
@@ -57,7 +57,7 @@ class session extends \core\base\service\multi
         parent::__construct(empty(self::$aInstances));
         self::$aInstances[$sGroup][$sNameSpace] = $this;
 
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             $this->sNameSpace = $sNameSpace;
             $this->sGroup     = $sGroup;
 
@@ -70,6 +70,7 @@ class session extends \core\base\service\multi
 
                 // Compare Urer's system
                 if (!$this->_compareSystem()) {
+                    trigger_error('Session is not compared', E_USER_NOTICE);
                     $this->setSessionId(md5($this->getSessionId() . microtime()));
                     $this->_killAll();
                 }

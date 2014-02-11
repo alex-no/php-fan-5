@@ -18,7 +18,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.006 (11.02.2014)
  */
 class locale extends \core\base\service\single
 {
@@ -78,8 +78,8 @@ class locale extends \core\base\service\single
 
         // Define Available languages and Curren Language
         $oAvailableLng = $this->getConfig('AVAILABLE_LANGUAGE');
-        if (!$this->bEnabled || empty($oAvailableLng)) {
-            $this->bEnabled = false;
+        if (!$this->isEnabled() || empty($oAvailableLng)) {
+            $this->oConfig['ENABLED'] = false;
             $this->aAvailableLng    = $this->_getDefultLanguages($oAvailableLng);
             $this->sCurrentLanguage = $this->sDefaultLng;
         } else {

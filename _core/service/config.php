@@ -14,7 +14,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.006 (11.02.2014)
  */
 final class config extends \core\base\service\multi
 {
@@ -81,7 +81,7 @@ final class config extends \core\base\service\multi
     /**
      * Get Service's instance of current service by $sConfigType
      * @param string $sConfigType Config Type - by default = 'service'
-     * @param string $sType Type of Source - by default = 'ini'
+     * @param string $sSourceType Type of Source - by default = 'ini'
      * @return config
      */
     public static function instance($sConfigType = 'service', $sSourceType = 'ini') {
@@ -94,7 +94,7 @@ final class config extends \core\base\service\multi
 
     /**
      * Merge all configuration file by application
-     * @param string $bCheckExist Check - is file name
+     * @param string $sAppName
      */
     public static function mergeByApp($sAppName)
     {
@@ -162,7 +162,7 @@ final class config extends \core\base\service\multi
      */
     public function merge($aData, $bPriority = true)
     {
-        if (!is_array($aData) && !(is_object($aData) && $aData instanceof row)) {
+        if (!is_array($aData) && !$this->_isRow($aData)) {
             throw new fatalException($this, 'Incorrect data for merge configs');
         }
         if (!empty($aData)) {
@@ -180,11 +180,21 @@ final class config extends \core\base\service\multi
     public function reset($sName = null, $mKey = null)
     {
         if (is_null($sName)) {
-            $this->oConfData->reset();
+            $this->oConfData->reset(null);
         } else {
             $oConf = $this->oConfData[$sName];
-            if ($oConf) {
-                $oConf->get($mKey)->reset();
+            if ($this->_isRow($oConf)) {
+                if (is_array($mKey)) {
+                    $sKey = array_pop($mKey);
+                    if (!empty($mKey)) {
+                        $oConf = $oConf->get($mKey);
+                    }
+                    if ($this->_isRow($oConf)) {
+                        $oConf->reset($sKey);
+                    }
+                } else {
+                    $oConf->reset($mKey);
+                }
             }
         }
         return $this;
@@ -335,7 +345,7 @@ final class config extends \core\base\service\multi
 
     /**
      * Set service's Config
-     * @return config
+     * @return \core\service\config
      */
     protected function _setConfig()
     {
@@ -344,7 +354,7 @@ final class config extends \core\base\service\multi
 
     /**
      * Get Config Engine
-     * @return config/ini
+     * @return \core\service\config\ini
      */
     protected function _getConfigEngine()
     {
@@ -364,9 +374,10 @@ final class config extends \core\base\service\multi
 
     /**
      * Load Applicaiton's config and merge it with global configuration
-     * @param string $sConfFile Configuration file name
+     * @param string $sFileName Configuration file name
      * @param string $bResetConf Allow to reset configuration file before marging
      * @param string $bCheckExist Check - is file name
+     * @return \core\service\config
      */
     protected function _mergeConfig($sFileName, $bResetConf, $bCheckExist)
     {
@@ -374,7 +385,18 @@ final class config extends \core\base\service\multi
             $this->reset();
         }
         $this->oConfData->mergeData($this->_getData($sFileName, $bCheckExist), $bResetConf);
+        return $this;
     } // function _mergeConfig
+
+    /**
+     * Check is instance of row
+     * @param \core\service\config\row $oObj
+     * @return boolean
+     */
+    protected function _isRow($oObj)
+    {
+        return is_object($oObj) && $oObj instanceof row;
+    } // function _isRow
 
 } // class \core\service\config
 ?>

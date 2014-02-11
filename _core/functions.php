@@ -489,7 +489,7 @@ function msg()
 function msgAlt()
 {
     $aArg = func_get_args();
-    return count($aArg) > 1 ? \project\service\translation::getCombiMessage($aArg, NULL, false) : $aArg[0];
+    return count($aArg) > 1 ? \project\service\translation::getCombiMessageAlt($aArg) : $aArg[0];
 } // function msg
 
 /**

@@ -32,7 +32,7 @@ class delayed
     /**
      * Delayed meta constructor
      * @param mixed  $mObj
-     * @param string $sMetod
+     * @param string $sMethod
      * @param mixed  $mArguments
      */
     public function __construct($mObj, $sMethod, $mArguments)

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.006 (11.02.2014)
  * @abstract
  */
 abstract class usual extends \core\block\base
@@ -65,6 +65,9 @@ abstract class usual extends \core\block\base
     public function getFormMeta($mKey = null, $mDefault = null)
     {
         $oFormMeta = $this->getMeta('form');
+        if (empty($oFormMeta)) {
+            return null;
+        }
         return empty($mKey) ? $oFormMeta : $oFormMeta->get($mKey, $mDefault);
     } // function getFormMeta
 
@@ -109,7 +112,7 @@ abstract class usual extends \core\block\base
     public function getCachePermission()
     {
         $nMode = $this->getMeta(array('cache', 'mode'));
-        if ($nMode == 0 || $_POST && $this->necessaryFormParsing(null, false)) {
+        if ($nMode == 0 || !empty($_POST) && $this->necessaryFormParsing(null, false)) {
             $this->disableCache();
             return false;
         } elseif($nMode == 1) {
@@ -275,7 +278,7 @@ abstract class usual extends \core\block\base
     {
         if ($this->bIsForm) {
             if(!$this->getFormMeta('form_id')) {
-                $this->setMeta(array('form', 'form_id'), $this->sClassName);
+                $this->setMeta(array('form', 'form_id'), $this->sBlockName);
             }
 
             if (!$this->getFormMeta('not_role')) {

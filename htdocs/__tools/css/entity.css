@@ -1,3 +1,28 @@
+/* Form filter */
+
+#filter {
+	width: 600px;
+	margin: 3px auto;
+	overflow: auto;
+}
+.form_col {
+	width: 50%;
+}
+.form_col:after {
+	content: "";
+	display: block;
+	clear: both;
+}
+#filter .label{
+	width: 115px;
+	float: left;
+}
+.form_col select, .form_col input {
+	width: 165px;
+}
+
+
+
 #create_entity {
 	width: 430px;
 	margin: 0px auto;

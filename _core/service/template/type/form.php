@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.006 (11.02.2014)
  */
 abstract class form extends base
 {
@@ -81,7 +81,7 @@ abstract class form extends base
             }
         }
 
-        $this->bMultiLng = $oBlock->getMeta('useMultiLanguage');
+        $this->bMultiLng = $this->oForm->isMultiLanguage();
     } // function __construct
 
     /**
@@ -222,16 +222,19 @@ abstract class form extends base
         if(!$sText) {
             return '';
         }
-        $sPattern = $this->_getFormMeta(array(
+
+        $bMultiLng = array_val($aData, 'multiLng', $this->bMultiLng);
+        $sPattern  = $this->_getFormMeta(array(
             'design',
             'note',
             empty($aData['type']) ? $this->_getFormMeta(array('default_type', 'note')) : $aData['type'],
         ), '<div>{TEXT}</div>');
+
         return str_replace(array(
             '{NOTE}',
             '{TEXT}'
         ), array(
-            $this->_getMsgByLng('OTHER_NOTE', $aData),
+            $this->_getMsgByLng($bMultiLng ? 'NOTE_FORM_ROW' : 'Note', $aData),
             $this->_getMsgByLng($sText, $aData)
         ), $sPattern);
     } // function getNote
@@ -374,7 +377,13 @@ abstract class form extends base
         ), array(
             $aData['name'],
             empty($aData['id']) ? '' : 'id="' . $this->_getIdByName($aData['name']) . '"',
-            empty($sSubPattern) ? '' : $this->_parseSubPattern($sSubPattern, (is_scalar($mVal) || $sFieldType == 'select_multi') ? $mVal : '', $mFdt, $aData, $sFieldType),
+            empty($sSubPattern) ? '' : $this->_parseSubPattern(
+                    $sSubPattern,
+                    (is_scalar($mVal) || $sFieldType == 'select_multi') ? $mVal : '',
+                    $mFdt,
+                    $aData,
+                    $sFieldType
+            ),
         ), $this->_setAttributes($sPattern, $aData));
     } // function getSelect
 

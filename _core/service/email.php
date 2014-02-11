@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.014 (03.08.2011)
+ * @version of file: 05.006 (11.02.2014)
  */
 class email extends \core\base\service\multi
 {
@@ -42,7 +42,7 @@ class email extends \core\base\service\multi
 
         $this->sInstName = $sInstName;
 
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             $oConfig = $this->oConfig;
             $this->oEngine = $this->_getEngine($oConfig->get('ENGINE', 'phpmailer'));
 
@@ -82,7 +82,7 @@ class email extends \core\base\service\multi
      */
     public function setFrom($sEmailFrom, $sNameFrom = '')
     {
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             $this->oEngine->setFrom($sEmailFrom, $this->_recodingText($sNameFrom, 'NAME_RECODING'));
         } // check enabling status
     } // function setFrom
@@ -94,7 +94,7 @@ class email extends \core\base\service\multi
      */
     public function clearAllRecipients()
     {
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             $this->oEngine->ClearAllRecipients();
         } // check enabling status
     }
@@ -109,7 +109,7 @@ class email extends \core\base\service\multi
     */
     function addCc($address, $name = '')
     {
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             $this->oEngine->AddCC($address, $name);
         } // check enabling status
     }
@@ -124,7 +124,7 @@ class email extends \core\base\service\multi
      */
     function addBcc($address, $name = '')
     {
-         if ($this->bEnabled) {
+         if ($this->isEnabled()) {
             $this->oEngine->AddBCC($address, $name);
         } // check enabling status
     }
@@ -137,7 +137,7 @@ class email extends \core\base\service\multi
      */
     function addReplyTo($address, $name = '')
     {
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             $this->oEngine->AddReplyTo($address, $name);
         } // check enabling status
     }
@@ -154,7 +154,7 @@ class email extends \core\base\service\multi
      */
     function addAttachment($path, $name = '', $encoding = 'base64', $type = 'application/octet-stream')
     {
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             $this->oEngine->AddAttachment($path, $name, $encoding, $type);
         }
     }
@@ -169,7 +169,7 @@ class email extends \core\base\service\multi
      */
     public function send($sSubj, $sBody, $sEmailTo, $sNameTo = '', $bIsHtml = false)
     {
-        return $this->bEnabled ? $this->oEngine->send($this->_recodingText($sSubj, 'SUBJECT_RECODING'), $this->_recodingText($sBody, 'BODY_RECODING'), $sEmailTo, $this->_recodingText($sNameTo, 'NAME_RECODING'), $bIsHtml) : null;
+        return $this->isEnabled() ? $this->oEngine->send($this->_recodingText($sSubj, 'SUBJECT_RECODING'), $this->_recodingText($sBody, 'BODY_RECODING'), $sEmailTo, $this->_recodingText($sNameTo, 'NAME_RECODING'), $bIsHtml) : null;
     } // function send
 
     /**
