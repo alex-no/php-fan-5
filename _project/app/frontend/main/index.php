@@ -10,7 +10,7 @@ class index extends \project\block\common\simple
      */
     public function init()
     {
-        $sDir = \bootstrap::parsePath('{PROJECT}\app\frontend\main\\');
+        $sDir = \bootstrap::parsePath('{PROJECT}/app/frontend/main/test/');
         $this->view->test_dir = str_replace('\\', \core\bootstrap\loader::DEFAULT_DIR_SEPARATOR, $sDir);
         $this->view->tests = $this->getMeta('tests');
     } // function init

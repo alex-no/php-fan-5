@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main;
+<?php namespace app\frontend\main\test;
 /**
  * Test service_request
  * @version 1.1
  */
-class test_service_request extends \project\block\common\simple
+class service_request extends \project\block\common\simple
 {
     /**
      * Init block data
@@ -43,5 +43,5 @@ class test_service_request extends \project\block\common\simple
     {
         return 'PHP-FAN.5: Main/Add request. Service of request';
     } // function getTitle
-} // class \app\frontend\main\test_service_request
+} // class \app\frontend\main\test\service_request
 ?>

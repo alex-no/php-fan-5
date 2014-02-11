@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main;
+<?php namespace app\frontend\main\test;
 /**
  * Test format class
  * @version 1.1
  */
-class test_format extends \project\block\common\simple
+class format extends \project\block\common\simple
 {
     /**
      * Init block data
@@ -23,5 +23,5 @@ class test_format extends \project\block\common\simple
         $sFormat = $this->request->get('format', 'PAG');
         return in_array($sFormat, array('custom1', 'custom2')) ? $sFormat : parent::getViewParserName();
     } // function getViewParserName
-} // class \app\frontend\main\test_format
+} // class \app\frontend\main\test\format
 ?>

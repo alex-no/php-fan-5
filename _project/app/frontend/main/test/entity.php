@@ -1,4 +1,4 @@
-<?php namespace app\frontend\main;
+<?php namespace app\frontend\main\test;
 /**
  * Test session
  * Data for this test:
@@ -6,7 +6,7 @@
  *  * DB-dump  - test_entity.sql
  * @version 1.1
  */
-class test_entity extends \project\block\common\simple
+class entity extends \project\block\common\simple
 {
     /**
      * Init block data
@@ -98,5 +98,5 @@ class test_entity extends \project\block\common\simple
 
     } // function init
 
-} // class \app\frontend\main\test_entity
+} // class \app\frontend\main\test\entity
 ?>

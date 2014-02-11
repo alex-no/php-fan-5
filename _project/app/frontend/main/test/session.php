@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main;
+<?php namespace app\frontend\main\test;
 /**
  * Test session
  * @version 1.1
  */
-class test_session extends \project\block\common\simple
+class session extends \project\block\common\simple
 {
     /**
      * Init block data
@@ -41,5 +41,5 @@ class test_session extends \project\block\common\simple
     {
         return 'PHP-FAN.5: Test of session';
     } // function getTitle
-} // class \app\frontend\main\test_session
+} // class \app\frontend\main\test\session
 ?>

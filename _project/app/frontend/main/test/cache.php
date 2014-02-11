@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main;
+<?php namespace app\frontend\main\test;
 /**
  * Test cache
  * @version 1.1
  */
-class test_cache extends \project\block\common\simple
+class cache extends \project\block\common\simple
 {
     /**
      * Init block data
@@ -46,5 +46,5 @@ class test_cache extends \project\block\common\simple
     {
         return 'PHP-FAN.5: Test of cache';
     } // function getTitle
-} // class \app\frontend\main\test_cache
+} // class \app\frontend\main\test\cache
 ?>

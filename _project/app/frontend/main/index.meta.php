@@ -5,7 +5,7 @@
  */
 return array(
     'own' => array(
-        'title' => 'PHP-FAN.5: List of test-files',
+        'title' => 'PHP-FAN.5: Presentation and testing',
 
         /** /
         'carcass'     => '{CARCASS}/home_carcass',
@@ -14,63 +14,63 @@ return array(
         ),/**/
 
         'tests' => array(
-            'test_view_data' => array(
+            'view_data' => array(
                 'ru' => 'Проверка установки данных для view',
                 'en' => 'Test of setting view data',
             ),
-            'test_service_request' => array(
+            'service_request' => array(
                 'ru'   => 'Main/Add request. Сервис request',
                 'en'   => 'Main/Add request. Service of request',
-                'link' => 'test_service_request/aaa-bbb',
+                'link' => 'service_request/aaa-bbb',
             ),
-            'test_format' => array(
+            'format' => array(
                 'ru' => 'Проверка форматов view',
                 'en' => 'Test of view format',
             ),
-            'test_session' => array(
+            'session' => array(
                 'ru' => 'Test of session',
                 'en' => 'Проверка сессий',
             ),
-            'test_cache' => array(
+            'cache' => array(
                 'ru' => 'Проверка работы с кэшем',
                 'en' => 'Test of operation with cache',
             ),
 /*
-            'test_config' => array(
+            'config' => array(
                 'ru' => '',
                 'en' => '',
             ),
-            'test_date' => array(
+            'date' => array(
                 'ru' => '',
                 'en' => '',
             ),
 */
-            'test_entity' => array(
+            'entity' => array(
                 'ru' => 'Проверка работы с базой данных с помощью entity',
                 'en' => 'Test of operation with the database using entity',
             ),
+            'form' => array(
+                'ru' => 'Тестирование HTML-форм',
+                'en' => 'Test HTML-form',
+            ),
 /*
-            'test_form' => array(
+            'msg' => array(
                 'ru' => '',
                 'en' => '',
             ),
-            'test_msg' => array(
+            'role' => array(
                 'ru' => '',
                 'en' => '',
             ),
-            'test_role' => array(
+            'subscribing' => array(
                 'ru' => '',
                 'en' => '',
             ),
-            'test_subscribing' => array(
+            'user' => array(
                 'ru' => '',
                 'en' => '',
             ),
-            'test_user' => array(
-                'ru' => '',
-                'en' => '',
-            ),
-            'test_zend' => array(
+            'zend' => array(
                 'ru' => '',
                 'en' => '',
             ),
