@@ -13,7 +13,7 @@
  *
  * @author: Otchenashenko Sergey (dinvisible@gmail.com)
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.006 (11.02.2014)
  */
 class mysql extends base
 {
@@ -49,7 +49,7 @@ class mysql extends base
         if (count($aParamConnect) == 3) {
             $aParamConnect[] = true; //Always create new link
         }
-        $sFunc    = $aParam['PERSISTENT'] ? 'mysql_pconnect' : 'mysql_connect';
+        $sFunc    = empty($aParam['PERSISTENT']) ? 'mysql_connect' : 'mysql_pconnect';
         $lConnent = @call_user_func_array($sFunc, $aParamConnect);
         if (empty($lConnent)) {
             $this->_fixError(

@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.006 (11.02.2014)
  * @abstract
  */
 abstract class service
@@ -29,11 +29,6 @@ abstract class service
      * @var \core\service\config\row
      */
     protected $oConfig = null;
-
-    /**
-     * @var boolean Enabled status of the service
-     */
-    protected $bEnabled = true;
 
     /**
      * @var array
@@ -94,7 +89,7 @@ abstract class service
      */
     public function isEnabled()
     {
-        return $this->bEnabled;
+        return (boolean)$this->getConfig('ENABLED', true);
     } // function isEnabled
 
     /**
@@ -102,7 +97,8 @@ abstract class service
      */
     public function resetEnabled()
     {
-        $this->bEnabled = (boolean)$this->getConfig('ENABLED', true);
+        $this->_getConfigurator()->reset(get_class_name($this), 'ENABLED');
+        return $this;
     } // function resetEnabled
 
     /**

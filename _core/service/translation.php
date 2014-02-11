@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.006 (11.02.2014)
  */
 class translation extends \core\base\service\single
 {
@@ -96,13 +96,12 @@ class translation extends \core\base\service\single
     } // function getCombiPart
 
     /**
-     * Get text by Current Language
-     * @param string $sKey The Key
-     * @param string $sLanguage The Language Code
-     * @param boolean $bEnableML Enable Multy-Language
+     * Get combined text by several keys of short massages
+     * @param string $aKeyList Keys
+     * @param string $sLng The Language Code
      * @return string
      */
-    public static function getCombiMessage($aKeyList, $sLng = null, $bEnableML = true)
+    public static function getCombiMessage($aKeyList, $sLng = null)
     {
         if (empty($sLng)) {
             $sLng = \project\service\locale::instance()->getLanguage();
@@ -111,6 +110,20 @@ class translation extends \core\base\service\single
         $sKey = array_shift($aKeyList);
         self::$aCombiArr = empty($aKeyList) ? array() : $aKeyList;
         return self::instance()->getMessage($sKey, $sLng);
+    } // function getCombiMessage
+
+    /**
+     * Get combined text by several prases
+     * @param string $aPhrases
+     * @return string
+     */
+    public static function getCombiMessageAlt($aPhrases)
+    {
+        $sResult = array_shift($aPhrases);
+        while (strstr($sResult, '{combi_part}') && !empty($aPhrases)) {
+            $sResult = preg_replace('/\{combi_part\}/i', array_shift($aPhrases), $sResult, 1);
+        }
+        return $sResult;
     } // function getCombiMessage
 
     // ======== Main Interface methods ======== \\

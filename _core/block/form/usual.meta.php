@@ -15,7 +15,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.044
+ * @version of file: 05.006 (11.02.2014)
  */
 return array(
     /**
@@ -89,7 +89,7 @@ return array(
                 'select' => array(
                     'select'            => '<select name="{NAME}"{ATTRIBUTES}{TABINDEX}{ID}>[<option value="{VALUE}"{SELECTED}>{TEXT}</option>]</select>',
                     'select_short'      => '<select name="{NAME}"{ATTRIBUTES}{TABINDEX}{ID} class="shortSelect">[<option value="{VALUE}"{SELECTED}>{TEXT}</option>]</select>',
-                    'radio_group'       => '<div class="formData">[<input type="radio" name="{NAME}" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" /><label for="{ID}">- {TEXT}</label>]</div>',
+                    'radio_group'       => '<span class="formData">[<input type="radio" name="{NAME}" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" /><label for="{ID}">- {TEXT}</label>]</span>',
                     'radio_group_ml'    => '<div class="formData multiLine">[<div><input type="radio" name="{NAME}" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" /><label for="{ID}">- {TEXT}</label></div>]</div>',
                 ),
                 'select_multi' => array(

@@ -55,7 +55,9 @@ return array(
                 'url'    => '/form_validation/form_name.php',
                 'fields' => array('field_name1', 'field_name2', 'etc'),
             ),
-            'required_msg' => 'Field "{FIELD_LABEL}" is required for fill!', //NR. By default: has value as show in this examlle
+
+            'useMultiLanguage' => true OR false, //NR. Set form vessages as multy- OR one-language. By default: true or false depending on service locale is allowed or not
+            'required_msg'     => 'Field "{FIELD_LABEL}" is required for fill!', //NR. By default: has value as show in this examlle
 
             'startTabIndex' => 1, //Start TabIndex number. NR. By default: 1
 
@@ -67,13 +69,25 @@ return array(
             'fields' => array(
                 'field_name1' => array(
                     'label'        => 'text before field', //Required if form has validation rules or 'is required'
+                    'note'         => 'note for field',    //NR
                     'fill_empty'   => 'text into field before typing', //NR
-                    'input_type'   => 'text/password/checkbox...etc', //NR
+                    'input_type'   => 'text/password/checkbox...etc',  //NR
                     'trim_data'    => true OR false, // NR. By default: true for all input type except 'password'
                     'trim_tag'     => true OR false, // NR. Trim tag in get data. By default: true
                     'trim_tag_val' => '&"\'<>',      // NR. This parameter work together with trim_tag=true. There is list of symbols, which must be replaced. By default: '&"\'<>'
                     'is_required'  => true OR false, // NR. By default: if field has validation rule with ('not_empty' = false) - it is required, else it isn't
-                    'data'         => array('value1','value2', 'etc'), //NR. Value for make form
+
+                    'data' => array( //NR. Data for select, radio-group, etc
+                        array('value' => 'value1', 'text' => 'text1'),
+                        array('value' => 'value2', 'text' => 'text2'),
+                        // ....
+                    ),
+                    'dataSource' => array( //NR. Method for get data.
+                        // This is more priority than "data". But if you point both of them and method return NULL - will be used "data"-parameter
+                        'method' => 'Method name',
+                        'class'  => 'Class name', //NR. If class is set - call static method of this class else method of current block
+                    ),
+
                     'default_value' => 'default value', //NR.
                     'attributes' => array( //NR. List of additional attributes with arbitrary name and value
                         'name_of_attr' => 'value_of_attr',

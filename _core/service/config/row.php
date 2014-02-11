@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.006 (11.02.2014)
  */
 class row extends \core\base\data
 {
@@ -163,14 +163,23 @@ class row extends \core\base\data
 
     /**
      * Reset Config data
+     * @param string $sKey Key of parameter
      * @return \core\service\config\row
      */
-    public function reset()
+    public function reset($sKey)
     {
         if ($this->_checkSetter()) {
-            $this->aData = $this->aSrcData;
-            foreach ($this->_getSubData() as $v) {
-                $v->reset();
+            if (is_null($sKey)) {
+                $this->aData = $this->aSrcData;
+                foreach ($this->_getSubData() as $v) {
+                    $v->reset(null);
+                }
+            }  elseif (!isset($this->aSrcData[$sKey])) {
+                $this->aData[$sKey] = null;
+            }  elseif (is_scalar($this->aSrcData[$sKey])) {
+                $this->aData[$sKey] = $this->aSrcData[$sKey];
+            } else {
+                $this->set($sKey, $this->aSrcData[$sKey]);
             }
         }
         return $this;
@@ -229,7 +238,7 @@ class row extends \core\base\data
      * Clone config
      */
     function __clone() {
-        $this->reset();
+        $this->reset(null);
     }
 
     public function __unset($sKey)

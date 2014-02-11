@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.006 (11.02.2014)
  * @property-read string $core
  * @property-read string $project
  * @property-read string $app
@@ -59,10 +59,10 @@ class loader implements \ArrayAccess
             'temp'    => NULL, // Directory for temporary files
         );
 
-        $this->_setTemporaryDir()
-             ->_setAppDir()
-             ->_setBasicLoader()
-             ->_setAdditionalLoader();
+        $this->_setTemporaryDir()     // Set Temporary Directory by path from bootstrap-config
+             ->_setAppDir()           // Set Applications Directory by path from bootstrap-config
+             ->_setBasicLoader()      // Set Basic Loader for FAN-classes: $this->loadClass()
+             ->_setAdditionalLoader();// Set Additional Loader(s) by bootstrap-config
     }
 
     // ======== Static methods ======== \\
@@ -152,11 +152,11 @@ class loader implements \ArrayAccess
             return false;
         }
         $sPath .= '.php';
-        if (file_exists($this->aNsKeys[$sKey] . $sPath)) {
+        if (is_readable($this->aNsKeys[$sKey] . $sPath)) {
             require_once $this->aNsKeys[$sKey] . $sPath;
             return true;
         }
-        if ($bMakeAlias && $sKey == 'project' && file_exists($this->aNsKeys['core'] . $sPath)) {
+        if ($bMakeAlias && $sKey == 'project' && is_readable($this->aNsKeys['core'] . $sPath)) {
             require_once $this->aNsKeys['core'] . $sPath;
             class_alias('core\\' . implode('\\', $aParts), $sClass);
             return true;
@@ -305,7 +305,7 @@ class loader implements \ArrayAccess
     } // function _setBasicLoader
 
     /**
-     * Set Basic Loader
+     * Set Additional Loader(s)
      * @return \core\bootstrap\loader
      */
     public function _setAdditionalLoader()

@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.006 (11.02.2014)
  */
 class form extends \core\base\service\multi
 {
@@ -98,7 +98,13 @@ class form extends \core\base\service\multi
 
         $this->oBlock     = $oBlock;
         $this->aFormMeta  = $oBlock->getFormMeta();
+        if (empty($this->aFormMeta)) {
+            throw new fatalException($this, 'Form meta isn\'t set for block "' . get_class($oBlock) . '".');;
+        }
         $this->aFieldMeta = $this->aFormMeta->get('fields');
+        if (empty($this->aFieldMeta)) {
+            throw new fatalException($this, 'Form fields meta aren\'t set for block "' . get_class($oBlock) . '".');;
+        }
 
         foreach (array('input','select','select_multi') as $v) {
             foreach ($this->_getFormMeta(array('design', $v), array()) as $k => $tmp) {
@@ -198,11 +204,6 @@ class form extends \core\base\service\multi
                     }
                 }
                 break;
-            }
-        }
-        foreach ($this->aFieldMeta as $sFieldName => $aParameters) {
-            if(!empty($aParameters['data']) && !isset($this->aFieldData[$sFieldName])) {
-                $this->aFieldData[$sFieldName] = $aParameters['data'];
             }
         }
         return $bRet;
@@ -444,8 +445,21 @@ class form extends \core\base\service\multi
      */
     public function getFieldData($mFieldName)
     {
-        $mKey = is_array($mFieldName) ? $mFieldName[0] : $mFieldName;
-        return array_val($this->aFieldData, $mKey, $this->aFormMeta->get(array('fields', $mKey, 'data')));
+        $mKey = \is_array($mFieldName) ? $mFieldName[0] : $mFieldName;
+        $oMeta = $this->aFormMeta->get(array('fields', $mKey));
+        if (isset($oMeta->dataSource->method)) {
+            $aCallback = array(
+                isset($oMeta->dataSource->class) ? $oMeta->dataSource->class : $this->oBlock,
+                $oMeta->dataSource->method
+            );
+            $aResult = \call_user_func($aCallback, $mFieldName);
+        } else {
+            $aResult = null;
+        }
+        if (is_null($aResult)) {
+            $aResult = \array_val($this->aFieldData, $mKey, \adduceToArray($oMeta->data));
+        }
+        return $aResult;
     } // function getFieldData
 
     /**
@@ -599,9 +613,7 @@ class form extends \core\base\service\multi
         }
 
         if (@$aParameters['is_required'] && $isEmpty) {
-            $aErrMesage = $this->isMultiLanguage() ?
-                msg($this->_getFormMeta('required_msg'), $aParameters['label']) :
-                msgAlt($this->_getFormMeta('required_msg_alt'), $aParameters['label']);
+            $aErrMesage = $this->_getErrorMesage($this->_getFormMeta('required_msg'), $aParameters['label']);
             $this->bIsError = true;
         } elseif (isset($aParameters['validate_rules'])) {
             foreach ($aParameters['validate_rules'] as $aRules) {
@@ -610,7 +622,9 @@ class form extends \core\base\service\multi
                     $oValidator = $this->_getValidator($sRule);
                     if (!empty($oValidator)) {
                         if(!$oValidator->$sRule($mValue, array_val($aRules, 'rule_data'), $nIndex)) {
-                            $aErrMesage = isset($aRules['error_msg']) ? msg($aRules['error_msg'], $aParameters['label']) : '';
+                            $aErrMesage = isset($aRules['error_msg']) ?
+                                    $this->_getErrorMesage($aRules['error_msg'], $aParameters['label']) :
+                                    '';
                             $this->bIsError = true;
                             break;
                         }
@@ -620,6 +634,25 @@ class form extends \core\base\service\multi
         }
     } // function _validateValueRecursive
 
+    /**
+     * Get error mesage with lable name
+     * @param string $sMsg
+     * @param string $sLabel
+     * @return string
+     */
+    protected function _getErrorMesage($sMsg, $sLabel)
+    {
+        return $this->isMultiLanguage() ?
+                msg($sMsg, $sLabel) :
+                msgAlt($sMsg, $sLabel);
+    } // function _getErrorMesage
+
+    /**
+     * Get validator name
+     * @param string $sValidatorName
+     * @return string
+     * @throws fatalException
+     */
     protected function _getValidator($sValidatorName)
     {
         if (!isset($this->aValidators[$sValidatorName])) {
@@ -635,7 +668,7 @@ class form extends \core\base\service\multi
             }
         }
         return $this->aValidators[$sValidatorName];
-    } // function _validateValueRecursive
+    } // function _getValidator
 
     // ------------ Functions for main parts ------------ \\
     /**

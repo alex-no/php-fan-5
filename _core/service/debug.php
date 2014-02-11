@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.006 (11.02.2014)
  */
 class debug extends \core\base\service\single {
 
@@ -30,7 +30,7 @@ class debug extends \core\base\service\single {
         parent::__construct($bAllowIni);
 
         $this->oTab = \project\service\tab::instance();
-        $this->bEnabled = $this->bEnabled && preg_match($this->getConfig('DEBUG_IP', '/^127\.0\.0\.1$/'), @$_SERVER['SERVER_ADDR']);
+        $this->oConfig['ENABLED'] = $this->isEnabled() && preg_match($this->getConfig('DEBUG_IP', '/^127\.0\.0\.1$/'), @$_SERVER['SERVER_ADDR']);
     } // function __construct
 
     /**
@@ -38,7 +38,7 @@ class debug extends \core\base\service\single {
      */
     public function setExtFiles($oRoot, $nMode)
     {
-        if ($this->bEnabled) {
+        if ($this->isEnabled()) {
             if (method_exists($oRoot, 'setExternalCss')) {
                 $oRoot->setExternalCss($this->getConfig('CSS_CONTROL',  '/__debug_trace/css/debug_control.css'));
                 if ($nMode) {
@@ -74,7 +74,7 @@ class debug extends \core\base\service\single {
      */
     public function wrapHtmlCode($sCode, $oBlock)
     {
-        if (!$this->bEnabled) {
+        if (!$this->isEnabled()) {
             return $sCode;
         }
         $sIntColor = $oBlock->getBlockName() == 'main' ? $this->getConfig('BORDER_MAIN', '#6600FF') : $this->getConfig('BORDER_INT', '#7F7971');
