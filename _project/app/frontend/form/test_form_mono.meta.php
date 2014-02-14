@@ -37,8 +37,8 @@ return array(
 
                 'variant' => array(
                     'label'       => 'Variant',
-                    //'input_type'  => 'select',
-                    'input_type'  => 'radio_group',
+                    'input_type'  => 'select',
+                    //'input_type'  => 'radio_group',
                     'data' => array(
                         array('value' => 'value1', 'text' => 'text1'),
                         array('value' => 'value2', 'text' => 'text2'),
