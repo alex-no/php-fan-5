@@ -12,12 +12,12 @@
 
     <p>Try to go to next URI / Попробуйте перейти по следующим ссылкам:</p>
     <ol>
-        <li><a href="/test_format/format-html">/test_format/format-html</a></li>
-        <li><a href="/test_format/format-json">/test_format/format-json</a></li>
-        <li><a href="/test_format/format-xml">/test_format/format-xml</a></li>
-        <li><a href="/test_format/format-loader">/test_format/format-loader</a></li>
-        <li><a href="/test_format/format-custom1">/test_format/format-custom1</a></li>
-        <li><a href="/test_format/format-custom2">/test_format/format-custom2</a></li>
+        <li><a href="/test/format/format-html">/test/format/format-html</a></li>
+        <li><a href="/test/format/format-json">/test/format/format-json</a></li>
+        <li><a href="/test/format/format-xml">/test/format/format-xml</a></li>
+        <li><a href="/test/format/format-loader">/test/format/format-loader</a></li>
+        <li><a href="/test/format/format-custom1">/test/format/format-custom1</a></li>
+        <li><a href="/test/format/format-custom2">/test/format/format-custom2</a></li>
     </ol>
 
 

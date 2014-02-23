@@ -26,6 +26,7 @@ return array(
                     'input_type'  => 'text',
                     'is_required' => false,
                     'note'        => 'Date must be between 2012-12-10 and 2012-12-31',
+                    'maxlength'   => 10,
                     'validate_rules' => array(
                         array(
                             'rule_name' => 'checkDate',

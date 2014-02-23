@@ -16,7 +16,7 @@
  */
 return array(
     'own' => array(
-        'title'   => 'PHP-FAN.5: Test HTML-form',
+        'title' => 'PHP-FAN.5: Test HTML-form',
 
         'embeddedBlocks' => array(
             'test_form' => '{CAPP}/form/test_form_mono',
