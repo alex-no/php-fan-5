@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 // ToDo: redesign this class
 class date extends \core\base\service\multi
@@ -186,9 +186,9 @@ class date extends \core\base\service\multi
      * get Validate of date
      * @return boolean
      */
-    public function getIsValid($bFullValidate = false) {
+    public function isValid($bFullValidate = false) {
         return $bFullValidate ? $this->bIsValid && $this->_validate($this->aDate, $this->bIsTime) : $this->bIsValid;
-    } // function getIsValid
+    } // function isValid
 
     /**
      * Set base format of date
@@ -205,9 +205,9 @@ class date extends \core\base\service\multi
      * get Is the time in this date
      * @return boolean
      */
-    public function getIsTime() {
+    public function isTime() {
         return $this->bIsTime;
-    } // function getIsTime
+    } // function isTime
 
     /**
      * get date as array
@@ -215,7 +215,7 @@ class date extends \core\base\service\multi
      * @return array
      */
     public function getDateAsArray($bFullValidate = false) {
-        return $this->getIsValid($bFullValidate) ? $this->aDate : null;
+        return $this->isValid($bFullValidate) ? $this->aDate : null;
     } // function getDateAsArray
 
     /**
@@ -224,7 +224,7 @@ class date extends \core\base\service\multi
      * @return number
      */
     public function getTimeStamp($bFullValidate = false) {
-        return $this->getIsValid($bFullValidate) ? $this->nTimeStamp : null;
+        return $this->isValid($bFullValidate) ? $this->nTimeStamp : null;
     } // function getTimeStamp
 
     /**
@@ -234,12 +234,12 @@ class date extends \core\base\service\multi
      * @return number
      */
     public function getDifference($sDate2, $bFullValidate = false, $bNotAbs = false) {
-        if (!$this->getIsValid($bFullValidate)) {
+        if (!$this->isValid($bFullValidate)) {
             return null;
         }
         $oDate2 = \project\service\date::instance($sDate2, $this->sFormat);
         $nRet = $this->getTimeStamp() - $oDate2->getTimeStamp($bFullValidate);
-        return $oDate2->getIsValid($bFullValidate) ? ($bNotAbs ? $nRet : abs($nRet)) : null;
+        return $oDate2->isValid($bFullValidate) ? ($bNotAbs ? $nRet : abs($nRet)) : null;
     } // function getDifference
 
     /**
@@ -249,7 +249,7 @@ class date extends \core\base\service\multi
      * @return string
      */
     public function shiftDate($nShift, $bFullValidate = false) {
-        if (!$this->getIsValid($bFullValidate)) {
+        if (!$this->isValid($bFullValidate)) {
             return null;
         }
         return date($this->_getPattern($this->sFormat), $this->getTimeStamp() + $nShift);
@@ -268,7 +268,7 @@ class date extends \core\base\service\multi
             throw new fatalException($this, 'Unknown data format "' . $sFormat . '"');
         }
 
-        if (!$this->getIsValid($bFullValidate)) {
+        if (!$this->isValid($bFullValidate)) {
             return null;
         }
 
@@ -282,7 +282,7 @@ class date extends \core\base\service\multi
      * @return string
      */
     public function getCustom($sPattern, $bFullValidate = false) {
-        if (!$this->getIsValid($bFullValidate)) {
+        if (!$this->isValid($bFullValidate)) {
             return null;
         }
 

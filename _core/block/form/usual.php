@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.007 (23.02.2014)
  * @abstract
  */
 abstract class usual extends \core\block\base
@@ -81,13 +81,14 @@ abstract class usual extends \core\block\base
     } // function getFieldsMeta
 
     /**
-     * Set Dynamic Meta-data
-     * Create metadata dynamically.
-     * This procedure is performed just before the initialization block.
+     * Finish Construction of block
+     * @param \core\block\base $oContainer
+     * @param array $aContainerMeta
+     * @param boolean $bAllowSetEmbedded
      */
-    public function setDynamicMeta()
+    public function finishConstruct($oContainer = null, $aContainerMeta = array(), $bAllowSetEmbedded = true)
     {
-        parent::setDynamicMeta();
+        parent::finishConstruct($oContainer, $aContainerMeta, $bAllowSetEmbedded);
         if ($this->bIsForm && !$this->getRoleCondition()) {
 
             $this->_redefineFieldMeta();
@@ -103,7 +104,7 @@ abstract class usual extends \core\block\base
             }
  */
         }
-    } // function setDynamicMeta
+    } // function finishConstruct
 
     /**
      * Get cache permission: true if cache enabled

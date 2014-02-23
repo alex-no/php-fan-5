@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class select extends base
 {
@@ -38,24 +38,29 @@ class select extends base
     } // function checkSelect
 
     /**
-     * Check up a value from select and radio
-     *
+     * Checks occurrence of the variable in an array
      * @param mixed $mValue
      * @param array $aData
      * @return bool
      */
-    public function checkSelectArray($mValue, $aData)
+    protected function inArray($mValue, $aData)
     {
-        $sProp = $aData['prop_name'];
-        if (is_array($this->$sProp) && $this->$sProp) {
-            foreach ($this->$sProp as $e) {
-                if ($e['value'] == $mValue) {
-                    return true;
-                }
+        if (!empty($aData['value'])) {
+            return in_array($mValue, $aData['value']);
+        }
+        if (!empty($aData['link_meta'])) {
+            $aArr = $this->getMeta($aData['link_meta']); //ToDo: getMeta
+            return is_array($aArr) && in_array($mValue, $aArr);
+        }
+        if (!empty($aData['method'])) {
+            $aCallBack = empty($aData['class']) ? array($aData['class'], $aData['method']) : array($this->oBlock, $aData['method']);//ToDo: $this->oBlock
+            if (is_callable($aCallBack)) {
+                $aArr = call_user_func($aCallBack);
+                return is_array($aArr) && in_array($mValue, $aArr);
             }
         }
         return false;
-    } // function checkSelectArray
+    } // function inArray
 
     /**
      * Check up a value from select and radio
@@ -64,27 +69,7 @@ class select extends base
      * @param array $aData
      * @return bool
      */
-    public function checkSelectMeta($mValue, $aData)
-    {
-        $aProp = $this->getMeta($aData['prop_name']);
-        if (is_array($aProp) && $aProp) {
-            foreach ($aProp as $k => $e) {
-                if ($k == $mValue) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    } // function checkSelectMeta
-
-    /**
-     * Check up a value from select and radio
-     *
-     * @param mixed $mValue
-     * @param array $aData
-     * @return bool
-     */
-    public function checkSelectData($mValue, $aData)
+    public function checkByData($mValue, $aData)
     {
         $aProp = $this->getMeta(array('form', 'fields', $aData['prop_name'], 'data'));
         if (is_array($aProp) && $aProp) {

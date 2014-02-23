@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.007 (23.02.2014)
  * @abstract
  */
 abstract class service
@@ -110,6 +110,19 @@ abstract class service
     {
         return is_null($mKey) || is_null($this->oConfig) ? $this->oConfig : $this->oConfig->get($mKey, $mDefault);
     } // function getConfig
+
+    /**
+     * Set DB-operation ('rollback', 'commit', 'nothing' OR null) when the Exception is occurred
+     * @param string $sExceptionDbOper
+     * @return \core\base\service
+     */
+    public function setExceptionDbOper($sExceptionDbOper = null)
+    {
+        if (in_array($sExceptionDbOper, array('rollback', 'commit', 'nothing')) || is_null($sExceptionDbOper)) {
+            $this->sExceptionDbOper = $sExceptionDbOper;
+        }
+        return $this;
+    } // function setExceptionDbOper
 
     /**
      * Get DB-operation ('rollback', 'commit', 'nothing' OR null) when the Exception is occurred
@@ -266,12 +279,14 @@ abstract class service
      * @param sting $sExceptionDbOper
      * @param numeric $nCode
      * @param \Exception $oPrevious
-     * @throws \core\exception\block\local
+     * @throws \project\exception\service\fatal
      */
-    protected function _makeServiceException($sLogErrMsg, $sExceptionDbOper = 'rollback', $nCode = E_USER_NOTICE, $oPrevious = null)
+    protected function _makeServiceException($sLogErrMsg, $sExceptionDbOper = 'rollback', $nCode = E_USER_ERROR, $oPrevious = null)
     {
-        $this->sExceptionDbOper = $sExceptionDbOper;
-        throw new \core\exception\service\fatal($this, $sLogErrMsg, $nCode, $oPrevious);
+        if (is_null($this->sExceptionDbOper)) {
+            $this->sExceptionDbOper = $sExceptionDbOper;
+        }
+        throw new fatalException($this, $sLogErrMsg, $nCode, $oPrevious);
     } // function _makeServiceException
 
     /**
@@ -284,7 +299,7 @@ abstract class service
     protected function _subscribeForService($sServiceName, $sEventName, $mCallBack)
     {
         if (!is_callable($mCallBack)) {
-            throw new \project\exception\service\fatal($this, 'Incorrect callback-function for subscribing.');
+            throw new fatalException($this, 'Incorrect callback-function for subscribing.');
         }
         if (!isset(self::$aListeners[$sServiceName][$sEventName])) {
             self::$aListeners[$sServiceName][$sEventName] = array();
@@ -313,6 +328,7 @@ abstract class service
      * @param string $sMethod method name
      * @param array $aArgs arguments
      * @return mixed Value return by engine
+     * @throws \project\exception\service\fatal
      */
     public function __call($sMethod, $aArgs)
     {

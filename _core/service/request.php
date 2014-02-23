@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class request extends \core\base\service\single
 {
@@ -54,13 +54,22 @@ class request extends \core\base\service\single
     protected $aMaker = array(
         'A' => '_makeAddRequest',
         'B' => '_makeBothRequest',
-        'C' => '_makeCookies',
         'G' => '_makeGet',
         'M' => '_makeMainRequest',
     );
+    /**
+     * Data maker indexes (for internal/sham trnsfer)
+     * @var array
+     */
+    protected $aMakerIndex = array(
+        'A' => -1,
+        'B' => -1,
+        'G' => -1,
+        'M' => -1,
+    );
 
     /**
-     * @var string Query string
+     * @var \core\service\matcher
      */
     private $oMatcher = '';
 
@@ -83,17 +92,20 @@ class request extends \core\base\service\single
         // Ses all basic data
         $bIsMQ = get_magic_quotes_gpc();
         foreach ($this->aCorrespondence as $k => $v) {
-            if (!isset($this->aMaker[$k])) {
-                if (empty($GLOBALS[$v])) {
-                    $this->aData[$k] = array();
-                } elseif ($bIsMQ && ($k != 'F')) {
-                    $this->aData[$k] = $this->_stripSlashesDeep($GLOBALS[$v]);
-                } else {
-                    $this->aData[$k] = $GLOBALS[$v];
-                }
+            if (empty($GLOBALS[$v])) {
+                $this->aData[$k] = array();
+            } elseif ($bIsMQ && in_array($k, array('P', 'R'))) {
+                $this->aData[$k] = $this->_stripSlashesDeep($GLOBALS[$v]);
+            } else {
+                $this->aData[$k] = $GLOBALS[$v];
             }
         }
-        $this->aData['H'] = $this->_makeHeaders();
+        if (\bootstrap::isCli()) {
+            $this->aData['O'] = $this->_makeOptions();
+        } else {
+            $this->aData['H'] = $this->_makeHeaders();
+            $this->aData['C'] = $this->_makeCookies();
+        }
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -141,7 +153,7 @@ class request extends \core\base\service\single
     /**
      * Get All Request parameter
      * @param string $sOrder Order keys see get
-     * @param mixed $mDefaultu The Default value
+     * @param mixed $mDefault The Default value
      * @return mixed Request parameter's value
      */
     public function getAll($sOrder = null, $mDefault = array())
@@ -164,7 +176,7 @@ class request extends \core\base\service\single
      */
     public function set($sKey, $mValue, $sType = 'P')
     {
-        if (strlen($sType) != 1 || !array_key_exists($sKey, $this->aData)) {
+        if (strlen($sType) != 1 || !array_key_exists($sType, $this->aData)) {
             throw new fatalException($this, 'Incorrect type for set "' . $sType . '". Possible one of symbols "' . implode('', array_keys($this->aData)) . '".');
         }
         if (!empty($this->oConfig['ALLOW_SET'][$sType])) {
@@ -176,9 +188,14 @@ class request extends \core\base\service\single
      * Get query string
      * @return string Query string
      */
-    public function getQueryString()
+    public function getQueryString($bByGetData = true, $bCurrent =  true, $sSprtr = null)
     {
-        return ltrim($this->_getParsedData()->query, '?');
+        if ($bByGetData) {
+            $aGet = $bCurrent ? $this->getAll('G') : $_GET;
+            return http_build_query($aGet, '', ($sSprtr ? : '&'));
+        }
+        $oItem = $bCurrent ? $this->oMatcher->getCurrentItem() : $this->oMatcher->getItem(0);
+        return ltrim($oItem->parsed->query, '?');
     } // function getQueryString
 
     /**
@@ -225,12 +242,14 @@ class request extends \core\base\service\single
     {
         $aData  = array();
         $sOrder = empty($sOrder) ? $this->sOrder : strtoupper($sOrder);
+        $nIndex = $this->oMatcher->getCurrentIndex();
 
         for ($i = 0; $i < strlen($sOrder); $i++) {
             $k = $sOrder{$i};
             if (array_key_exists($k, $this->aData)) {
-                if (isset($this->aMaker[$k])) {
+                if (isset($this->aMaker[$k]) && $this->aMakerIndex[$k] != $nIndex) {
                     $this->aData[$k] = call_user_func(array($this, $this->aMaker[$k]));
+                    $this->aMakerIndex[$k] = $nIndex;
                 }
                 $aData[$k] = $this->aData[$k];
             } else {
@@ -286,8 +305,7 @@ class request extends \core\base\service\single
      */
     protected function _makeAddRequest()
     {
-        $aAddRequest = $this->_getParsedData()->add_request;
-        $aAddRequest = empty($aAddRequest) ? array() : $aAddRequest;
+        $aAddRequest = $this->_getParsedData()->add_request ? : array();
         foreach ($aAddRequest as $v) {
             $aTmp = explode($this->oConfig->get('ADD_REQUEST_DELIMITER', '-'), $v, 2);
             if (count($aTmp) == 2 && !isset($aAddRequest[$aTmp[0]])) {
@@ -313,7 +331,15 @@ class request extends \core\base\service\single
      */
     protected function _makeBothRequest()
     {
-        return array_merge($this->_makeMainRequest(), $this->_makeAddRequest());
+        $aResult = $this->_makeMainRequest();
+        $aAdd    = $this->_makeAddRequest();
+        for ($i = 0; $i < count($aAdd); $i++) {
+            if (!isset($aAdd[$i])) {
+                break;
+            }
+            $aResult[] = $aAdd[$i];
+        }
+        return $aResult;
     } // function _makeBothRequest
 
     /**
@@ -323,7 +349,7 @@ class request extends \core\base\service\single
     protected function _makeGet()
     {
         $aData = array();
-        $sQueryStr = $this->getQueryString();
+        $sQueryStr = $this->getQueryString(false);
         if (!empty($sQueryStr)) {
             parse_str($sQueryStr, $aData);
         }

@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 abstract class form extends base
 {
@@ -67,7 +67,7 @@ abstract class form extends base
 
         $this->oForm = $oBlock->getForm();
         $this->aFormVar = $oBlock->getFormMeta();
-        foreach (array('input', 'checking', 'select', 'select_multi', 'select_multi_separated') as $sType) {
+        foreach (array('input', 'checking', 'select', 'select_separated', 'select_multi', 'select_multi_separated') as $sType) {
             foreach ($this->_getFormMeta(array('design', $sType), array()) as $k => $v) {
                 $this->aFieldType[$k] = $sType;
             }
@@ -115,7 +115,14 @@ abstract class form extends base
      */
     public function getKeyField()
     {
-        return '<input type="hidden" name="form_key_field" value="' . $this->aFormVar['form_id'] . '" />' . $this->getSidField();
+        $sKeyValue = $this->aFormVar['form_id'];
+        $nCsrfLen  = (integer)$this->aFormVar['csrf_protection'];
+        if ($nCsrfLen >= 4) {
+            $sCsrfCode = substr(md5(microtime() . $sKeyValue), 0, min(32, $nCsrfLen));
+            service_session::instance($sKeyValue, 'form_key')->set('csrf', $sCsrfCode);
+            $sKeyValue .= '_' . $sCsrfCode;
+        }
+        return '<input type="hidden" name="form_key_field" value="' . $sKeyValue . '" />' . $this->getSidField();
     } // function getKeyField
 
     /**
@@ -291,6 +298,7 @@ abstract class form extends base
         case 'select_multi':
             $sMetod = 'getSelect';
             break;
+        case 'select_separated':
         case 'select_multi_separated':
             $sMetod = 'getSeparatedSelect';
             break;
@@ -307,17 +315,25 @@ abstract class form extends base
     {
         $sPattern = $this->_getFormMeta(
                 array('design', 'input', empty($aData['type']) ? 'text' : $aData['type']),
-                '<input type="text" name="{NAME}" value="{VALUE}"{ATTRIBUTES}{TABINDEX} />'
+                '<input type="text" name="{NAME}" value="{VALUE}"{MAXLENGTH}{ATTRIBUTES}{TABINDEX} />'
         );
+
+        $sMaxLength = $this->_getFormMeta(array('fields', $aData['name'], 'maxlength'), '');
+        if (!empty($sMaxLength)) {
+            $sMaxLength = ' maxlength="' . (int)$sMaxLength . '"';
+            unset($aData['attributes']['maxlength']);
+        }
         $mVal = $this->oForm->getFieldValue($aData['name']);
         return str_replace(array(
             '{NAME}',
             '{ID}',
             '{VALUE}',
+            '{MAXLENGTH}',
         ), array(
             $aData['name'],
             empty($aData['id']) ? '' : ' id="' . $this->_getIdByName($aData['name']) . '"',
             is_scalar($mVal) ? $mVal : '',
+            $sMaxLength,
         ), $this->_setAttributes($sPattern, $aData));
     } // function getInput
 
@@ -414,7 +430,7 @@ abstract class form extends base
         $mCdt['text']  = array_val($mCdt, 'text');
 
         $mVal = $this->oForm->getFieldValue($aData['name'], array());
-        if (!is_array($mVal)) {
+        if ($sFieldType == 'select_multi_separated' && !is_array($mVal)) {
             $mVal = array();
         }
 
@@ -427,9 +443,11 @@ abstract class form extends base
         ), array(
             $aData['name'],
             $this->_getIdByName($aData['name']) . '_' . ($nInd),
-            $mCdt['value'],
-            $mCdt['text'],
-            in_array($mCdt['value'], $mVal) ? ' checked="checked"' : '',
+            array_val($mCdt, 'value'),
+            array_val($mCdt, 'text'),
+            isset($mCdt['value']) && ($sFieldType == 'select_separated' ? $mCdt['value'] == $mVal : in_array($mCdt['value'], $mVal)) ?
+                ' checked="checked"' :
+                '',
         ), $this->_setAttributes($sPattern, $aData));
     } // function getSeparatedSelect
 

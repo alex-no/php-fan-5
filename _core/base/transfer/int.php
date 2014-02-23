@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class int extends \core\base\transfer
 {
@@ -20,12 +20,12 @@ class int extends \core\base\transfer
      * Transfer's constructor
      * @param string $sNewUrn New Transfer's URL
      * @param string $sNewQueryString New Query String
-     * @param string $sDbOperation Database Operation (commit, rollback)
+     * @param string $sDbOper Database Operation (commit, rollback)
      */
-    public function __construct($sNewUrn, $sNewQueryString = null, $sDbOperation = null)
+    public function __construct($sNewUrn, $sNewQueryString = null, $sDbOper = null)
     {
         $this->sTransferType = 'int';
-        parent::__construct($sNewUrn, $sNewQueryString, $sDbOperation);
+        parent::__construct($sNewUrn, $sNewQueryString, $sDbOper);
     }
 } // class \core\base\transfer\int
 ?>

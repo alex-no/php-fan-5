@@ -62,7 +62,7 @@ class cli extends \core\base\service\single
 
     /**
      * Set Engine for plain output
-     * @param string $sControllerClass
+     * @param string $sController
      * @return \core\service\plain
      * @throws fatalException
      */

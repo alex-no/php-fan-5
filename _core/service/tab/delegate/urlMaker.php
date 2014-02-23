@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.007 (23.02.2014)
  */
 class urlMaker extends \core\service\tab\delegate
 {
@@ -38,42 +38,87 @@ class urlMaker extends \core\service\tab\delegate
 
     /**
      * Get Current Parsed URI
+     *
+     * $oTab->getCurrentURI(array(
+     *     'correct_language' => $val1,
+     *     'add_extension'    => $val2,
+     *     'add_query_string' => $val3,
+     *     'add_session_id'   => $val4,
+     *     'query_separator'  => $val5
+     * ));
+     * - such variant of call allows you to pass the arguments in any order
+     *
      * @param boolean  $bCorLanguage
      * @param boolean  $bAddExt
      * @param boolean  $bAddQueryStr
-     * @param boolean  $bAddFirstSlash
+     * @param boolean  $bAddSid
+     * @param string  $sSprtr
      * @return string
      */
-    public function getCurrentURI($bCorLanguage = true, $bAddExt = true, $bAddQueryStr = true, $bAddFirstSlash = true)
+    public function getCurrentURI($bCorLanguage = true, $bAddExt = true, $bAddQueryStr = true, $bAddSid = null, $sSprtr = null)
     {
-        $aParsedData = $this->oMatcher->getCurrentItem()->parsed;
+        if (is_array($bCorLanguage)) {
+            return $this->getCurrentURI(
+                    array_val($bCorLanguage, 'correct_language', true),
+                    array_val($bCorLanguage, 'add_extension',    true),
+                    array_val($bCorLanguage, 'add_query_string', true),
+                    array_val($bCorLanguage, 'add_session_id',   null),
+                    array_val($bCorLanguage, 'query_separator',  null)
+            );
+        }
+
+        $oReq    = \project\service\request::instance();
+        /* @var $oReq \core\service\request */
+        $oParsed = $this->oMatcher->getCurrentItem()->parsed;
+        /* @var $oParsed \core\service\matcher\item\parsed */
 
         // Set Request path
-        $aRequest = $aParsedData->both_request;
-        // Add app prefix
-        if ($aParsedData->app_prefix) {
-            array_unshift($aRequest, trim($aParsedData->app_prefix, '/'));
-        }
-        // Add language
-        if ($bCorLanguage && 0) {
-            array_unshift($aRequest, $aParsedData->language);
+        $aRequest = $oReq->getAll('B');
+        foreach ($aRequest as &$v) {
+            $v = urlencode($v);
         }
 
-        $sCurRequest = implode('/', $aRequest);
+        // Add app prefix
+        if ($oParsed->app_prefix) {
+            array_unshift($aRequest, trim($oParsed->app_prefix, '/'));
+        }
+        // Add language
+        if ($bCorLanguage) {
+            $sLng = \core\service\locale::instance()->getLanguage();
+            if (!empty($sLng)) {
+                array_unshift($aRequest, $sLng);
+            }
+        }
+
+        $sCurRequest = '/' . implode('/', $aRequest);
 
         // Add extension
         if ($bAddExt) {
             $sCurRequest .= '.' . $this->getDefaultExtension();
         }
 
-        // Add Query String
-        if ($bAddQueryStr) {
-            $sQueryStr    = $aParsedData->query;
-	    // ToDo: not always replace & to &amp; there
-            $sCurRequest .= $sQueryStr ? str_replace('&', $this->getConfig('GET_SEPARATOR', '&amp;'), $sQueryStr) : '';
+        if (is_null($sSprtr)) {
+            $sSprtr = $this->getConfig('GET_SEPARATOR', '&amp;');
         }
 
-        return ($bAddFirstSlash ? '/' : '') . $sCurRequest;
+        // Add Query String
+        if ($bAddQueryStr) {
+            $sQueryStr = $oReq->getQueryString(true, true, $sSprtr);
+            $sCurRequest .= empty($sQueryStr) ? '' : '?' . $sQueryStr;
+        }
+
+        // Add Session ID
+        if (is_null($bAddSid)) {
+            $bAddSid = $this->getConfig('ALLOW_GET_SID', true);
+        }
+        if ($bAddSid) {
+            $oSes = \project\service\session::instance();
+            if (!$oSes->isByCookies()) {
+                $sCurRequest = $this->addQuery($sCurRequest, $oSes->getSessionName(), $oSes->getSessionId(), $sSprtr);
+            }
+        }
+
+        return $sCurRequest;
     } // function getCurrentURI
 
     /**
@@ -88,8 +133,7 @@ class urlMaker extends \core\service\tab\delegate
     public function getURI($sUrn = '', $sType = 'link', $bUseSid = null, $bProtocol = null)
     {
         if (is_null($bUseSid)) {
-            //ToDo: Redesign it
-            $bUseSid = ($sType == 'link');
+            $bUseSid = ($sType == 'link') && $this->getConfig('ALLOW_GET_SID', true);
         }
 
         if (!$sUrn) {
@@ -108,11 +152,16 @@ class urlMaker extends \core\service\tab\delegate
                 $sUrn = $this->addQuery($sUrn, $oSes->getSessionName(), $oSes->getSessionId());
             }
         }
+
+        $oLocale = \project\service\locale::instance();
+        if ($sType == 'link' && $oLocale->isUrlParsing()) {
+            $oLocale->modifyUrl($sUrn);
+        }
+
         if ($this->isUseHttps() && !is_null($bProtocol) && $bProtocol != (@$_SERVER['HTTPS'] == 'on')) {
             $sUrn = ($bProtocol ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $sUrn;
         }
-        $oLocale = \project\service\locale::instance();
-        return $sType == 'link' && $oLocale->isUrlParsing() ? $oLocale->modifyUrl($sUrn) : $sUrn;
+        return $sUrn;
     } // function getURI
 
     /**
@@ -122,13 +171,16 @@ class urlMaker extends \core\service\tab\delegate
      * @param string $sQuery
      * @return string
      */
-    public function addQuery($sUrn, $sKey, $sVal)
+    public function addQuery($sUrn, $sKey, $sVal, $sSprtr = null)
     {
         if ($sKey && $sVal) {
-            $sSep = $this->getConfig('GET_SEPARATOR', '&amp;');
+            if (is_null($sSprtr)) {
+                $sSprtr = $this->getConfig('GET_SEPARATOR', '&amp;');
+            }
+
             $sVal = htmlspecialchars($sVal);
-            if (!preg_match('/(?:\?|' . $this->_addSlashes($sSep) . ')' . $this->_addSlashes($sKey) . '\=' . $this->_addSlashes($sVal) . '/', $sUrn)) {
-                $sUrn .= (strstr($sUrn, '?') ? $sSep : '?') . $sKey . '=' . $sVal;
+            if (!preg_match('/(?:\?|' . $this->_addSlashes($sSprtr) . ')' . $this->_addSlashes($sKey) . '\=' . $this->_addSlashes($sVal) . '/', $sUrn)) {
+                $sUrn .= (strstr($sUrn, '?') ? $sSprtr : '?') . urlencode($sKey) . '=' . urlencode($sVal);
             }
         }
         return $sUrn;
@@ -143,6 +195,20 @@ class urlMaker extends \core\service\tab\delegate
     {
         return trim($this->oFacade->getConfig('DEFAULT_EXT', 'html'), ' .');
     } // function getDefaultExtension
+
+    /**
+     * Reduce extantion from URL-request
+     * @param string $sUrl
+     * @return string
+     */
+    public function reduceExt($sUrl, $nMinLen = 2, $nMaxLen = 4)
+    {
+        $aMatches = null;
+        if (preg_match('/^(.+?)(\.\w{' . $nMinLen. ',' . $nMaxLen . '})?$/', $sUrl, $aMatches)) {
+            return $aMatches[1];
+        }
+        return $sUrl;
+    } // function reduceExt
 
     // ======== Private/Protected methods ======== \\
 

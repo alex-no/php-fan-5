@@ -15,7 +15,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 return array(
     /**
@@ -36,6 +36,8 @@ return array(
             'request_type'      => 'P',
 
             'redirect_required' => true,
+
+            'csrf_protection' => 8,
 
             'js_url' => array(
                 'js-wrapper' => '/js/js-wrapper.js',
@@ -70,21 +72,21 @@ return array(
                     'simple'                => '{LABEL}',
                 ),
                 'input' => array(
-                    'text'              => '<input type="text" name="{NAME}" value="{VALUE}"{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
-                    'text_empty'        => '<input type="text" name="{NAME}" value=""{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
-                    'text_short'        => '<input type="text" name="{NAME}" value="{VALUE}"{ATTRIBUTES}{TABINDEX}{ID} class="inpText shortText" />',
-                    'password'          => '<input type="password" name="{NAME}" value=""{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
-                    'password_noAF'     => '<input type="text" name="disabled_password" disabled="disabled" style="display: none" /><input type="password" name="{NAME}" value=""{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
+                    'text'              => '<input type="text" name="{NAME}" value="{VALUE}"{MAXLENGTH}{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
+                    'text_empty'        => '<input type="text" name="{NAME}" value=""{MAXLENGTH}{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
+                    'text_short'        => '<input type="text" name="{NAME}" value="{VALUE}"{MAXLENGTH}{ATTRIBUTES}{TABINDEX}{ID} class="inpText shortText" />',
+                    'password'          => '<input type="password" name="{NAME}" value=""{MAXLENGTH}{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
+                    'password_noAF'     => '<input type="text" name="disabled_password" disabled="disabled" style="display: none" /><input type="password" name="{NAME}" value=""{MAXLENGTH}{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
                     'file'              => '<input type="file" name="{NAME}" value="{VALUE}"{ATTRIBUTES}{TABINDEX}{ID} />',
-                    'textarea'          => '<textarea name="{NAME}" rows="5" cols="60"{ATTRIBUTES}{TABINDEX}{ID}>{VALUE}</textarea>',
+                    'textarea'          => '<textarea name="{NAME}" rows="5" cols="60"{MAXLENGTH}{ATTRIBUTES}{TABINDEX}{ID}>{VALUE}</textarea>',
                     'hidden'            => '<input type="hidden" name="{NAME}" value="{VALUE}"{ID} />',
 
-                    'text_multiple'     => '<input type="text" name="{NAME}[]" value="{VALUE}"{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
+                    'text_multiple'     => '<input type="text" name="{NAME}[]" value="{VALUE}"{MAXLENGTH}{ATTRIBUTES}{TABINDEX}{ID} class="inpText" />',
                     'file_multiple'     => '<input type="file" name="{NAME}[]" value="{VALUE}"{ATTRIBUTES}{TABINDEX}{ID} />',
                 ),
                 'checking' => array(
-                    'checkbox'          => '<input type="checkbox" name="{NAME}" value="1"{CHECKED} class="inpChkBx"{ATTRIBUTES}{TABINDEX}{ID} />',
-                    'radio'             => '<input type="radio" name="{NAME}" value="1"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" />',
+                    'checkbox'          => '<input type="checkbox" name="{NAME}" value="1"{CHECKED}{ATTRIBUTES}{TABINDEX}{ID} class="inpChkBx" />',
+                    'radio'             => '<input type="radio" name="{NAME}" value="1"{CHECKED}{ATTRIBUTES}{TABINDEX}{ID} class="inpRadio" />',
                 ),
                 'select' => array(
                     'select'            => '<select name="{NAME}"{ATTRIBUTES}{TABINDEX}{ID}>[<option value="{VALUE}"{SELECTED}>{TEXT}</option>]</select>',
@@ -92,14 +94,19 @@ return array(
                     'radio_group'       => '<span class="formData">[<input type="radio" name="{NAME}" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" /><label for="{ID}">- {TEXT}</label>]</span>',
                     'radio_group_ml'    => '<div class="formData multiLine">[<div><input type="radio" name="{NAME}" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" /><label for="{ID}">- {TEXT}</label></div>]</div>',
                 ),
+                'select_separated' => array(
+                    'radio_alone'   => '<input type="radio" name="{NAME}" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" />',
+                    'radio_w_label' => '<input type="radio" name="{NAME}" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpRadio" /><label for="{ID}">- {TEXT}</label>',
+                ),
                 'select_multi' => array(
                     'select_multiple'   => '<select name="{NAME}[]" multiple="multiple"{ATTRIBUTES}{TABINDEX}{ID}>[<option value="{VALUE}"{SELECTED}>{TEXT}</option>]</select>',
                     'checkbox_group'    => '<div class="formData">[<input type="checkbox" name="{NAME}[]" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpChkBx" /><label for="{ID}">- {TEXT}</label>]</div>',
                     'checkbox_group_ml' => '<div class="formData multiLine">[<div><input type="checkbox" name="{NAME}[]" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpChkBx" /><label for="{ID}">- {TEXT}</label></div>]</div>',
                 ),
                 'select_multi_separated' => array(
-                    'checkbox_alone'   => '<input type="checkbox" name="{NAME}[]" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpChkBx" />',
-                    'checkbox_w_label' => '<input type="checkbox" name="{NAME}[]" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpChkBx" /><label for="{ID}">- {TEXT}</label>',
+                    'checkbox_alone'       => '<input type="checkbox" name="{NAME}[]" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpChkBx" />',
+                    'checkbox_w_label'     => '<input type="checkbox" name="{NAME}[]" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpChkBx" /><label for="{ID}">- {TEXT}</label>',
+                    'checkbox_w_label_one' => '<input type="checkbox" name="{NAME}" value="1"{CHECKED}{ATTRIBUTES}{TABINDEX} class="inpChkBx" id="{ID}" /><label for="{ID}">- {TEXT}</label>',
                 ),
                 'error' => array(
                     'field' => '<div class="errorField">{TEXT}</div>',

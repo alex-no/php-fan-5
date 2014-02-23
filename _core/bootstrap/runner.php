@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 
 class runner
@@ -122,17 +122,19 @@ class runner
         if (trim($sMessage)) {
             if (preg_match('/\w+\s+error.+$/', $sMessage, $aMatches)) {
                 $sErrMessage = trim(strip_tags($aMatches[0]));
-                $sErrNote = htmlspecialchars($sMessage);
+                $sErrNote    = htmlspecialchars($sMessage);
             } elseif (trim(strip_tags($sMessage)) == '') {
                 $sErrMessage = htmlspecialchars($sMessage);
-                $sErrNote = '';
+                $sErrNote    = '';
             } else {
                 $sErrMessage = trim(strip_tags($sMessage));
-                $sErrNote = htmlspecialchars($sMessage);
+                $sErrNote    = htmlspecialchars($sMessage);
             }
             if ($sErrMessage == $sErrNote) {
-                $sErrNote = null;
+                $sErrNote = '';
             }
+
+            $sErrNote .= \project\service\request::instance()->getInfoString();
             \project\service\error::instance()->logErrorMessage($sErrMessage, 'Intercepted fatal error', $sErrNote, false, true);
 
             $sRet = $this->showError(null, 'error_500', false);

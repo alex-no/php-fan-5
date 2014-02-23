@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  *
  * @abstract
  *
@@ -789,7 +789,7 @@ abstract class base
                 if(!is_null($v)) {
                     $aContainerMeta = array(
                         'common' => $aSrcMeta['common'],
-                        'own'    => isset($aSrcMeta[$k]) ? $aSrcMeta[$k] : array(),
+                        'own'    => isset($aSrcMeta[$k]) && $this->blockName != 'main' ? $aSrcMeta[$k] : array(),
                     );
                     $sClass = $this->_parseClassName($v);
                     if ($k == 'main') {

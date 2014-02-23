@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 
 function get_class_name($oObject)
@@ -393,33 +393,33 @@ function role($sRoleCondition)
  * Outer transfer
  * @param string $sNewUrl New Transfer's URL
  * @param string $sNewQueryString New Query String
- * @param string $sDbOperation Database Operation (commit, rollback)
+ * @param string $sDbOper Database Operation (commit, rollback)
  */
-function transfer_out($sNewUrl, $sNewQueryString = null, $sDbOperation = null)
+function transfer_out($sNewUrl, $sNewQueryString = null, $sDbOper = null)
 {
-    throw new \project\base\transfer\out($sNewUrl, $sNewQueryString, $sDbOperation);
+    throw new \project\base\transfer\out($sNewUrl, $sNewQueryString, $sDbOper);
 } // function transfer_out
 
 /**
  * Internal transfer
  * @param string $sNewUrl New Transfer's URL
  * @param string $sNewQueryString New Query String
- * @param string $sDbOperation Database Operation (commit, rollback)
+ * @param string $sDbOper Database Operation (commit, rollback)
  */
-function transfer_int($sNewUrl, $sNewQueryString = null, $sDbOperation = null)
+function transfer_int($sNewUrl, $sNewQueryString = null, $sDbOper = null)
 {
-    throw new \project\base\transfer\int($sNewUrl, $sNewQueryString, $sDbOperation);
+    throw new \project\base\transfer\int($sNewUrl, $sNewQueryString, $sDbOper);
 } // function transfer_int
 
 /**
  * Sham transfer (do not change current URL)
  * @param string $sNewUrl New Transfer's URL
  * @param string $sNewQueryString New Query String
- * @param string $sDbOperation Database Operation (commit, rollback)
+ * @param string $sDbOper Database Operation (commit, rollback)
  */
-function transfer_sham($sNewUrl, $sNewQueryString = null, $sDbOperation = null)
+function transfer_sham($sNewUrl, $sNewQueryString = null, $sDbOper = null)
 {
-    throw new \project\base\transfer\sham($sNewUrl, $sNewQueryString, $sDbOperation);
+    throw new \project\base\transfer\sham($sNewUrl, $sNewQueryString, $sDbOper);
 } // function transfer_sham
 
 /**
@@ -452,8 +452,7 @@ function dateM2L($sDate, $sFormat = 'euro', $bFullValidate = false)
  */
 function msg()
 {
-    static $sLng = null;
-    static $aMsg = array();
+    static $sLng = null, $aMsg = array();
     $aArg = func_get_args();
 
     if (empty($aArg[0])) {

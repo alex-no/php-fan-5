@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 class local extends \core\exception\base
 {
@@ -49,12 +49,12 @@ class local extends \core\exception\base
      * @param string $sDbOper
      * @return null|string
      */
-    protected function _getDbOperation($sDbOper = null)
+    protected function _defineDbOper($sDbOper = null)
     {
         if (empty($sDbOper) && method_exists($this->oBlock, 'getExceptionDbOper')) {
             $sDbOper = $this->oBlock->getExceptionDbOper();
         }
-        return parent::_getDbOperation($sDbOper);
-    } // function _getDbOperation
+        return parent::_defineDbOper($sDbOper);
+    } // function _defineDbOper
 } // class \core\exception\block\local
 ?>

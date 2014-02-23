@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.005 (05.08.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class phpmailer extends \PHPMailer
 {
@@ -21,7 +21,9 @@ class phpmailer extends \PHPMailer
      * Constructor
      * @param array $aConfig Configuration data
      */
-    public function __construct() {
+    public function __construct()
+    {
+        parent::__construct();
         $sDir = \bootstrap::parsePath('{CORE_DIR}/../libraries/PHPMailer');
 
         $this->PluginDir = $sDir . '/';
@@ -63,8 +65,14 @@ class phpmailer extends \PHPMailer
                 $this->SMTPAuth = true;
                 $this->Username = $sUser;
                 $this->Password = $oConfig->SMTP_PASSWORD;
-            }
+            } // check SMTP_USER
+
+            if ($oConfig->AUTH_TYPE) {
+                $this->AuthType = $oConfig->AUTH_TYPE;
+            } // check SMTP_USER
         }
+
+        //$this->SMTPDebug = true;
         return $this;
     } // function setFacade
 
@@ -73,7 +81,8 @@ class phpmailer extends \PHPMailer
      * @param string $sEmailFrom FROM address
      * @param string $sNameFrom FROM name
      */
-    public function setFrom($sEmailFrom, $sNameFrom = '') {
+    public function setFrom($sEmailFrom, $sNameFrom = '')
+    {
         $this->From = $sEmailFrom;
         if ($sNameFrom) {
             $this->FromName = $sNameFrom;
@@ -97,8 +106,7 @@ class phpmailer extends \PHPMailer
         $this->IsHTML($bIsHtml);
         $bRet = parent::Send();
         if (!empty($this->ErrorInfo)) {
-            trigger_error('<b>EMAIL error:</b> ' . $this->ErrorInfo . '<br/>' . $sNameTo . ' &lt;' . $sEmailTo . '&gt;', E_USER_NOTICE);
-            //d(array('Subject' => $this->Subject, 'Body' => $this->Body), 'Email content');
+            trigger_error('<b>EMAIL error:</b> ' . $this->ErrorInfo . '<br/>' . $sNameTo . ' &lt;' . $sEmailTo . '&gt;', E_USER_WARNING);
         }
         $this->ClearAddresses();
         $this->ClearAttachments();

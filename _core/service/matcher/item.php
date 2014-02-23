@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  *
  * @property-read \core\service\matcher\item\source  $source
  * @property-read \core\service\matcher\item\uri     $uri
@@ -146,7 +146,7 @@ class item implements \ArrayAccess
      *  - Cleaned request path (without app and locale)
      *  - query string
      */
-    public function preParseRequest($bShiftCurrent)
+    public function preParseRequest()
     {
         $aUri = $this['uri'];
         $aSubject = array(
@@ -162,7 +162,8 @@ class item implements \ArrayAccess
         $aLanguages      = $oLocale->getAvailableLanguages();
         $sRegexpLanguage = implode('|', array_keys($aLanguages));
 
-        $sPrefix = '';
+        $sPrefix  = '';
+        $aMatches = null;
         foreach ($this->oFacade->getConfig('app', array()) as $k => $v) {
             $sRegexp = str_replace('{LANGUAGE}', $sRegexpLanguage, $v['regexp']);
             $sWay    = isset($v['way']) ? $v['way'] : 'path';

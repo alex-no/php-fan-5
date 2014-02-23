@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class uri extends base
 {
 
     /**
-     * Check up if a value contains e-mail address
+     * Check up a value is e-mail address
      *
      * @param mixed $mValue
      * @param array $aData
@@ -26,7 +26,7 @@ class uri extends base
      */
     public function isEmail($mValue, $aData)
     {
-        return preg_match('/^[a-z_0-9!#*=.-]+@([a-z0-9-]+\.)+[a-z]{2,4}$/i', $mValue) > 0;
+        return filter_var($mValue, FILTER_VALIDATE_EMAIL) !== false;
     } // function isEmail
 
     /**
@@ -35,10 +35,17 @@ class uri extends base
      * @param array $aData
      * @return bool
      */
-    public function checkUri($mValue, $aData)
+    public function isUri($mValue, $aData)
     {
-        return preg_match('/^(?:(?:https?|ftp)\:\/\/)?[^\/]+\/.+/', $mValue) > 0;
-    } // function checkUri
+        if ($aData['is_path']) {
+            $mResult = filter_var($mValue, FILTER_FLAG_PATH_REQUIRED);
+        } elseif ($aData['is_query']) {
+            $mResult = filter_var($mValue, FILTER_FLAG_QUERY_REQUIRED);
+        } else {
+            $mResult = filter_var($mValue, FILTER_VALIDATE_URL);
+        }
+        return $mResult !== false;
+    } // function isUri
 
 } // class \core\service\form\validator\uri
 ?>
