@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 class form extends \core\base\service\multi
 {
@@ -168,7 +168,15 @@ class form extends \core\base\service\multi
                 // Validate data
                 if ($this->oBlock->checkBeforeValidation()) {
                     foreach ($this->aFieldMeta as $sFieldName => $aParameters) {
-                        $this->_validateValueRecursive($this->aFieldValue[$sFieldName], $aParameters, $this->aErrorMsg[$sFieldName]);
+                        if ($this->_checkByData($sFieldName, isset($aParameters['label']) ? $aParameters['label'] : $sFieldName)) {
+                            if (!array_key_exists($sFieldName, $this->aFieldValue)) {
+                                $this->aFieldValue[$sFieldName] = null;
+                            }
+                            if (!array_key_exists($sFieldName, $this->aErrorMsg)) {
+                                $this->aErrorMsg[$sFieldName] = null;
+                            }
+                            $this->_validateValueRecursive($this->aFieldValue[$sFieldName], $aParameters, $this->aErrorMsg[$sFieldName]);
+                        }
                     }
                 }
 
@@ -183,8 +191,10 @@ class form extends \core\base\service\multi
                         $bRet = false;
                         break;
                     } else {
+                        $oRole = \project\service\role::instance();
+                        /* @var $oRole \core\service\role */
                         if (!$this->_getFormMeta('not_role')) {
-                            \project\service\role::instance()->setFixQttRoles($this->oBlock->getRoleName());
+                            $oRole->setFixQttRoles($this->oBlock->getRoleName());
                         }
 
                         //ToDo: Clear cache of some blocks there
@@ -196,10 +206,15 @@ class form extends \core\base\service\multi
                             $bAllowTransfer = strtoupper($this->aFormMeta['action_method']) != 'GET';
                             // ToDo: Do not disable transfer there, but remove form_key_field from query string
                         }
-                        if (!$this->bIsError && $bAllowTransfer) {
-                            $this->onSubmitTransfer('commit');
+                        if (!$this->bIsError) {
+                            $oRole->killSessionRoles($this->sRoleName);
+                        } elseif ($bAllowTransfer) {
+                            if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
+                                \project\service\session::instance($this->_getFormMeta('form_id'), 'form_key')->remove('csrf');
+                            }
+                            $this->_onSubmitTransfer('commit');
                         }
-                        $bRet = true;
+                        $bRet = !$this->bIsError;
                         break;
                     }
                 }
@@ -226,10 +241,18 @@ class form extends \core\base\service\multi
 
         $oRequest     = \project\service\request::instance();
         $sRequestType = $this->_getFormMeta('request_type', 'GP');
+
         // Analyse key field
-        $sKeyField = $oRequest->get('form_key_field', 'GP');
-        if ($sKeyField && $sKeyField != $this->_getFormMeta('form_id')) {
-            return false;
+        $sSrcKeyVal = $this->_getFormMeta('form_id');
+        if (!empty($sSrcKeyVal)) {
+            if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
+                $sCsrfCode   = \project\service\session::instance($sSrcKeyVal, 'form_key')->get('csrf');
+                $sSrcKeyVal .= '_' . $sCsrfCode;
+            }
+            $sKeyField = $oRequest->get('form_key_field', 'GP');
+            if ($sSrcKeyVal != $sKeyField) {
+                return false;
+            }
         }
 
 
@@ -283,15 +306,32 @@ class form extends \core\base\service\multi
         }
 
         foreach ($this->aFieldMeta as $sFieldName => $aParameters) {
-           if(preg_match_all('/([^\[]+)?\[([^\]]+)\]/', $sFieldName, $aMatch)){
+            $aMatch = null;
+            if(preg_match_all('/([^\[]+)?\[([^\]]+)\]/', $sFieldName, $aMatch)){
                 $checkValue = $oRequest->get($aMatch[1][0], $sRequestType);
                 foreach($aMatch[2] as $v) {
-                    $checkValue = array_val($checkValue, $v);
+                    if (isset($checkValue[$v])) {
+                        $checkValue = $checkValue[$v];
+                    } else {
+                        $checkValue = null;
+                        break;
+                    }
                 }
-                $this->aFieldValue[$sFieldName] = $this->_trimDataRecursive($checkValue, $aParameters);
+                $this->aFieldValue[$sFieldName] = $this->_trimDataRecursive($checkValue, $aParameters, $sFieldName);
             } else {
-                $this->aFieldValue[$sFieldName] = $this->_trimDataRecursive($oRequest->get($sFieldName, $sRequestType), $aParameters);
-                //, array_val($aParameters, 'default_value')
+                $mVal = $oRequest->get($sFieldName, $sRequestType);
+                if (in_array($aParameters['input_type'], array('file', 'file_multi'))) {
+                    $this->aFieldValue[$sFieldName] = $mVal;
+                } else {
+                    while (is_array($mVal)) {
+                        $mVal = reset($mVal);
+                    }
+                    if (!is_scalar($mVal)) {
+                        continue;
+                    }
+                    $this->aFieldValue[$sFieldName] = $this->trimDataRecursive($mVal, $aParameters, $sFieldName);
+                    //, array_val($aParameters, 'default_value')
+                }
             }
             $this->aErrorMsg[$sFieldName] = null;
         }
@@ -402,25 +442,6 @@ class form extends \core\base\service\multi
     } // function reduceMessage
 
     /**
-     * If the validation was successful the Transfer'll be performed on success url
-     * @param string $sDbOperation - DB operation: "commit" or "rollback"
-     */
-    public function onSubmitTransfer($sDbOperation = null)
-    {
-        $aForm = $this->aFormMeta;
-        if (!isset($aForm['redirect_required']) || $aForm['redirect_required']) {
-            $oTab = $this->oBlock->getTab();
-            if(empty($aForm['redirect_uri'])) {
-                $sUri          = $oTab->getCurrentURI(true, true, strtoupper($aForm['action_method']) != 'GET', true);
-                $sDefaultHttps = $oTab->getTabMeta('page_https');
-            } else {
-                $sUri          = $aForm['redirect_uri'];
-                $sDefaultHttps = null;
-            }
-            transfer_out($sUri, null, $sDbOperation);
-        }
-    } // function onsubmitTransfer
-    /**
      * Get array field value
      * @param mixed $mFieldName
      * @return mixed
@@ -446,6 +467,10 @@ class form extends \core\base\service\multi
     public function getFieldData($mFieldName)
     {
         $mKey = \is_array($mFieldName) ? $mFieldName[0] : $mFieldName;
+        if (!empty($this->aFieldData[$mKey])) {
+            return $this->aFieldData[$mKey];
+        }
+
         $oMeta = $this->aFormMeta->get(array('fields', $mKey));
         if (isset($oMeta->dataSource->method)) {
             $aCallback = array(
@@ -457,7 +482,7 @@ class form extends \core\base\service\multi
             $aResult = null;
         }
         if (is_null($aResult)) {
-            $aResult = \array_val($this->aFieldData, $mKey, \adduceToArray($oMeta->data));
+            $aResult = \adduceToArray($oMeta->data);
         }
         return $aResult;
     } // function getFieldData
@@ -549,18 +574,25 @@ class form extends \core\base\service\multi
      * Delete whitespaces from the beginning and end of value
      *
      * @param mixed $mValue
-     * @param bool $bTrim
+     * @param array $aParam
      * @return string
      */
-    protected function _trimDataRecursive($mValue, $aParam)
+    protected function _trimDataRecursive($mValue, $aParam, $sFieldName)
     {
         if (!is_null($mValue)) {
             if (is_array($mValue)) {
                 foreach ($mValue as &$mSubValue) {
-                    $mSubValue = $this->_trimDataRecursive($mSubValue, $aParam);
+                    $mSubValue = $this->_trimDataRecursive($mSubValue, $aParam, $sFieldName);
                 }
             } else {
                 $mValue = empty($aParam['trim_data']) ? $mValue : trim($mValue);
+                if (!empty($aParam['maxlength']) && strlen($mValue) > $aParam['maxlength']) {
+                    trigger_error(
+                            'Data has been truncated in the form "' . get_class($this->oBlock) . '" for field "' . $sFieldName . '". Length was ' . strlen($mValue) . '.',
+                            E_USER_WARNING
+                    );
+                    $mValue = substr($mValue, 0, $aParam['maxlength']);
+                }
                 if (!isset($aParam['trim_tag']) || $aParam['trim_tag']) {
                     $aRepl = array(
                         '&'  => '&amp;',
@@ -568,6 +600,7 @@ class form extends \core\base\service\multi
                         '\'' => '&#039;',
                         '<'  => '&lt;',
                         '>'  => '&gt;',
+                        '\\' => '\\\\',
                     );
                     $sCurRepl = $this->_getFormMeta('trim_tag_val', '&"\'<>');
                     for ($i = 0; $i < strlen($sCurRepl); $i++) {
@@ -582,22 +615,55 @@ class form extends \core\base\service\multi
     } // function _trimDataRecursive
 
     /**
+     * -----> ToDo: move it to validate\select <-----
+     * Compare value with preset data
+     * @param mixed $mValue
+     * @param array $aParameters
+     * @param array|string $mErrMesage
+     */
+    protected function _checkByData($sFieldName, $sLabel)
+    {
+        $aData = $this->getFieldData($sFieldName);
+        if (!empty($aData)) {
+            $aTmp  = reset($aData);
+            if (!array_diff_key($aTmp, array('value' => 0, 'text'  => 0))) {
+                $mValue = $this->aFieldValue[$sFieldName];
+                foreach ($aData as $v) {
+                    if (is_array($mValue) ? in_array($v['value'], $mValue) : $mValue == $v['value']) {
+                        return true;
+                    }
+                }
+                $this->bIsError = true;
+                trigger_error(
+                        'Error in the form "' . get_class($this->oBlock) . '". Value of "' . $sFieldName . '" doesn\'t correspond to source.',
+                        E_USER_WARNING
+                );
+                $this->aErrorMsg[$sFieldName] = $this->isMultiLanguage() ?
+                    msg('ERROR_FIELD_HAS_INCORRECT_VALUE', $sLabel) :
+                    msgAlt('Field "{combi_part}" has incorrect value', $sLabel);
+                return false;
+            }
+        }
+        return true;
+    } // function _checkByData
+
+    /**
      * functions which the element value check, if the element value is an array
      *
      * @param mixed $mValue
      * @param array $aParameters
-     * @param array $aErrMesage
+     * @param array|string $mErrMesage
      */
-    protected function _validateValueRecursive($mValue, $aParameters, &$aErrMesage, $nIndex = null)
+    protected function _validateValueRecursive($mValue, $aParameters, &$mErrMesage, $nIndex = null)
     {
-        if(@$aParameters['input_type'] == 'file' || @$aParameters['input_type'] == 'file_multi') {
+        if(in_array(array_val($aParameters, 'input_type'), array('file', 'file_multi'))) {
             if (!empty($mValue['tmp_name']) && is_array($mValue['tmp_name'])) {
                 foreach ($mValue['tmp_name'] as $iKey => $dummy) {
                     $aSubValue = array();
                     foreach ($mValue as $k => $v) {
                         $aSubValue[$k] = $v[$iKey];
                     }
-                    $this->_validateValueRecursive($aSubValue, $aParameters, $aErrMesage[$iKey], $iKey);
+                    $this->_validateValueRecursive($aSubValue, $aParameters, $mErrMesage[$iKey], $iKey);
                 }
                 return;
             }
@@ -605,16 +671,18 @@ class form extends \core\base\service\multi
         } else {
             if (is_array($mValue) && !array_val($aParameters, 'group_rule', false)) {
                 foreach ($mValue as $iKey => $aSubValue) {
-                    $this->_validateValueRecursive($aSubValue, $aParameters, $aErrMesage[$iKey], $iKey);
+                    $this->_validateValueRecursive($aSubValue, $aParameters, $mErrMesage[$iKey], $iKey);
                 }
                 return;
             }
             $isEmpty = is_array($mValue) ? empty($mValue) : $mValue == '';
         }
 
-        if (@$aParameters['is_required'] && $isEmpty) {
-            $aErrMesage = $this->_getErrorMesage($this->_getFormMeta('required_msg'), $aParameters['label']);
+        // Check required value
+        if (!empty($aParameters['is_required']) && $isEmpty) {
+            $mErrMesage = $this->_getErrorMesage($this->_getFormMeta('required_msg'), $aParameters['label']);
             $this->bIsError = true;
+        // Check value by specified rules
         } elseif (isset($aParameters['validate_rules'])) {
             foreach ($aParameters['validate_rules'] as $aRules) {
                 if(!$isEmpty || empty($aRules['not_empty'])) {
@@ -622,7 +690,7 @@ class form extends \core\base\service\multi
                     $oValidator = $this->_getValidator($sRule);
                     if (!empty($oValidator)) {
                         if(!$oValidator->$sRule($mValue, array_val($aRules, 'rule_data'), $nIndex)) {
-                            $aErrMesage = isset($aRules['error_msg']) ?
+                            $mErrMesage = isset($aRules['error_msg']) ?
                                     $this->_getErrorMesage($aRules['error_msg'], $aParameters['label']) :
                                     '';
                             $this->bIsError = true;
@@ -635,7 +703,29 @@ class form extends \core\base\service\multi
     } // function _validateValueRecursive
 
     /**
-     * Get error mesage with lable name
+     * If the validation was successful the Transfer'll be performed on success url
+     * @param string $sDbOper - DB operation: "commit" or "rollback"
+     * @return \core\service\form
+     */
+    protected function _onSubmitTransfer($sDbOper = null)
+    {
+        $aForm = $this->aFormMeta;
+        if (!isset($aForm['redirect_required']) || $aForm['redirect_required']) {
+            $oTab = $this->oBlock->getTab();
+            if(empty($aForm['redirect_uri'])) {
+                $sUri          = $oTab->getCurrentURI(true, true, strtoupper($aForm['action_method']) != 'GET', true);
+                $sDefaultHttps = $oTab->getTabMeta('page_https');
+            } else {
+                $sUri          = $aForm['redirect_uri'];
+                $sDefaultHttps = null;
+            }
+            transfer_out($sUri, null, $sDbOper);
+        }
+        return $this;
+    } // function _onSubmitTransfer
+
+    /**
+     * Get error mesage with label name
      * @param string $sMsg
      * @param string $sLabel
      * @return string

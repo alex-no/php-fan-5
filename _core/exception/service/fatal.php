@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 class fatal extends \core\exception\base
 {
@@ -59,6 +59,19 @@ class fatal extends \core\exception\base
         }
         return $this;
     }
+
+    /**
+     * Get operation for Db (rollback, commit or nothing) when exception occured
+     * @param string $sDbOper
+     * @return null|string
+     */
+    protected function _defineDbOper($sDbOper = null)
+    {
+        if (empty($sDbOper) && method_exists($this->oService, 'getExceptionDbOper')) {
+            $sDbOper = $this->oService->getExceptionDbOper();
+        }
+        return parent::_defineDbOper($sDbOper);
+    } // function _defineDbOper
 
 } // class \core\exception\service\fatal
 ?>

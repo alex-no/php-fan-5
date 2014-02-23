@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  *
  * @property string  $response
  * @property string  $protocol
@@ -336,6 +336,20 @@ class header extends \core\base\service\single
         }
         return $this;
     } // function sendLocation
+
+    /**
+     * Send header location 301
+     * @param string $sUrl new location
+     * @return \core\service\header
+     */
+    public function sendLocation301($sUrl, $bContinueExec = false)
+    {
+        header('Location: ' . str_replace('&amp;', '&', $sUrl), true, 301);
+        if (!$bContinueExec) {
+            exit;
+        }
+        return $this;
+    } // function sendLocation301
 
     /**
      * Send Arbitrary header

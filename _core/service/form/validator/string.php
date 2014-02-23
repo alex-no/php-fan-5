@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class string extends base
 {
@@ -25,15 +25,33 @@ class string extends base
      */
     public function strlen($mValue, $aData)
     {
-        $nLength = @$aData['is_mb'] ? mb_strlen($mValue) : strlen($mValue);
-        if (isset($aData['min_value']) && $nLength < $aData['min_value']) {
+        $nLength = isset($aData['is_mb']) && empty($aData['is_mb']) ? strlen($mValue) : mb_strlen($mValue);
+        if (isset($aData['min_length']) && $nLength < $aData['min_length']) {
             return false;
         }
-        if (isset($aData['max_value']) && $nLength > $aData['max_value']) {
+        if (isset($aData['max_length']) && $nLength > $aData['max_length']) {
             return false;
         }
         return true;
     } // function strlen
+
+    /**
+     * Check coding of string is UTF-8
+     * @param mixed $mValue
+     * @param array $aData
+     * @return bool
+     */
+    protected function isUtf8($mValue, $aData)
+    {
+        if (!mb_check_encoding($mValue, 'UTF-8')) {
+            return false;
+        }
+        if (isset($aData['max_length']) || isset($aData['min_length'])) {
+            $aData['is_mb'] = true;
+            return $this->strlen($mValue, $aData);
+        }
+        return true;
+    } // function isUtf8
 
     /**
      * Check up if a value consists of letters, numbers, _, @, ., - and begging from letter or number

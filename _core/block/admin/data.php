@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 abstract class data extends base
 {
@@ -53,11 +53,11 @@ abstract class data extends base
         // ====== Parse gotten data ======= \\
         service('error')->setParseDBerror(false);
         do {
-            if (@$aData['edit'] || @$aData['ins']) {
-                if (!@$aData['edit']) {
-                    @$aData['edit'] = array();
-                } elseif (!@$aData['ins']) {
-                    @$aData['ins'] = array();
+            if (isset($aData['edit']) || isset($aData['ins'])) {
+                if (empty($aData['edit'])) {
+                    $aData['edit'] = array();
+                } elseif (empty($aData['ins'])) {
+                    $aData['ins'] = array();
                 }
 
                 if (!$this->validateData($aData['edit'], $aData['ins'])) {
@@ -71,7 +71,7 @@ abstract class data extends base
                 }
             }
 
-            if (@$aData['del']) { // Cancel edit if delete impossible?
+            if (isset($aData['del'])) { // Cancel edit if delete impossible?
                 $this->deleteData($aData['del']);
                 if ($this->bIsError) {
                     break;
@@ -210,12 +210,12 @@ abstract class data extends base
                 $aJson['extra'] = $aExtra;
             }
         }
-/*
+
         // Flag for use Main Page
         if ($bIsFirst || $this->getMeta('useMainPage')) {
             $aJson['useMainPage'] = 1;
         }
-*/
+
         return $aJson;
     } // function getMainData
 
@@ -396,7 +396,7 @@ abstract class data extends base
 
         //$oDate = service('date', $mValue, 'mysql');
         $oDate = service('date', $mValue);
-        if (!$oDate->getIsValid()) {
+        if (!$oDate->isValid()) {
             return false;
         }
         $mValue = $oDate->convertLocal2Mysql();

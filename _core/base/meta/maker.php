@@ -183,7 +183,7 @@ class maker implements \IteratorAggregate
     {
         $aData = array();
         foreach ($this->getOrder('current') as $v) {
-            $key   = $v[1] == 'blockName' ? $this->sBlockName : $v[1];
+            $key = $v[1] == 'blockName' ? $this->sBlockName : $v[1];
             if (isset($this->aSource[$v[0]][$key])) {
                 $aData = $this->_mergeMeta($aData, $this->aSource[$v[0]][$key], $v[0]);
             }

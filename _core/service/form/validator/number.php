@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class number extends base
 {
@@ -47,7 +47,7 @@ class number extends base
      */
     public function isFloat($mValue, $aData)
     {
-        $value = str_replace(',', '.', $mValue);
+        $mValue = str_replace(',', '.', $mValue);
         if (!is_numeric($mValue)) {
             return false;
         }
@@ -71,12 +71,9 @@ class number extends base
     {
         $mValue2 = null;
         if (isset($aData['compare_field'])) {
-            $mValue2 = @$this->aFieldValue[$aData['compare_field']];
+            $mValue2 = array_val($this->aFieldValue, $aData['compare_field']);
         }
-           if ($mValue != $mValue2) {
-            return false;
-        }
-        return true;
+        return $mValue == $mValue2;
     } // function equalTo
 
     /**
@@ -90,12 +87,9 @@ class number extends base
     {
         $mValue2 = null;
         if (isset($aData['compare_field'])) {
-            $mValue2 = @$this->aFieldValue[$aData['compare_field']];
+            $mValue2 = array_val($this->aFieldValue, $aData['compare_field']);
         }
-        if ($mValue == $mValue2) {
-            return false;
-        }
-        return true;
+        return $mValue != $mValue2;
     } // function notEqualTo
 
     /**
@@ -109,16 +103,13 @@ class number extends base
     {
         $mValue2 = null;
         if (isset($aData['compare_field'])) {
-            $mValue2 = @$this->aFieldValue[$aData['compare_field']];
+            $mValue2 = array_val($this->aFieldValue, $aData['compare_field']);
         }
-        if (@$aField['data_type']=='DATE' ||  @$aField['data_type']=='DATETIME') {
+        if (isset($aData['data_type']) && ($aData['data_type'] == 'DATE' || $aData['data_type'] == 'DATETIME')) {
             $mValue  = \project\service\date::instance($mValue)->get('mysql');
             $mValue2 = \project\service\date::instance($mValue2)->get('mysql');
         }
-        if ($mValue <= $mValue2) {
-            return false;
-        }
-        return true;
+        return $mValue > $mValue2;
     } // function greaterThan
 
     /**
@@ -132,16 +123,13 @@ class number extends base
     {
         $mValue2 = null;
         if (isset($aData['compare_field'])) {
-            $mValue2 = @$this->aFieldValue[$aData['compare_field']];
+            $mValue2 = array_val($this->aFieldValue, $aData['compare_field']);
         }
-        if (@$aField['data_type']=='DATE' ||  @$aField['data_type']=='DATETIME') {
+        if (isset($aData['data_type']) && ($aData['data_type'] == 'DATE' || $aData['data_type'] == 'DATETIME')) {
             $mValue  = \project\service\date::instance($mValue)->get('mysql');
             $mValue2 = \project\service\date::instance($mValue2)->get('mysql');
         }
-        if ($mValue >= $mValue2) {
-            return false;
-        }
-        return true;
+        return $mValue < $mValue2;
     } // function lesserThan
 
     /**
@@ -155,12 +143,9 @@ class number extends base
     {
         $mValue2 = null;
         if (isset($aData['compare_field'])) {
-            $mValue2 = @$this->aFieldValue[$aData['compare_field']];
+            $mValue2 = array_val($this->aFieldValue, $aData['compare_field']);
         }
-        if ($mValue < $mValue2) {
-            return false;
-        }
-        return true;
+        return $mValue >= $mValue2;
     } // function greaterOrEqualTo
 
     /**
@@ -174,12 +159,9 @@ class number extends base
     {
         $mValue2 = null;
         if (isset($aData['compare_field'])) {
-            $mValue2 = @$this->aFieldValue[$aData['compare_field']];
+            $mValue2 = array_val($this->aFieldValue, $aData['compare_field']);
         }
-        if ($mValue > $mValue2) {
-            return false;
-        }
-        return true;
+        return $mValue <= $mValue2;
     } // function lesserOrEqualTo
 
 } // class \core\service\form\validator\number

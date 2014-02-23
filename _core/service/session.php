@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 class session extends \core\base\service\multi
 {
@@ -357,6 +357,12 @@ class session extends \core\base\service\multi
         if ($oConfig['MAXLIFETIME']){
             ini_set('session.gc_maxlifetime', $oConfig['MAXLIFETIME']);
         }
+
+        // Check conf - Session COOKIE_SECURE
+        ini_set('session.cookie_secure', !empty($oConfig['COOKIE_SECURE']));
+
+        // Check conf - Session COOKIE_HTTPONLY
+        ini_set('session.cookie_httponly', !isset($oConfig['COOKIE_HTTPONLY']) || !empty($oConfig['COOKIE_HTTPONLY']));
 
         // Set main session parameters
         if ($oConfig['COOKIE_DOMAIN']) {

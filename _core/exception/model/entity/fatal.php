@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  */
 class fatal extends  \core\exception\base
 {
@@ -35,7 +35,8 @@ class fatal extends  \core\exception\base
 
         parent::__construct($sLogErrMsg, $nCode, $oPrevious);
 
-        $this->_logByService($sLogErrMsg, 'Entity fatal error (' . get_class($oEntity) . ').');
+        $sNote = method_exists($oEntity, '__toString') ? $oEntity->__toString() : '';
+        $this->_logByService($sLogErrMsg, 'Entity fatal error (' . get_class($oEntity) . ').', $sNote);
     }
 
     /**
@@ -52,9 +53,9 @@ class fatal extends  \core\exception\base
      * @param string $sDbOper
      * @return null|string
      */
-    protected function _getDbOperation($sDbOper = 'rollback')
+    protected function _defineDbOper($sDbOper = 'rollback')
     {
-        return parent::_getDbOperation($sDbOper);
-    } // function _getDbOperation
+        return parent::_defineDbOper($sDbOper);
+    } // function _defineDbOper
 } // class \core\exception\model\entity\fatal
 ?>

@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 abstract class base implements \ArrayAccess
 {
@@ -251,7 +251,13 @@ abstract class base implements \ArrayAccess
      */
     protected function makeTagAttr($sAttr, $mData, $sKey = null)
     {
-        $mVal = is_array($mData) ? @$mData[is_null($sKey) ? $sAttr : $sKey] : $mData;
+        if(is_object($mData)) {
+            $mVal = empty($mData->$sKey) ?
+                (method_exists($mData, '__toString') ? $mData->__toString() : '') :
+                $mData->$sKey;
+        } else {
+            $mVal = is_array($mData) ? array_val($mData, is_null($sKey) ? $sAttr : $sKey) : $mData;
+        }
         return empty($mVal) ? '' : ' ' . $sAttr . '="' . $mVal . '"';
     } // function makeTagAttr
 

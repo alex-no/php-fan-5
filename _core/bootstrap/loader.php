@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.007 (23.02.2014)
  * @property-read string $core
  * @property-read string $project
  * @property-read string $app
@@ -143,7 +143,7 @@ class loader implements \ArrayAccess
     {
         //global $aPoints, $nStart; $aPoints[$sClass] = microtime(true) - $nStart;
         $sClass = trim($sClass, '\\');
-        if (class_exists($sClass, false)) {
+        if (class_exists($sClass, false) || interface_exists($sClass, false)) {
             return true;
         }
 

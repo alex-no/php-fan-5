@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  * @abstract
  */
 abstract class base extends \Exception
@@ -40,7 +40,7 @@ abstract class base extends \Exception
      * Possible values: 'rollback', 'commit' or NULL
      * @var string
      */
-    private $sDbOperation = null;
+    private $sDbOper = null;
 
     /**
      * Exception's constructor
@@ -58,9 +58,9 @@ abstract class base extends \Exception
             $this->sShowErrFile = 'error_500';
         }
 
-        $sDbOperation = $this->_getDbOperation();
-        if (!empty($sDbOperation) && class_exists('\core\service\database', false)) {
-            \project\service\database::fixAll($sDbOperation);
+        $this->sDbOper = $this->_defineDbOper();
+        if (!empty($this->sDbOper) && class_exists('\core\service\database', false)) {
+            \project\service\database::fixAll($this->sDbOper);
         }
 
         if (!empty($oPrevious) && $oPrevious instanceof \Exception) {
@@ -96,6 +96,15 @@ abstract class base extends \Exception
     {
         return $this->sShowErrMsg;
     } // function getMessageForShow
+
+    /**
+     * Get Database Operation
+     * @return string
+     */
+    public function getDbOper()
+    {
+        return $this->sDbOper;
+    } // function getDbOper
 
     /**
      * Log error by php
@@ -135,7 +144,7 @@ abstract class base extends \Exception
      * @param string $sDbOper
      * @return null|string
      */
-    protected function _getDbOperation($sDbOper = null)
+    protected function _defineDbOper($sDbOper = null)
     {
         if (in_array($sDbOper, array('rollback', 'commit'))) {
             return (string)$sDbOper;
@@ -143,7 +152,7 @@ abstract class base extends \Exception
             trigger_error('Incorret DB-operation name for Ecxeption ' . get_class($this), E_USER_WARNING);
         }
         return null;
-    } // function _getDbOperation
+    } // function _defineDbOper
 
 } // class \core\exception\base
 ?>

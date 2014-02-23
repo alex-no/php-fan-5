@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  * @abstract
  */
 abstract class transfer extends \Exception
@@ -34,14 +34,14 @@ abstract class transfer extends \Exception
      * Transfer's constructor
      * @param string $sNewUrn New Transfer's URL
      * @param string $sNewQueryString New Query String
-     * @param string $sDbOperation Database Operation (commit, rollback)
+     * @param string $sDbOper Database Operation (commit, rollback)
      */
-    public function __construct($sNewUrn, $sNewQueryString = null, $sDbOperation = null)
+    public function __construct($sNewUrn, $sNewQueryString = null, $sDbOper = null)
     {
         $this->sNewUrn = $sNewUrn;
         $this->sNewQueryString = $sNewQueryString;
-        if ($sDbOperation) {
-            \project\service\database::fixAll($sDbOperation, false);
+        if ($sDbOper) {
+            \project\service\database::fixAll($sDbOper, false);
         }
         parent::__construct($this->sTransferType, E_USER_NOTICE);
     }

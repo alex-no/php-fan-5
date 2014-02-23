@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.007 (23.02.2014)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -278,11 +278,11 @@ class tab extends \core\base\service\single
 
     /**
      * Check Tab Roles - it is need to call this method ecach time when roles of curent member are changed
-     * @param string $sDbOperation
+     * @param string $sDbOper
      * @param boolean $bAllowTransfer
      * @return boolean
      */
-    public function checkTabRoles($sDbOperation = null, $bAllowTransfer = true)
+    public function checkTabRoles($sDbOper = null, $bAllowTransfer = true)
     {
         $aCond = $this->getTabMeta('roles');
         if ($aCond) {
@@ -301,13 +301,13 @@ class tab extends \core\base\service\single
                 $sExpire_URL = $oServSes->isExpired() && !$this->getTabMeta('notRedirectByExpire', false) ? $this->oConfig['EXPIRE_URL'] : null;
 
                 if ($sExpire_URL) {
-                    transfer_out($sExpire_URL, null, $sDbOperation);
+                    transfer_out($sExpire_URL, null, $sDbOper);
                 } elseif (!empty($aTransfer['transfer_sham'])) {
-                    transfer_sham($this->getURI($aTransfer['transfer_sham']), null, $sDbOperation);
+                    transfer_sham($this->getURI($aTransfer['transfer_sham']), null, $sDbOper);
                 } elseif (!empty($aTransfer['transfer_int'])) {
-                    transfer_int($this->getURI($aTransfer['transfer_int']), null, $sDbOperation);
+                    transfer_int($this->getURI($aTransfer['transfer_int']), null, $sDbOper);
                 } elseif (!empty($aTransfer['transfer_out'])) {
-                    transfer_out($this->getURI($aTransfer['transfer_out']), null, $sDbOperation);
+                    transfer_out($this->getURI($aTransfer['transfer_out']), null, $sDbOper);
                 } else {
                     $this->_parseError403();
                 }

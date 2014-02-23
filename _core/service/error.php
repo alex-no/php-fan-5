@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class error extends \core\base\service\single
 {
@@ -358,6 +358,13 @@ class error extends \core\base\service\single
      */
     protected function _logError($sType, $sMessage, $sHeader, $sNote, $bIsTrace, $bDuplicateByEmail)
     {
+        if (isset($_SERVER['REQUEST_METHOD']) && !in_array(strtoupper($_SERVER['REQUEST_METHOD']), array('GET', 'POST'))) {
+            if (!empty($sNote)) {
+                $sNote .= '<br />';
+            }
+            $sNote .= '$_SERVER = ' . print_r($_SERVER, true);
+        }
+
         if (!$this->oServLog) {
             $this->oServLog = \project\service\log::instance();
         }

@@ -1,5 +1,4 @@
 <?php namespace core\service;
-use project\exception\service\fatal as fatalException;
 /**
  * SOAP operation service
  *
@@ -13,7 +12,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.007 (23.02.2014)
  */
 class soap extends \core\base\service\multi
 {
@@ -75,16 +74,17 @@ class soap extends \core\base\service\multi
     /**
      * Init Path to image and check exist file
      * @param string $sFuncName SOAP function name
-     * @param array $sFuncName SOAP function arguments
+     * @param array $aArguments SOAP function arguments
+     * @param array $aOptions SOAP options
      * @return object - Soap object if operation is successful
      */
-    public function call($sFuncName, $aArguments, $aOptions = null)
+    public function call($sFuncName, $aArguments = array(), $aOptions = null)
     {
         if (!is_object($this->oSoapObj)) {
-            throw new fatalException($this, 'Soap Object is not set');
+            $this->_makeServiceException('Soap Object is not set');
         }
         if (!is_string($sFuncName)) {
-            throw new fatalException($this, 'Error! Function name is not string there: (' . gettype($sFuncName) . ') "' . strval($sFuncName) . '"');
+            $this->_makeServiceException('Error! Function name is not string there: (' . gettype($sFuncName) . ') "' . strval($sFuncName) . '"');
         }
 
         $oErr = service('error');
@@ -220,7 +220,7 @@ class soap extends \core\base\service\multi
                         $aParam['soap_version'] = (int)$aParam['soap_version'];
                     } else {
                         $aConst = get_defined_constants();
-                        $aParam['soap_version'] = @$aConst[$aParam['soap_version']];
+                        $aParam['soap_version'] = $aConst[array_val($aParam, 'soap_version')];
                     }
                 }
                 $this->oSoapObj = $aParam && is_array($aParam) ? new \SoapClient($sWsdlFile_Full, $aParam) : new \SoapClient($sWsdlFile_Full);
@@ -255,10 +255,10 @@ class soap extends \core\base\service\multi
             $mData = new \SoapVar(
                 $mData,
                 SOAP_ENC_OBJECT,
-                @$aVarParam['type_name'],
-                @$aVarParam['type_namespace'],
-                @$aVarParam['node_name'],
-                @$aVarParam['node_namespace']
+                array_val($aVarParam, 'type_name'),
+                array_val($aVarParam, 'type_namespace'),
+                array_val($aVarParam, 'node_name'),
+                array_val($aVarParam, 'node_namespace')
             );
         }
         return $mData;
