@@ -106,7 +106,8 @@ class form extends \core\base\service\multi
             throw new fatalException($this, 'Form fields meta aren\'t set for block "' . get_class($oBlock) . '".');;
         }
 
-        foreach (array('input','select','select_multi') as $v) {
+        $aActiveElements = $this->getConfig('ACTIVE_ELEMENTS', array('input', 'checking', 'select', 'select_separated', 'select_multi', 'select_multi_separated'));
+        foreach ($aActiveElements as $v) {
             foreach ($this->_getFormMeta(array('design', $v), array()) as $k => $tmp) {
                 $this->aFieldTypes[$k] = $v;
             }
@@ -320,13 +321,19 @@ class form extends \core\base\service\multi
                 $this->aFieldValue[$sFieldName] = $this->_trimDataRecursive($checkValue, $aParameters, $sFieldName);
             } else {
                 $mVal = $oRequest->get($sFieldName, $sRequestType);
-                if (in_array($aParameters['input_type'], array('file', 'file_multi'))) {
+                $aUploads = $this->getConfig('UPLOAD_TYPES', array('file', 'file_multiple'));
+                if (in_array($aParameters['input_type'], adduceToArray($aUploads))) {
                     $this->aFieldValue[$sFieldName] = $mVal;
                 } else {
+                    $bIsMulti = $this->_isMultiVal($aParameters['input_type']);
                     while (is_array($mVal)) {
-                        $mVal = reset($mVal);
+                        $mTmp = reset($mVal);
+                        if ($bIsMulti && is_scalar($mTmp)) {
+                            break;
+                        }
+                        $mVal = $mTmp;
                     }
-                    if (!is_scalar($mVal)) {
+                    if (!($bIsMulti ? is_array($mVal) : is_scalar($mVal))) {
                         continue;
                     }
                     $this->aFieldValue[$sFieldName] = $this->trimDataRecursive($mVal, $aParameters, $sFieldName);
@@ -389,7 +396,7 @@ class form extends \core\base\service\multi
             }
             if($sRules) {
                 $sStr .= $sStr ? ',' : '';
-                $sStr .= '\'' . $sFieldName . (@$this->aFieldTypes[$aParameters['input_type']] == 'select_multi' ? '[]' : '') . '\':[' . $sRules . ']';
+                $sStr .= '\'' . $sFieldName . ($this->_isMultiVal($aParameters['input_type']) ? '[]' : '') . '\':[' . $sRules . ']';
             }
         } //foreach ($this->aFieldMeta as $sFieldName => $aParameters)
 
@@ -648,6 +655,17 @@ class form extends \core\base\service\multi
     } // function _checkByData
 
     /**
+     * Check - is Multi-value element
+     * @param string $sInpType
+     * @return boolean
+     */
+    protected function _isMultiVal($sInpType)
+    {
+        $sFieldType = $this->aFieldTypes[$sInpType];
+        return in_array($sFieldType, array('select_multi', 'select_multi_separated'));
+    } // function _isMultiVal
+
+    /**
      * functions which the element value check, if the element value is an array
      *
      * @param mixed $mValue
@@ -656,7 +674,8 @@ class form extends \core\base\service\multi
      */
     protected function _validateValueRecursive($mValue, $aParameters, &$mErrMesage, $nIndex = null)
     {
-        if(in_array(array_val($aParameters, 'input_type'), array('file', 'file_multi'))) {
+        $aUploads = $this->getConfig('UPLOAD_TYPES', array('file', 'file_multiple'));
+        if(in_array(array_val($aParameters, 'input_type'), adduceToArray($aUploads))) {
             if (!empty($mValue['tmp_name']) && is_array($mValue['tmp_name'])) {
                 foreach ($mValue['tmp_name'] as $iKey => $dummy) {
                     $aSubValue = array();
