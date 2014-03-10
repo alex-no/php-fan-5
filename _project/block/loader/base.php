@@ -1,4 +1,4 @@
-<?php namespace project\block\loader;
+<?php namespace fan\project\block\loader;
 /**
  * Base abstract loader block
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class base extends \core\block\loader\base
+abstract class base extends \fan\core\block\loader\base
 {
-} // class \project\block\loader\base
+} // class \fan\project\block\loader\base
 ?>

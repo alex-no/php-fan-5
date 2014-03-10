@@ -1,10 +1,10 @@
-<?php namespace project\model;
+<?php namespace fan\model;
 /**
  * Description of any
  *
  * @author Alex
  */
-class any extends \project\base\model\entity
+class any extends \fan\project\base\model\entity
 {
-} // class \project\model\any
+} // class \fan\model\any
 ?>

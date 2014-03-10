@@ -1,4 +1,4 @@
-<?php namespace project\block\form;
+<?php namespace fan\project\block\form;
 /**
  * Part of form block abstract
  *
@@ -12,11 +12,11 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class part extends \core\block\form\part
+abstract class part extends \fan\core\block\form\part
 {
 
-} // class \project\block\form\part
+} // class \fan\project\block\form\part
 ?>

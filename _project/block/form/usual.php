@@ -1,4 +1,4 @@
-<?php namespace project\block\form;
+<?php namespace fan\project\block\form;
 /**
  * Usual form block abstract
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class usual extends \core\block\form\usual
+abstract class usual extends \fan\core\block\form\usual
 {
-} // class \project\block\form\usual
+} // class \fan\project\block\form\usual
 ?>

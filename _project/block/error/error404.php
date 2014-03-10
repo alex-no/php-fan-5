@@ -1,4 +1,4 @@
-<?php namespace project\block\error;
+<?php namespace fan\project\block\error;
 /**
  * Block for show error 404
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class error404 extends \core\block\error\error404
+class error404 extends \fan\core\block\error\error404
 {
-} // class \project\block\error\error404
+} // class \fan\project\block\error\error404
 ?>

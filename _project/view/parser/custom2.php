@@ -1,4 +1,4 @@
-<?php namespace project\view\parser;
+<?php namespace fan\project\view\parser;
 /**
  * View parser XML-type
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class custom2 extends \core\view\parser
+class custom2 extends \fan\core\view\parser
 {
     // ======== Static methods ======== \\
     /**
@@ -63,5 +63,5 @@ class custom2 extends \core\view\parser
 
     // ======== Protected methods ======== \\
 
-} // class \project\view\parser\custom2
+} // class \fan\project\view\parser\custom2
 ?>

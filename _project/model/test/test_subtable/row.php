@@ -1,4 +1,4 @@
-<?php namespace project\model\test\test_subtable;
+<?php namespace fan\model\test\test_subtable;
 /**
  * Row of `test_subtable` table
  * @method void set_id_test_subtable()
@@ -9,7 +9,7 @@
  * @method string get_sub_content()
  * @version 1.0
  */
-class row extends \project\base\model\row
+class row extends \fan\project\base\model\row
 {
 
     /*
@@ -28,5 +28,5 @@ class row extends \project\base\model\row
      * ============================= [ Private/protected methods ] ============================ *
      */
 
-} // class project\model\test\test_subtable\row
+} // class fan\model\test\test_subtable\row
 ?>

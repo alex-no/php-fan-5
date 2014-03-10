@@ -1,9 +1,9 @@
-<?php namespace project\model\test\test_subtable;
+<?php namespace fan\model\test\test_subtable;
 /**
  * Entity of `test_subtable` table
  * @version 1.0
  */
-class entity extends \project\base\model\entity
+class entity extends \fan\project\base\model\entity
 {
 
     /*
@@ -18,5 +18,5 @@ class entity extends \project\base\model\entity
      * ============================= [ Private/protected methods ] ============================ *
      */
 
-} // class project\model\test\test_subtable\entity
+} // class fan\model\test\test_subtable\entity
 ?>

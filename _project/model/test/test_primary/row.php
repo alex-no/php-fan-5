@@ -1,4 +1,4 @@
-<?php namespace project\model\test\test_primary;
+<?php namespace fan\model\test\test_primary;
 /**
  * Row of `test_primary` table
  * @method void set_id_test_primary()
@@ -13,7 +13,7 @@
  * @method integer get_is_complete()
  * @version 1.0
  */
-class row extends \project\base\model\row
+class row extends \fan\project\base\model\row
 {
 
     /*
@@ -32,5 +32,5 @@ class row extends \project\base\model\row
      * ============================= [ Private/protected methods ] ============================ *
      */
 
-} // class project\model\test\test_primary\row
+} // class fan\model\test\test_primary\row
 ?>
