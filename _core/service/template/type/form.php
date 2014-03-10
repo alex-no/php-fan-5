@@ -1,4 +1,4 @@
-<?php namespace core\service\template\type;
+<?php namespace fan\core\service\template\type;
 /**
  *
  * This file is part PHP-FAN (php-framework from Alexandr Nosov)
@@ -11,14 +11,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class form extends base
 {
 
     /**
      * Form service
-     * @var \core\service\form
+     * @var \fan\core\service\form
      */
     protected $oForm;
 
@@ -59,9 +59,9 @@ abstract class form extends base
 
     /**
      * Template block constructor
-     * @param \core\block\form\usual $oBlock
+     * @param \fan\core\block\form\usual $oBlock
      */
-    public function __construct(\core\block\form\usual $oBlock)
+    public function __construct(\fan\core\block\form\usual $oBlock)
     {
         parent::__construct($oBlock);
 
@@ -119,7 +119,7 @@ abstract class form extends base
         $nCsrfLen  = (integer)$this->aFormVar['csrf_protection'];
         if ($nCsrfLen >= 4) {
             $sCsrfCode = substr(md5(microtime() . $sKeyValue), 0, min(32, $nCsrfLen));
-            service_session::instance($sKeyValue, 'form_key')->set('csrf', $sCsrfCode);
+            service('session', array($sKeyValue, 'form_key'))->set('csrf', $sCsrfCode);
             $sKeyValue .= '_' . $sCsrfCode;
         }
         return '<input type="hidden" name="form_key_field" value="' . $sKeyValue . '" />' . $this->getSidField();
@@ -131,7 +131,7 @@ abstract class form extends base
      */
     public function getSidField()
     {
-        $oSes = \project\service\session::instance();
+        $oSes = \fan\project\service\session::instance();
         return $oSes->isByCookies() ? '' : '<input type="hidden" name="' . $oSes->getSessionName() . '" value="' . $oSes->getSessionId() .'" />';
     } // function getSidField
 
@@ -480,7 +480,7 @@ abstract class form extends base
             foreach ($mFdt as $k =>$d) {
                 $d['value'] = array_val($d, 'value');
                 $d['text']  = array_val($d, 'text');
-                $bSelected = !is_null($mValue) && ($sFieldType == 'select_multi' ? in_array($d['value'], $mValue) : strcmp($d['value'], $mValue) == 0);
+                $bSelected = !is_null($mValue) && ($sFieldType == 'select_multi' ? in_array($d['value'], adduceToArray($mValue)) : strcmp($d['value'], $mValue) == 0);
                 $sRet .= str_replace(array(
                     '{NAME}',
                     '{ID}',
@@ -569,5 +569,5 @@ abstract class form extends base
         }
         return array_val($this->aFormVar, $mKey, $mDefault);
     } // function _getFormMeta
-} // class \core\service\template\type\form
+} // class \fan\core\service\template\type\form
 ?>

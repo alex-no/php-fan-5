@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Cookie service
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class cookie extends \core\base\service\multi
+class cookie extends \fan\core\base\service\multi
 {
     /**
      * @var array Service's Instances
@@ -69,11 +69,11 @@ class cookie extends \core\base\service\multi
      * @param string $sPath
      * @param string $sDomain
      * @param boolean $bSecure
-     * @return \core\service\cookie
+     * @return \fan\core\service\cookie
      */
     public static function instance($sPath = null, $sDomain = null, $bSecure = false)
     {
-        $oConfig = \project\service\config::instance()->get('cookie');
+        $oConfig = \fan\project\service\config::instance()->get('cookie');
 
         if (is_null($sPath)) {
             $sPath = $oConfig->get('DEFAULT_PATH', '/');
@@ -212,5 +212,5 @@ class cookie extends \core\base\service\multi
         $this->bHttpOnly = !empty($bHttpOnly);
     } // function setHttpOnlyFlag
 
-} // class \core\service\cookie
+} // class \fan\core\service\cookie
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\base\transfer;
+<?php namespace fan\core\base\transfer;
 /**
  * Sham transfer (do not change current URL)
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class sham extends \core\base\transfer
+class sham extends \fan\core\base\transfer
 {
     /**
      * Transfer's constructor
@@ -27,5 +27,5 @@ class sham extends \core\base\transfer
         $this->sTransferType = 'sham';
         parent::__construct($sNewUrn, $sNewQueryString, $sDbOper);
     }
-} // class \core\base\transfer\sham
+} // class \fan\core\base\transfer\sham
 ?>

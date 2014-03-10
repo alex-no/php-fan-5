@@ -1,4 +1,4 @@
-<?php namespace core\exception\service;
+<?php namespace fan\core\exception\service;
 /**
  * Exception a service fatal error
  *
@@ -12,23 +12,23 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class fatal extends \core\exception\base
+class fatal extends \fan\core\exception\base
 {
 
     /**
-     * @var \core\base\service Instance of class maked exception
+     * @var \fan\core\base\service Instance of class maked exception
      */
     protected $oService = null;
 
     /**
      * Exception's constructor
-     * @param \core\base\service $oService Object - instance of service
+     * @param \fan\core\base\service $oService Object - instance of service
      * @param string $sLogErrMsg Log error message
      * @param numeric $nCode Error Code
      */
-    public function __construct(\core\base\service $oService, $sLogErrMsg, $nCode = E_USER_ERROR, $oPrevious = null)
+    public function __construct(\fan\core\base\service $oService, $sLogErrMsg, $nCode = E_USER_ERROR, $oPrevious = null)
     {
         $this->oService = $oService;
 
@@ -39,7 +39,7 @@ class fatal extends \core\exception\base
 
     /**
      * Get Instance of service
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     public function getService()
     {
@@ -49,7 +49,7 @@ class fatal extends \core\exception\base
     /**
      * Get Instance of service
      * @param string $sLogType
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     protected function _logErrorMessage($sLogType)
     {
@@ -73,5 +73,5 @@ class fatal extends \core\exception\base
         return parent::_defineDbOper($sDbOper);
     } // function _defineDbOper
 
-} // class \core\exception\service\fatal
+} // class \fan\core\exception\service\fatal
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\service\matcher\item;
+<?php namespace fan\core\service\matcher\item;
 /**
  * Description of parsed
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @property string $app_name
  * @property string $app_prefix
@@ -86,7 +86,7 @@ class parsed extends base
             if (empty($aMainRequest)) {
                 $this->aData['class'] = '';
             } else {
-                $this->aData['class']  = '\\app\\' . $this->aData['app_name'];
+                $this->aData['class']  = '\\fan\\app\\' . $this->aData['app_name'];
                 $this->aData['class'] .= '\\' . $this->_getConfig('main_block_dir', 'main') . '\\';
                 $this->aData['class'] .= implode('\\', $aMainRequest);
             }
@@ -138,5 +138,5 @@ class parsed extends base
 
     // ======== Private/Protected methods ======== \\
 
-} // class \core\service\matcher\item\parsed
+} // class \fan\core\service\matcher\item\parsed
 ?>

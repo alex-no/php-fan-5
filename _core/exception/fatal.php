@@ -1,4 +1,4 @@
-<?php namespace core\exception;
+<?php namespace fan\core\exception;
 /**
  * Exception a fatal error. This exception must be caught in bootstrap
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class fatal extends base
 {
@@ -39,5 +39,5 @@ class fatal extends base
 
         $this->_logByPhp('Fatal error (http://' . @$_SERVER['HTTP_HOST'] . @$_SERVER['REQUEST_URI'] . '). ' . $sLogErrMsg);
     }
-} // class \core\exception\fatal
+} // class \fan\core\exception\fatal
 ?>

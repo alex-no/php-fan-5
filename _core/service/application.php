@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Application service
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class application extends \core\base\service\single
+class application extends \fan\core\base\service\single
 {
     /**
      * @var string Current applicatin name
@@ -47,7 +47,7 @@ class application extends \core\base\service\single
     /**
      * Set Application name
      * @param type $sName
-     * @return \core\service\application
+     * @return \fan\core\service\application
      */
     public function setAppName($sName)
     {
@@ -104,5 +104,5 @@ class application extends \core\base\service\single
     {
         return 'PHP-FAN 05.001 (29.09.2011)';
     } // function getCoreVersion
-} // class \core\service\application
+} // class \fan\core\service\application
 ?>

@@ -1,7 +1,7 @@
-<?php namespace app\__tools\main\db_up;
+<?php namespace fan\app\__tools\main;
 /**
  * Parse scenario
- *
+ * @version 05.02.001 (10.03.2014)
  */
 class scenario
 {
@@ -261,5 +261,5 @@ class scenario
         $this->oDb->commit();
     } // function clear_fk
 
-} // class \app\__tools\main\db_up\scenario
+} // class \fan\app\__tools\main\scenario
 ?>

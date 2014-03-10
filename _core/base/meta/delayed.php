@@ -1,4 +1,4 @@
-<?php namespace core\base\meta;
+<?php namespace fan\core\base\meta;
 /**
  * Class for get delayed meta-data, after make block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 04.001 (11.07.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class delayed
 {
@@ -51,5 +51,5 @@ class delayed
         return call_user_func_array(array($this->mObj, $this->sMethod), $this->aArguments);
     } // function getValue
 
-} // class \core\base\meta\delayed
+} // class \fan\core\base\meta\delayed
 ?>

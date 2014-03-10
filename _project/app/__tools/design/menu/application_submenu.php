@@ -1,9 +1,9 @@
-<?php namespace app\__tools\design\menu;
+<?php namespace fan\app\__tools\design;
 /**
  * application_submenu block for tools
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class application_submenu extends \project\block\base
+class application_submenu extends \fan\project\block\base
 {
 
     /**
@@ -33,8 +33,8 @@ class application_submenu extends \project\block\base
             );
         }
 
-        $this->setTemplateVar('aMenu', $this->aMenu);
-        $this->setTemplateVar('sCurrent', $this->sCurrent);
+        $this->view->aMenu    = $this->aMenu;
+        $this->view->sCurrent = $this->sCurrent;
     }
 
     /**
@@ -46,5 +46,5 @@ class application_submenu extends \project\block\base
         return @$this->aMenu[$this->sCurrent]['name'];
     }
 
-} // class \app\__tools\design\menu\application_submenu
+} // class \fan\app\__tools\design\application_submenu
 ?>

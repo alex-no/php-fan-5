@@ -1,5 +1,5 @@
-<?php namespace core\service\user;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\user;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Parser of log message-file
  *
@@ -13,14 +13,14 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class config extends base
 {
 
     /**
      * Config of Authentication Data
-     * @var \core\service\config\row
+     * @var \fan\core\service\config\row
      */
     protected $oAuthConfig;
 
@@ -63,7 +63,7 @@ class config extends base
             return false;
         }
 
-        $this->oAuthConfig = \project\service\config::instance($sFile)->get($sKey);
+        $this->oAuthConfig = \fan\project\service\config::instance($sFile)->get($sKey);
 
         $oRule = $this->_getAccessRule();
         if (empty($oRule)) {
@@ -87,10 +87,10 @@ class config extends base
 
     /**
      * Get Data of Anonymous user
-     * @param \core\service\config\row $oRule
+     * @param \fan\core\service\config\row $oRule
      * @return array
      */
-    protected function _getAnonymousData(\core\service\config\row $oRule)
+    protected function _getAnonymousData(\fan\core\service\config\row $oRule)
     {
         $this->bIsValid = true;
 
@@ -151,7 +151,7 @@ class config extends base
 
     /**
      * Get Access Rule from config
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
     protected function _getAccessRule()
     {
@@ -206,5 +206,5 @@ class config extends base
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
 
-} // \core\service\user\config
+} // class \fan\core\service\user\config
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\service\template\parser;
+<?php namespace fan\core\service\template\parser;
 /**
  * Template parser engine form
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class form extends base
 {
@@ -39,5 +39,5 @@ class form extends base
         return '$sReturnHtmlVal.=$this->getSidField();' . "\n";
     } // function parse_form_sid
 
-} // class \core\service\template\parser\form
+} // class \fan\core\service\template\parser\form
 ?>

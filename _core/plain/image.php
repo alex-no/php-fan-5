@@ -1,5 +1,5 @@
-<?php namespace core\plain;
-use project\exception\plain\fatal as fatalException;
+<?php namespace fan\core\plain;
+use fan\project\exception\plain\fatal as fatalException;
 /**
  * Class of controller for show image, nail, etc
  *
@@ -13,7 +13,7 @@ use project\exception\plain\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
 class image extends db_file
@@ -103,7 +103,7 @@ class image extends db_file
         if ($this->sImageType == 'adm_nail') {
             return array(60, 60);
         }
-        $oSR = \project\service\request::instance();
+        $oSR = \fan\project\service\request::instance();
         return array($oSR->get('w', 'GPA'), $oSR->get('h', 'GPA'));
     } // function _getNailSize
 
@@ -224,8 +224,8 @@ class image extends db_file
      */
     protected function _getCacheData($aMainData)
     {
-        $oCache = \project\service\cache::instance('img_nail');
-        /* @var $oCache \core\service\cache */
+        $oCache = \fan\project\service\cache::instance('img_nail');
+        /* @var $oCache \fan\core\service\cache */
 
         $sCacheKey = $this->mId;
         if (!empty($this->nWidth)) {
@@ -250,7 +250,7 @@ class image extends db_file
      */
     protected function _getNailData($aMainData)
     {
-        $oImg = \project\service\image::instance($aMainData['filePath']);
+        $oImg = \fan\project\service\image::instance($aMainData['filePath']);
         $oImg->scal($this->nWidth, $this->nHeight);
         $aImgData = $oImg->getImageInfo(300, empty($this->sNailDir));
 
@@ -271,5 +271,5 @@ class image extends db_file
         );
     } // function _getNailData
 
-} // class \core\service\plain\nail
+} // class \fan\core\service\plain\nail
 ?>

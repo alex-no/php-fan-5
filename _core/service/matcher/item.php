@@ -1,5 +1,5 @@
-<?php namespace core\service\matcher;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\matcher;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Description of item
  *
@@ -13,12 +13,12 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  *
- * @property-read \core\service\matcher\item\source  $source
- * @property-read \core\service\matcher\item\uri     $uri
- * @property-read \core\service\matcher\item\handler $handler
- * @property-read \core\service\matcher\item\parsed  $parsed
+ * @property-read \fan\core\service\matcher\item\source  $source
+ * @property-read \fan\core\service\matcher\item\uri     $uri
+ * @property-read \fan\core\service\matcher\item\handler $handler
+ * @property-read \fan\core\service\matcher\item\parsed  $parsed
  */
 class item implements \ArrayAccess
 {
@@ -33,19 +33,19 @@ class item implements \ArrayAccess
      * @var array
      */
     protected $aData = array(
-        // \core\service\matcher\item\source
+        // \fan\core\service\matcher\item\source
         'source'  => null,
-        // \core\service\matcher\item\uri
+        // \fan\core\service\matcher\item\uri
         'uri'     => null,
-        // \core\service\matcher\item\handler
+        // \fan\core\service\matcher\item\handler
         'handler' => null,
-        // \core\service\matcher\item\parsed
+        // \fan\core\service\matcher\item\parsed
         'parsed'  => null,
     );
 
     /**
      * Facade of service
-     * @var core\service\matcher
+     * @var fan\core\service\matcher
      */
     protected $oFacade = null;
 
@@ -53,7 +53,7 @@ class item implements \ArrayAccess
     {
         $this->iIndex = $iIndex;
         foreach ($this->aData as $k => &$v) {
-            $sClass = '\project\service\matcher\item\\' . $k;
+            $sClass = '\fan\project\service\matcher\item\\' . $k;
             $v = new $sClass($this);
         }
     }
@@ -94,9 +94,9 @@ class item implements \ArrayAccess
 
     /**
      * Set Facade
-     * @param core\service\matcher $oFacade
+     * @param fan\core\service\matcher $oFacade
      */
-    public function setFacade(\core\service\matcher $oFacade)
+    public function setFacade(\fan\core\service\matcher $oFacade)
     {
         $this->oFacade = $oFacade;
         foreach ($this->aData as $v) {
@@ -107,7 +107,7 @@ class item implements \ArrayAccess
 
     /**
      * Get Facade
-     * @return core\service\matcher
+     * @return fan\core\service\matcher
      */
     public function getFacade()
     {
@@ -155,10 +155,11 @@ class item implements \ArrayAccess
             'full'    => $aUri['full'],
         );
 
-        $sAppName = null;
-        $aReqData = array();
-        $sPathPos = null;
-        $oLocale  = \project\service\locale::instance();
+        $sLanguage = null;
+        $sAppName  = null;
+        $aReqData  = array();
+        $sPathPos  = null;
+        $oLocale   = \fan\project\service\locale::instance();
         $aLanguages      = $oLocale->getAvailableLanguages();
         $sRegexpLanguage = implode('|', array_keys($aLanguages));
 
@@ -169,8 +170,7 @@ class item implements \ArrayAccess
             $sWay    = isset($v['way']) ? $v['way'] : 'path';
             if (preg_match($sRegexp, $aSubject[$sWay], $aMatches)) {
                 if (isset($v['language']) && !empty($aMatches[$v['language']])) {
-                    // ToDo: Redesign Language defining there (by subscribe)
-                    $oLocale->setLanguage($aMatches[$v['language']]);
+                    $sLanguage = $aMatches[$v['language']];
                 }
                 $sAppName = $k;
                 $aReqData = $aMatches;
@@ -197,9 +197,9 @@ class item implements \ArrayAccess
         }
 
         $oParsed = $this->aData['parsed'];
+        $oParsed['language']   = $sLanguage;
         $oParsed['app_name']   = $sAppName;
         $oParsed['app_prefix'] = $sPrefix;
-        $oParsed['language']   = $oLocale->getLanguage();
 
         $nQueryPos = strpos ($sSrcPath, '?');
         if ($nQueryPos === false) {
@@ -210,11 +210,12 @@ class item implements \ArrayAccess
             $oParsed['query']    = substr($sSrcPath, $nQueryPos);
         }
 
+
         // ToDo: Check all paths
         //   - local (disk-paths) must point by last item;
         //   - outer (URN) must point by current item;
         // If this is departed from a rule - will be big error when AppName is changed
-        \project\service\application::instance()->setAppName($sAppName);
+        \fan\project\service\application::instance()->setAppName($sAppName);
         return $this;
     } // function preParseRequest
 
@@ -366,7 +367,7 @@ class item implements \ArrayAccess
             // Set default handler if it doesn't macth any RegExp
             $aDefault = $this->oFacade->getConfig('default_handler', array(
                 'key'    => 'tab',
-                'method' => '\project\service\tab::getCode',
+                'method' => '\fan\project\service\tab::getCode',
                 'param'  => null
             ));
             return array(
@@ -392,7 +393,7 @@ class item implements \ArrayAccess
     {
         return array(
             'key'     => 'cli',
-            'method'  => '\project\service\cli::getContent',
+            'method'  => '\fan\project\service\cli::getContent',
             'param'   => array(),
             'ctrlKey' => null,
         );
@@ -409,7 +410,7 @@ class item implements \ArrayAccess
         if (preg_match($aData['regexp'], $this->aData['uri']['path'], $aMatches)) {
             return array(
                 'key'     => 'plain',
-                'method'  => '\project\service\plain::getContent',
+                'method'  => '\fan\project\service\plain::getContent',
                 'param'   => array($sKey, $aData['class'], $this->_getControllerMethod($aMatches, $aData['method'])),
                 'ctrlKey' => $sKey,
                 'mReqKey' => isset($aMatches[1]) ? $aMatches[1] : null,
@@ -420,11 +421,11 @@ class item implements \ArrayAccess
 
     /**
      *
-     * @param \core\service\matcher\item\parsed $oParsed
+     * @param \fan\core\service\matcher\item\parsed $oParsed
      * @param array $aData
-     * @return \core\service\matcher\item
+     * @return \fan\core\service\matcher\item
      */
-    protected function _parseRequestForTab(\core\service\matcher\item\parsed $oParsed, array $aData)
+    protected function _parseRequestForTab(\fan\core\service\matcher\item\parsed $oParsed, array $aData)
     {
         $sPath  = \bootstrap::getLoader()->project;
         $sPath .= '/app/' . $oParsed['app_name'] . '/' . $this->_getConfig('main_block_dir', 'main');
@@ -461,11 +462,11 @@ class item implements \ArrayAccess
     } // function _parseRequestForTab
     /**
      *
-     * @param \core\service\matcher\item\parsed $oParsed
+     * @param \fan\core\service\matcher\item\parsed $oParsed
      * @param array $aData
-     * @return \core\service\matcher\item
+     * @return \fan\core\service\matcher\item
      */
-    protected function _parseRequestForPlain(\core\service\matcher\item\parsed $oParsed, array $aData)
+    protected function _parseRequestForPlain(\fan\core\service\matcher\item\parsed $oParsed, array $aData)
     {
         $sMainRequstPref = $this->aData['handler']->mReqKey;
         if (empty($sMainRequstPref)) {
@@ -485,11 +486,11 @@ class item implements \ArrayAccess
     } // function _parseRequestForPlain
     /**
      *
-     * @param \core\service\matcher\item\parsed $oParsed
+     * @param \fan\core\service\matcher\item\parsed $oParsed
      * @param array $aData
-     * @return \core\service\matcher\item
+     * @return \fan\core\service\matcher\item
      */
-    protected function _parseRequestForCli(\core\service\matcher\item\parsed $oParsed, array $aData)
+    protected function _parseRequestForCli(\fan\core\service\matcher\item\parsed $oParsed, array $aData)
     {
         return $this;
     } // function _parseRequestForCli
@@ -509,14 +510,14 @@ class item implements \ArrayAccess
      * Make Exception
      * @param string $sErrMsg
      * @throws fatalException
-     * @throws \project\exception\fatal
+     * @throws \fan\project\exception\fatal
      */
     protected function _makeException($sErrMsg)
     {
         if ($this->oFacade) {
             throw new fatalException($this->oFacade, $sErrMsg);
         }
-        throw new \project\exception\fatal($sErrMsg);
+        throw new \fan\project\exception\fatal($sErrMsg);
     } // function _makeException
 
     /**
@@ -593,5 +594,5 @@ class item implements \ArrayAccess
     }
 
     // ======== Required Interface methods ======== \\
-} // class \core\service\matcher\item
+} // class \fan\core\service\matcher\item
 ?>

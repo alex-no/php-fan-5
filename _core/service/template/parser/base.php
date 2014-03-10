@@ -1,5 +1,5 @@
-<?php namespace core\service\template\parser;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\template\parser;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Template parser engine base
  *
@@ -13,12 +13,12 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class base
 {
     /**
-     * @var \core\service\template Service template instance
+     * @var \fan\core\service\template Service template instance
      */
     protected $oFacade;
 
@@ -35,9 +35,9 @@ abstract class base
 
     /**
      * Set Facade
-     * @param core\service\template $oFacade
+     * @param fan\core\service\template $oFacade
      */
-    public function setFacade(\core\service\template $oFacade)
+    public function setFacade(\fan\core\service\template $oFacade)
     {
         $this->oFacade = $oFacade;
     } // function setFacade
@@ -87,7 +87,7 @@ Near "' . $aParseData['part'] . '". At the file "');
     protected function getSimpleParam($sData)
     {
         $aRet = array();
-        if (preg_match_all(\project\service\template::paramSimplePcre, $sData, $aMatches)) {
+        if (preg_match_all(\fan\project\service\template::paramSimplePcre, $sData, $aMatches)) {
             foreach ($aMatches[0] as $i => $val) {
                 $aRet[] = $aMatches[2][$i] == '"' ?
                     stripslashes(substr($aMatches[1][$i], 1, -1)) :
@@ -110,7 +110,7 @@ Near "' . $aParseData['part'] . '". At the file "');
     protected function getStandardParam($sData, $aRequire = array(), $aStrip = array())
     {
         $aRet = array();
-        if (preg_match_all(\project\service\template::paramStandardPcre, $sData, $aMatches)) {
+        if (preg_match_all(\fan\project\service\template::paramStandardPcre, $sData, $aMatches)) {
             foreach ($aMatches[0] as $i => $val) {
                 $aRet[$aMatches[1][$i]] = $aMatches[3][$i] == '"' ?
                     stripslashes(substr($aMatches[2][$i], 1, -1)) :
@@ -157,5 +157,5 @@ Near "' . $aParseData['part'] . '". At the file "');
         return substr($sRet, 0, -1) . ')';
     } // function getDynamicArray
 
-} // class \core\service\template\parser\base
+} // class \fan\core\service\template\parser\base
 ?>

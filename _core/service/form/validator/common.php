@@ -1,4 +1,4 @@
-<?php namespace core\service\form\validator;
+<?php namespace fan\core\service\form\validator;
 /**
  * Common class of validators
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class common extends base
 {
@@ -28,5 +28,5 @@ class common extends base
         return $mValue != '';
     } // function isRequired
 
-} // class \core\service\form\validator\common
+} // class \fan\core\service\form\validator\common
 ?>

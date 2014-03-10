@@ -1,4 +1,4 @@
-<?php namespace core\service\entity\descriptor\mysql;
+<?php namespace fan\core\service\entity\descriptor\mysql;
 
 /**
  * Get table description by information_schema
@@ -13,9 +13,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class schema extends \core\service\entity\descriptor\mysql
+class schema extends \fan\core\service\entity\descriptor\mysql
 {
     /**
      * Data Base Name
@@ -25,7 +25,7 @@ class schema extends \core\service\entity\descriptor\mysql
 
     /**
      * Connection to database
-     * @var \core\service\database
+     * @var \fan\core\service\database
      */
     protected $oConnectionSchema = null;
 
@@ -41,14 +41,33 @@ class schema extends \core\service\entity\descriptor\mysql
      */
     protected $aConstraints = null;
 
-    public function __construct(\core\service\entity\description $oDescription)
+    public function __construct(\fan\core\service\entity\description $oDescription)
     {
         parent::__construct($oDescription);
-//throw new \project\exception\model\reverse($oDescription->getEntity());
+//throw new \fan\project\exception\model\reverse($oDescription->getEntity());
 
-        $aParam = $oDescription->getEntity()->getConnection()->getConnectionParam();
+        $aCheckParam = array(
+            'ENGINE'     => null,
+            'PERSISTENT' => 0,
+            'HOST'       => 'localhost',
+            'DATABASE'   => null,
+            'USER'       => null,
+            'PASSWORD'   => '',
+        );
+        $oConnect = $oDescription->getEntity()->getConnection();
+        $aParam = $oConnect->getConnectionParam();
+        foreach ($aCheckParam as $k => $v) {
+            if (!isset($aParam[$k])) {
+                if (is_null($v)) {
+                    throw new \project\exception\model\reverse($oDescription->getEntity(), 'Undefined required connect parameter ' . $k . ' for connection ' . $oConnect->getConnectionName());
+                } else {
+                    $aParam[$k] = $v;
+                }
+            }
+        }
+
         try {
-            $this->oConnectionSchema = \project\service\database::instanceByParam(array(
+            $this->oConnectionSchema = \fan\project\service\database::instanceByParam(array(
                 'ENGINE'     => $aParam['ENGINE'],
                 'PERSISTENT' => $aParam['PERSISTENT'],
                 'HOST'       => $aParam['HOST'],
@@ -57,9 +76,9 @@ class schema extends \core\service\entity\descriptor\mysql
                 'PASSWORD'   => $aParam['PASSWORD'],
                 'SCENARIO'   => '',
             ), 'shema');
-        } catch (\project\exception\database $oExp) {
+        } catch (\fan\project\exception\database $oExp) {
             $oExp->disableLog();
-            throw new \project\exception\model\reverse($oDescription->getEntity());
+            throw new \fan\project\exception\model\reverse($oDescription->getEntity());
         }
 
         $this->sDbName = $aParam['DATABASE'];
@@ -251,5 +270,5 @@ ORDER BY
         }
         return $this->aConstraints;
     } // function _getConstraints
-} // class \core\service\entity\descriptor\mysql\schema
+} // class \fan\core\service\entity\descriptor\mysql\schema
 ?>

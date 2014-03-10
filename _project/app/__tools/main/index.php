@@ -1,4 +1,4 @@
-<?php namespace app\__tools\main;
+<?php namespace fan\app\__tools\main;
 /**
  * index block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class index extends \project\block\common\simple
+class index extends \fan\project\block\common\simple
 {
     /**
      * Init block
@@ -33,5 +33,5 @@ class index extends \project\block\common\simple
         }
     } // init
 
-} // class \app\__tools\main\index
+} // class \fan\app\__tools\main\index
 ?>

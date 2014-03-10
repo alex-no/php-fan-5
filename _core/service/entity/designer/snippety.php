@@ -1,4 +1,4 @@
-<?php namespace core\service\entity\designer;
+<?php namespace fan\core\service\entity\designer;
 /**
  * Designer of snippety SQL-request
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class snippety extends \core\service\entity\designer
+class snippety extends \fan\core\service\entity\designer
 {
     /**
      * SQL-request snippets
@@ -35,7 +35,7 @@ class snippety extends \core\service\entity\designer
     /**
      * Separate Source SQL-requests at the snippets and set it
      * @param string $sQueryKey
-     * @return \core\service\entity\designer\snippety
+     * @return \fan\core\service\entity\designer\snippety
      */
     public function setSqlRequest($sQueryKey)
     {
@@ -52,7 +52,7 @@ class snippety extends \core\service\entity\designer
     /**
      * Set Snippet of Request
      * @param string $sSourceSQL
-     * @return \core\service\entity\designer\snippety
+     * @return \fan\core\service\entity\designer\snippety
      */
     public function setRequestSnippet($mSnippetValue, $bAllowException = true)
     {
@@ -65,7 +65,7 @@ class snippety extends \core\service\entity\designer
      * @param string|array $mSnippetValue
      * @param type $bToEnd
      * @param type $bAllowException
-     * @return \core\service\entity\designer\snippety
+     * @return \fan\core\service\entity\designer\snippety
      */
     public function addRequestSnippet($mSnippetValue, $bToEnd = true, $bAllowException = true)
     {
@@ -77,7 +77,7 @@ class snippety extends \core\service\entity\designer
      * Set Part of Order
      * @param mixed $mPartValue
      * @param boolean $bAllowException
-     * @return \core\service\entity\designer\snippety
+     * @return \fan\core\service\entity\designer\snippety
      */
     public function setOrderPart($mPartValue, $bAllowException = true)
     {
@@ -92,7 +92,7 @@ class snippety extends \core\service\entity\designer
      * @param string|array $mPartValue
      * @param boolean $bToEnd
      * @param boolean $bAllowException
-     * @return \core\service\entity\designer\snippety
+     * @return \fan\core\service\entity\designer\snippety
      */
     public function addOrderPart($mPartValue, $bToEnd = true, $bAllowException = true)
     {
@@ -130,5 +130,5 @@ class snippety extends \core\service\entity\designer
         return $aSnippets;
     } // function _parseSQL
 
-} // class \core\service\entity\designer\snippety
+} // class \fan\core\service\entity\designer\snippety
 ?>

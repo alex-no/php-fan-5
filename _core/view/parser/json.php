@@ -1,4 +1,4 @@
-<?php namespace core\view\parser;
+<?php namespace fan\core\view\parser;
 /**
  * View parser JSON-type
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class json extends \core\view\parser
+class json extends \fan\core\view\parser
 {
     // ======== Static methods ======== \\
     /**
@@ -41,5 +41,5 @@ class json extends \core\view\parser
 
     // ======== Protected methods ======== \\
 
-} // class \core\view\parser\json
+} // class \fan\core\view\parser\json
 ?>

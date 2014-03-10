@@ -1,13 +1,13 @@
-<?php namespace app\__tools\main\create_block;
+<?php namespace fan\app\__tools\main;
 /**
  * Index class block
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class index extends \project\block\common\simple
+class index extends \fan\project\block\common\simple
 {
     public function init()
     {
         //d($this->oTab->getMainRequest());
     }
-} // class \app\__tools\main\create_block\index
+} // class \fan\app\__tools\main\index
 ?>

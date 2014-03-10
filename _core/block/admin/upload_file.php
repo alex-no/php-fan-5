@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Admin upload file class for loader block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class upload_file extends base
 {
@@ -30,7 +30,7 @@ class upload_file extends base
     /**
      * Block constructor
      * @param string $sBlockName Block Name
-     * @param service_tab $oTab
+     * @param \core\service\tab $oTab
      */
     public function finishConstruct($oContainer, $aContainerMeta, $bAllowSetEmbedded = true)
     {
@@ -180,5 +180,5 @@ class upload_file extends base
         // To Do: Get full info about file
         return array('id' => $mFileId);
     } // function getFileData
-} // class \core\block\admin\upload_file
+} // class \fan\core\block\admin\upload_file
 ?>

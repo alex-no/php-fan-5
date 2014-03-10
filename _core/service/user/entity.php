@@ -1,5 +1,5 @@
-<?php namespace core\service\user;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\user;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Parser of log message-file
  *
@@ -13,13 +13,13 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class entity extends base
 {
     /**
      * DB row data
-     * @var \core\base\model\row
+     * @var \fan\core\base\model\row
      */
     protected $oRow;
 
@@ -162,7 +162,7 @@ class entity extends base
 
     /**
      * Get Row
-     * @return \core\base\model\row|null
+     * @return \fan\core\base\model\row|null
      */
     protected function _getRow()
     {
@@ -184,5 +184,5 @@ class entity extends base
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
 
-} // \core\service\user\config
+} // class \fan\core\service\user\config
 ?>

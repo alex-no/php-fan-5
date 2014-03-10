@@ -1,4 +1,4 @@
-<?php namespace core\view\parser;
+<?php namespace fan\core\view\parser;
 /**
  * View parser HTML-type
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class html extends \core\view\parser
+class html extends \fan\core\view\parser
 {
     // ======== Static methods ======== \\
     /**
@@ -27,11 +27,11 @@ class html extends \core\view\parser
 
     /**
      * Get View-Router for block
-     * @param \core\block\base $oBlock
-     * @return \core\view\router\simple
+     * @param \fan\core\block\base $oBlock
+     * @return \fan\core\view\router\simple
      */
-    static public function getRouter(\core\block\base $oBlock) {
-        return new \project\view\router\html($oBlock);
+    static public function getRouter(\fan\core\block\base $oBlock) {
+        return new \fan\project\view\router\html($oBlock);
     } // function getRouter
 
     // ======== The magic methods ======== \\
@@ -41,7 +41,7 @@ class html extends \core\view\parser
      * Get Final Content Code
      * @return string
      */
-    public function getResultData(\core\block\base $oBlock)
+    public function getResultData(\fan\core\block\base $oBlock)
     {
         $aTplVar = $oBlock->getViewData();
 
@@ -57,11 +57,11 @@ class html extends \core\view\parser
     /**
      * Set Response Headers
      * @param type $sResult
-     * @return \core\view\parser
+     * @return \fan\core\view\parser
      */
     protected function _setHeaders($sResult, $sContentType = 'text/html', $sEncoding = null)
     {
         return parent::_setHeaders($sResult, $sContentType, $sEncoding);
     } // function _setHeaders
-} // class \core\view\parser\html
+} // class \fan\core\view\parser\html
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\service\template\type;
+<?php namespace fan\core\service\template\type;
 /**
  *
  * This file is part PHP-FAN (php-framework from Alexandr Nosov)
@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class image extends base
 {
@@ -111,5 +111,5 @@ abstract class image extends base
     {
         return $this->aBaseParam['signature']['text'] ? '<span' . (@$aData['class'] ? ' class="' . $aData['class'] . '"' : '') . '>' . $this->aBaseParam['signature']['text'] . '</span>' : '';
     } // function makeSignature
-} // class \core\service\template\type\image
+} // class \fan\core\service\template\type\image
 ?>

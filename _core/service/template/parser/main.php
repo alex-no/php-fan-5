@@ -1,4 +1,4 @@
-<?php namespace core\service\template\parser;
+<?php namespace fan\core\service\template\parser;
 /**
  * Template parser engine main
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class main extends base
 {
@@ -123,8 +123,8 @@ class main extends base
         }
         $aParam['use_sid']  = array_key_exists('use_sid',  $aParam) ? (empty($aParam['use_sid'])  ? 'false' : 'true') : 'null';
         $aParam['protocol'] = array_key_exists('protocol', $aParam) ? (empty($aParam['protocol']) ? 'false' : 'true') : 'null';
-        return '$sReturnHtmlVal.=\project\service\tab::instance()->getURI(' . $aParam['url'] . ',\'' . $aParam['type'] . '\',' . $aParam['use_sid'] . ',' . $aParam['protocol'] . ");\n";
+        return '$sReturnHtmlVal.=\fan\project\service\tab::instance()->getURI(' . $aParam['url'] . ',\'' . $aParam['type'] . '\',' . $aParam['use_sid'] . ',' . $aParam['protocol'] . ");\n";
     } // function parse_get_url
 
-} // class \core\service\template\parser\main
+} // class \fan\core\service\template\parser\main
 ?>

@@ -1,14 +1,14 @@
 <?php
 /**
  * Footer content meta
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 
 return array(
     'own' => array(
 
         'embeddedBlocks' => array( // Key - template var; Value - path to block
-            //'menu_bottom' => '{CAPP}/design/menu/menu_bottom',
+            //'menu_bottom' => 'design/menu/menu_bottom',
         ),
 
         'staticContent' => array(

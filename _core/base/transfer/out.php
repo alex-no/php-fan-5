@@ -1,4 +1,4 @@
-<?php namespace core\base\transfer;
+<?php namespace fan\core\base\transfer;
 /**
  * Outer transfer
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class out extends \core\base\transfer
+class out extends \fan\core\base\transfer
 {
     /**
      * Transfer's constructor
@@ -30,5 +30,5 @@ class out extends \core\base\transfer
         }
         parent::__construct($sNewUrn, $sNewQueryString, $sDbOper);
     }
-} // class \core\base\transfer\out
+} // class \fan\core\base\transfer\out
 ?>

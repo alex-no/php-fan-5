@@ -1,4 +1,4 @@
-<?php namespace core\base\model\file_data;
+<?php namespace fan\core\base\model\file_data;
 /**
  * Entity of file data
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (17.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-abstract class entity extends \core\base\model\entity
+abstract class entity extends \fan\core\base\model\entity
 {
-} // class \core\base\model\file_data\entity
+} // class \fan\core\base\model\file_data\entity
 ?>

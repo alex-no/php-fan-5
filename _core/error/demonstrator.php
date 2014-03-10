@@ -1,4 +1,4 @@
-<?php namespace core\error;
+<?php namespace fan\core\error;
 /**
  * Description of demonstrator
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class demonstrator
 {
@@ -91,7 +91,7 @@ class demonstrator
     /**
      * Set Template Variables
      * @param mixed $mTplVars
-     * @return \core\error\demonstrator
+     * @return \fan\core\error\demonstrator
      */
     public function setTplVars($mTplVars)
     {
@@ -115,7 +115,7 @@ class demonstrator
     /**
      * Set Template Name
      * @param mixed $sTplFile
-     * @return \core\error\demonstrator
+     * @return \fan\core\error\demonstrator
      */
     public function setTplName($sTplFile = null)
     {
@@ -266,5 +266,5 @@ class demonstrator
         }
         return $sRet;
     } // function setDoctype
-} // class \core\error\demonstrator
+} // class \fan\core\error\demonstrator
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\base;
+<?php namespace fan\core\base;
 /**
  * Any types of Data (config, meta, entity, etc)
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializable
 {
@@ -57,7 +57,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
 
     /**
      * Superior in multilevel systems (if null - this is root element)
-     * @var \core\base\data
+     * @var \fan\core\base\data
      */
     protected $oSuperior = null;
 
@@ -71,7 +71,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
      * Constructor of Config-data
      * @param array $aData
      * @param string $sKey
-     * @param core\service\config\row $oSuperior
+     * @param fan\core\service\config\row $oSuperior
      */
     public function __construct($aData = null, $sKey = null, $oSuperior = null)
     {
@@ -113,7 +113,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
      * @param mixed $mValue
      * @param boolean $bRewriteExisting - rewrite exists value
      * @param boolean $bConvArray - convert array to object of this class (null is true for Multi-Level data)
-     * @return \core\base\data
+     * @return \fan\core\base\data
      */
     public function set($mKey, $mValue, $bRewriteExisting = true, $bConvArray = null)
     {
@@ -180,7 +180,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
 
     /**
      * Restore of Setter
-     * @return \core\base\data
+     * @return \fan\core\base\data
      */
     protected function _restoreSetters()
     {
@@ -321,7 +321,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
         foreach ($aReplacement as $k => $v) {
             $sErrMsg = str_replace('{' . strtoupper($k) . '}', $v, $sErrMsg);
         }
-        \project\service\error::instance()->logErrorMessage($sErrMsg, 'Data error', '', true);
+        \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data error', '', true);
         return $this;
     } // function _logError
 
@@ -459,7 +459,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
         $this->aData = $aRecover['data'];
         if ($this->bMultiLevel) {
             foreach ($this->aData as $k => $v) {
-                if (is_object($v) && $v instanceof \core\base\data) {
+                if (is_object($v) && $v instanceof \fan\core\base\data) {
                     $v->sKey      = $k;
                     $v->oSuperior = $this;
                 }
@@ -468,5 +468,5 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
         // Attention: restore Setter in the children class by method _setSetter
     }
 
-} // class \core\base\data
+} // class \fan\core\base\data
 ?>

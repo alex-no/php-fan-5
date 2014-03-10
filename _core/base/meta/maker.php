@@ -1,4 +1,4 @@
-<?php namespace core\base\meta;
+<?php namespace fan\core\base\meta;
 /**
  * Meta-Data Maker
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class maker implements \IteratorAggregate
 {
@@ -23,7 +23,7 @@ class maker implements \IteratorAggregate
     protected static $aMetaCache = array();
 
     /**
-     * @var \core\block\base Linked block
+     * @var \fan\core\block\base Linked block
      */
     protected $oBlock;
 
@@ -88,20 +88,20 @@ class maker implements \IteratorAggregate
     );
 
     /**
-     * @var \core\base\meta\row
+     * @var \fan\core\base\meta\row
      */
     protected $oRootRow;
 
     /**
      * Constructor of meta maker
-     * @param core\block\base $oBlock
+     * @param fan\core\block\base $oBlock
      */
-    public function __construct(\core\block\base $oBlock)
+    public function __construct(\fan\core\block\base $oBlock)
     {
         $this->oBlock     = $oBlock;
         $this->sBlockName = $oBlock->getBlockName();
 
-        $aPaths = \project\service\reflector::instance()->getParentPaths($this->oBlock);
+        $aPaths = \fan\project\service\reflector::instance()->getParentPaths($this->oBlock);
         $this->_defineBlockMeta($aPaths);
         $this->_defineFolderMeta($aPaths);
     } // function __construct
@@ -127,7 +127,7 @@ class maker implements \IteratorAggregate
 
     /**
      * Get instance of linked Block
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getBlock()
     {
@@ -137,7 +137,7 @@ class maker implements \IteratorAggregate
     /**
      * Set Container Meta
      * @param type $aContainerMeta
-     * @return \core\base\meta\maker
+     * @return \fan\core\base\meta\maker
      */
     public function setContainerMeta($aContainerMeta)
     {
@@ -147,7 +147,7 @@ class maker implements \IteratorAggregate
 
     /**
      * Set Meta-data assigned for current block in Main-Content block
-     * @return \core\base\meta\maker
+     * @return \fan\core\base\meta\maker
      */
     public function setContentMeta()
     {
@@ -177,7 +177,7 @@ class maker implements \IteratorAggregate
 
     /**
      * Assemble meta-data for Block
-     * @return \core\base\meta\row
+     * @return \fan\core\base\meta\row
      */
     public function assembleBlock()
     {
@@ -188,7 +188,7 @@ class maker implements \IteratorAggregate
                 $aData = $this->_mergeMeta($aData, $this->aSource[$v[0]][$key], $v[0]);
             }
         }
-        $this->oRootRow = new \project\base\meta\row($this, $aData);
+        $this->oRootRow = new \fan\project\base\meta\row($this, $aData);
         return $this->oRootRow;
     } // function assembleBlock
 
@@ -257,7 +257,7 @@ class maker implements \IteratorAggregate
      * Get Root element of Meta Data
      * @param string|array $mKey
      * @param mixed $mDefault
-     * @return \core\base\meta\row
+     * @return \fan\core\base\meta\row
      */
     public function getMeta($mKey = null, $mDefault = null)
     {
@@ -268,7 +268,7 @@ class maker implements \IteratorAggregate
      * Set Meta Data of Current element
      * @param string|array $mKey
      * @param mixed $mValue
-     * @return \core\base\meta\maker
+     * @return \fan\core\base\meta\maker
      */
     public function setMeta($mKey, $mValue)
     {
@@ -340,13 +340,13 @@ class maker implements \IteratorAggregate
      * Set source Meta-data
      * @param string $sType
      * @param array $aData
-     * @return \core\base\meta\maker
-     * @throws \project\exception\block\fatal
+     * @return \fan\core\base\meta\maker
+     * @throws \fan\project\exception\block\fatal
      */
     protected function _setSource($sType, $aData)
     {
         if (!key_exists($sType, $this->aSource)) {
-            throw new \project\exception\block\fatal($this->oBlock, 'Unknown type "' . $sType . '" of source Meta-data');
+            throw new \fan\project\exception\block\fatal($this->oBlock, 'Unknown type "' . $sType . '" of source Meta-data');
         }
         $this->aSource[$sType] = $aData;
         return $this;
@@ -377,7 +377,7 @@ class maker implements \IteratorAggregate
      * @param mixed $mArguments
      * @param string|object $mObj
      * @param boolean $bDelayed
-     * @return \project\base\meta\delayed|mixed
+     * @return \fan\project\base\meta\delayed|mixed
      */
     protected function _makeActiveMeta($sMethod, $mArguments = array(), $mObj = null, $bDelayed = true)
     {
@@ -389,9 +389,9 @@ class maker implements \IteratorAggregate
         } elseif (!is_array($mArguments)) {
             $mArguments = adduceToArray($mArguments);
         }
-        $mRet = $bDelayed ? new \project\base\meta\delayed($mObj, $sMethod, $mArguments) : call_user_func_array(array($mObj, $sMethod), $mArguments);
+        $mRet = $bDelayed ? new \fan\project\base\meta\delayed($mObj, $sMethod, $mArguments) : call_user_func_array(array($mObj, $sMethod), $mArguments);
         return $mRet;
     } // function _makeActiveMeta
 
-} // class \core\base\meta\maker
+} // class \fan\core\base\meta\maker
 ?>

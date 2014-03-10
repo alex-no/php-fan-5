@@ -1,9 +1,9 @@
-<?php namespace app\__tools\main;
+<?php namespace fan\app\__tools\main;
 /**
  * Upgrade blocks
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class upgrade_blocks extends \project\block\common\simple
+class upgrade_blocks extends \fan\project\block\common\simple
 {
     /**
      * Base Path to upgraded directory
@@ -452,5 +452,5 @@ class upgrade_blocks extends \project\block\common\simple
         return false;
     } // function _checkType
 
-} // class \app\__tools\main\upgrade_blocks
+} // class \fan\app\__tools\main\upgrade_blocks
 ?>

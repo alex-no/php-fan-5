@@ -1,4 +1,4 @@
-<?php namespace core\exception;
+<?php namespace fan\core\exception;
 /**
  * Exception base class
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
 abstract class base extends \Exception
@@ -59,8 +59,8 @@ abstract class base extends \Exception
         }
 
         $this->sDbOper = $this->_defineDbOper();
-        if (!empty($this->sDbOper) && class_exists('\core\service\database', false)) {
-            \project\service\database::fixAll($this->sDbOper);
+        if (!empty($this->sDbOper) && class_exists('\fan\core\service\database', false)) {
+            \fan\project\service\database::fixAll($this->sDbOper);
         }
 
         if (!empty($oPrevious) && $oPrevious instanceof \Exception) {
@@ -125,17 +125,17 @@ abstract class base extends \Exception
      * @param string $sErrMsg Logged error message
      * @param string $sErrTitle Error title
      * @param string $sNote
-     * @return \core\exception\base
+     * @return \fan\core\exception\base
      */
     protected function _logByService($sErrMsg, $sErrTitle = '', $sNote = '')
     {
         if (!$sNote) {
-            $sNote = \project\service\request::instance()->getInfoString();
+            $sNote = \fan\project\service\request::instance()->getInfoString();
             if (!empty($_POST)) {
                 $sNote .= "\nPOST = " . print_r($_POST, true);
             }
         }
-        \project\service\error::instance()->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
+        \fan\project\service\error::instance()->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
         return $this;
     } // function _logByService
 
@@ -154,5 +154,5 @@ abstract class base extends \Exception
         return null;
     } // function _defineDbOper
 
-} // class \core\exception\base
+} // class \fan\core\exception\base
 ?>

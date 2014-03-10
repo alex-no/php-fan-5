@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * debug manager service
  *
@@ -12,12 +12,12 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class debug extends \core\base\service\single {
+class debug extends \fan\core\base\service\single {
 
     /**
-     * @var \core\service\tab
+     * @var \fan\core\service\tab
      */
     protected $oTab;
     /**
@@ -29,7 +29,7 @@ class debug extends \core\base\service\single {
     {
         parent::__construct($bAllowIni);
 
-        $this->oTab = \project\service\tab::instance();
+        $this->oTab = \fan\project\service\tab::instance();
         $this->oConfig['ENABLED'] = $this->isEnabled() && preg_match($this->getConfig('DEBUG_IP', '/^127\.0\.0\.1$/'), @$_SERVER['SERVER_ADDR']);
     } // function __construct
 
@@ -69,7 +69,7 @@ class debug extends \core\base\service\single {
     /**
      * Wrap html-code
      * @param string $sCode
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      * @return string
      */
     public function wrapHtmlCode($sCode, $oBlock)
@@ -123,7 +123,7 @@ debug_trace.init(2);
 
     /**
      * Get block description for second debug mode
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      * @return string
      */
     public function getSecondDebugRow($oBlock, $aIncl, $isView)
@@ -165,7 +165,7 @@ debug_trace.init(2);
 
     /**
      * Get block description
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      * @return string
      */
     protected function _getBlockDetail($oBlock)
@@ -339,5 +339,5 @@ debug_trace.init(2);
         return str_replace('/', DIRECTORY_SEPARATOR, $sPath);
     } // function _correctPath
 
-} // class \core\service\debug
+} // class \fan\core\service\debug
 ?>

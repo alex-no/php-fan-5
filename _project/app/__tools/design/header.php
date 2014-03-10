@@ -1,4 +1,4 @@
-<?php namespace app\__tools\design;
+<?php namespace fan\app\__tools\design;
 /**
  * header_main block
  *
@@ -12,12 +12,12 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.005
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class header extends \project\block\base
+class header extends \fan\project\block\base
 {
     public function init()
     {
     } // function init
-} // class \app\__tools\design\header
+} // class \fan\app\__tools\design\header
 ?>

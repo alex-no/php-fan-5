@@ -1,4 +1,4 @@
-<?php namespace core\view\router;
+<?php namespace fan\core\view\router;
 /**
  * View router of Block for Loader-type
  *
@@ -12,21 +12,21 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  *
  * IMPORTANT: this view has common area for text and json data, but independed for html
  */
-class loader extends \core\view\router
+class loader extends \fan\core\view\router
 {
     /**
      * JSON-keeper
-     * @var \core\view\keeper\loader\json
+     * @var \fan\core\view\keeper\loader\json
      */
     static protected $oJson = null;
     /**
      * TEXT-keeper
-     * @var \core\view\keeper\loader\text
+     * @var \fan\core\view\keeper\loader\text
      */
     static protected $oText = null;
 
@@ -50,7 +50,7 @@ class loader extends \core\view\router
      * Set special or default view data
      * @param string $sKey
      * @param mixed $mValue
-     * @return \core\view\router
+     * @return \fan\core\view\router
      */
     public function set($sKey, $mValue)
     {
@@ -79,7 +79,7 @@ class loader extends \core\view\router
      * @param string|number $mKey
      * @param mixed $mValue
      * @param boolean $bRewriteExisting - rewrite exists value
-     * @return \core\view\router\loader
+     * @return \fan\core\view\router\loader
      */
     public function setJson($mKey, $mValue, $bRewriteExisting = true)
     {
@@ -99,7 +99,7 @@ class loader extends \core\view\router
      * Set Text-data
      * @param mixed $mValue
      * @param integer $iPosition
-     * @return \core\view\router\loader
+     * @return \fan\core\view\router\loader
      */
     public function setText($mValue, $iPosition = 1)
     {
@@ -109,10 +109,10 @@ class loader extends \core\view\router
 
     /**
      * Is Allowed Full Rewrite data
-     * @param \core\view\keeper $oKeeper
+     * @param \fan\core\view\keeper $oKeeper
      * @return boolean
      */
-    public function isFullRewrite(\core\view\keeper $oKeeper)
+    public function isFullRewrite(\fan\core\view\keeper $oKeeper)
     {
         foreach ($this->aKeepers as $k => $v) {
             if ($v === $oKeeper) {
@@ -125,12 +125,12 @@ class loader extends \core\view\router
     // ======== Private/Protected methods ======== \\
     /**
      *
-     * @return \core\view\keeper\loader\json
+     * @return \fan\core\view\keeper\loader\json
      */
     protected function _getJsonKeeper()
     {
         if (empty(self::$oJson)) {
-            self::$oJson = new \project\view\keeper\loader\json($this);
+            self::$oJson = new \fan\project\view\keeper\loader\json($this);
         } else {
             self::$oJson->addRouter($this);
         }
@@ -140,11 +140,11 @@ class loader extends \core\view\router
     protected function _getTextKeeper()
     {
         if (empty(self::$oText)) {
-            self::$oText = new \project\view\keeper\loader\text($this);
+            self::$oText = new \fan\project\view\keeper\loader\text($this);
         } else {
             self::$oText->addRouter($this);
         }
         return self::$oText;
     } // function _getJsonKeeper
-} // class \core\view\router\loader
+} // class \fan\core\view\router\loader
 ?>

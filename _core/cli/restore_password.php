@@ -1,4 +1,4 @@
-<?php namespace core\cli;
+<?php namespace fan\core\cli;
 /**
  * Restore password CLI-tool
  *
@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class restore_password
 {
     /**
      * Service config
-     * @var \core\service\config
+     * @var \fan\core\service\config
      */
     protected $oConf = null;
 
@@ -80,5 +80,5 @@ class restore_password
         }
         return false;
     } // function parceData
-} // class \project\cli\restore_password
+} // class \fan\project\cli\restore_password
 ?>

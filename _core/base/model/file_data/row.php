@@ -1,5 +1,5 @@
-<?php namespace core\base\model\file_data;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\base\model\file_data;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
  * Row of file data
  *
@@ -13,12 +13,12 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-abstract class row extends \core\base\model\row
+abstract class row extends \fan\core\base\model\row
 {
     /**
-     * @var \core\model\access_type\row  entity access type
+     * @var \fan\core\model\access_type\row  entity access type
      */
     private $oAT = null;
 
@@ -48,10 +48,10 @@ abstract class row extends \core\base\model\row
 
     /**
      * Row-data constructor
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param array $aData
      */
-    public function __construct(\core\base\model\entity $oEntity, &$aData = array(), \core\base\model\rowset $oRowset = null)
+    public function __construct(\fan\core\base\model\entity $oEntity, &$aData = array(), \fan\core\base\model\rowset $oRowset = null)
     {
         parent::__construct($oEntity, $aData, $oRowset);
         $this->sStorePath = \bootstrap::parsePath($oEntity->getConfig('file_store'));
@@ -268,7 +268,7 @@ return ' . var_export($aRow, true) . ';
         $sFilePath = $this->getFilePath();
         if ($sFilePath && file_exists($sFilePath)) {
             $oSH = service('headers');
-            /* @var $oSH \core\service\header */
+            /* @var $oSH \fan\core\service\header */
             $oSH->addHeader('set_content_type', array($this->get_mime_type()));
             $oSH->addHeader('set_filename',     array($this->get_src_name(), is_null($bContentDisposition) ? $this->getContentDisposition() : $bContentDisposition));
             $oSH->addHeader('set_length',       array(filesize($sFilePath)));
@@ -612,5 +612,5 @@ return ' . var_export($aRow, true) . ';
         return $this->sFileNs;
     } // function _getFileNs
 
-} // class \core\base\model\file_data\row
+} // class \fan\core\base\model\file_data\row
 ?>

@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Class of cli handler
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class cli extends \core\base\service\single
+class cli extends \fan\core\base\service\single
 {
     /**
      * Service tab constructor
@@ -24,7 +24,7 @@ class cli extends \core\base\service\single
     protected function __construct($bAllowIni = true)
     {
         parent::__construct($bAllowIni);
-        $this->oMatcher = \project\service\matcher::instance();
+        $this->oMatcher = \fan\project\service\matcher::instance();
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -35,7 +35,7 @@ class cli extends \core\base\service\single
      */
     public static function getContent($sControllerClass, $sMethod)
     {
-        $oInstance = \project\service\cli::instance();
+        $oInstance = \fan\project\service\cli::instance();
         return $oInstance->_setController($sControllerClass)->_getFinalContent($sMethod);
     }
 
@@ -63,19 +63,19 @@ class cli extends \core\base\service\single
     /**
      * Set Engine for plain output
      * @param string $sController
-     * @return \core\service\plain
+     * @return \fan\core\service\plain
      * @throws fatalException
      */
     protected function _setController($sController)
     {
         $sController = ltrim($sController, '\\');
-        $sController = (substr($sController, 0, 6) == 'project\\' ? '\\' : '\\project\\cli\\') . $sController;
+        $sController = (substr($sController, 0, 12) == 'fan\project\\' ? '\\' : '\fan\project\cli\\') . $sController;
         if (!class_exists($sController)) {
             throw new fatalException($this, 'Can\'t find class "' . $sController . '" for CLI content.');
         }
         $this->oController = new $sController($this);
         if (method_exists($this->oController, 'setConfig')) {
-            $oConfig = \core\service\config::instance('cli')->getControllerConfig($this->oController);
+            $oConfig = \fan\core\service\config::instance('cli')->getControllerConfig($this->oController);
             $this->oController->setConfig($oConfig);
         }
         return $this;
@@ -85,5 +85,5 @@ class cli extends \core\base\service\single
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\cli
+} // class \fan\core\service\cli
 ?>

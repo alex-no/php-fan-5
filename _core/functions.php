@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 
 function get_class_name($oObject)
@@ -231,7 +231,7 @@ function decreaseNum($nNumber, $nQtt = 2)
  */
 function getCurBlockInfo()
 {
-    $oTab = class_exists('\project\service\tab', false) ? \project\service\tab::instance() : null;
+    $oTab = class_exists('\fan\project\service\tab', false) ? \fan\project\service\tab::instance() : null;
 
     if ($oTab) {
         $oBlock = $oTab->getCurrentBlock();
@@ -255,11 +255,11 @@ function getCurBlockInfo()
  * Get Instance of Service by name
  * @param string $sServiceName
  * @param array $aArguments
- * @return \core\base\service
+ * @return \fan\core\base\service
  */
 function service($sServiceName, $aArguments = array())
 {
-    $sClass = '\project\service\\' . $sServiceName;
+    $sClass = '\fan\project\service\\' . $sServiceName;
     if (!class_exists($sClass) || !method_exists($sClass, 'instance')) {
         return null;
     }
@@ -281,20 +281,20 @@ function handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText)
     if (!error_reporting()) {
         return;
     }
-    \project\service\error::instance()->handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText);
+    \fan\project\service\error::instance()->handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText);
 } // function handleError
 
 /**
  * Get Current OR arbitrary user
  * @param mixed $mIdentifyer
  * @param string $sUserSpace
- * @return \core\service\user|null
+ * @return \fan\core\service\user|null
  */
 function getUser($mIdentifyer = null, $sUserSpace = null)
 {
     return empty($mIdentifyer) ?
-            \project\service\user::getCurrent($sUserSpace) :
-            \project\service\user::instance($mIdentifyer, $sUserSpace);
+            \fan\project\service\user::getCurrent($sUserSpace) :
+            \fan\project\service\user::instance($mIdentifyer, $sUserSpace);
 } // function getUser
 
 /**
@@ -302,11 +302,11 @@ function getUser($mIdentifyer = null, $sUserSpace = null)
  * @param string $sEntityName Entity Name
  * @param mixed $mCollection Name of Entity Collection
  * @param array $aParam parameter ()
- * @return \core\base\model\entity
+ * @return \fan\core\base\model\entity
  */
 function ge($sEntityName, $mCollection = 0, $aParam = array())
 {
-    return \project\service\entity::instance($mCollection)->get($sEntityName, $aParam);
+    return \fan\project\service\entity::instance($mCollection)->get($sEntityName, $aParam);
 } // function ge
 /**
  * Load row of entity by name and id.
@@ -314,17 +314,17 @@ function ge($sEntityName, $mCollection = 0, $aParam = array())
  * @param mixed $mRowId Id of row
  * @param boolean $bIdIsEncrypt
  * @param array $aParam Parameters
- * @return \core\base\model\row
+ * @return \fan\core\base\model\row
  */
 function gr($sEntityName, $mRowId = null, $bIdIsEncrypt = false, $aParam = array())
 {
-    return \project\service\entity::instance()->get($sEntityName, $aParam)->getRowById($mRowId, $bIdIsEncrypt);
+    return \fan\project\service\entity::instance()->get($sEntityName, $aParam)->getRowById($mRowId, $bIdIsEncrypt);
 } // function gr
 /**
  * Get instance of specific entity.
  * -=!!!!!=- Deprecated - use ge() instead se(). -=!!!!!=-
  * @param string $sEntityName Entity Name
- * @return \core\base\model\entity
+ * @return \fan\core\base\model\entity
  */
 function se($sEntityName)
 {
@@ -336,7 +336,7 @@ function se($sEntityName)
  * -=!!!!!=- Deprecated - use ge() instead le(). -=!!!!!=-
  * @param string $sEntityName Entity Name
  * @param mixed $mRowId Id of row
- * @return \core\base\model\row
+ * @return \fan\core\base\model\row
  */
 function le($sEntityName, $mRowId = null, $bIdIsEncrypt = false)
 {
@@ -386,7 +386,7 @@ function dma($sKey, $mDefaultValue = array())
  */
 function role($sRoleCondition)
 {
-    return \project\service\role::instance()->check($sRoleCondition);
+    return \fan\project\service\role::instance()->check($sRoleCondition);
 } // function role
 
 /**
@@ -397,7 +397,7 @@ function role($sRoleCondition)
  */
 function transfer_out($sNewUrl, $sNewQueryString = null, $sDbOper = null)
 {
-    throw new \project\base\transfer\out($sNewUrl, $sNewQueryString, $sDbOper);
+    throw new \fan\project\base\transfer\out($sNewUrl, $sNewQueryString, $sDbOper);
 } // function transfer_out
 
 /**
@@ -408,7 +408,7 @@ function transfer_out($sNewUrl, $sNewQueryString = null, $sDbOper = null)
  */
 function transfer_int($sNewUrl, $sNewQueryString = null, $sDbOper = null)
 {
-    throw new \project\base\transfer\int($sNewUrl, $sNewQueryString, $sDbOper);
+    throw new \fan\project\base\transfer\int($sNewUrl, $sNewQueryString, $sDbOper);
 } // function transfer_int
 
 /**
@@ -419,7 +419,7 @@ function transfer_int($sNewUrl, $sNewQueryString = null, $sDbOper = null)
  */
 function transfer_sham($sNewUrl, $sNewQueryString = null, $sDbOper = null)
 {
-    throw new \project\base\transfer\sham($sNewUrl, $sNewQueryString, $sDbOper);
+    throw new \fan\project\base\transfer\sham($sNewUrl, $sNewQueryString, $sDbOper);
 } // function transfer_sham
 
 /**
@@ -431,7 +431,7 @@ function transfer_sham($sNewUrl, $sNewQueryString = null, $sDbOper = null)
  */
 function dateL2M($sDate, $sFormat = 'euro', $bFullValidate = false)
 {
-    return \project\service\date::instance($sDate, $sFormat)->get('mysql', $bFullValidate);
+    return \fan\project\service\date::instance($sDate, $sFormat)->get('mysql', $bFullValidate);
 } // function dateL2M
 
 /**
@@ -443,7 +443,7 @@ function dateL2M($sDate, $sFormat = 'euro', $bFullValidate = false)
  */
 function dateM2L($sDate, $sFormat = 'euro', $bFullValidate = false)
 {
-    return \project\service\date::instance($sDate, 'mysql')->get($sFormat, $bFullValidate);
+    return \fan\project\service\date::instance($sDate, 'mysql')->get($sFormat, $bFullValidate);
 } // function dateM2L
 
 /**
@@ -461,11 +461,11 @@ function msg()
     }
 
     if (count($aArg) > 1) {
-        return \project\service\translation::getCombiMessage($aArg);
+        return \fan\project\service\translation::getCombiMessage($aArg);
     }
 
-    $oSL = \project\service\locale::instance();
-    $oST = \project\service\translation::instance();
+    $oSL = \fan\project\service\locale::instance();
+    $oST = \fan\project\service\translation::instance();
     if ($oSL->getLanguage() == $sLng && isset($aMsg[$aArg[0]])) {
         return $aMsg[$aArg[0]];
     }
@@ -488,7 +488,7 @@ function msg()
 function msgAlt()
 {
     $aArg = func_get_args();
-    return count($aArg) > 1 ? \project\service\translation::getCombiMessageAlt($aArg) : $aArg[0];
+    return count($aArg) > 1 ? \fan\project\service\translation::getCombiMessageAlt($aArg) : $aArg[0];
 } // function msg
 
 /**
@@ -501,7 +501,7 @@ function msgAlt()
  */
 function d($mData, $sTitle = 'Custom dump', $sNote = '', $nDataDepth = null, $bIsTrace = true)
 {
-    \project\service\log::instance()->logData('dump', $mData, $sTitle, $sNote, $nDataDepth, $bIsTrace);
+    \fan\project\service\log::instance()->logData('dump', $mData, $sTitle, $sNote, $nDataDepth, $bIsTrace);
 } // function d
 
 /**
@@ -513,7 +513,7 @@ function d($mData, $sTitle = 'Custom dump', $sNote = '', $nDataDepth = null, $bI
  */
 function l($sMessage, $sTitle = 'Custom message', $sNote = '', $sType = 'custom')
 {
-    \project\service\log::instance()->logMessage($sType, $sMessage, $sTitle, $sNote);
+    \fan\project\service\log::instance()->logMessage($sType, $sMessage, $sTitle, $sNote);
 } // function l
 
 ?>

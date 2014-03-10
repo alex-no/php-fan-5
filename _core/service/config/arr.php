@@ -1,4 +1,4 @@
-<?php namespace core\service\config;
+<?php namespace fan\core\service\config;
 /**
  * Description of ini
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class arr extends base
 {
@@ -23,5 +23,5 @@ class arr extends base
     protected $sFileExtention = 'php';
 
     //put your code here
-} // class \core\service\config\arr
+} // class \fan\core\service\config\arr
 ?>

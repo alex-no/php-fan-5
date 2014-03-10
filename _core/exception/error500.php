@@ -1,4 +1,4 @@
-<?php namespace core\exception;
+<?php namespace fan\core\exception;
 /**
  * Exception an error 500
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class error500 extends base
 {
@@ -32,5 +32,5 @@ class error500 extends base
 
         $this->_logByService($sLogErrMsg, 'Error 500');
     }
-} // class \core\exception\error500
+} // class \fan\core\exception\error500
 ?>

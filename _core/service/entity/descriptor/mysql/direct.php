@@ -1,4 +1,4 @@
-<?php namespace core\service\entity\descriptor\mysql;
+<?php namespace fan\core\service\entity\descriptor\mysql;
 
 /**
  * Get table description by SQL-requests: "DESCRIBE table", "SHOW KEYS FROM table", "SHOW CREATE TABLE table",
@@ -13,9 +13,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class direct extends \core\service\entity\descriptor\mysql
+class direct extends \fan\core\service\entity\descriptor\mysql
 {
     /**
      * SQL-request for create table
@@ -187,5 +187,5 @@ class direct extends \core\service\entity\descriptor\mysql
         return $this->sCreateTable;
     } // function _getCreateTable
 
-} // class \core\service\entity\descriptor\mysql\direct
+} // class \fan\core\service\entity\descriptor\mysql\direct
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Admin table data class for loader block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class data_table extends data
 {
@@ -66,7 +66,7 @@ class data_table extends data
      * Parse changed/inserted Data
      * @param array $aEdit
      * @param array $aInsert
-     * @return \core\block\admin\data
+     * @return \fan\core\block\admin\data
      */
     public function parseData($aEdit, $aInsert)
     {
@@ -235,17 +235,17 @@ class data_table extends data
 
     /**
      * Run Aggregate Request
-     * @param \core\base\model\entity $oEtt
+     * @param \fan\core\base\model\entity $oEtt
      * @param string $sEttKey
      * @param array $aFld
      * @param number $nQtt
      * @param number $nOffset
      * @param string $sOrder
-     * @return \core\base\model\rowset
+     * @return \fan\core\base\model\rowset
      */
-    protected function getArrayAssoc(\core\base\model\entity $oEtt, $sEttKey, $aFld, $nQtt, $nOffset, $sOrder, $bExcludeId = true)
+    protected function getArrayAssoc(\fan\core\base\model\entity $oEtt, $sEttKey, $aFld, $nQtt, $nOffset, $sOrder, $bExcludeId = true)
     {
-        /* @var $oRowset \core\model\rowset */
+        /* @var $oRowset \fan\core\model\rowset */
         $oRowset = $sEttKey ?
             $oEtt->getRowsetByKey($sEttKey, $this->getCondition(), $nQtt, $nOffset, $sOrder) :
             $oEtt->getRowsetByParam($this->getCondition(), $nQtt, $nOffset, $sOrder);
@@ -303,5 +303,5 @@ class data_table extends data
         return array($nQtt, $nOffset);
     } // function definePager
 
-} // class \core\block\admin\data_table
+} // class \fan\core\block\admin\data_table
 ?>

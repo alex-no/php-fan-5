@@ -1,5 +1,5 @@
-<?php namespace core\base\model;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\base\model;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
  * Description of row
  *
@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -35,12 +35,12 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * Object of Entity Class
-     * @var \core\base\model\entity
+     * @var \fan\core\base\model\entity
      */
     protected $oEntity = null;
     /**
      * Object of Rowset Class
-     * @var \core\base\model\rowset
+     * @var \fan\core\base\model\rowset
      */
     protected $oRowset = null;
 
@@ -77,10 +77,10 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * Row-data constructor
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param array $aData
      */
-    public function __construct(\core\base\model\entity $oEntity, &$aData = array(), \core\base\model\rowset $oRowset = null)
+    public function __construct(\fan\core\base\model\entity $oEntity, &$aData = array(), \fan\core\base\model\rowset $oRowset = null)
     {
         $this->oEntity = $oEntity;
         $this->oRowset = $oRowset;
@@ -148,7 +148,7 @@ class row implements \ArrayAccess, \Serializable
      * Load current entity by ID
      * @param mixed $mRowId
      * @param boolean $bIdIsEncrypt
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function loadById($mRowId, $bIdIsEncrypt = false)
     {
@@ -162,7 +162,7 @@ class row implements \ArrayAccess, \Serializable
      * @param array|object $mParam
      * @param numeric $nOffset
      * @param string $sOrderBy
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function loadByParam($mParam, $nOffset = 0, $sOrderBy = null)
     {
@@ -184,7 +184,7 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Init Id Only without Loading (only for update part/full of Row-data)
      * @param type $mRowId
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      * @throws fatalException
      */
     public function initIdOnly($mRowId)
@@ -248,7 +248,7 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Set value of data
      * @param array|entity $mValue
-     * @return \core\base\data
+     * @return \fan\core\base\data
      */
     public function set($sFieldName, $mValue, $bAllowException = true)
     {
@@ -291,7 +291,7 @@ class row implements \ArrayAccess, \Serializable
      * @param string $sName
      * @param mixed $mValue
      * @param boolean $bAllowException
-     * @return \core\base\data
+     * @return \fan\core\base\data
      */
     public function setByLocal($sName, $mValue = null, $bAllowException = true)
     {
@@ -337,7 +337,7 @@ class row implements \ArrayAccess, \Serializable
      * Set All Fields together
      * @param array $aFields field -> value pairs
      * @param boolean $bIsSave
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function setFields($aFields, $bIsSave = false)
     {
@@ -355,12 +355,12 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Get Row from Top linked table
      * @param string $sByField
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getTopRow($sByField)
     {
-        $oErr = \project\service\error::instance();
-        /* @var $oErr \core\service\error */
+        $oErr = \fan\project\service\error::instance();
+        /* @var $oErr \fan\core\service\error */
         $sErrHeader = 'Error while get Top Row';
         $mVal = $this->get($sByField, null, false);
         if (empty($mVal)) {
@@ -393,12 +393,12 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Get Rowset from linked tables
      * @param string $sByField
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getBottomRowset($sTableName, $nQtt = -1, $nOffset = -1, $sOrderBy = '')
     {
-        $oErr = \project\service\error::instance();
-        /* @var $oErr \core\service\error */
+        $oErr = \fan\project\service\error::instance();
+        /* @var $oErr \fan\core\service\error */
         $sErrHeader = 'Error while get Bottom Rowset';
 
         $oCurEtt    = $this->getEntity();
@@ -426,7 +426,7 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * Revert all changes of this row
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function revert()
     {
@@ -439,7 +439,7 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * Save this row
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function save()
     {
@@ -455,7 +455,7 @@ class row implements \ArrayAccess, \Serializable
                 $this->_runAfterInsert($aChanged);
             }
             $this->_runAfterSave($aChanged);
-            //\project\service\cache::instance()->clearCacheByEntity($this);
+            //\fan\project\service\cache::instance()->clearCacheByEntity($this);
         }
         return $this;
     } // function save
@@ -471,14 +471,14 @@ class row implements \ArrayAccess, \Serializable
             $mDelId = $this->getId(false, true);
             if ($mDelId) {
                 $oDesigner = $oEtt->getDesigner('delete');
-                /* @var $oDesigner \core\service\entity\designer\delete */
+                /* @var $oDesigner \fan\core\service\entity\designer\delete */
                 $sQuery    = $oDesigner->setDeleteByParam($this->getId(false, true, true))->assemble();
                 $aAdjParam = $oDesigner->getAdjustedParam();
                 $oEtt->getConnection()->execute($sQuery, $aAdjParam);
 
                 $this->_resetProperty(false);
                 $this->_runAfterDelete($mDelId);
-                //\project\service\cache::instance()->clearCacheByEntity($this);
+                //\fan\project\service\cache::instance()->clearCacheByEntity($this);
                 return true;
             } else {
                 throw new fatalException($this->getEntity(), 'Can\'t get source ID for delete row.');
@@ -526,7 +526,7 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * Get instace of Entity
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function getEntity()
     {
@@ -534,7 +534,7 @@ class row implements \ArrayAccess, \Serializable
     } // function getEntity
     /**
      * Get instace of Rowset
-     * @return \core\base\model\rowset
+     * @return \fan\core\base\model\rowset
      */
     public function getRowset()
     {
@@ -603,7 +603,7 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Set Show Error
      * @param boolean $bShowError
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function setShowError($bShowError)
     {
@@ -632,7 +632,7 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * Insert DB-row
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     protected function _insertRow()
     {
@@ -648,7 +648,7 @@ class row implements \ArrayAccess, \Serializable
         $oEtt      = $this->getEntity();
         $oConnect  = $oEtt->getConnection();
         $oDesigner = $oEtt->getDesigner('insert');
-        /* @var $oDesigner \core\service\entity\designer\insert */
+        /* @var $oDesigner \fan\core\service\entity\designer\insert */
         $sQuery    = $oDesigner->setInsertByParam($this->aData)->assemble();
         $aAdjParam = $oDesigner->getAdjustedParam();
         $oConnect->execute($sQuery, $aAdjParam);
@@ -668,14 +668,14 @@ class row implements \ArrayAccess, \Serializable
 
             //ToDo: if ($this->bCacheIt) {}
         } elseif ($this->bShowError) {
-            \project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t inserted.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . print_r($aAdjParam, true));
+            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t inserted.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . print_r($aAdjParam, true));
         }
         return $this;
     } // function _insertRow
 
     /**
      * Update DB-row
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      * @throws fatalException
      */
     protected function _updateRow()
@@ -692,7 +692,7 @@ class row implements \ArrayAccess, \Serializable
 
         $oConnect  = $oEtt->getConnection();
         $oDesigner = $oEtt->getDesigner('update');
-        /* @var $oDesigner \core\service\entity\designer\update */
+        /* @var $oDesigner \fan\core\service\entity\designer\update */
         $sQuery    = $oDesigner->setUpdateByParam($this->aChanged, $this->getId(false, true, true))->assemble();
         $aAdjParam = $oDesigner->getAdjustedParam();
         $oConnect->execute($sQuery, $aAdjParam);
@@ -701,7 +701,7 @@ class row implements \ArrayAccess, \Serializable
         if (!$sErrMsg) {
             $this->aChanged = array();
         } elseif ($this->bShowError) {
-            \project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t updated.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . print_r($aAdjParam, true));
+            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t updated.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . print_r($aAdjParam, true));
         }
         return $this;
     } // function _updateRow
@@ -777,7 +777,7 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Set value of data
      * @param array|entity $mValue
-     * @return \core\base\data
+     * @return \fan\core\base\data
      */
     protected function _setFieldValue($sFieldName, $mValue, $bAllowException = true)
     {
@@ -819,7 +819,7 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Set all Property as new Row
      * @param type $bFull
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     protected function _resetProperty($bFull = true)
     {
@@ -840,7 +840,7 @@ class row implements \ArrayAccess, \Serializable
     protected function _getCurrentLocal()
     {
         if (!$this->sCurrentLocal) {
-            $this->sCurrentLocal = '_' . \project\service\locale::instance()->getLanguage();
+            $this->sCurrentLocal = '_' . \fan\project\service\locale::instance()->getLanguage();
         }
         return $this->sCurrentLocal;
     } // function _getCurrentLocal
@@ -853,7 +853,7 @@ class row implements \ArrayAccess, \Serializable
     protected function _getDefaultLocal()
     {
         if (!$this->sDefaultLocal) {
-            $this->sDefaultLocal = '_' . \project\service\locale::instance()->getDefaultLanguage();
+            $this->sDefaultLocal = '_' . \fan\project\service\locale::instance()->getDefaultLanguage();
         }
         return $this->sDefaultLocal;
     } // function _getDefaultLocal
@@ -875,7 +875,7 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * Restore Current object Properties
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     protected function _restoreProperties()
     {
@@ -983,7 +983,7 @@ class row implements \ArrayAccess, \Serializable
         $this->bInitIdOnly = $aData['initIdOnly'];
 
         $aParam = $aData['mainParam'];
-        $oServ  = \project\service\entity::instance($aParam['collection']);
+        $oServ  = \fan\project\service\entity::instance($aParam['collection']);
         $this->oEntity = empty($aParam['name']) ?
                 $oServ->getAnonymous($aParam['class'], $aParam['param']) :
                 $oServ->get($aParam['name'], $aParam['param']);
@@ -991,5 +991,5 @@ class row implements \ArrayAccess, \Serializable
 
         $this->_restoreProperties();
     }
-} // class \core\base\model\row
+} // class \fan\core\base\model\row
 ?>

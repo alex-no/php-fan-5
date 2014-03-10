@@ -1,4 +1,4 @@
-<?php namespace core\view\parser;
+<?php namespace fan\core\view\parser;
 /**
  * View parser XML-type
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class xml extends \core\view\parser
+class xml extends \fan\core\view\parser
 {
     // ======== Static methods ======== \\
     /**
@@ -48,7 +48,7 @@ class xml extends \core\view\parser
      * Make Dom Elements
      * @param \DOMNode $oParent
      * @param type $aData
-     * @return \core\view\parser\xml
+     * @return \fan\core\view\parser\xml
      */
     protected function _makeDomElements(\DOMNode $oParent, $aData)
     {
@@ -67,5 +67,5 @@ class xml extends \core\view\parser
         return $this;
     } // function _makeDomElements
 
-} // class \core\view\parser\xml
+} // class \fan\core\view\parser\xml
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Admin upload image file class for loader block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class upload_image extends base
 {
@@ -35,7 +35,7 @@ class upload_image extends base
     /**
      * Block constructor
      * @param string $sBlockName Block Name
-     * @param service_tab $oTab
+     * @param \core\service\tab $oTab
      */
     public function finishConstruct($oContainer, $aContainerMeta, $bAllowSetEmbedded = true)
     {
@@ -272,7 +272,7 @@ class upload_image extends base
      * Get Row By Connection
      * @param sring $sEttName
      * @param mixed $mId
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     private function _getRow($sEttName, $mId = null)
     {
@@ -288,7 +288,7 @@ class upload_image extends base
     /**
      * Get Entity By Connection
      * @param sring $sEttName
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     private function _getEntity($sEttName)
     {
@@ -309,5 +309,5 @@ class upload_image extends base
     } // function _getEttImageName
 
 
-} // class \core\block\admin\upload_image
+} // class \fan\core\block\admin\upload_image
 ?>

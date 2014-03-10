@@ -1,4 +1,4 @@
-<?php namespace core\service\form\validator;
+<?php namespace fan\core\service\form\validator;
 /**
  * Uri class of validators
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class uri extends base
 {
@@ -47,5 +47,5 @@ class uri extends base
         return $mResult !== false;
     } // function isUri
 
-} // class \core\service\form\validator\uri
+} // class \fan\core\service\form\validator\uri
 ?>

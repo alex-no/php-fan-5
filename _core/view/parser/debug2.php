@@ -1,4 +1,4 @@
-<?php namespace core\view\parser;
+<?php namespace fan\core\view\parser;
 /**
  * View parser HTML-type
  *
@@ -12,23 +12,23 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class debug2 extends \core\view\parser
+class debug2 extends \fan\core\view\parser
 {
     /**
-     * @var \core\service\debug Root block
+     * @var \fan\core\service\debug Root block
      */
     protected $oDebug;
 
     /**
      * View meta constructor
-     * @param core\block\base $oBlock
+     * @param fan\core\block\base $oBlock
      */
-    public function __construct(\core\block\base $oMainBlock)
+    public function __construct(\fan\core\block\base $oMainBlock)
     {
         parent::__construct($oMainBlock);
-        $this->oDebug = \project\service\debug::instance();
+        $this->oDebug = \fan\project\service\debug::instance();
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -37,7 +37,7 @@ class debug2 extends \core\view\parser
      * @return string
      */
     final static public function getType() {
-        throw new \project\exception\error500('Class "\core\view\parser\debug2" can\'t be use for define View-type');
+        throw new \fan\project\exception\error500('Class "\fan\core\view\parser\debug2" can\'t be use for define View-type');
     } // function getType
 
     // ======== The magic methods ======== \\
@@ -47,7 +47,7 @@ class debug2 extends \core\view\parser
      * Get Final Content Code
      * @return string
      */
-    public function getResultData(\core\block\base $oBlock)
+    public function getResultData(\fan\core\block\base $oBlock)
     {
         $sBlockInfo = $this->_getInternalResultData($oBlock, false);
         return array(
@@ -64,7 +64,7 @@ class debug2 extends \core\view\parser
      * Get Internal Result Data
      * @return array
      */
-    public function _getInternalResultData(\core\block\base $oBlock, $isView)
+    public function _getInternalResultData(\fan\core\block\base $oBlock, $isView)
     {
         $aIncl = array();
         foreach ($oBlock->getEmbeddedBlocks() as $oEmbeddedBlock) {
@@ -76,11 +76,11 @@ class debug2 extends \core\view\parser
     /**
      * Set Response Headers
      * @param type $sResult
-     * @return \core\view\parser
+     * @return \fan\core\view\parser
      */
     protected function _setHeaders($sResult, $sContentType = 'text/html', $sEncoding = null)
     {
         return parent::_setHeaders($sResult, $sContentType, $sEncoding);
     } // function _setHeaders
-} // class \core\view\parser\debug2
+} // class \fan\core\view\parser\debug2
 ?>

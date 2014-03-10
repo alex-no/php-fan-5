@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Description of reflector
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class reflector extends \core\base\service\single
+class reflector extends \fan\core\base\service\single
 {
     /**
      * @var array List of Reflection classes
@@ -28,7 +28,7 @@ class reflector extends \core\base\service\single
     /**
      * Set new Reflection
      * @param string $sClassName
-     * @return \core\service\reflector
+     * @return \fan\core\service\reflector
      */
     public function setReflection(&$sClassName)
     {
@@ -99,5 +99,5 @@ class reflector extends \core\base\service\single
         }
         return $aPaths;
     }
-} // class \core\service\reflector
+} // class \fan\core\service\reflector
 ?>

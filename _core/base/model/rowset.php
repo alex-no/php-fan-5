@@ -1,5 +1,5 @@
-<?php namespace core\base\model;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\base\model;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
  * Description of rowset
  *
@@ -13,21 +13,21 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class rowset extends \core\base\data
+class rowset extends \fan\core\base\data
 {
     /**
      * Class of DB-table
-     * @var core\entity\table
+     * @var fan\core\entity\table
      */
     protected $oEntity = null;
 
     /**
      * TAble describer
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      */
-    public function __construct(\core\base\model\entity $oEntity, &$aData)
+    public function __construct(\fan\core\base\model\entity $oEntity, &$aData)
     {
         $this->oEntity = $oEntity;
 
@@ -62,7 +62,7 @@ class rowset extends \core\base\data
 
     /**
      * Get array of Row-object, where ID as key
-     * @return \core\base\model\entity[]
+     * @return \fan\core\base\model\entity[]
      * @throws fatalException
      */
     public function getRowsById()
@@ -194,5 +194,5 @@ class rowset extends \core\base\data
         $this->oEntity = reset($this->aData)->getEntity();
     }
 
-} // class \core\base\model\rowset
+} // class \fan\core\base\model\rowset
 ?>

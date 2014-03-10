@@ -1,4 +1,4 @@
-<?php namespace core\service\database;
+<?php namespace fan\core\service\database;
 /**
  * Description of base
  *
@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class base
 {
     /**
      * Facade of service
-     * @var core\base\service
+     * @var fan\core\base\service
      */
     protected $oFacade = null;
 
@@ -40,10 +40,10 @@ abstract class base
 
     /**
      * Constructor of Database engine
-     * @param \core\base\service $oFacade
+     * @param \fan\core\base\service $oFacade
      * @param array $aParam
      */
-    public function __construct(\core\service\database $oFacade, array $aParam)
+    public function __construct(\fan\core\service\database $oFacade, array $aParam)
     {
         $this->oFacade = $oFacade;
         $this->aParam  = $aParam;
@@ -52,10 +52,10 @@ abstract class base
 
     /**
      * Set Facade
-     * @param \core\base\service $oFacade
-     * @return \core\service\database\base
+     * @param \fan\core\base\service $oFacade
+     * @return \fan\core\service\database\base
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -66,7 +66,7 @@ abstract class base
     /**
      * Set Result Types for methods: execute, getRow, getAll, getAllLimit
      * @param integer $iResultType
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function setResultTypes($iResultType = MYSQL_ASSOC)
     {
@@ -95,7 +95,7 @@ abstract class base
 
     /**
      * Reset error message
-     * @return \core\service\database\mysql
+     * @return \fan\core\service\database\mysql
      */
     public function resetError()
     {
@@ -137,5 +137,5 @@ abstract class base
         );
         $this->oFacade->fixError($this, $bMakeException);
     } // function _fixError
-} // class \core\service\database\base
+} // class \fan\core\service\database\base
 ?>

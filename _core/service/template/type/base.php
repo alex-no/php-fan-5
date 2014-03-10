@@ -1,4 +1,4 @@
-<?php namespace core\service\template\type;
+<?php namespace fan\core\service\template\type;
 /**
  *
  * This file is part PHP-FAN (php-framework from Alexandr Nosov)
@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class base implements \ArrayAccess
 {
@@ -21,7 +21,7 @@ abstract class base implements \ArrayAccess
     protected $aTplVar;
 
     /**
-     * @var \core\block\base Object of block
+     * @var \fan\core\block\base Object of block
      */
     protected $oBlock;
 
@@ -47,11 +47,11 @@ abstract class base implements \ArrayAccess
 
     /**
      * Template block constructor
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      */
-    public function __construct(\core\block\base $oBlock)
+    public function __construct(\fan\core\block\base $oBlock)
     {
-        if (is_object($oBlock) && $oBlock instanceof \core\block\base) {
+        if (is_object($oBlock) && $oBlock instanceof \fan\core\block\base) {
             $this->oBlock = $oBlock;
             if (method_exists ($oBlock, 'getBlockName')) {
                 $this->sBlockName = $oBlock->getBlockName();
@@ -287,8 +287,8 @@ abstract class base implements \ArrayAccess
     final private function checkVars($sKey)
     {
         if (in_array($sKey, $this->aExceptVar)) {
-            throw new \project\exception\template\fatal($this, 'Incorrecn key name "' . $sKey . '". It is reserved name.');
+            throw new \fan\project\exception\template\fatal($this, 'Incorrecn key name "' . $sKey . '". It is reserved name.');
         }
     } // function checkVars
-} // class \core\service\template\type\base
+} // class \fan\core\service\template\type\base
 ?>

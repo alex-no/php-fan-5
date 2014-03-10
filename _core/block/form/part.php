@@ -1,4 +1,4 @@
-<?php namespace core\block\form;
+<?php namespace fan\core\block\form;
 /**
  * Part of form block abstract
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
 abstract class part extends usual
@@ -40,9 +40,9 @@ abstract class part extends usual
             return $this->aFieldValue;
         }
         if ($this->bIsError) {
-            throw new \project\exception\block\form_part($this, $this->aErrorMsg);
+            throw new \fan\project\exception\block\form_part($this, $this->aErrorMsg);
         }
         return array();
     } // function _parseForm
-} // class \core\block\form\part
+} // class \fan\core\block\form\part
 ?>

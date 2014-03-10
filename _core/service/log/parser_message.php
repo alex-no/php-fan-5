@@ -1,4 +1,4 @@
-<?php namespace core\service\log;
+<?php namespace fan\core\service\log;
 /**
  * Parser of log message-file
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class parser_message extends parser_base
 {
-} // class \core\service\log\parser_message
+} // class \fan\core\service\log\parser_message
 ?>

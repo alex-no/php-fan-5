@@ -1,4 +1,4 @@
-<?php namespace core\bootstrap;
+<?php namespace fan\core\bootstrap;
 /**
  * Description of runner
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 
 class runner
@@ -55,7 +55,7 @@ class runner
             ob_end_clean();
 
             if ($bIsEcho) {
-                \project\service\header::instance()->sendHeaders();
+                \fan\project\service\header::instance()->sendHeaders();
 
                 if (is_array($mRet) && is_callable($mRet)) {
                     call_user_func($mRet);
@@ -65,7 +65,7 @@ class runner
             }
 
             return $mRet;
-        } catch (\core\exception\base $e) {
+        } catch (\fan\core\exception\base $e) {
         } catch (\Exception $e) {
             \bootstrap::logError("Unrecognized fatal error.\n" . print_r($e, true)); // ToDo: There can be out of memory when $e too bir or has recourcive properties
         }
@@ -92,7 +92,7 @@ class runner
             }
 
             return $mRet;
-        } catch (\core\exception\base $e) {
+        } catch (\fan\core\exception\base $e) {
         } catch (\Exception $e) {
             \bootstrap::logError("Unrecognized fatal error.\n" . print_r($e, true));
         }
@@ -108,7 +108,7 @@ class runner
      */
     public function getHandler()
     {
-        $aHandler = \project\service\matcher::instance()->getCurrentHandler();
+        $aHandler = \fan\project\service\matcher::instance()->getCurrentHandler();
         return array($aHandler['method'], $aHandler['param']);
     } // function getHandler
 
@@ -134,8 +134,8 @@ class runner
                 $sErrNote = '';
             }
 
-            $sErrNote .= \project\service\request::instance()->getInfoString();
-            \project\service\error::instance()->logErrorMessage($sErrMessage, 'Intercepted fatal error', $sErrNote, false, true);
+            $sErrNote .= \fan\project\service\request::instance()->getInfoString();
+            \fan\project\service\error::instance()->logErrorMessage($sErrMessage, 'Intercepted fatal error', $sErrNote, false, true);
 
             $sRet = $this->showError(null, 'error_500', false);
             return $sRet ? $sRet : 'Error 500';
@@ -171,9 +171,9 @@ class runner
         $sProjectPath = str_replace('{PROJECT_DIR}', PROJECT_DIR, self::PROJECT_ERROR_DEMONSTRATOR);
         if (is_file($sProjectPath)) {
             include $sProjectPath;
-            $oDemonstrator = new \project\error\demonstrator($mErrMsg, $sTplName);
+            $oDemonstrator = new \fan\project\error\demonstrator($mErrMsg, $sTplName);
         } else {
-            $oDemonstrator = new \core\error\demonstrator($mErrMsg, $sTplName);
+            $oDemonstrator = new \fan\core\error\demonstrator($mErrMsg, $sTplName);
         }
 
         if ($bIsEcho) {
@@ -201,5 +201,5 @@ class runner
         }
     } // function _parseException
 
-} // class \core\bootstrap\runner
+} // class \fan\core\bootstrap\runner
 ?>

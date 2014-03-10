@@ -1,4 +1,4 @@
-<?php namespace core\service\tab\delegate;
+<?php namespace fan\core\service\tab\delegate;
 /**
  * Description of urlMaker
  *
@@ -12,18 +12,18 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class urlMaker extends \core\service\tab\delegate
+class urlMaker extends \fan\core\service\tab\delegate
 {
     /**
-     * @var \core\service\matcher
+     * @var \fan\core\service\matcher
      */
     protected $oMatcher = null;
 
     public function __construct()
     {
-        $this->oMatcher = \project\service\matcher::instance();
+        $this->oMatcher = \fan\project\service\matcher::instance();
     } // function __construct
     // ======== Static methods ======== \\
     // ======== Main Interface methods ======== \\
@@ -67,10 +67,10 @@ class urlMaker extends \core\service\tab\delegate
             );
         }
 
-        $oReq    = \project\service\request::instance();
-        /* @var $oReq \core\service\request */
+        $oReq    = \fan\project\service\request::instance();
+        /* @var $oReq \fan\core\service\request */
         $oParsed = $this->oMatcher->getCurrentItem()->parsed;
-        /* @var $oParsed \core\service\matcher\item\parsed */
+        /* @var $oParsed \fan\core\service\matcher\item\parsed */
 
         // Set Request path
         $aRequest = $oReq->getAll('B');
@@ -84,7 +84,7 @@ class urlMaker extends \core\service\tab\delegate
         }
         // Add language
         if ($bCorLanguage) {
-            $sLng = \core\service\locale::instance()->getLanguage();
+            $sLng = \fan\core\service\locale::instance()->getLanguage();
             if (!empty($sLng)) {
                 array_unshift($aRequest, $sLng);
             }
@@ -112,7 +112,7 @@ class urlMaker extends \core\service\tab\delegate
             $bAddSid = $this->getConfig('ALLOW_GET_SID', true);
         }
         if ($bAddSid) {
-            $oSes = \project\service\session::instance();
+            $oSes = \fan\project\service\session::instance();
             if (!$oSes->isByCookies()) {
                 $sCurRequest = $this->addQuery($sCurRequest, $oSes->getSessionName(), $oSes->getSessionId(), $sSprtr);
             }
@@ -140,20 +140,20 @@ class urlMaker extends \core\service\tab\delegate
             $sUrn = $this->oMatcher->getCurrentUri();
         }
 
-        if (substr($sUrn, 0, 1) == \core\service\tab::URN_AP) {
+        if (substr($sUrn, 0, 1) == \fan\core\service\tab::URN_AP) {
             $sUrnPrefix = $this->getConfig(array('URN_prefix', $sType));
             $sAppPrefix = trim($this->oMatcher->getCurrentItem()->parsed['app_prefix'], '/');
             $sUrn = (empty($sAppPrefix) ? '' : '/' . $sAppPrefix) . $sUrnPrefix . substr($sUrn, 1);
         }
 
         if ($bUseSid) {
-            $oSes = \project\service\session::instance();
+            $oSes = \fan\project\service\session::instance();
             if (!$oSes->isByCookies()) {
                 $sUrn = $this->addQuery($sUrn, $oSes->getSessionName(), $oSes->getSessionId());
             }
         }
 
-        $oLocale = \project\service\locale::instance();
+        $oLocale = \fan\project\service\locale::instance();
         if ($sType == 'link' && $oLocale->isUrlParsing()) {
             $oLocale->modifyUrl($sUrn);
         }
@@ -223,5 +223,5 @@ class urlMaker extends \core\service\tab\delegate
     } // function addSlashes
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
-} // class \core\service\tab\delegate\urlMaker
+} // class \fan\core\service\tab\delegate\urlMaker
 ?>

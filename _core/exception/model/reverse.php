@@ -1,4 +1,4 @@
-<?php namespace core\exception\model;
+<?php namespace fan\core\exception\model;
 /**
  * Exception a fatal error
  *
@@ -12,23 +12,23 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class reverse extends \core\exception\base
+class reverse extends \fan\core\exception\base
 {
     /**
-     * @var \core\base\model\entity
+     * @var \fan\core\base\model\entity
      */
     protected $oEntity = null;
 
     /**
      * Exception's constructor
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param string $sLogErrMsg
      * @param error $nCode Error Code
      * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct(\core\base\model\entity $oEntity, $sLogErrMsg, $nCode = null, $oPrevious = null)
+    public function __construct(\fan\core\base\model\entity $oEntity, $sLogErrMsg, $nCode = null, $oPrevious = null)
     {
         $this->oEntity = $oEntity;
         parent::__construct($sLogErrMsg, $nCode, $oPrevious);
@@ -36,7 +36,7 @@ class reverse extends \core\exception\base
 
     /**
      * Get Entity
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function getEntity()
     {
@@ -53,5 +53,5 @@ class reverse extends \core\exception\base
         return parent::_defineDbOper($sDbOper);
     } // function _defineDbOper
 
-} // class \core\exception\model\reverse
+} // class \fan\core\exception\model\reverse
 ?>

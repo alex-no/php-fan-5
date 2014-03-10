@@ -1,4 +1,4 @@
-<?php namespace core\view\parser;
+<?php namespace fan\core\view\parser;
 /**
  * View parser SOAP-type
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class soap extends \core\view\parser
+class soap extends \fan\core\view\parser
 {
     // ======== Static methods ======== \\
     /**
@@ -29,5 +29,5 @@ class soap extends \core\view\parser
     // ======== Required Interface methods ======== \\
     // ======== Main Interface methods ======== \\
     // ======== Protected methods ======== \\
-} // class \core\view\parser\soap
+} // class \fan\core\view\parser\soap
 ?>

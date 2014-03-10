@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class bootstrap
 {
@@ -122,10 +122,10 @@ class bootstrap
         self::_setErrorHandler();
 
         // Perform the preparation procedures
-        self::$oInitializer = self::_defineObj('initializer', '\\core\\bootstrap\\initializer', '{CORE_DIR}/bootstrap/initializer.php');
-        self::$oLoader      = self::_defineObj('loader',      '\\core\\bootstrap\\loader',      '{CORE_DIR}/bootstrap/loader.php');
+        self::$oInitializer = self::_defineObj('initializer', '\fan\core\bootstrap\initializer', '{CORE_DIR}/bootstrap/initializer.php');
+        self::$oLoader      = self::_defineObj('loader',      '\fan\core\bootstrap\loader',      '{CORE_DIR}/bootstrap/loader.php');
         self::$oInitializer->initAfterLoader();
-        self::$oRunner      = self::_defineObj('runner',      '\\core\\bootstrap\\runner',      '{CORE_DIR}/bootstrap/runner.php');
+        self::$oRunner      = self::_defineObj('runner',      '\fan\core\bootstrap\runner',      '{CORE_DIR}/bootstrap/runner.php');
 
         return true;
     } // function init
@@ -159,7 +159,7 @@ class bootstrap
 
     /**
      * Get initializer
-     * @return \core\bootstrap\initializer
+     * @return \fan\core\bootstrap\initializer
      */
     public static function getInitializer()
     {
@@ -171,7 +171,7 @@ class bootstrap
 
     /**
      * Get loader
-     * @return \core\bootstrap\loader
+     * @return \fan\core\bootstrap\loader
      */
     public static function getLoader()
     {
@@ -183,7 +183,7 @@ class bootstrap
 
     /**
      * Get loader
-     * @return \core\bootstrap\runner
+     * @return \fan\core\bootstrap\runner
      */
     public static function getRunner()
     {

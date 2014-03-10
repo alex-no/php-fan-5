@@ -1,4 +1,4 @@
-<?php namespace core\exception\block;
+<?php namespace fan\core\exception\block;
 /**
  * Exception a block fatal error
  *
@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class fatal extends local
 {
     /**
      * Exception's constructor
-     * @param \core\block\base $oBlock Object - instance of block
+     * @param \fan\core\block\base $oBlock Object - instance of block
      * @param string $sLogErrMsg Log error message
      * @param numeric $nCode Error Code
      * @param \Exception $oPrevious Previous Exception
@@ -43,5 +43,5 @@ class fatal extends local
     {
         return parent::_defineDbOper($sDbOper);
     } // function _defineDbOper
-} // class \core\exception\block\fatal
+} // class \fan\core\exception\block\fatal
 ?>

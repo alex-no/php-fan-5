@@ -1,5 +1,5 @@
-<?php namespace core\service\entity;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\service\entity;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
  * Entity table-description
  *
@@ -13,21 +13,21 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @property-read string|array $primeryKey
- * @method \core\service\entity\description setPrimeryKey() setPrimeryKey(array|string $mKey)
+ * @method \fan\core\service\entity\description setPrimeryKey() setPrimeryKey(array|string $mKey)
  * @method mixed getPrimeryKey()
  * @property-read array $fields
- * @method \core\service\entity\description setFields() setFields(array $aFields)
+ * @method \fan\core\service\entity\description setFields() setFields(array $aFields)
  * @method mixed getFields()
  * @property-read array $keys
- * @method \core\service\entity\description setKeys() setKeys(array $aKeys)
+ * @method \fan\core\service\entity\description setKeys() setKeys(array $aKeys)
  * @method mixed getKeys()
  * @property-read array $relations
  * @method mixed getRelations()
  * @property-read array $dependents
- * @method \core\service\entity\description setDependents()  setDependents(array $aDependents)
+ * @method \fan\core\service\entity\description setDependents()  setDependents(array $aDependents)
  * @method mixed getDependents()
  * @property-read string $engine
  * @method string getEngine()
@@ -42,12 +42,12 @@ class description
 {
     /**
      * Entity - owner of table description
-     * @var \core\base\model\entity
+     * @var \fan\core\base\model\entity
      */
     protected $oEntity = null;
     /**
      * Table descriptor (Maker dynamic description)
-     * @var \core\service\entity\descriptor
+     * @var \fan\core\service\entity\descriptor
      */
     protected $oDescriptor = null;
 
@@ -80,10 +80,10 @@ class description
 
     /**
      * Description constructor
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param array $aParam
      */
-    public function __construct(\core\base\model\entity $oEntity, $aParam)
+    public function __construct(\fan\core\base\model\entity $oEntity, $aParam)
     {
         $this->oEntity = $oEntity;
 
@@ -154,7 +154,7 @@ class description
      * Set value of property
      * @param string $sKey
      * @param mixed $mValue
-     * @return \core\service\entity\description
+     * @return \fan\core\service\entity\description
      */
     public function set($sKey, $mValue)
     {
@@ -172,7 +172,7 @@ class description
     /**
      * Set Comment
      * @param string $sValue
-     * @return \core\service\entity\description
+     * @return \fan\core\service\entity\description
      */
     public function setComment($sValue)
     {
@@ -216,7 +216,7 @@ class description
 
     /**
      * Get instace of Entity
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function getEntity()
     {
@@ -244,16 +244,16 @@ class description
 
     /**
      * Get Table Descriptor (Several classes for different type of description)
-     * @return \core\service\entity\descriptor
+     * @return \fan\core\service\entity\descriptor
      */
     protected function _getDescriptor()
     {
         if (is_null($this->oDescriptor)) {
             // ToDo: Define descriptor by type of current connection
             try {
-                $this->oDescriptor = new \project\service\entity\descriptor\mysql\schema($this);
-            } catch (\core\exception\model\reverse $e) {
-                $this->oDescriptor = new \project\service\entity\descriptor\mysql\direct($this);
+                $this->oDescriptor = new \fan\project\service\entity\descriptor\mysql\schema($this);
+            } catch (\fan\core\exception\model\reverse $e) {
+                $this->oDescriptor = new \fan\project\service\entity\descriptor\mysql\direct($this);
             }
         }
         return $this->oDescriptor;
@@ -279,7 +279,7 @@ class description
 
     /**
      * Load Dynamic Property
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     protected function _loadDynamicProperty($sKey = null, $bForce = false)
     {
@@ -309,7 +309,7 @@ class description
 
     /**
      * Save Cache File
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     protected function _saveCacheFile()
     {
@@ -337,5 +337,5 @@ return ' . var_export($aSavedData, true) . ';
         $sCacheDir = \bootstrap::parsePath($sCacheDir);
         return $sCacheDir . $this->getTableName() . '_' . md5($aParam['HOST'] . $aParam['DATABASE']);
     } // function _getCacheFileName
-} // class \core\service\entity\description
+} // class \fan\core\service\entity\description
 ?>

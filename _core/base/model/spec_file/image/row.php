@@ -1,4 +1,4 @@
-<?php namespace core\base\model\spec_file\image;
+<?php namespace fan\core\base\model\spec_file\image;
 /**
  * Row of special file
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class row extends \core\base\model\spec_file\row
+abstract class row extends \fan\core\base\model\spec_file\row
 {
 
     /**
@@ -333,5 +333,5 @@ abstract class row extends \core\base\model\spec_file\row
         $aParam['height'] = $nHeight;
     } // function resizeImage
 
-} // class \core\base\model\spec_file\image\entity
+} // class \fan\core\base\model\spec_file\image\entity
 ?>

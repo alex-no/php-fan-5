@@ -1,4 +1,5 @@
-<?php namespace core\block;
+<?php namespace fan\core\block;
+use fan\project\exception\block\fatal as fatalException;
 /**
  * Base abstract all type of block
  *
@@ -12,30 +13,30 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @abstract
  *
  * @property-read string $blockName
- * @property-read \core\block\base $container
- * @property-read \core\base\meta\row $meta
+ * @property-read \fan\core\block\base $container
+ * @property-read \fan\core\base\meta\row $meta
  * @property-read string $namespace
- * @property-read \core\service\request $request
- * @property-read \core\service\session $session
- * @property-read \core\service\tab $tab
- * @property-read \core\view\router $view
+ * @property-read \fan\core\service\request $request
+ * @property-read \fan\core\service\session $session
+ * @property-read \fan\core\service\tab $tab
+ * @property-read \fan\core\view\router $view
  *
  * @method mixed getSessionData() getSessionData(array|string $mKey, mixed $mDefaultValue = null, boolean $bRemoveFromSes = false)
  * @method mixed setSessionData() setSessionData(array|string $mKey, mixed $mValue)
  * @method mixed removeSessionData() removeSessionData(array|string $mKey)
  *
- * @method \core\service\tab\subscriber _subscribeForEvent() subscribeForEvent(string $sEventName, string $sListenerMethod = 'eventHandler')
- * @method \core\service\tab\subscriber _subscribeByName() subscribeByName(string $sBroadcasterName, string $sEventName, string $sListenerMethod = 'eventHandler')
- * @method \core\service\tab\subscriber _subscribeByClass() subscribeByClass(string $sClassName, string $sEventName, string $sListenerMethod = 'eventHandler')
- * @method \core\service\tab\subscriber _unSubscribeForEvent() unSubscribeForEvent(string $sEventName, string $sListenerMethod = 'eventHandler')
- * @method \core\service\tab\subscriber _unSubscribeByName() unSubscribeByName(string $sBroadcasterName, string $sEventName, string $sListenerMethod = 'eventHandler')
- * @method \core\service\tab\subscriber _unSubscribeByClass() unSubscribeByClass(string $sClassName, string $sEventName, string $sListenerMethod = 'eventHandler')
- * @method \core\service\tab\subscriber _broadcastEvent() broadcastEvent(string $sEventName, array $aData = array())
+ * @method \fan\core\service\tab\subscriber _subscribeForEvent() subscribeForEvent(string $sEventName, string $sListenerMethod = 'eventHandler')
+ * @method \fan\core\service\tab\subscriber _subscribeByName() subscribeByName(string $sBroadcasterName, string $sEventName, string $sListenerMethod = 'eventHandler')
+ * @method \fan\core\service\tab\subscriber _subscribeByClass() subscribeByClass(string $sClassName, string $sEventName, string $sListenerMethod = 'eventHandler')
+ * @method \fan\core\service\tab\subscriber _unSubscribeForEvent() unSubscribeForEvent(string $sEventName, string $sListenerMethod = 'eventHandler')
+ * @method \fan\core\service\tab\subscriber _unSubscribeByName() unSubscribeByName(string $sBroadcasterName, string $sEventName, string $sListenerMethod = 'eventHandler')
+ * @method \fan\core\service\tab\subscriber _unSubscribeByClass() unSubscribeByClass(string $sClassName, string $sEventName, string $sListenerMethod = 'eventHandler')
+ * @method \fan\core\service\tab\subscriber _broadcastEvent() broadcastEvent(string $sEventName, array $aData = array())
  */
 abstract class base
 {
@@ -53,13 +54,13 @@ abstract class base
     protected $bIsMain = false;
 
     /**
-     * @var \core\service\tab
+     * @var \fan\core\service\tab
      */
     protected $oTab;
 
     /**
      * Meta-Maker instance
-     * @var \core\base\meta\maker
+     * @var \fan\core\base\meta\maker
      */
     private $oMetaMaker;
     /**
@@ -79,7 +80,7 @@ abstract class base
 
     /**
      * View data router
-     * @var \core\view\router
+     * @var \fan\core\view\router
      */
     private $oView;
     /**
@@ -90,7 +91,7 @@ abstract class base
 
     /**
      * Container block
-     * @var \core\block\base
+     * @var \fan\core\block\base
      */
     private $oContainer;
 
@@ -107,7 +108,7 @@ abstract class base
 
     /**
      * Request-service
-     * @var \core\service\request
+     * @var \fan\core\service\request
      */
     private $oRequest;
 
@@ -134,16 +135,16 @@ abstract class base
     /**
      * Block constructor
      * @param string $sBlockName Block Name
-     * @param \core\service\tab $oTab Service tab
+     * @param \fan\core\service\tab $oTab Service tab
      * @param base $oContainer Block's Container
      * @param array $aContainerMeta - array of Container block Meta
      * @param boolean $bFullConstr - allow to finish Construction of block
      */
-    public function __construct($sBlockName = null, \core\service\tab $oTab = null, base $oContainer = null, $aContainerMeta = array(), $bFullConstr = true)
+    public function __construct($sBlockName = null, \fan\core\service\tab $oTab = null, base $oContainer = null, $aContainerMeta = array(), $bFullConstr = true)
     {
         $this->sBlockName = $sBlockName;
-        $this->oTab       = empty($oTab) ? \project\service\tab::instance() : $oTab;
-        $this->oRequest   = \project\service\request::instance();
+        $this->oTab       = empty($oTab) ? \fan\project\service\tab::instance() : $oTab;
+        $this->oRequest   = \fan\project\service\request::instance();
 
         if (!empty($sBlockName)) {
             $this->oTab->setCurrentBlock($this);
@@ -161,7 +162,7 @@ abstract class base
 
     /**
      * Finish Construction of block
-     * @param \core\block\base $oContainer
+     * @param \fan\core\block\base $oContainer
      * @param array $aContainerMeta
      * @param boolean $bAllowSetEmbedded
      */
@@ -232,7 +233,7 @@ abstract class base
 
     /**
      * Get Instance of tab
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     public function getTab()
     {
@@ -241,7 +242,7 @@ abstract class base
 
     /**
      * Get Instance of Container-block
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getContainer()
     {
@@ -250,7 +251,7 @@ abstract class base
 
     /**
      * Get Meta Maker
-     * @return \core\base\meta\maker
+     * @return \fan\core\base\meta\maker
      */
     public function getMetaMaker()
     {
@@ -261,7 +262,7 @@ abstract class base
      * Get Meta-data
      * @param string|array $mKey
      * @param mixed $mDefault
-     * @return \core\base\meta\row
+     * @return \fan\core\base\meta\row
      */
     public function getMeta($mKey = null, $mDefault = null)
     {
@@ -284,13 +285,31 @@ abstract class base
      * Set value of meta-element
      * @param string|array $mKey - key of var
      * @param mixed $mValue - value
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     protected function setMeta($mKey, $mValue)
     {
         $this->oMetaMaker->setMeta($mKey, $mValue);
         return $this;
     } // function setMeta
+
+    /**
+     * Add/mix new Meta-data (as array or \core\base\meta\row) with exist Meta-data
+     * @param array|\core\base\meta\row $mValue
+     * @return \core\block\base
+     */
+    protected function addMeta($mValue)
+    {
+        if (true) {
+            $oMaker = $this->oMetaMaker;
+            foreach ($mValue as $k => $v) {
+                $oMaker->setMeta($k, $v);
+            }
+        } else {
+            trigger_error('Incorrect value for method "addMeta".', E_USER_WARNING);
+        }
+        return $this;
+    } // function addMeta
 
     /**
      * Set value of meta-element (This method added for compatible with previous version)
@@ -307,13 +326,13 @@ abstract class base
      * Make Delayed Dynamic Meta-data
      * @return link
      */
-    public function makeDelayedMeta(\core\base\meta\row $aMeta)
+    public function makeDelayedMeta(\fan\core\base\meta\row $aMeta)
     {
         foreach ($aMeta as $k => $v) {
             if (is_object($v)) {
-                if ($v instanceof \core\base\meta\delayed) {
+                if ($v instanceof \fan\core\base\meta\delayed) {
                     $aMeta[$k] = $v->getValue();
-                } elseif ($v instanceof \core\base\meta\row) {
+                } elseif ($v instanceof \fan\core\base\meta\row) {
                     $this->makeDelayedMeta($v);
                 }
             }
@@ -340,8 +359,8 @@ abstract class base
      */
     public function setDynamicMeta()
     {
-        //ToDo: Replace \core\base\meta\delayed to special Flag in \core\base\meta\row
-        if(class_exists('\core\base\meta\delayed', false)) {
+        //ToDo: Replace \fan\core\base\meta\delayed to special Flag in \fan\core\base\meta\row
+        if(class_exists('\fan\core\base\meta\delayed', false)) {
             $this->makeDelayedMeta($this->aMeta);
         }
         $this->_makeDynamicMeta(true);
@@ -421,7 +440,7 @@ abstract class base
 
     /**
      * Get View Router
-     * @return \core\view\router
+     * @return \fan\core\view\router
      */
     public function getView()
     {
@@ -452,7 +471,7 @@ abstract class base
      * @param string $sTemplatePath
      * @param boolean $bAllowException
      * @return boolean
-     * @throws \project\exception\block\fatal
+     * @throws \fan\project\exception\block\fatal
      */
     public function setTemplate($sTemplatePath, $bAllowException = true)
     {
@@ -460,14 +479,14 @@ abstract class base
             $this->sTemplate = $sTemplatePath;
             return true;
         } elseif ($bAllowException) {
-            throw new \project\exception\block\fatal($this, 'Incorrect template path "' . $sTemplatePath . '"');
+            throw new fatalException($this, 'Incorrect template path "' . $sTemplatePath . '"');
         }
         return false;
     } // function setTemplate
 
     /**
      * Get Request
-     * @return \core\service\request
+     * @return \fan\core\service\request
      */
     public function getRequest()
     {
@@ -506,11 +525,11 @@ abstract class base
 
     /**
      * Get instance of block's session
-     * @return \core\service\session
+     * @return \fan\core\service\session
      */
     public function getSession()
     {
-        return \project\service\session::instance(get_class($this), 'block');
+        return \fan\project\service\session::instance(get_class($this), 'block');
     } // function getSession
 
     /**
@@ -528,7 +547,7 @@ abstract class base
     public function getDebugInfo()
     {
         $aMetaSourse = $this->oMetaMaker->getSource();
-        $aParentPaths  = \project\service\reflector::instance()->getParentPaths($this);
+        $aParentPaths  = \fan\project\service\reflector::instance()->getParentPaths($this);
         $sCurrentPath = substr(reset($aParentPaths), 0, -3);
 
         return array(
@@ -552,16 +571,16 @@ abstract class base
     // ======== Private/Protected methods ======== \\
     /**
      * Create Meta Maker
-     * @return \core\base\meta\maker
+     * @return \fan\core\base\meta\maker
      */
     protected function _createMetaMaker()
     {
-        return new \project\base\meta\maker($this);
+        return new \fan\project\base\meta\maker($this);
     } // function _createMetaMaker
 
     /**
      * Create View Router
-     * @return \core\view\data
+     * @return \fan\core\view\data
      */
     protected function _createViewRouter()
     {
@@ -572,7 +591,7 @@ abstract class base
      * Set View Variable
      * @param string $sKey
      * @param mixed $mVal
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     protected function _setViewVar($sKey, $mVal)
     {
@@ -582,7 +601,7 @@ abstract class base
 
     /**
      * Previouse parse Meta
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     protected function _preparseMeta()
     {
@@ -645,11 +664,11 @@ abstract class base
 
     /**
      * Set root-block parameters
-     * @param \core\block\root\html $oRoot
+     * @param \fan\core\block\root\html $oRoot
      * @param array $aRootKeys
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
-    protected function _setRootBlockParameters(\core\block\base $oRoot = null, $aRootKeys = array())
+    protected function _setRootBlockParameters(\fan\core\block\base $oRoot = null, $aRootKeys = array())
     {
         if (empty($oRoot)) {
             $oRoot  = $this->_getBlock('root');
@@ -683,7 +702,7 @@ abstract class base
     /**
      * Set Template Variables By Meta-data
      * @param array $aTplVars
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     protected function _setTplVarsByMeta($aTplVars)
     {
@@ -696,11 +715,11 @@ abstract class base
     /**
      * Set Template of block
      * @param string $sTemplateName
-     * @throws \core\exception\block\fatal
+     * @throws \fan\project\exception\block\fatal
      */
     protected function _setTemplate($sTemplateName = '')
     {
-        $aPaths    = \project\service\reflector::instance()->getParentPaths($this);
+        $aPaths    = \fan\project\service\reflector::instance()->getParentPaths($this);
         $aSuffixes = $this->_getTplSuffixes();
 
         // If template-name isn't defined - try to get it from the Meta
@@ -721,7 +740,7 @@ abstract class base
             }
 
             // Throw exception if defined template-name incorrect
-            throw new \project\exception\block\fatal($this, 'Incorrect template name "' . $sTemplateName . '"');
+            throw new fatalException($this, 'Incorrect template name "' . $sTemplateName . '"');
         }
 
         // Try to find template by block-name
@@ -742,7 +761,7 @@ abstract class base
     {
         $aSuffixes = array('');
         if ($this->getMeta('useMultiLanguage')) {
-            $sLng = \project\service\locale::instance()->getLanguage();
+            $sLng = \fan\project\service\locale::instance()->getLanguage();
             if (!empty($sLng)) {
                 array_unshift($aSuffixes, $sSeparator . $sLng);
             }
@@ -779,6 +798,7 @@ abstract class base
 
     /**
      * Set Embedded Blocks
+     * @throws \fan\project\exception\block\fatal
      */
     protected function _setEmbeddedBlocks()
     {
@@ -791,26 +811,32 @@ abstract class base
                         'common' => $aSrcMeta['common'],
                         'own'    => isset($aSrcMeta[$k]) && $this->blockName != 'main' ? $aSrcMeta[$k] : array(),
                     );
-                    $sClass = $this->_parseClassName($v);
-                    if ($k == 'main') {
-                        $this->aEmbeddedBlocks[$k] = $this->oTab->getMainBlock();
-                        $this->aEmbeddedBlocks[$k]->finishConstruct($this, $aContainerMeta);
-                    } elseif ($sClass) {
-                        $this->aEmbeddedBlocks[$k] = new $sClass($k, $this->oTab, $this, $aContainerMeta, true);
-                        $this->oTab->setCurrentBlock($this);
-                    } else {
-                        throw new \project\exception\block\fatal($this, 'Unknown block path "' . $v . '" for Embedded Block');
+                    if ($v == '{MAIN}') {
+                        $oMain = $this->oTab->getMainBlock();
+                        if (empty($oMain)) {
+                            throw new fatalException($this, 'Main Block isn\'t set.');
+                        } else {
+                            $this->aEmbeddedBlocks[$k] = $oMain;
+                            $oMain->finishConstruct($this, $aContainerMeta);
+                        }
+                    } else{
+                        $sClass = $this->_parseClassName($v);
+                        if ($sClass) {
+                            $this->aEmbeddedBlocks[$k] = new $sClass($k, $this->oTab, $this, $aContainerMeta, true);
+                            $this->oTab->setCurrentBlock($this);
+                        }
                     }
                 }
             }
         }
+        return $this;
     } // function _setEmbeddedBlocks
 
     /**
      * Get other Blocks
      * @param sting $sBlockName - name of block
      * @param boolean $bAllowException - Allow Exception if name of block is incorrect
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     protected function _getBlock($sBlockName, $bAllowException = true)
     {
@@ -824,37 +850,32 @@ abstract class base
      * @param sting $sExceptionDbOper
      * @param numeric $nCode
      * @param \Exception $oPrevious
-     * @throws \core\exception\block\local
+     * @throws \fan\core\exception\block\local
      */
     protected function _makeBlockException($sLogErrMsg, $sType = 'local', $sExceptionDbOper = null, $nCode = E_USER_NOTICE, $oPrevious = null)
     {
-        $sClass = '\project\exception\block\\' . $sType;
+        $sClass = '\fan\project\exception\block\\' . $sType;
         if (!class_exists($sClass)) {
-            $sClass = '\project\exception\block\fatal';
+            $sClass = '\fan\project\exception\block\fatal';
         }
-        $this->sExceptionDbOper = empty($sExceptionDbOper) ? ($sClass == '\project\exception\block\local' ? 'nothing' : 'rollback' ) : $sExceptionDbOper;
+        $this->sExceptionDbOper = empty($sExceptionDbOper) ? ($sClass == '\fan\project\exception\block\local' ? 'nothing' : 'rollback' ) : $sExceptionDbOper;
         throw new $sClass($this, $sLogErrMsg, $nCode, $oPrevious);
     } // function _makeBlockException
 
     /**
      * Get other Blocks
-     * @param sting $sBlockName - name of block
+     * @param sting $sBlockPath - name of block
      * @param boolean $bAllowException - Allow Exception if name of block is incorrect
-     * @return \core\block\base
+     * @throws \fan\project\exception\block\fatal
+     * @return string
      */
-    protected function _parseClassName($sName)
+    protected function _parseClassName($sBlockPath, $bAllowException = true)
     {
-        if ($sName == '{MAIN}') {
-            $oMain = $this->oTab->getMainBlock();
-            return empty($oMain) ? null : get_class($oMain);
+        $sClass = $this->oTab->loadBlock($sBlockPath);
+        if (empty($sClass) && $bAllowException) {
+            throw new fatalException($this, 'Unknown block path "' . $sBlockPath . '" for Embedded Block');
         }
-        $aReplacement = array(
-            '{CAPP}' => '\\app\\' . $this->oTab->getAppName(),
-            '/'      => '\\',
-        );
-        $sClass = str_replace(array_keys($aReplacement), array_values($aReplacement), $sName);
-        $sClass = substr($sClass, 0, 1) == '\\' ? $sClass : get_ns_name($this) . $sClass;
-        return class_exists($sClass) ? $sClass : null;
+        return $sClass;
     } // function _parseClassName
 
     /**
@@ -935,5 +956,5 @@ abstract class base
         );
     } // function __call
     // ======== Required Interface methods ======== \\
-} // class \core\block\base
+} // class \fan\core\block\base
 ?>

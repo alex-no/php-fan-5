@@ -1,4 +1,4 @@
-<?php namespace core\service\log;
+<?php namespace fan\core\service\log;
 /**
  * Base parser of log file
  * array (
@@ -21,14 +21,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class parser_base
 {
 
     /**
      * Service Log
-     * @var \core\service\log
+     * @var \fan\core\service\log
      */
     protected $oFacade;
 
@@ -110,7 +110,7 @@ abstract class parser_base
      * Set Facade
      * @param object $oFacade
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         $this->oFacade = $oFacade;
     } // function setFacade
@@ -490,5 +490,5 @@ abstract class parser_base
 return ' . var_export($aTmp, true) . ';
 ?>');
     } // function _writeIndexFile
-} // class \core\service\log\parser_base
+} // class \fan\core\service\log\parser_base
 ?>

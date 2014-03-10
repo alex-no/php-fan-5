@@ -1,4 +1,4 @@
-<?php namespace core\exception\plain;
+<?php namespace fan\core\exception\plain;
 /**
  * Exception a plain controller fatal error
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class fatal extends \core\exception\base
+class fatal extends \fan\core\exception\base
 {
 
     /**
@@ -44,12 +44,12 @@ class fatal extends \core\exception\base
 
     /**
      * Get Instance of service
-     * @return \core\service\base
+     * @return \fan\core\service\base
      */
     public function getController()
     {
         return $this->oController;
     }
 
-} // class \core\exception\plain\fatal
+} // class \fan\core\exception\plain\fatal
 ?>

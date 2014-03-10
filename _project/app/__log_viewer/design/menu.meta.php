@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.004
+ * @version of file: 05.01.002 (01.05.2013)
  */
 return array(
     'own' => array(

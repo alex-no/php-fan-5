@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Session service
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class session extends \core\base\service\multi
+class session extends \fan\core\base\service\multi
 {
     /**
      * @var array Service's Instances
@@ -90,18 +90,18 @@ class session extends \core\base\service\multi
      * Get instance of Session service
      * @param string $sNameSpace
      * @param string $sGroup
-     * @return \core\service\session
-     * @throws \project\exception\fatal
+     * @return \fan\core\service\session
+     * @throws \fan\project\exception\fatal
      */
     public static function instance($sNameSpace = null, $sGroup = 'custom')
     {
         if (is_null($sGroup)) {
-            throw new \project\exception\fatal('Unset group name for \core\service\session.');
+            throw new \fan\project\exception\fatal('Unset group name for \fan\core\service\session.');
         }
         if (is_null($sNameSpace)) {
-            $oConfig    = \project\service\config::instance()->get('session');
+            $oConfig    = \fan\project\service\config::instance()->get('session');
             $sGroup     = 'app';
-            $sNameSpace = \project\service\application::instance()->getAppName();
+            $sNameSpace = \fan\project\service\application::instance()->getAppName();
             $sRepName   = $oConfig->get(array('REPLACE_APP', $sNameSpace));
             if ($sRepName) {
                 $sNameSpace = $sRepName;
@@ -337,7 +337,7 @@ class session extends \core\base\service\multi
     protected function _prepareParameters()
     {
         $oConfig = $this->oConfig;
-        $oSR     = \project\service\request::instance();
+        $oSR     = \fan\project\service\request::instance();
 
         $sSesName   = $oConfig->get('SESSION_NAME', 'SID');
         $sCookieSid = $oSR->get($sSesName, 'C');
@@ -383,7 +383,7 @@ class session extends \core\base\service\multi
      */
     protected function _setCookie($sVar, $sVal)
     {
-        \project\service\cookie::instance('/', $this->oConfig['COOKIE_DOMAIN'])->set($sVar, $sVal);
+        \fan\project\service\cookie::instance('/', $this->oConfig['COOKIE_DOMAIN'])->set($sVar, $sVal);
         return $this;
     } // function _setCookie
 
@@ -425,8 +425,8 @@ class session extends \core\base\service\multi
         $bResult = true;
         $aCheck = $this->oConfig['CHECK_SYSTEM'];
         if ($aCheck) {
-            $aServer = \project\service\request::instance()->getAll('S', array());
-            $oSes    = \project\service\session::instance('data', 'session');
+            $aServer = \fan\project\service\request::instance()->getAll('S', array());
+            $oSes    = \fan\project\service\session::instance('data', 'session');
             $aParam  = &$oSes->getByLink('param');
             if ($oSes->get('is_fill', false)) {
                 foreach ($aCheck as $v) {
@@ -455,11 +455,11 @@ class session extends \core\base\service\multi
     {
         $oConf = $this->oConfig;
         if ($oConf['KILL_BY_TIMEOUT']) {
-            $oSes = \project\service\session::instance('time', 'session');
+            $oSes = \fan\project\service\session::instance('time', 'session');
 
             self::$bIsExpired = &$oSes->getByLink('isKilled');
             $sNowDt = date('Y-m-d H:i:s');
-            $oNow = \project\service\date::instance($sNowDt);
+            $oNow = \fan\project\service\date::instance($sNowDt);
             $nDiffer = $oNow->getDifference($oSes->get('reload', $sNowDt));
 
             if ($nDiffer > $oConf['MAXLIFETIME']) {
@@ -487,5 +487,5 @@ class session extends \core\base\service\multi
         }
     } // function _killAll
 
-} // class \core\service\session
+} // class \fan\core\service\session
 ?>

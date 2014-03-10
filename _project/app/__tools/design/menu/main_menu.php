@@ -1,9 +1,9 @@
-<?php namespace app\__tools\design\menu;
+<?php namespace fan\app\__tools\design;
 /**
  * main_menu block for tools
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class main_menu extends \project\block\base
+class main_menu extends \fan\project\block\base
 {
     /**
      * Init block
@@ -25,5 +25,5 @@ class main_menu extends \project\block\base
         return $this->oTab->getURI('~/' . $sKey . $sAddUrl . '.html', 'link', null, null);
     }
 
-} // class \app\__tools\design\menu\main_menu
+} // class \fan\app\__tools\design\main_menu
 ?>

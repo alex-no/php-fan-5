@@ -1,12 +1,12 @@
 <?php
 /**
  * Carcass with application meta
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 return array(
     'header' => array(
         'embeddedBlocks' => array(
-            'addMenu' => '{TOOLS_DESIGN}/menu_block/application_submenu',
+            'addMenu' => 'design/menu_block/application_submenu',
         ),
     ),
 );

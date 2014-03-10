@@ -1,4 +1,4 @@
-<?php namespace app\__log_viewer\main;
+<?php namespace fan\app\__log_viewer\main;
 /**
  * index block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.002
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class get_trace extends \core\block\loader\base
+class get_trace extends \fan\project\block\loader\base
 {
 
     public function init()
@@ -35,5 +35,5 @@ class get_trace extends \core\block\loader\base
         $this->setText('ok');
     }
 
-} // class \app\__log_viewer\main\get_trace
+} // class \fan\app\__log_viewer\main\get_trace
 ?>

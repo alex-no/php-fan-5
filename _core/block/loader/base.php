@@ -1,4 +1,4 @@
-<?php namespace core\block\loader;
+<?php namespace fan\core\block\loader;
 /**
  * Base abstract loader block
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class base extends \core\block\base
+abstract class base extends \fan\core\block\base
 {
     /**
      * @var array Getted Data from loader
@@ -33,7 +33,7 @@ abstract class base extends \core\block\base
 
     /**
      * Finish Construction of block
-     * @param \core\block\base $oContainer
+     * @param \fan\core\block\base $oContainer
      * @param array $aContainerMeta
      * @param boolean $bAllowSetEmbedded
      */
@@ -128,5 +128,5 @@ abstract class base extends \core\block\base
     {
         return $this->view->toArray();
     }// function getOutcome
-} // class \core\block\loader\base
+} // class \fan\core\block\loader\base
 ?>

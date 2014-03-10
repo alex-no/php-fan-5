@@ -1,4 +1,4 @@
-<?php namespace core\service\entity\designer;
+<?php namespace fan\core\service\entity\designer;
 /**
  * Designer of SQL-request DELETE
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class delete extends \core\service\entity\designer
+class delete extends \fan\core\service\entity\designer
 {
     /**
      * SQL-request parts
@@ -34,7 +34,7 @@ class delete extends \core\service\entity\designer
     /**
      * Set parts of SQL-requests for delete by parameters
      * @param array $mParam
-     * @return \core\service\entity\designer\delete
+     * @return \fan\core\service\entity\designer\delete
      */
     public function setDeleteByParam($mParam)
     {
@@ -48,5 +48,5 @@ class delete extends \core\service\entity\designer
 
     // ======== Private/Protected methods ======== \\
 
-} // class \core\service\entity\designer\delete
+} // class \fan\core\service\entity\designer\delete
 ?>

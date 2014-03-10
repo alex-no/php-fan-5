@@ -1,4 +1,4 @@
-<?php namespace core\service\session;
+<?php namespace fan\core\service\session;
 /**
  * Session engine adodb
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
 include_once __DIR__ . '/session_engine_php.php';
 
@@ -32,7 +32,7 @@ class adodb extends inbuilt
         require_once \bootstrap::get_dir('LIBS') . '/ADOdb/adodb.inc.php';
 
         if (@$aConfig['IS_DATABASE']) {
-            $aDbConfig = \project\service\config::instance()->get('database');
+            $aDbConfig = \fan\project\service\config::instance()->get('database');
             $aDb = $aDbConfig['DATABASES'][$aConfig['CONNECTION']];
 
             $ADODB_SESSION_DRIVER  = $aDb['DRIVER'];
@@ -47,5 +47,5 @@ class adodb extends inbuilt
 
         parent::__construct($aConfig);
     } // function __construct
-} // class \core\service\session\adodb
+} // class \fan\core\service\session\adodb
 ?>

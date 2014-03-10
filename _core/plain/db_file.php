@@ -1,5 +1,5 @@
-<?php namespace core\plain;
-//use project\exception\plain\fatal as fatalException;
+<?php namespace fan\core\plain;
+//use fan\project\exception\plain\fatal as fatalException;
 /**
  * Base access for plain files (uploaded to the server) class
  *
@@ -13,20 +13,20 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 
 class db_file
 {
     /**
      * Handler object
-     * @var \core\service\plain
+     * @var \fan\core\service\plain
      */
     protected $oHandler;
 
     /**
      * Plain config object
-     * @var \core\service\config\row
+     * @var \fan\core\service\config\row
      */
     protected $oConfig;
 
@@ -73,7 +73,7 @@ class db_file
 
     /**
      * Database row
-     * @var \core\base\model\row
+     * @var \fan\core\base\model\row
      */
     protected $oRow = null;
 
@@ -81,7 +81,7 @@ class db_file
      * Constructor of Plain controller db_file
      * @param boolean $bAllowIni
      */
-    public function __construct(\core\service\plain $oHandler, $sKey)
+    public function __construct(\fan\core\service\plain $oHandler, $sKey)
     {
         $this->oHandler = $oHandler;
         $this->sKey     = $sKey;
@@ -118,7 +118,7 @@ class db_file
         return $this->_prepare()->_init()->_getContent();
     } // getFile
 
-    public function setConfig(\core\service\config\row $oConfig)
+    public function setConfig(\fan\core\service\config\row $oConfig)
     {
         if (empty($this->oConfig)) {
             $this->oConfig = $oConfig;
@@ -148,11 +148,11 @@ class db_file
 
     /**
      * Set properties file output: mId, mPos, sApp, sErrMsg
-     * @return \core\plain\db_file
+     * @return \fan\core\plain\db_file
      */
     protected function _prepare()
     {
-        $oSR  = \project\service\request::instance();
+        $oSR  = \fan\project\service\request::instance();
         $this->mId = $oSR->get('id', 'AGP');
         if (empty($this->mId)) {
             $this->mId = $oSR->get(0, 'A');
@@ -169,12 +169,12 @@ class db_file
 
     /**
      * Init data
-     * @return \core\plain\db_file
+     * @return \fan\core\plain\db_file
      */
     protected function _init()
     {
         if (!empty($this->sApp)) {
-            \project\service\application::instance()->setAppName($this->sApp);
+            \fan\project\service\application::instance()->setAppName($this->sApp);
         }
 
         $aData = $this->_getFileData();
@@ -187,8 +187,8 @@ class db_file
             }
         }
 
-        if (class_exists('\core\service\database', false)) {
-            \project\service\database::close();
+        if (class_exists('\fan\core\service\database', false)) {
+            \fan\project\service\database::close();
         }
         if (!empty($this->sFilePath) || !empty($this->sPlainContent)) {
             return $this;
@@ -211,14 +211,14 @@ class db_file
         if (empty($this->mId)) {
             return null;
         }
-        $oCache = \project\service\cache::instance('file_store');
+        $oCache = \fan\project\service\cache::instance('file_store');
         $aData  = $oCache->get($this->mId);
         if (!empty($aData) && $aData['fileDate'] == filemtime($aData['filePath']) && $aData['headers']['length'] == filesize($aData['filePath'])) {
             // ToDo: Check Access by Cache?
             return $aData;
         }
 
-        /* @var $oRow \core\model\file_data\row */
+        /* @var $oRow \fan\core\model\file_data\row */
         $oRow = $this->_getRow($bIdIsEncrypt);
 
         if ($oRow) {
@@ -249,7 +249,7 @@ class db_file
     /**
      * Get Entity entity_file_data
      * Return NULL if the file is not valid
-     * @return \core\model\file_data\row|null
+     * @return \fan\core\model\file_data\row|null
      */
     protected function _getRow($bIdIsEncrypt = null)
     {
@@ -270,5 +270,5 @@ class db_file
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\plain\file
+} // class \fan\core\service\plain\file
 ?>

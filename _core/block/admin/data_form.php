@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Admin form data class for loader block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class data_form extends data
 {
@@ -43,7 +43,7 @@ class data_form extends data
      * Parse changed/inserted Data
      * @param array $aEdit
      * @param array $aInsert
-     * @return \core\block\admin\data
+     * @return \fan\core\block\admin\data
      */
     public function parseData($aEdit, $aInsert)
     {
@@ -125,7 +125,7 @@ class data_form extends data
 
     /**
      * Get current entity
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getCurrentRow($bCacheEnable)
     {
@@ -135,5 +135,5 @@ class data_form extends data
             $oEtt->getRowByKey($sEttKey, $this->getCondition()) :
             $oEtt->getRowByParam($this->getCondition());
     } // function getCurrentRow
-} // class \core\block\admin\data_form
+} // class \fan\core\block\admin\data_form
 ?>

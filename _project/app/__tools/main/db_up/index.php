@@ -1,14 +1,14 @@
-<?php namespace app\__tools\main\db_up;
+<?php namespace fan\app\__tools\main;
 /**
  * index block
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class index extends \project\block\form\usual
+class index extends \fan\project\block\form\usual
 {
     public function init()
     {
         require_once(dirname(__FILE__) . "/scenario.php");
-        
+
         $this->aFieldMeta["scenario"]["data"] = array();
 
         $aScList = array();
@@ -31,12 +31,12 @@ class index extends \project\block\form\usual
                 $this->aFieldMeta["scenario"]["data"][] = array("value" => $k, "text" => $v);
             }
 
-            $this->parseForm();
-            $this->setTemplateVar("isCorrect", 1);
+            $this->_parseForm();
+            $this->view->isCorrect = 1;
         } else {
             $sRealDirPath = realpath($sDirPath);
-            $this->setTemplateVar("sDirPath", $sRealDirPath ? $sRealDirPath : $this->getMeta("scenario_dir"));
+            $this->view->sDirPath = $sRealDirPath ? $sRealDirPath : $this->getMeta("scenario_dir");
         }
     }
-} // class \app\__tools\main\db_up\index
+} // class \fan\app\__tools\main\index
 ?>

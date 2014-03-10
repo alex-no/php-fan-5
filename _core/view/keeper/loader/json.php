@@ -1,4 +1,4 @@
-<?php namespace core\view\keeper\loader;
+<?php namespace fan\core\view\keeper\loader;
 /**
  * View-data keeper of Block data for loader JSON-data
  *
@@ -12,15 +12,15 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class json extends \core\view\keeper
+class json extends \fan\core\view\keeper
 {
     /**
      * View meta constructor
-     * @param core\block\base $oRouter
+     * @param fan\core\block\base $oRouter
      */
-    public function __construct(\core\view\router $oRouter)
+    public function __construct(\fan\core\view\router $oRouter)
     {
         parent::__construct($oRouter);
         $this->bFullRewrite = true;
@@ -31,10 +31,10 @@ class json extends \core\view\keeper
     // ======== Main Interface methods ======== \\
     /**
      * Add Router
-     * @param \core\view\router\loader $oRouter
-     * @return \core\view\keeper\loader\text
+     * @param \fan\core\view\router\loader $oRouter
+     * @return \fan\core\view\keeper\loader\text
      */
-    public function addRouter(\core\view\router\loader $oRouter)
+    public function addRouter(\fan\core\view\router\loader $oRouter)
     {
         $this->_setSetter($oRouter);
         $this->_setSetter($oRouter->getBlock());
@@ -46,5 +46,5 @@ class json extends \core\view\keeper
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\view\keeper\loader\json
+} // class \fan\core\view\keeper\loader\json
 ?>

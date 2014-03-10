@@ -1,4 +1,4 @@
-<?php namespace core\service\matcher\item;
+<?php namespace fan\core\service\matcher\item;
 /**
  * Description of source
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @property string $request
  * @property string $host
@@ -35,5 +35,5 @@ class source extends base
             $this->aData['path'] . '/' . $this->aData['file'] :
             $this->aData['host'] . $this->aData['request'];
     }
-} // class \core\service\matcher\item\source
+} // class \fan\core\service\matcher\item\source
 ?>

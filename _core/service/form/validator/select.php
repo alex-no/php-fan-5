@@ -1,4 +1,4 @@
-<?php namespace core\service\form\validator;
+<?php namespace fan\core\service\form\validator;
 /**
  * Common class of validators
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class select extends base
 {
@@ -43,7 +43,7 @@ class select extends base
      * @param array $aData
      * @return bool
      */
-    protected function inArray($mValue, $aData)
+    public function inArray($mValue, $aData)
     {
         if (!empty($aData['value'])) {
             return in_array($mValue, $aData['value']);
@@ -82,5 +82,5 @@ class select extends base
         return false;
     } // function checkSelectData
 
-} // class \core\service\form\validator\common
+} // class \fan\core\service\form\validator\common
 ?>

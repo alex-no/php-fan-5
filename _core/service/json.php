@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Description of JSON
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class json extends \core\base\service\single
+class json extends \fan\core\base\service\single
 {
     /**
      * Error Code
@@ -155,5 +155,5 @@ class json extends \core\base\service\single
         }
         return $sResult;
    } // function prettyPrint
-} // class \core\service\json
+} // class \fan\core\service\json
 ?>

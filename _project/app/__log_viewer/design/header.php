@@ -1,4 +1,4 @@
-<?php namespace app\__log_viewer\design;
+<?php namespace fan\app\__log_viewer\design;
 /**
  * header_main block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.005
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class header extends \project\block\base
+class header extends \fan\project\block\base
 {
     public function init()
     {
@@ -75,5 +75,5 @@ class header extends \project\block\base
         }
         ksort($aDt);
     } // function setFileList
-} // class \app\__log_viewer\design\header
+} // class \fan\app\__log_viewer\design\header
 ?>
