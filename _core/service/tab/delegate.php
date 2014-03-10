@@ -1,4 +1,4 @@
-<?php namespace core\service\tab;
+<?php namespace fan\core\service\tab;
 
 /**
  * Description of delegate
@@ -13,13 +13,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class delegate extends engine
 {
     /**
      * Facade of service
-     * @var \core\service\config\base
+     * @var \fan\core\service\config\base
      */
     protected $oConfig = null;
 
@@ -28,9 +28,9 @@ abstract class delegate extends engine
 
     /**
      * Set Facade
-     * @param \core\base\service $oFacade
+     * @param \fan\core\base\service $oFacade
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         parent::setFacade($oFacade);
         $this->oConfig = $oFacade->getConfig();
@@ -51,5 +51,5 @@ abstract class delegate extends engine
 
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
-} // class \core\service\tab\delegate
+} // class \fan\core\service\tab\delegate
 ?>

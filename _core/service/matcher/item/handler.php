@@ -1,4 +1,4 @@
-<?php namespace core\service\matcher\item;
+<?php namespace fan\core\service\matcher\item;
 /**
  * Description of handler
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @property string $method
  * @property array $param
@@ -39,5 +39,5 @@ class handler extends base
         $this->_checkKey($sKey);
         return $this->aData[$sKey];
     }
-} // class \core\service\matcher\item\handler
+} // class \fan\core\service\matcher\item\handler
 ?>

@@ -1,5 +1,5 @@
-<?php namespace core\service\user;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\user;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Description of user-data
  *
@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFirstName()
@@ -27,30 +27,30 @@ use project\exception\service\fatal as fatalException;
  * @method string getStatus()
  * @method string getJoinDate()
  * @method string getVisitDate()
- * @method \core\service\user setLogin()     setLogin(string $sLogin)
- * @method \core\service\user setNickName()  setNickName(string $sNickName)
- * @method \core\service\user setFirstName() setFirstName(string $sFirstName)
- * @method \core\service\user setLastName()  setLastName(string $sLastName)
- * @method \core\service\user setTitle()     setTitle(string $sTitle)
- * @method \core\service\user setGender()    setGender(string $sGender)
- * @method \core\service\user setEmail()     setEmail(string $sEmail)
- * @method \core\service\user setPhone()     setPhone(string $sPhone)
- * @method \core\service\user setLocale()    setLocale(string $sLocale)
- * @method \core\service\user setAddress()   setAddress(string|array $aAddress)
- * @method \core\service\user setStatus()    setStatus(string $sStatus)
+ * @method \fan\core\service\user setLogin()     setLogin(string $sLogin)
+ * @method \fan\core\service\user setNickName()  setNickName(string $sNickName)
+ * @method \fan\core\service\user setFirstName() setFirstName(string $sFirstName)
+ * @method \fan\core\service\user setLastName()  setLastName(string $sLastName)
+ * @method \fan\core\service\user setTitle()     setTitle(string $sTitle)
+ * @method \fan\core\service\user setGender()    setGender(string $sGender)
+ * @method \fan\core\service\user setEmail()     setEmail(string $sEmail)
+ * @method \fan\core\service\user setPhone()     setPhone(string $sPhone)
+ * @method \fan\core\service\user setLocale()    setLocale(string $sLocale)
+ * @method \fan\core\service\user setAddress()   setAddress(string|array $aAddress)
+ * @method \fan\core\service\user setStatus()    setStatus(string $sStatus)
  * @method string getPassword()
  */
 abstract class base implements \Serializable
 {
     /**
      * Service User
-     * @var \core\service\user
+     * @var \fan\core\service\user
      */
     protected $oFacade;
 
     /**
      * Row of config
-     * @var \core\service\config\row
+     * @var \fan\core\service\config\row
      */
     protected $oConfig;
 
@@ -121,9 +121,9 @@ abstract class base implements \Serializable
 
     /**
      * Set Facade
-     * @param \core\service\user $oFacade
+     * @param \fan\core\service\user $oFacade
      */
-    public function setFacade(\core\service\user $oFacade)
+    public function setFacade(\fan\core\service\user $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -133,9 +133,9 @@ abstract class base implements \Serializable
 
     /**
      * Set Config
-     * @param \core\service\config\row $oConfig
+     * @param \fan\core\service\config\row $oConfig
      */
-    public function setConfig(\core\service\config\row $oConfig)
+    public function setConfig(\fan\core\service\config\row $oConfig)
     {
         if (empty($this->oConfig)) {
             if (empty($oConfig)) {
@@ -202,7 +202,7 @@ abstract class base implements \Serializable
      * Add Role
      * @param string $mRole
      * @param number $nExpiredTime - live time of setted role in second
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function addRole($sRole, $nExpiredTime)
     {
@@ -212,7 +212,7 @@ abstract class base implements \Serializable
     /**
      * Remove Role
      * @param string $mRole
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function removeRole($sRole)
     {
@@ -222,7 +222,7 @@ abstract class base implements \Serializable
     /**
      * Set Visit Date as string in format "Y-m-d"
      * @param string $sDate
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function setVisitDate($sDate = null)
     {
@@ -235,7 +235,7 @@ abstract class base implements \Serializable
     /**
      * Set Password
      * @param string $sPassword
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function setPassword($sPassword)
     {
@@ -273,7 +273,7 @@ abstract class base implements \Serializable
 
     /**
      * Load User data
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function load()
     {
@@ -286,7 +286,7 @@ abstract class base implements \Serializable
     } // function load
     /**
      * Logout User
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function logout()
     {
@@ -295,7 +295,7 @@ abstract class base implements \Serializable
 
     /**
      * Save User data
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function save()
     {
@@ -385,7 +385,7 @@ abstract class base implements \Serializable
      * Set any data
      * @param string $sKey
      * @param mixed $mVal
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     protected function _set($sKey, $mVal)
     {
@@ -460,5 +460,5 @@ abstract class base implements \Serializable
         $this->mData       = unserialize($aData['main']);
     }
 
-} // class \core\service\user\base
+} // class \fan\core\service\user\base
 ?>

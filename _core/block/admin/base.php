@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Base class for loader block
  *
@@ -12,15 +12,15 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class base extends \core\block\loader\base
+abstract class base extends \fan\core\block\loader\base
 {
     /**
      * Block constructor
      * @param string $sBlockName Block Name
-     * @param service_tab $oTab
+     * @param \core\service\tab $oTab
      * /
     public function __construct($oTab, $sBasicFilePatch)
     {
@@ -67,7 +67,7 @@ abstract class base extends \core\block\loader\base
         } else {
             $aTmp = $this->getRowset($aArgPrev);
             foreach ($aTmp as $e) {
-                /* @var $e \core\base\model\row */
+                /* @var $e \fan\core\base\model\row */
                 $aRetData[$e->get($aArgPrev['key'])] = array('val' => $e->get($aArgPrev['val']));
             }
         }
@@ -121,7 +121,7 @@ abstract class base extends \core\block\loader\base
     /**
      * Get Aggregate Entities
      * @param array $aArg array('entity' => '', 'sql_key' => '', 'key' => '', 'val' => '', 'parent' => '', 'param' => '', 'qtt' => '', 'offset' => '', 'order' => '')
-     * @return \core\base\model\rowset
+     * @return \fan\core\base\model\rowset
      */
     private function getRowset($aArg)
     {
@@ -175,7 +175,7 @@ abstract class base extends \core\block\loader\base
      * Set template variable value
      * @param string $sKey
      * @param mixed $mValue
-     * @return \core\block\admin\data
+     * @return \fan\core\block\admin\data
      */
     protected function setTemplateVar($sKey, $mValue)
     {
@@ -198,7 +198,7 @@ abstract class base extends \core\block\loader\base
     protected function getTemplateCode($aAddVars = array())
     {
         $sRetHtml  = '';
-        $aTmp      = $this->view instanceof \core\view\router && count($this->view) > 0 ? $this->view->toArray() : array();
+        $aTmp      = $this->view instanceof \fan\core\view\router && count($this->view) > 0 ? $this->view->toArray() : array();
         $aTplVars  = isset($aTmp['html']) && is_array($aTmp['html']) ? $aTmp['html'] : array();
         $sTemplate = $this->getTemplate();
         if (!empty($sTemplate)) {
@@ -232,5 +232,5 @@ abstract class base extends \core\block\loader\base
         return $sRetHtml;
     } // function getTemplateCode
 
-} // class \core\block\admin\base
+} // class \fan\core\block\admin\base
 ?>

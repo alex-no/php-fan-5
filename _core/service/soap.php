@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * SOAP operation service
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class soap extends \core\base\service\multi
+class soap extends \fan\core\base\service\multi
 {
     /**
      * @var SoapClient
@@ -61,7 +61,7 @@ class soap extends \core\base\service\multi
      * Get Service's instance of current service
      * @param string $sWsdlFile wsdl-file name
      * @param array $aParam parameter to create SOAP
-     * @return service_soap
+     * @return \core\service\soap
      */
     public static function instance($sWsdlFile, $aParam = null, $bLogEnabled = true)
     {
@@ -88,7 +88,7 @@ class soap extends \core\base\service\multi
         }
 
         $oErr = service('error');
-        /* @var $oErr \core\service\error */
+        /* @var $oErr \fan\core\service\error */
         if (!is_array($aArguments)) {
             $oErr->logErrorMessage('Error! Arguments is not array there: (' . gettype($aArguments) . ') "' . strval($aArguments) . '"', 'SOAP: incorrect arguments.', null, true);
             $aArguments = array();
@@ -197,7 +197,7 @@ class soap extends \core\base\service\multi
      * Init SOAP Connect
      * @param string $sWsdlFile wsdl-file name
      * @param array $aParam parameter to create SOAP
-     * @return service_soap
+     * @return \core\service\soap
      */
     protected function initSoapObj($sWsdlFile, $aParam = null)
     {
@@ -278,5 +278,5 @@ class soap extends \core\base\service\multi
         $oXml->formatOutput = true;
         return htmlspecialchars($oXml->saveXML());
     } // function format4log
-} // class \core\service\soap
+} // class \fan\core\service\soap
 ?>

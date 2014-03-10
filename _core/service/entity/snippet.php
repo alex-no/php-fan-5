@@ -1,5 +1,5 @@
-<?php namespace core\service\entity;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\service\entity;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
  * Description of SQL-snippet
  *
@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class snippet
 {
@@ -29,12 +29,12 @@ class snippet
     protected $sPlaceHoldersRe = '/\{\$(\w+)\}/';
     /**
      * Instance of Snippety-designer
-     * @var \core\service\entity\designer\snippety
+     * @var \fan\core\service\entity\designer\snippety
      */
     protected $oSnippety = null;
     /**
      * Entity - table data
-     * @var \core\base\model\entity
+     * @var \fan\core\base\model\entity
      */
     protected $oEntity = null;
 
@@ -69,7 +69,7 @@ class snippet
     protected $mCallback = null;
 
 
-    public function __construct(\core\service\entity\designer\snippety $oSnippety, $sQuery, $sSrcCondition, $sCallback)
+    public function __construct(\fan\core\service\entity\designer\snippety $oSnippety, $sQuery, $sSrcCondition, $sCallback)
     {
         $this->oSnippety     = $oSnippety;
         $this->oEntity       = $oSnippety->getEntity();
@@ -179,7 +179,7 @@ class snippet
 
     /**
      * Get Instance of Snippety-designer
-     * @return \core\service\entity\designer\snippety
+     * @return \fan\core\service\entity\designer\snippety
      */
     public function getSnippety()
     {
@@ -187,7 +187,7 @@ class snippet
     } // function getSnippety
     /**
      * Get link to Entity
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function getEntity()
     {
@@ -295,5 +295,5 @@ class snippet
         eval($this->sCondition);
         return $bResult;
     } // function _checkCondition
-} // class \core\service\entity\snippet
+} // class \fan\core\service\entity\snippet
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\exception\block;
+<?php namespace fan\core\exception\block;
 /**
  * Exception a block fatal error
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class form_part extends local
 {
@@ -33,7 +33,7 @@ class form_part extends local
      * @param integer $nCode Error Code
      * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct(\core\block\base $oBlock, $aErrorMsg, $nCode = E_USER_WARNING, $oPrevious = null)
+    public function __construct(\fan\core\block\base $oBlock, $aErrorMsg, $nCode = E_USER_WARNING, $oPrevious = null)
     {
         $this->oFormPart = $oBlock;
         $this->aErrorMsg = $aErrorMsg;
@@ -68,5 +68,5 @@ class form_part extends local
         return parent::_defineDbOper($sDbOper);
     } // function _defineDbOper
 
-} // class \core\exception\block\form_part
+} // class \fan\core\exception\block\form_part
 ?>

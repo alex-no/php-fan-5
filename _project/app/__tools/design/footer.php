@@ -1,4 +1,4 @@
-<?php namespace app\__tools\design;
+<?php namespace fan\app\__tools\design;
 /**
  * footer block
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class footer extends \project\block\base
+class footer extends \fan\project\block\base
 {
 
-} // class \app\__tools\design\footer
+} // class \fan\app\__tools\design\footer
 ?>

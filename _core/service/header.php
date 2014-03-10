@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Description of header
  *
@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @property string  $response
  * @property string  $protocol
@@ -28,7 +28,7 @@ use project\exception\service\fatal as fatalException;
  * @property string  $cacheLimit
  *
  */
-class header extends \core\base\service\single
+class header extends \fan\core\base\service\single
 {
     /**
      * Mapping of methods for send headers
@@ -100,7 +100,7 @@ class header extends \core\base\service\single
      * Add header to stack
      * @param string $sParam Parameter of Header
      * @param string $sValue Value of Parameter
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function addHeader($sParam, $sValue)
     {
@@ -116,7 +116,7 @@ class header extends \core\base\service\single
     /**
      * Set headers to stack
      * @param array $aHeaders Name=>Parameters for call
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function setHeaders(array $aHeaders)
     {
@@ -130,7 +130,7 @@ class header extends \core\base\service\single
     /**
      * Remove Parameter of Header from stack
      * @param string $sParam
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function removeHeader($sParam)
     {
@@ -190,7 +190,7 @@ class header extends \core\base\service\single
     /**
      * Set response type
      * @param integer $iCode
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function setResponseType($iCode = null)
     {
@@ -237,7 +237,7 @@ class header extends \core\base\service\single
      * Set Content-Type
      * @param string $sValue
      * @param string $sEncoding
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendContentType($sValue = null, $sEncoding = null)
     {
@@ -254,7 +254,7 @@ class header extends \core\base\service\single
      * Get Request parameter
      * @param string $nLen Set file legth
      * @param string $sRanges Set ranges of legth
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendLength($nLen, $sRanges = null)
     {
@@ -272,7 +272,7 @@ class header extends \core\base\service\single
      * Set time parameters
      * @param number $nModified Set modified timestamp
      * @param number $nExpired Set expired timestamp
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendTime($nModified = NULL, $nExpired = NULL)
     {
@@ -290,7 +290,7 @@ class header extends \core\base\service\single
      * Get Request parameter
      * @param string $sFileName Set file name
      * @param boolean $bIsInline if TRUE - inline, ELSE - attachment
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendFilename($sFileName, $bIsInline = true)
     {
@@ -301,7 +301,7 @@ class header extends \core\base\service\single
     /**
      * Sends headers for enabling/disabling of caching file by browser/proxy
      * @param number $nTimeExpires Time period of expires (if "0" - disable cache)
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendCache($nTimeExpires = 0)
     {
@@ -326,7 +326,7 @@ class header extends \core\base\service\single
     /**
      * Send header location
      * @param string $sUrl new location
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendLocation($sUrl, $bContinueExec = false)
     {
@@ -340,7 +340,7 @@ class header extends \core\base\service\single
     /**
      * Send header location 301
      * @param string $sUrl new location
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendLocation301($sUrl, $bContinueExec = false)
     {
@@ -356,7 +356,7 @@ class header extends \core\base\service\single
      * @param string $sType
      * @param string $sValue
      * @param string $sExtraData Extra Data after ";"
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function sendArbitrary($sType, $sValue, $sExtraData = '')
     {
@@ -367,7 +367,7 @@ class header extends \core\base\service\single
     // ------ Frequently response headers set ------ \\
     /**
      * Set header of ok 200
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function ok200($bSend = false)
     {
@@ -376,7 +376,7 @@ class header extends \core\base\service\single
 
     /**
      * Set header of error 403
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function error403($bSend = false)
     {
@@ -385,7 +385,7 @@ class header extends \core\base\service\single
 
     /**
      * Set header of error 404
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function error404($bSend = false)
     {
@@ -394,7 +394,7 @@ class header extends \core\base\service\single
 
     /**
      * Set header of error 500
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     public function error500($bSend = false)
     {
@@ -415,7 +415,7 @@ class header extends \core\base\service\single
      * Set value to Head-Stack
      * @param string $sParam Parameter of Header
      * @param strng $sValue
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     protected function _setHeadStack($sParam, $sValue)
     {
@@ -463,7 +463,7 @@ class header extends \core\base\service\single
      * @param integer $iCode
      * @param string $sProtocol
      * @return string
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     protected function _getResponseText($iCode, $sProtocol)
     {
@@ -477,8 +477,8 @@ class header extends \core\base\service\single
     /**
      * Check Response Code and autoload not finded code
      * @param integer $iCode
-     * @return \core\service\header
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\header
+     * @throws \fan\project\exception\service\fatal
      */
     protected function _checkResponseCode($iCode)
     {
@@ -501,7 +501,7 @@ class header extends \core\base\service\single
      * Set special response type
      * @param integer $iCode
      * @param boolean $bSend
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     protected function _setSpecialType($iCode, $bSend)
     {
@@ -525,5 +525,5 @@ class header extends \core\base\service\single
     }
 
     // ======== Required Interface methods ======== \\
-} // class \core\service\header
+} // class \fan\core\service\header
 ?>

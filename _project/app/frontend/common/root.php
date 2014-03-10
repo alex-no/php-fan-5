@@ -1,8 +1,8 @@
-<?php
+<?php namespace fan\app\frontend\common;
 /**
- * Meta data of index
+ * Viewer root block
  *
- * This file is part PHP-FAN (php-framework from Alexandr Nosov)
+ * This file is part PHP-FAN (php-framework of Alexandr Nosov)
  * Copyright (C) 2005-2007 Alexandr Nosov, http://www.alex.4n.com.ua/
  *
  * Licensed under the terms of the GNU Lesser General Public License:
@@ -12,17 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.01.002 (01.05.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-return array(
-    'own' => array(
-        'title' => 'Log viewer tools',
-
-        'dontCrawl' => true,
-
-        'cache' => array(
-            'mode' => 1,
-        ),
-    ),
-);
+class root extends \fan\project\block\root\html5
+{
+} // class \fan\app\frontend\common\root
 ?>

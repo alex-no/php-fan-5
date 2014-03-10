@@ -1,4 +1,4 @@
-<?php namespace app\__tools\common;
+<?php namespace fan\app\__tools\common;
 /**
  * Viewer root block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class root extends \project\block\root\html
+class root extends \fan\project\block\root\html
 {
 
     /**
@@ -28,5 +28,5 @@ class root extends \project\block\root\html
     } // function setTitle
 
 
-} // class \app\__tools\common\root
+} // class \fan\app\__tools\common\root
 ?>

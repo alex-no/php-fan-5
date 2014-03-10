@@ -1,6 +1,6 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
-use project\exception\error500 as error500;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
+use fan\project\exception\error500 as error500;
 /**
  * Cache service
  *
@@ -14,9 +14,9 @@ use project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class cache extends \core\base\service\multi
+class cache extends \fan\core\base\service\multi
 {
     /**
      * Type of cache for config
@@ -35,7 +35,7 @@ class cache extends \core\base\service\multi
     protected $sType;
 
     /**
-     * @var \core\service\cache\base[] Engines of current cache type
+     * @var \fan\core\service\cache\base[] Engines of current cache type
      */
     protected $aEngine = null;
 
@@ -68,7 +68,7 @@ class cache extends \core\base\service\multi
     // ======== Static methods ======== \\
     /**
      * Get Instance of cache for service of config
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      * @throws error500
      */
     public static function configInstance()
@@ -89,13 +89,13 @@ class cache extends \core\base\service\multi
     /**
      * Get instance of cache service
      * @param string $sType
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      * @throws fatalException
      */
     public static function instance($sType = null)
     {
         if (is_null($sType)) {
-            $oConfig = \project\service\config::instance();
+            $oConfig = \fan\project\service\config::instance();
             $sType   = $oConfig->get('cache')->get('DEFAULT_TYPE');
             if (empty($sType)) {
                 throw new fatalException($oConfig, 'Default CACHE-type doesn\'t set in config-file.');
@@ -128,7 +128,7 @@ class cache extends \core\base\service\multi
      * @param string $sKey
      * @param mixed $mValue
      * @param boolean $bAutoSave
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      */
     public function set($sKey, $mValue, $bAutoSave = true)
     {
@@ -185,7 +185,7 @@ class cache extends \core\base\service\multi
      * @param string $sKey
      * @param string $sParam
      * @param mixed $mValue
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      */
     public function setExtraMeta($sKey, $sParam, $mValue)
     {
@@ -198,7 +198,7 @@ class cache extends \core\base\service\multi
      * @param string $sKey
      * @param string $sParam
      * @param mixed $mValue
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      */
     public function checkExtraMeta($sKey, $sParam, $mValue, $sMethod = 'equal', $bAllowDelete = false)
     {
@@ -255,7 +255,7 @@ class cache extends \core\base\service\multi
      * Set Lifetime
      * @param string $sKey
      * @param integer $iTime
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      */
     public function setLifetime($sKey, $iTime)
     {
@@ -294,7 +294,7 @@ class cache extends \core\base\service\multi
     /**
      * Save cahe-data
      * @param string $sKey
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      */
     public function save($sKey)
     {
@@ -305,7 +305,7 @@ class cache extends \core\base\service\multi
     /**
      * Delete cahe-data
      * @param string $sKey
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      */
     public function delete($sKey)
     {
@@ -318,7 +318,7 @@ class cache extends \core\base\service\multi
      * Allows to separate data for subdirectories
      * @param type $sKey
      * @param type $sExtraPath
-     * @return \core\service\cache
+     * @return \fan\core\service\cache
      */
     public function setExtraPath($sKey, $sExtraPath)
     {
@@ -339,7 +339,7 @@ class cache extends \core\base\service\multi
     /**
      * Get Data-engine
      * @param string $sKey
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function getEngine($sKey)
     {
@@ -365,5 +365,5 @@ class cache extends \core\base\service\multi
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\cache
+} // class \fan\core\service\cache
 ?>

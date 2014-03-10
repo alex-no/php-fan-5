@@ -1,4 +1,4 @@
-<?php namespace core\base\meta;
+<?php namespace fan\core\base\meta;
 /**
  * Meta Data Row
  *
@@ -12,22 +12,22 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class row extends \core\base\data
+class row extends \fan\core\base\data
 {
     /**
-     * @var \core\block\all Linked block
+     * @var \fan\core\block\all Linked block
      */
     protected $oBlock;
 
     /**
-     * @var \core\base\meta\maker
+     * @var \fan\core\base\meta\maker
      */
     protected $oMaker;
 
     /**
-     * @var \core\base\meta\row
+     * @var \fan\core\base\meta\row
      */
     protected $oParent;
 
@@ -40,7 +40,7 @@ class row extends \core\base\data
 
     /**
      * Constructor of meta row
-     * @param core\block\all $oBlock
+     * @param fan\core\block\all $oBlock
      */
     public function __construct(maker $oMaker,array $aData, row $oParent = null, $sKeyName = null)
     {
@@ -60,7 +60,7 @@ class row extends \core\base\data
     {
         $aRet = array();
         foreach ($aData as $k => $v) {
-            $aRet[$k] = is_array($v) ? new \project\base\meta\row($this->oMaker, $v, $this, $k) : $v;
+            $aRet[$k] = is_array($v) ? new \fan\project\base\meta\row($this->oMaker, $v, $this, $k) : $v;
         }
         return $aRet;
     }
@@ -80,5 +80,5 @@ class row extends \core\base\data
         return new $sClass($this->oMaker, $aValue, $this, $sKey);
     } // function _makeSubData
 
-} // class \core\base\meta\row
+} // class \fan\core\base\meta\row
 ?>

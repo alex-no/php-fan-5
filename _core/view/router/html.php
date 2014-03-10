@@ -1,4 +1,4 @@
-<?php namespace core\view\router;
+<?php namespace fan\core\view\router;
 /**
  * View router of Block for HTML-type
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class html extends \core\view\router
+class html extends \fan\core\view\router
 {
     /**
      * Routers array
@@ -30,5 +30,5 @@ class html extends \core\view\router
     protected $sDefaultKey = 'tpl';
 
     // ======== Main Interface methods ======== \\
-} // class \core\view\router\html
+} // class \fan\core\view\router\html
 ?>

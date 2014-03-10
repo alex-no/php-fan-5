@@ -1,4 +1,4 @@
-<?php namespace core\bootstrap;
+<?php namespace fan\core\bootstrap;
 /**
  * Description of loader
  *
@@ -12,10 +12,11 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  * @property-read string $core
  * @property-read string $project
  * @property-read string $app
+ * @property-read string $model
  * @property-read string $capp
  * @property-read string $main
  * @property-read string $temp
@@ -34,10 +35,45 @@ class loader implements \ArrayAccess
     protected $aConfig;
 
     /**
-     * Namespace keys
+     * Default Config values
      * @var array
      */
-    protected $aNsKeys;
+    protected $aDefaultConfig = array(
+        'dir_separator' => '/',
+        'app_dir'   => '{PROJECT_DIR}/app/',
+        'model_dir' => '{PROJECT_DIR}/model/',
+        'capp_dir'  => '{APP_DIR}/{APP_NAME}/',
+        'main_dir'  => '{CAPP_DIR}/main/',
+        'temp_dir'  => '{PROJECT_DIR}/../temp_data/',
+        'zend_dir'  => '{PROJECT_DIR}/../libraries/Zend/',
+    );
+
+    /**
+     * Namespace keys - correspondence to directories
+     * @var array
+     */
+    protected $aNsKeys = array(
+        'core'    => null, // Core directory
+        'project' => null, // Project directory
+        'app'     => null, // All applications directory
+        'model'   => null, // Model directory
+    );
+
+    /**
+     * Extra direrectory keys
+     * @var array
+     */
+    protected $aExtraKeys = array(
+        'capp' => null, // Current application directory
+        'main' => null, // Current directory for Main-blocks
+        'temp' => null, // Directory for temporary files
+    );
+
+    /**
+     * Path to direrectory of last loaded blocks
+     * @var array
+     */
+    protected $aLastBlock = array();
 
     /**
      * Construct of class
@@ -45,22 +81,19 @@ class loader implements \ArrayAccess
      */
     public function __construct($aConfig)
     {
-        $this->aConfig = $aConfig;
+        $this->aConfig = array_merge($this->aDefaultConfig, $aConfig);
+
         if (!defined('DIR_SEPARATOR')) {
             $sSeparator = isset($aConfig['dir_separator']) ? $aConfig['dir_separator'] : self::DEFAULT_DIR_SEPARATOR;
             define('DIR_SEPARATOR', $sSeparator);
         }
-        $this->aNsKeys = array(
-            'core'    => $this->getRealPath(CORE_DIR,    false), // Core directory
-            'project' => $this->getRealPath(PROJECT_DIR, false), // Project directory
-            'app'     => NULL, // All applications directory
-            'capp'    => NULL, // Current application directory
-            'main'    => NULL, // Current directory for Main-blocks
-            'temp'    => NULL, // Directory for temporary files
-        );
 
-        $this->_setTemporaryDir()     // Set Temporary Directory by path from bootstrap-config
-             ->_setAppDir()           // Set Applications Directory by path from bootstrap-config
+        $this->aNsKeys['core']    = $this->getRealPath(CORE_DIR, false);
+        $this->aNsKeys['project'] = $this->getRealPath(PROJECT_DIR, false);
+
+        $this->_setAppDir()           // Set Applications Directory by path from bootstrap-config
+             ->_setModelDir()         // Set Model Directory by path from bootstrap-config
+             ->_setTemporaryDir()     // Set Temporary Directory by path from bootstrap-config
              ->_setBasicLoader()      // Set Basic Loader for FAN-classes: $this->loadClass()
              ->_setAdditionalLoader();// Set Additional Loader(s) by bootstrap-config
     }
@@ -103,7 +136,7 @@ class loader implements \ArrayAccess
         if ($iHandleError == 1) {
             trigger_error($sErrorMsg, E_USER_WARNING);
         } elseif ($iHandleError > 1) {
-            throw new \project\exception\fatal($sErrorMsg);
+            throw new \fan\project\exception\fatal($sErrorMsg);
         }
         return null;
     } // function loadFile
@@ -147,23 +180,135 @@ class loader implements \ArrayAccess
             return true;
         }
 
+        if (substr($sClass, 0, 4) != 'fan\\') {
+            //trigger_error('Load unknown class "' . $sClass. '"', E_USER_WARNING); // It is conflicted with another loaders
+            return false;
+        }
+
+        if (substr($sClass, 0, 8) == 'fan\app\\') {
+            return $this->loadBlockByClass($sClass);
+        }
+
         list($sKey, $sPath, $aParts) = $this->getPathByNS($sClass, false);
         if (empty($sPath)) {
             return false;
         }
         $sPath .= '.php';
-        if (is_readable($this->aNsKeys[$sKey] . $sPath)) {
-            require_once $this->aNsKeys[$sKey] . $sPath;
-            return true;
+
+        $sPrimePath = $this->aNsKeys[$sKey] . $sPath;
+        if (is_readable($sPrimePath)) {
+            require_once $sPrimePath;
+            if (class_exists($sClass, false) || interface_exists($sClass, false)) {
+                return true;
+            }
+            trigger_error('Class "' . $sClass . '" isn\'t found in the file "' . $sPrimePath . '"', E_USER_WARNING);
+            return false;
         }
-        if ($bMakeAlias && $sKey == 'project' && is_readable($this->aNsKeys['core'] . $sPath)) {
-            require_once $this->aNsKeys['core'] . $sPath;
-            class_alias('core\\' . implode('\\', $aParts), $sClass);
+
+        $sSecondPath = $this->aNsKeys['core'] . $sPath;
+        if ($bMakeAlias && $sKey == 'project' && is_readable($sSecondPath)) {
+            $sOriginal = 'fan\core\\' . implode('\\', $aParts);
+            require_once $sSecondPath;
+            if (!class_exists($sOriginal, false) && !interface_exists($sOriginal, false)) {
+                trigger_error('Class "' . $sOriginal . '" isn\'t found in the file "' . $sSecondPath . '"', E_USER_WARNING);
+                return false;
+            }
+            class_alias($sOriginal, $sClass, false);
             return true;
         }
 
         return false;
     } // function loadClass
+
+    /**
+     * Load block by main request
+     * @param sring $sAppName
+     * @param array $aMainRequest
+     * @return sring - class name
+     */
+    public function loadBlockByMR($sAppName, $aMainRequest)
+    {
+        if (empty($aMainRequest)) {
+            return null;
+        }
+        $sPath = str_replace(
+                '{CAPP_DIR}',
+                $this->aNsKeys['app'] . DIR_SEPARATOR . $sAppName,
+                $this->aConfig['main_dir']
+        );
+        $sPath .= implode(DIR_SEPARATOR, $aMainRequest) . '.php';
+        return $this->loadBlockByPath($sPath);
+    } // function loadBlockByMR
+
+    /**
+     * Load usual block by full class-name
+     * @param sring $sClass
+     * @return sring - class name
+     */
+    public function loadBlockByClass($sClass)
+    {
+        $sClass = trim($sClass, '\\');
+        if (substr($sClass, 0, 8) != 'fan\app\\') {
+            trigger_error('Block class "' . $sClass . '" has incorrect prefix.', E_USER_WARNING);
+            return null;
+        }
+
+        $aKey = explode('\\', substr($sClass, 8));
+        if (count($aKey) != 3) {
+            trigger_error('Block class "' . $sClass . '" has incorrect name.', E_USER_WARNING);
+            return null;
+        }
+
+        $sFile = $aKey[2] . '.php';
+        if (isset($this->aLastBlock[$aKey[0]][$aKey[1]])) {
+            $sPath = $this->aLastBlock[$aKey[0]][$aKey[1]] . DIR_SEPARATOR . $sFile;
+            if (is_file($sPath)) {
+                return $this->loadBlockByPath($sPath);
+            }
+        }
+
+        $sDir  = $this->aNsKeys['app'] . DIR_SEPARATOR . $aKey[0] . DIR_SEPARATOR . $aKey[1];
+        $sPath = $this->_findBlock($sDir, $sFile);
+        if (!empty($sPath)) {
+            return $this->loadBlockByPath($sPath);
+        }
+        return null;
+    } // function loadBlockByClass
+
+    /**
+     * Load Block By Phisical Path (at the disc) or Path with placeholders
+     * @param type $sSrcPath
+     * @return sring - class name
+     */
+    public function loadBlockByPath($sSrcPath)
+    {
+        $sPath = $this->checkPath($sSrcPath);
+        if (empty($sPath) || !is_readable($sPath)) {
+            trigger_error('Incorrect block path "' . $sSrcPath . '".', E_USER_WARNING);
+            return null;
+        }
+
+        $sApp = $this->aNsKeys['app'];
+        if (substr($sPath, 0, strlen($sApp)) != $sApp) {
+            trigger_error('Class file "' . $sPath . '" is out of app directory.', E_USER_WARNING);
+            return null;
+        }
+        $aKey = explode(DIR_SEPARATOR, substr($sPath, strlen($sApp) + 1));
+        if (count($aKey) < 3) {
+            trigger_error('Block path "' . $sPath . '" isn\'t full.', E_USER_WARNING);
+            return null;
+        }
+        $this->aLastBlock[$aKey[0]][$aKey[1]] = substr($sPath, 0, -strlen(end($aKey)) - 1);
+
+        require_once $sPath;
+        $sClass = '\fan\app\\' . $aKey[0] . '\\' . $aKey[1] . '\\' . substr(end($aKey), 0, -4);
+        if (!class_exists($sClass, false)) {
+            trigger_error('Class "' . $sClass . '" isn\'t found in the file "' . $sPath . '"', E_USER_WARNING);
+            return null;
+        }
+
+        return $sClass;
+    } // function loadBlockByPath
 
     /**
      * Get path to file/dir by namespace
@@ -173,7 +318,12 @@ class loader implements \ArrayAccess
      */
     public function getPathByNS($sNS, $bFullPath = true)
     {
-        $aParts = explode('\\', trim($sNS, '\\'));
+        $sNS = trim($sNS, '\\');
+        if (substr($sNS, 0, 4) == 'fan\\') {
+            $sNS = substr($sNS, 4);
+        }
+
+        $aParts = explode('\\', $sNS);
         $sKey   = array_shift($aParts);
         if (!in_array($sKey, array_keys($this->aNsKeys))) {
             return $bFullPath ? null : array($sKey, null, $aParts);
@@ -190,7 +340,7 @@ class loader implements \ArrayAccess
      */
     public function parsePath($sPath)
     {
-        foreach ($this->aNsKeys as $k => $v) {
+        foreach ($this->_getMixedKeys() as $k => $v) {
             $nCount = 0;
             $k = strtoupper($k);
             $sPath = str_replace(array('{' . $k . '}', '{' . $k . '_DIR}'), array($v, $v), $sPath, $nCount);
@@ -221,19 +371,21 @@ class loader implements \ArrayAccess
      */
     public function getRealPath($sPath, $bIsFile = true)
     {
-        return ($bIsFile ? is_file($sPath) : is_dir($sPath)) ? str_replace('\\', DIR_SEPARATOR, realpath($sPath)) : NULL;
+        return ($bIsFile ? is_file($sPath) : is_dir($sPath)) ?
+                str_replace(array('/', '\\'), array(DIR_SEPARATOR, DIR_SEPARATOR), realpath($sPath)) :
+                null;
     } // function getRealPath
 
     /**
      * Define new application parameters
-     * @param \core\service\application $oApp
+     * @param \fan\core\service\application $oApp
      */
-    public function defineNewApp(\core\service\application $oApp)
+    public function defineNewApp(\fan\core\service\application $oApp)
     {
         $sAppName = $oApp->getAppName();
         if (empty($sAppName)) {
-            $this->aNsKeys['capp'] = NULL;
-            $this->aNsKeys['main'] = NULL;
+            $this->aExtraKeys['capp'] = null;
+            $this->aExtraKeys['main'] = null;
             return;
         }
         $aMask = array(
@@ -242,13 +394,13 @@ class loader implements \ArrayAccess
             '{APP_DIR}'     => $this->aNsKeys['app'],
             '{APP_NAME}'    => $sAppName,
         );
-        $this->aNsKeys['capp'] = $this->getRealPath(
+        $this->aExtraKeys['capp'] = $this->getRealPath(
                 str_replace(array_keys($aMask), array_values($aMask), $this->aConfig['capp_dir']),
                 false
         );
 
-        $aMask['{CAPP_DIR}']   = $this->aNsKeys['capp'];
-        $this->aNsKeys['main'] =  $this->getRealPath(
+        $aMask['{CAPP_DIR}']   = $this->aExtraKeys['capp'];
+        $this->aExtraKeys['main'] =  $this->getRealPath(
                 str_replace(array_keys($aMask), array_values($aMask), $this->aConfig['main_dir']),
                 false
         );
@@ -264,8 +416,9 @@ class loader implements \ArrayAccess
         if (is_null($sZendPath)) {
             $sZendPath = $this->parsePath($this->aConfig['zend_dir']);
         }
-        set_include_path($sZendPath);
-        require_once $sZendPath . '/Zend/Loader/Autoloader.php';
+        $sZendPath = trim(str_replace('\\', '/', $sZendPath), '/');
+        set_include_path(substr($sZendPath, -5) == '/Zend' ? substr($sZendPath, 0, -5) : $sZendPath);
+        require_once $sZendPath . '/Loader/Autoloader.php';
 
         $this->registerAutoload(array('Zend_Loader_Autoloader', 'autoload'), $bPrepend);
     } // function registerZend2
@@ -274,9 +427,9 @@ class loader implements \ArrayAccess
 
     /**
      * Set Applications Directory
-     * @return \core\bootstrap\loader
+     * @return \fan\core\bootstrap\loader
      */
-    public function _setAppDir()
+    protected function _setAppDir()
     {
         $sPath = $this->parsePath($this->aConfig['app_dir']);
         $this->aNsKeys['app'] = $this->getRealPath($sPath, false);
@@ -284,21 +437,32 @@ class loader implements \ArrayAccess
     } // function _setAppDir
 
     /**
-     * Set Temporary Directory
-     * @return \core\bootstrap\loader
+     * Set Model Directory
+     * @return \fan\core\bootstrap\loader
      */
-    public function _setTemporaryDir()
+    protected function _setModelDir()
+    {
+        $sPath = $this->parsePath($this->aConfig['model_dir']);
+        $this->aNsKeys['model'] = $this->getRealPath($sPath, false);
+        return $this;
+    } // function _setModelDir
+
+    /**
+     * Set Temporary Directory
+     * @return \fan\core\bootstrap\loader
+     */
+    protected function _setTemporaryDir()
     {
         $sPath = $this->parsePath($this->aConfig['temp_dir']);
-        $this->aNsKeys['temp'] = $this->getRealPath($sPath, false);
+        $this->aExtraKeys['temp'] = $this->getRealPath($sPath, false);
         return $this;
     } // function _setTemporaryDir
 
     /**
      * Set Basic Loader
-     * @return \core\bootstrap\loader
+     * @return \fan\core\bootstrap\loader
      */
-    public function _setBasicLoader()
+    protected function _setBasicLoader()
     {
         $this->registerAutoload(array($this, 'loadClass'));
         return $this;
@@ -306,9 +470,9 @@ class loader implements \ArrayAccess
 
     /**
      * Set Additional Loader(s)
-     * @return \core\bootstrap\loader
+     * @return \fan\core\bootstrap\loader
      */
-    public function _setAdditionalLoader()
+    protected function _setAdditionalLoader()
     {
         foreach ($this->aConfig as $k => $v) {
             if (substr($k, 0, 11) != 'add_loader.') {
@@ -322,11 +486,40 @@ class loader implements \ArrayAccess
         return $this;
     } // function _setAdditionalLoader
 
+    /**
+     * Get Mixed Keys NS and Extra
+     * @return array
+     */
+    protected function _getMixedKeys()
+    {
+        return array_merge($this->aNsKeys, $this->aExtraKeys);
+    } // function _getMixedKeys
+
+    protected function _findBlock($sDir, $sFile)
+    {
+        if (is_file($sDir . DIR_SEPARATOR . $sFile)) {
+            return $sDir . DIR_SEPARATOR . $sFile;
+        }
+
+        $aDir = scandir($sDir);
+        foreach ($aDir as $v) {
+            $sNewDir = $sDir . DIR_SEPARATOR . $v;
+            if ($v != '.' && $v != '..' && is_dir($sNewDir) && is_readable($sNewDir)) {
+                $sNewFile = $this->_findBlock($sNewDir, $sFile);
+                if (!empty($sNewFile)) {
+                    return $sNewFile;
+                }
+            }
+        }
+
+        return null;
+    } // function _findBlock
+
     // ======== The magic methods ======== \\
 
-    public function __set($sKey, $value)
+    public function __set($sKey, $mValue)
     {
-        return $this->offsetSet($sKey, $value);
+        return $this->offsetSet($sKey, $mValue);
     }
 
     public function __get($sKey)
@@ -343,7 +536,8 @@ class loader implements \ArrayAccess
 
     public function offsetExists($sKey)
     {
-        return isset($this->aNsKeys[$sKey]);
+        $aKeys = $this->_getMixedKeys();
+        return isset($aKeys[$sKey]);
     }
 
     public function offsetUnset($sKey)
@@ -353,9 +547,9 @@ class loader implements \ArrayAccess
 
     public function offsetGet($sKey)
     {
-        return isset($this->aNsKeys[$sKey]) ? $this->aNsKeys[$sKey] : null;
+        $aKeys = $this->_getMixedKeys();
+        return isset($aKeys[$sKey]) ? $aKeys[$sKey] : null;
     }
 
-
-} // class \core\bootstrap\loader
+} // class \fan\core\bootstrap\loader
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Description of error
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class error extends \core\base\service\single
+class error extends \fan\core\base\service\single
 {
     /**
      * Types of system error
@@ -80,13 +80,13 @@ class error extends \core\base\service\single
 
     /**
      * Service log
-     * @var \project\service\log
+     * @var \fan\project\service\log
      */
     protected $oServLog = null;
 
     /**
      * Service email
-     * @var \project\service\email
+     * @var \fan\project\service\email
      */
     protected $oServEmail = null;
 
@@ -114,7 +114,7 @@ class error extends \core\base\service\single
         if (\bootstrap::isCli()) {
             $this->bDuplicateByEmail = false;
         } elseif (!empty($oConfig['DUPLICATE_BY_EMAIL'])) {
-            if (!is_array($oConfig['DUPLICATE_BY_EMAIL']) && !($oConfig['DUPLICATE_BY_EMAIL'] instanceof \core\service\config\row)) {
+            if (!is_array($oConfig['DUPLICATE_BY_EMAIL']) && !($oConfig['DUPLICATE_BY_EMAIL'] instanceof \fan\core\service\config\row)) {
                 $oConfig['DUPLICATE_BY_EMAIL'] = array($oConfig['DUPLICATE_BY_EMAIL']);
             }
             foreach ($oConfig['DUPLICATE_BY_EMAIL'] as $v) {
@@ -366,7 +366,7 @@ class error extends \core\base\service\single
         }
 
         if (!$this->oServLog) {
-            $this->oServLog = \project\service\log::instance();
+            $this->oServLog = \fan\project\service\log::instance();
         }
         $this->oServLog->logError($sType, $sMessage, $sHeader, $sNote, $bIsTrace);
 
@@ -459,7 +459,7 @@ class error extends \core\base\service\single
     {
         $aConfig = $this->oConfig;
         if (!$this->oServEmail) {
-            $this->oServEmail = \project\service\email::instance('err_message');
+            $this->oServEmail = \fan\project\service\email::instance('err_message');
         }
         $this->oServEmail->clearAllRecipients();
         if (isset($aConfig['MAIL_CC'])) {
@@ -479,5 +479,5 @@ class error extends \core\base\service\single
         $this->oServEmail->send($sSubject, $sMessage, $aConfig['MAIL_TO'], @$aConfig['NAME_TO']);
     } // function _sendErrorEmail
 
-} // class \core\service\error
+} // class \fan\core\service\error
 ?>

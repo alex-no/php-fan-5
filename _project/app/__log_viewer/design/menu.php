@@ -1,4 +1,4 @@
-<?php namespace app\__log_viewer\design;
+<?php namespace fan\app\__log_viewer\design;
 /**
  * main_menu block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.002
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class menu extends \project\block\base
+class menu extends \fan\project\block\base
 {
     /**
      * Get Menu Url
@@ -41,5 +41,5 @@ class menu extends \project\block\base
         return $aList;
     } // function getVarieties
 
-} // class \app\__log_viewer\design\menu
+} // class \fan\app\__log_viewer\design\menu
 ?>

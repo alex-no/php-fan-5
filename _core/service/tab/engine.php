@@ -1,4 +1,4 @@
-<?php namespace core\service\tab;
+<?php namespace fan\core\service\tab;
 
 /**
  * Description of delegate
@@ -13,13 +13,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class engine
 {
     /**
      * Facade of service
-     * @var core\base\service
+     * @var fan\core\base\service
      */
     protected $oFacade = null;
 
@@ -28,9 +28,9 @@ abstract class engine
 
     /**
      * Set Facade
-     * @param \core\base\service $oFacade
+     * @param \fan\core\base\service $oFacade
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -42,14 +42,14 @@ abstract class engine
     /**
      * Make Exception
      * @param type $sMessage
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     protected function _makeException($sMessage)
     {
-        throw new \project\exception\service\fatal($this->oFacade, $sMessage);
+        throw new \fan\project\exception\service\fatal($this->oFacade, $sMessage);
     } // function _makeException
 
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
-} // class \core\service\tab\engine
+} // class \fan\core\service\tab\engine
 ?>

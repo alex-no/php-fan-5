@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Email manager service
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class email extends \core\base\service\multi
+class email extends \fan\core\base\service\multi
 {
 
     /**
@@ -47,7 +47,7 @@ class email extends \core\base\service\multi
             $this->oEngine = $this->_getEngine($oConfig->get('ENGINE', 'phpmailer'));
 
             if (!empty($oConfig->FROM_EMAIL)) {
-                $oLng = \project\service\locale::instance();
+                $oLng = \fan\project\service\locale::instance();
                 $sKey = 'FROM_NAME' . ($oLng->isEnabled() ? '_' . $oLng->get() : '');
                 if (empty($oConfig->$sKey)) {
                     $sKey = 'FROM_NAME';
@@ -60,7 +60,7 @@ class email extends \core\base\service\multi
 
     /**
      * Get Service's instance of current service
-     * @return service_email
+     * @return \core\service\email
      */
     public static function instance($sInstName = 'default')
     {
@@ -184,7 +184,7 @@ class email extends \core\base\service\multi
     {
         $sFullPath = $this->_checkFilename($sTemplateName);
         if (!$sFullPath) {
-            throw new exception_error_service_fatal($this, 'Incorrect path for email template "' . $sTemplateName . '"');
+            throw new fatalException($this, 'Incorrect path for email template "' . $sTemplateName . '"');
         }
         $oST = service('template');
         //$oST->disableStrip();
@@ -266,7 +266,7 @@ class email extends \core\base\service\multi
         if(substr($sTemplateName, -strlen($sEmailExt)) == $sEmailExt) {
             $sTemplateName = substr($sTemplateName, 0, -strlen($sEmailExt));
         }
-        $sLanguage = \project\service\locale::instance()->get();
+        $sLanguage = \fan\project\service\locale::instance()->get();
         foreach ($aDir as $sDir) {
             if ($sLanguage && is_file($sDir . $sTemplateName . '.' . $sLanguage . $sEmailExt)) {
                 $sTemplateName .= '.' . $sLanguage . $sEmailExt;
@@ -308,5 +308,5 @@ class email extends \core\base\service\multi
         return empty($sTmp) ? $sSrc : $sTmp;
     } // function _recodingText
 
-} // class \core\service\email
+} // class \fan\core\service\email
 ?>

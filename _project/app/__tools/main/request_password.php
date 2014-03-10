@@ -1,4 +1,4 @@
-<?php namespace app\__tools\main;
+<?php namespace fan\app\__tools\main;
 /**
  * Request password block
  *
@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class request_password extends \project\block\form\usual
+class request_password extends \fan\project\block\form\usual
 {
     /**
      * Current User
-     * @var \core\service\user
+     * @var \fan\core\service\user
      */
     protected $oUser;
 
@@ -53,5 +53,5 @@ class request_password extends \project\block\form\usual
         }
     }
 
-} // class \app\__tools\main\request_password
+} // class \fan\app\__tools\main\request_password
 ?>

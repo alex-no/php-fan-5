@@ -1,4 +1,4 @@
-<?php namespace core\block\error;
+<?php namespace fan\core\block\error;
 /**
  * Base abstract block of error 404
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class error404 extends \core\block\base
+abstract class error404 extends \fan\core\block\base
 {
     /**
      * Set View Vars
@@ -33,5 +33,5 @@ abstract class error404 extends \core\block\base
             $this->view->setText($sCombiMessage);
         }
     } // function setViewVars
-} // class \core\block\error\error404
+} // class \fan\core\block\error\error404
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\service\email;
+<?php namespace fan\core\service\email;
  \bootstrap::loadFile('{PROJECT_DIR}/../libraries/PHPMailer/class.phpmailer.php', 1, 3);
 /**
  * PHPMailer engine
@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class phpmailer extends \PHPMailer
 {
@@ -32,10 +32,10 @@ class phpmailer extends \PHPMailer
 
     /**
      * Set Facade
-     * @param \core\base\service $oFacade
-     * @return \core\service\database\base
+     * @param \fan\core\base\service $oFacade
+     * @return \fan\core\service\database\base
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -112,5 +112,5 @@ class phpmailer extends \PHPMailer
         $this->ClearAttachments();
         return $bRet;
     } // function send
-} // class \core\service\email\phpmailer
+} // class \fan\core\service\email\phpmailer
 ?>

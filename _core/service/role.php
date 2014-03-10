@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Description of Role
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class role extends \core\base\service\single
+class role extends \fan\core\base\service\single
 {
     /**
      * Key for mark common User space
@@ -23,7 +23,7 @@ class role extends \core\base\service\single
     const COMMON_KEY = '_common_';
 
     /**
-     * @var \core\service\user Current User
+     * @var \fan\core\service\user Current User
      */
     private $oCurrentUser;
 
@@ -90,13 +90,13 @@ class role extends \core\base\service\single
 
         // Define Current User and his (static) roles
         $this->oCurrentUser = $this->oConfig->get('CHECK_LOGOUT', true) ?
-                \project\service\user::checkLogout() :
-                \project\service\user::getCurrent();
+                \fan\project\service\user::checkLogout() :
+                \fan\project\service\user::getCurrent();
         $this->sUserSpace = $this->_getUserSpace();
         $this->_setStaticRoles();
 
         // Define Session roles
-        $oSes = \project\service\session::instance('role', 'system');
+        $oSes = \fan\project\service\session::instance('role', 'system');
         $this->aSessionRoles =& $oSes->getByLink('session',       array());
         $this->aFixQttRoles  =& $oSes->getByLink('fix_qtt_roles', array());
         $this->_removeSessionExpired();
@@ -246,7 +246,7 @@ class role extends \core\base\service\single
 
     /**
      * Get Current User
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function getCurrentUser()
     {
@@ -257,7 +257,7 @@ class role extends \core\base\service\single
      * Set new static Role/s
      * @param mixed $mNewRoles array/string of new roles
      * @param number $mExpiredTime - live time of setted role (in second) OR Expired date as string
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function setStaticRoles($mNewRoles, $mExpiredTime = null)
     {
@@ -293,7 +293,7 @@ class role extends \core\base\service\single
             return true;
         }
         if (!is_string($sRolesRule)) {
-            \project\service\error::instance()->error_message(print_r($sRolesRule, false), 'Role is not string');
+            \fan\project\service\error::instance()->error_message(print_r($sRolesRule, false), 'Role is not string');
             return false;
         }
         $bRet = false;
@@ -306,7 +306,7 @@ class role extends \core\base\service\single
         ob_end_clean();
 
         if ($sOut) {
-            \project\service\error::instance()->error_message($sRolesRule, 'Incorrect role set');
+            \fan\project\service\error::instance()->error_message($sRolesRule, 'Incorrect role set');
             return false;
         }
 
@@ -325,9 +325,9 @@ class role extends \core\base\service\single
 
     /**
      * Subscribe for event - Set Current User
-     * @param \core\service\user $oUser
+     * @param \fan\core\service\user $oUser
      */
-    public function onCurrentUserSet(\core\service\user $oUser)
+    public function onCurrentUserSet(\fan\core\service\user $oUser)
     {
         if ($this->getCurrentUser() !== $oUser) {
             $this->oCurrentUser = $oUser;
@@ -338,9 +338,9 @@ class role extends \core\base\service\single
 
     /**
      * Subscribe for event - Change Static role of Current User
-     * @param \core\service\user $oUser
+     * @param \fan\core\service\user $oUser
      */
-    public function onUserRolesChange(\core\service\user $oUser)
+    public function onUserRolesChange(\fan\core\service\user $oUser)
     {
         if ($this->getCurrentUser() === $oUser) {
             $this->_setStaticRoles();
@@ -404,7 +404,7 @@ class role extends \core\base\service\single
     /**
      * Set All Current Roles
      * @param type $bForce
-     * @return \core\service\role
+     * @return \fan\core\service\role
      */
     protected function _setCurrentRoles($bForce = false)
     {
@@ -433,7 +433,7 @@ class role extends \core\base\service\single
 
     /**
      * Set Static Roles
-     * @return \core\service\role
+     * @return \fan\core\service\role
      */
     protected function _setStaticRoles()
     {
@@ -448,7 +448,7 @@ class role extends \core\base\service\single
 
     /**
      * Remove expired Static roles
-     * @return \core\service\role
+     * @return \fan\core\service\role
      */
     protected function _removeStaticExpired()
     {
@@ -463,7 +463,7 @@ class role extends \core\base\service\single
 
     /**
      * Remove expired Session roles
-     * @return \core\service\role
+     * @return \fan\core\service\role
      */
     protected function _removeSessionExpired()
     {
@@ -509,7 +509,7 @@ class role extends \core\base\service\single
      */
     protected function _getUserSpace()
     {
-        return \project\service\user::getCurrentSpace();
+        return \fan\project\service\user::getCurrentSpace();
     } // function _getUserSpace
 
     /**
@@ -523,14 +523,14 @@ class role extends \core\base\service\single
             return null;
         }
         if (is_numeric($mExpiredTime)) {
-            return \project\service\date::instance(date('Y-m-d H:i:s'), 'mysql')->shiftDate($mExpiredTime);
+            return \fan\project\service\date::instance(date('Y-m-d H:i:s'), 'mysql')->shiftDate($mExpiredTime);
         }
-        return \project\service\date::instance(date($mExpiredTime))->get('mysql');
+        return \fan\project\service\date::instance(date($mExpiredTime))->get('mysql');
     } // function _defineExpiredDate
 
     // ======== The magic methods ======== \\
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\role
+} // class \fan\core\service\role
 ?>

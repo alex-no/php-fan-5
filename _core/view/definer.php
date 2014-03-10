@@ -1,4 +1,4 @@
-<?php namespace core\view;
+<?php namespace fan\core\view;
 /**
  * Definer type of View
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.002 (17.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class definer
 {
@@ -45,7 +45,7 @@ class definer
      */
     protected $aConditions = null;
     /**
-     * @var \core\service\request
+     * @var \fan\core\service\request
      */
     protected $oRequest = null;
 
@@ -78,7 +78,7 @@ class definer
             }
         }
         $oTab = service('tab');
-        /* @var $oTab \core\service\tab */
+        /* @var $oTab \fan\core\service\tab */
         return $oTab->getTabMeta('default_view_format', $this->aConfig['default_format']);
     } // function getViewParserName
     // ======== Private/Protected methods ======== \\
@@ -89,7 +89,7 @@ class definer
     public function _getConditions()
     {
         if (is_null($this->aConditions)) {
-            $this->oRequest    = \project\service\request::instance();
+            $this->oRequest    = \fan\project\service\request::instance();
             $this->aConditions = array();
             $aMatches    = null;
             foreach ($this->aConfig['rule'] as $k1 => $v1) { // $k1 - view format
@@ -227,5 +227,5 @@ class definer
         return 'preg_match(\'' . $mVal . '\', $this->oRequest->get(' . $sKey . ', ' . $sSrc . '))';
     } // function _getRegexpExpr
 
-} // class \core\view\definer
+} // class \fan\core\view\definer
 ?>

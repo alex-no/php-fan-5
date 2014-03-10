@@ -1,7 +1,7 @@
 <?php
 /**
  * Create entity tools meta
- * @version 1.0
+ * @version 05.01.002 (01.05.2013)
  */
 return array(
     'own' => array(

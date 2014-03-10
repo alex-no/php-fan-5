@@ -1,4 +1,4 @@
-<?php namespace core\service\entity\encapsulant;
+<?php namespace fan\core\service\entity\encapsulant;
 /**
  * Description of encapsulant
  *
@@ -12,21 +12,21 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class simple
 {
     /**
      * Class of DB-table
-     * @var core\entity\table
+     * @var fan\core\entity\table
      */
     protected $oService = null;
 
     /**
      * Encapsulant-assistant constructor
-     * @param \core\service\entity $oService
+     * @param \fan\core\service\entity $oService
      */
-    public function __construct(\core\service\entity $oService)
+    public function __construct(\fan\core\service\entity $oService)
     {
         $this->oService = $oService;
     } // function __construct
@@ -158,5 +158,5 @@ class simple
         return $this->oService->getConfig()->get('encrypt_id_key', '');
     }// function _getEncryptKey
 
-} // class \core\service\entity\encapsulant\simple
+} // class \fan\core\service\entity\encapsulant\simple
 ?>

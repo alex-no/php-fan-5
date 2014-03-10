@@ -1,4 +1,4 @@
-<?php namespace core\service\header;
+<?php namespace fan\core\service\header;
 /**
  * List of additional response codes
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class code
 {
@@ -128,5 +128,5 @@ class code
             511 => 'Network Authentication Required',
         );
     } // function getCodes5
-} // class \core\service\header\code
+} // class \fan\core\service\header\code
 ?>

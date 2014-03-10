@@ -1,4 +1,5 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
+use project\exception\service\fatal as fatalException;
 /**
  * Description of translation
  *
@@ -12,9 +13,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class translation extends \core\base\service\single
+class translation extends \fan\core\base\service\single
 {
     /**
      * Combi-message buffer
@@ -28,7 +29,7 @@ class translation extends \core\base\service\single
     private static $sCombiLng = null;
 
     /**
-     * @var \core\service\locale
+     * @var \fan\core\service\locale
      */
     private $oLocale;
     /**
@@ -66,7 +67,7 @@ class translation extends \core\base\service\single
     protected function __construct($bAllowIni = true)
     {
         parent::__construct($bAllowIni);
-        $this->oLocale      = \project\service\locale::instance();
+        $this->oLocale      = \fan\project\service\locale::instance();
         $this->aEditableLng = array_keys($this->oLocale->getAvailableLanguages());
     } // function __construct
 
@@ -92,7 +93,7 @@ class translation extends \core\base\service\single
             return null;
         }
         $sKey = array_shift(self::$aCombiArr);
-        return \project\service\translation::instance()->getMessage($sKey, self::$sCombiLng);
+        return \fan\project\service\translation::instance()->getMessage($sKey, self::$sCombiLng);
     } // function getCombiPart
 
     /**
@@ -104,7 +105,7 @@ class translation extends \core\base\service\single
     public static function getCombiMessage($aKeyList, $sLng = null)
     {
         if (empty($sLng)) {
-            $sLng = \project\service\locale::instance()->getLanguage();
+            $sLng = \fan\project\service\locale::instance()->getLanguage();
         }
         self::$sCombiLng = $sLng;
         $sKey = array_shift($aKeyList);
@@ -156,7 +157,7 @@ class translation extends \core\base\service\single
         if ($bEnableML) {
             $sKeyF = $this->_formatKey($sKey);
             if (empty($sKeyF)) {
-                throw new exception_error_service_fatal($this, 'Incorrect Key. You can\'t create message with key "' . $sKey . '"');
+                throw new fatalException($this, 'Incorrect Key. You can\'t create message with key "' . $sKey . '"');
             }
 
             $aAvailableLng = $this->oLocale->getAvailableLanguages();
@@ -191,7 +192,7 @@ class translation extends \core\base\service\single
             }
         }
 
-        if ($bEnableML && class_exists('\core\service\tab', false) && \project\service\tab::instance()->isDebugAllowed()) {
+        if ($bEnableML && class_exists('\fan\core\service\tab', false) && \fan\project\service\tab::instance()->isDebugAllowed()) {
             $this->_setReferer($sKeyF);
             $nLen = strpos($sKeyF, '_');
             if ($nLen > 0) {
@@ -433,7 +434,7 @@ class translation extends \core\base\service\single
     {
         $sPath = $this->getConfig($sKey);
         if (empty($sPath)) {
-            throw new exception_error_service_fatal($this, 'Incorrect Key. Key for path "' . $sKey . '" doesn\'t set');
+            throw new fatalException($this, 'Incorrect Key. Key for path "' . $sKey . '" doesn\'t set');
         }
         if ($aRepl) {
             $sPath = strtr($sPath, $aRepl);
@@ -473,7 +474,7 @@ class translation extends \core\base\service\single
             $sPath = 'Unknown!';
         }
         if (!isset($this->aReferers[$sKey][$sPath][$sStage])) {
-            $oSource = \project\service\matcher::instance()->getItem(0)->source;
+            $oSource = \fan\project\service\matcher::instance()->getItem(0)->source;
             $this->aReferers[$sKey][$sPath][$sStage] = $_SERVER['REQUEST_METHOD'] . ': ' . $oSource;
             $this->aForCall['_saveRefererArr'] = 1;
         }
@@ -559,5 +560,5 @@ return ' . var_export($this->aReferers, true) . ';
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\translation
+} // class \fan\core\service\translation
 ?>

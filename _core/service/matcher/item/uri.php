@@ -1,4 +1,4 @@
-<?php namespace core\service\matcher\item;
+<?php namespace fan\core\service\matcher\item;
 /**
  * Separated URI data
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @property string $scheme
  * @property string $host
@@ -44,5 +44,5 @@ class uri extends base
         return $this->aData['full'];
         //return $this->aData['path'] . (empty($this->aData['query']) ? '' : '?' . $this->aData['query']);
     }
-} // class \core\service\matcher\item\uri
+} // class \fan\core\service\matcher\item\uri
 ?>

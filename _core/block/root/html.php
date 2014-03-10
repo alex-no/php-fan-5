@@ -1,4 +1,4 @@
-<?php namespace core\block\root;
+<?php namespace fan\core\block\root;
 /**
  * Base abstract root html block
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class html extends \core\block\base
+abstract class html extends \fan\core\block\base
 {
     /**
      * Init block data
@@ -38,7 +38,7 @@ abstract class html extends \core\block\base
             }
         }
         $this->_setViewVar('bodyClass', $sBrowserClass);
-        $this->_setViewVar('poweredBy', $this->getMeta('show_power', true) ? \project\service\application::instance()->getCoreVersion() : null);
+        $this->_setViewVar('poweredBy', $this->getMeta('show_power', true) ? \fan\project\service\application::instance()->getCoreVersion() : null);
     } // function init
 
     /**
@@ -58,7 +58,7 @@ abstract class html extends \core\block\base
             }
             if (empty($sTitle)) {
                 $oApp = service('application');
-                /* @var $oApp \core\service\application */
+                /* @var $oApp \fan\core\service\application */
                 $sTitle  = $oApp->getConfig('PROJECT_NAME');
                 $sTitle .= (empty($sTitle) ? '' : ' | ') . $oApp->getAppName();
                 if ($oMain) {
@@ -73,7 +73,7 @@ abstract class html extends \core\block\base
      * Set tab title
      * @param string $sTitle - new title
      * @param boolean $bCheckIsSet - Check - if set - do not change
-     * @return \core\block\root\html
+     * @return \fan\core\block\root\html
      */
     public function setTitle($sTitle, $bCheckIsSet = false)
     {
@@ -243,7 +243,7 @@ abstract class html extends \core\block\base
         }
         if(is_array($mJs)) {
             $sJs = array_shift($mJs) . '(';
-            $oJson = \project\service\json::instance();
+            $oJson = \fan\project\service\json::instance();
             foreach ($mJs as $v) {
                 $sJs .= $oJson->encode($v) . ', ';
             }
@@ -297,7 +297,7 @@ abstract class html extends \core\block\base
     public function setModalWindow($sFilePath, $aTplVars = array())
     {
         if($sFilePath && is_file($sFilePath)) {
-            $oTemplate = \project\service\template::instance()->get($sFilePath);
+            $oTemplate = \fan\project\service\template::instance()->get($sFilePath);
 
             foreach ($aTplVars as $k => $v) {
                 $oTemplate->assign($k, $v);
@@ -329,5 +329,5 @@ abstract class html extends \core\block\base
         }
         return true;
     } // function _compareArray
-} // class \core\block\root\html
+} // class \fan\core\block\root\html
 ?>

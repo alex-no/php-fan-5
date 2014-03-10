@@ -1,4 +1,4 @@
-<?php namespace core\service\config;
+<?php namespace fan\core\service\config;
 /**
  * Meta Data Row
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class row extends \core\base\data
+class row extends \fan\core\base\data
 {
     /**
      * Saved source data
@@ -24,7 +24,7 @@ class row extends \core\base\data
 
     /**
      * Facade of service
-     * @var core\base\service
+     * @var fan\core\base\service
      */
     protected $oFacade = null;
 
@@ -44,7 +44,7 @@ class row extends \core\base\data
      * Constructor of Config-data
      * @param array $aData
      * @param string $sKey
-     * @param core\service\config\row $oSuperior
+     * @param fan\core\service\config\row $oSuperior
      */
     public function __construct($aData, $sKey = null, $oSuperior = null)
     {
@@ -57,9 +57,9 @@ class row extends \core\base\data
     // ======== Main Interface methods ======== \\
     /**
      * Set Facade
-     * @param \core\base\service $oFacade
+     * @param \fan\core\base\service $oFacade
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -91,10 +91,10 @@ class row extends \core\base\data
 
     /**
      * Set Service - Owner of Config
-     * @param \core\base\service $oService
-     * @return \core\service\config\row
+     * @param \fan\core\base\service $oService
+     * @return \fan\core\service\config\row
      */
-    public function setServiceOwner(\core\base\service $oService)
+    public function setServiceOwner(\fan\core\base\service $oService)
     {
         $sName = get_class_name($oService);
         if ($sName == $this->getRootKey()) {
@@ -110,7 +110,7 @@ class row extends \core\base\data
      * Set Plain Controller - Owner of Config
      * @param object $oCtrl
      * @param string $sName
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
     public function setPlainOwner($oCtrl, $sName)
     {
@@ -126,11 +126,11 @@ class row extends \core\base\data
 
     /**
      * Set Entity - Owner of Config
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param string $sName
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
-    public function setEntityOwner(\core\base\model\entity $oEntity, $sName)
+    public function setEntityOwner(\fan\core\base\model\entity $oEntity, $sName)
     {
         if ($sName == $this->getRootKey()) {
             $this->_setSetter($oEntity);
@@ -164,7 +164,7 @@ class row extends \core\base\data
     /**
      * Reset Config data
      * @param string $sKey Key of parameter
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
     public function reset($sKey)
     {
@@ -187,13 +187,13 @@ class row extends \core\base\data
 
     /**
      * Merge data
-     * @param array|\core\service\config\row $aData
+     * @param array|\fan\core\service\config\row $aData
      * @param boolean $bPriority
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
     public function mergeData($aData, $bPriority = true)
     {
-        if (is_object($aData) && $aData instanceof \core\service\config\row) {
+        if (is_object($aData) && $aData instanceof \fan\core\service\config\row) {
             $aData = $aData->toArray();
         }
         if ($this->_checkSetter() && is_array($aData)) {
@@ -244,7 +244,7 @@ class row extends \core\base\data
     public function __unset($sKey)
     {
         // Todo: Do this "throw" only if it is enabled in config
-        throw new \project\exception\service\fatal($this->oFacade, 'You can\'t unset data for key "' . $sKey . '".');
+        throw new \fan\project\exception\service\fatal($this->oFacade, 'You can\'t unset data for key "' . $sKey . '".');
     }
 
     // ======== Required Interface methods ======== \\
@@ -265,5 +265,5 @@ class row extends \core\base\data
         $this->sRootKey = $aRecover['rootKey'];
     }
 
-} // class \core\service\config\row
+} // class \fan\core\service\config\row
 ?>

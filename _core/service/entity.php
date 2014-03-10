@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Entity manager service
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class entity extends \core\base\service\multi
+class entity extends \fan\core\base\service\multi
 {
     /**
      * @var array Service's Instances
@@ -35,7 +35,7 @@ class entity extends \core\base\service\multi
     /**
      * Constructor of Service of entity
      * @param mixed $mCollection
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     protected function __construct($mCollection = 0)
     {
@@ -57,7 +57,7 @@ class entity extends \core\base\service\multi
     /**
      * Get instance of service of entity
      * @param mixed $mCollection Key of collection
-     * @return \core\service\entity
+     * @return \fan\core\service\entity
      */
     public static function instance($mCollection = 0)
     {
@@ -82,8 +82,8 @@ class entity extends \core\base\service\multi
      *   ''
      * @param string $sName
      * @param array $aParam
-     * @return \core\base\model\entity
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\base\model\entity
+     * @throws \fan\project\exception\service\fatal
      */
     public function get($sName, $aParam = array())
     {
@@ -106,7 +106,7 @@ class entity extends \core\base\service\multi
      *   Note: Anonymous entity doesn't have name
      * @param string $sClass
      * @param array $aParam
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function getAnonymous($sClass, $aParam = array())
     {
@@ -118,7 +118,7 @@ class entity extends \core\base\service\multi
      * @param string $sTableName
      * @param string $sConnectionName
      * @param boolean $bForce - do not use cache
-     * @return \core\base\model\entity|null
+     * @return \fan\core\base\model\entity|null
      */
     public function getEntityByTable($sTableName, $sConnectionName = null, $bForce = false)
     {
@@ -151,7 +151,7 @@ class entity extends \core\base\service\multi
     public function getNsPrefix()
     {
         $sPrefix = $this->_getConfigParam('NS_PREFIX');
-        return empty($sPrefix) ? '\project\model\\' : '\\' . trim($sPrefix, '\\') . '\\';
+        return empty($sPrefix) ? '\fan\model\\' : '\\' . trim($sPrefix, '\\') . '\\';
     }
     /**
      * Get namespace suffix of entity "file_data", "image", "flash", "video", etc
@@ -174,25 +174,25 @@ class entity extends \core\base\service\multi
 
     /**
      * Get Entity table Description
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param array $aParam
-     * @return \core\service\entity\description
+     * @return \fan\core\service\entity\description
      */
-    public function getDescription(\core\base\model\entity $oEntity, $aParam = array())
+    public function getDescription(\fan\core\base\model\entity $oEntity, $aParam = array())
     {
-        return new \project\service\entity\description($oEntity, $aParam);
+        return new \fan\project\service\entity\description($oEntity, $aParam);
     } // function getDescription
 
     /**
      * Get SQL-designer
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param string $sType
-     * @return \core\service\entity\designer
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\entity\designer
+     * @throws \fan\project\exception\service\fatal
      */
-    public function getDesigner(\core\base\model\entity $oEntity, $sType = 'select')
+    public function getDesigner(\fan\core\base\model\entity $oEntity, $sType = 'select')
     {
-        $sClassName = '\project\service\entity\designer\\' . $sType;
+        $sClassName = '\fan\project\service\entity\designer\\' . $sType;
         if (!class_exists($sClassName)) {
             throw new fatalException($this, 'Class of SQL-designer "' . $sType . '" doesn\'t exist.');
         }
@@ -201,25 +201,25 @@ class entity extends \core\base\service\multi
 
     /**
      * Make new object of Snippet
-     * @param \core\service\entity\designer\snippety $oSnippety
+     * @param \fan\core\service\entity\designer\snippety $oSnippety
      * @param type $sQuery
      * @param type $sSrcCondition
      * @param type $sCallback
-     * @return \project\service\entity\snippet
+     * @return \fan\project\service\entity\snippet
      */
-    public function getSnippet(\core\service\entity\designer\snippety $oSnippety, $sQuery, $sSrcCondition, $sCallback)
+    public function getSnippet(\fan\core\service\entity\designer\snippety $oSnippety, $sQuery, $sSrcCondition, $sCallback)
     {
-        return new \project\service\entity\snippet($oSnippety, $sQuery, $sSrcCondition, $sCallback);
+        return new \fan\project\service\entity\snippet($oSnippety, $sQuery, $sSrcCondition, $sCallback);
     } // function getSnippet
 
     /**
      * Get Encapsulant
      * @param string $sClass
-     * @return \core\service\entity\encapsulant\simple
+     * @return \fan\core\service\entity\encapsulant\simple
      */
     public function getEncapsulant($sClass = null)
     {
-        $sClass = '\project\service\entity\encapsulant\\' . ($sClass ? $sClass : $this->getConfig('encapsulantClass', 'simple'));
+        $sClass = '\fan\project\service\entity\encapsulant\\' . ($sClass ? $sClass : $this->getConfig('encapsulantClass', 'simple'));
         return new $sClass($this);
     } // function getEncapsulant
 
@@ -229,7 +229,7 @@ class entity extends \core\base\service\multi
      * @param string $sClass
      * @param array $aParam
      * @param string $sName
-     * @return \core\service\entity
+     * @return \fan\core\service\entity
      * @throws fatalException
      */
     protected function _getEntity($sClass, $aParam, $sName = null)
@@ -239,8 +239,8 @@ class entity extends \core\base\service\multi
         }
 
         $oEntity = new $sClass($this, $sName, $aParam);
-        if (!$oEntity instanceof \core\base\model\entity) {
-            throw new fatalException($this, 'Entity "' . (empty($sName) ? $sClass : $sName) . '" must be instance of "\core\base\model\entity"');
+        if (!$oEntity instanceof \fan\core\base\model\entity) {
+            throw new fatalException($this, 'Entity "' . (empty($sName) ? $sClass : $sName) . '" must be instance of "\fan\core\base\model\entity"');
         }
         return $oEntity;
     } // function _getEntity
@@ -312,5 +312,5 @@ class entity extends \core\base\service\multi
         return array_val($aData, array($sConnectionName, $sTableName));
     } // function _getNameByTable
 
-} // class \core\service\entity
+} // class \fan\core\service\entity
 ?>

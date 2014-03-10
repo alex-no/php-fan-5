@@ -1,4 +1,4 @@
-<?php namespace core\service\database;
+<?php namespace fan\core\service\database;
 /**
  * ADOdb wrapper for template engine
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class adodb extends base
 {
@@ -31,7 +31,7 @@ class adodb extends base
      * Constructor
      * @param array $aConfig Configuration data
      */
-    public function __construct(\core\base\service $oFacade, \core\service\config\base $oConfig)
+    public function __construct(\fan\core\base\service $oFacade, \fan\core\service\config\base $oConfig)
     {
         parent::__construct($oFacade, $oConfig, false);
         if (!defined('ADODB_ERROR_HANDLER')) {
@@ -253,7 +253,7 @@ class adodb extends base
             error_log(date("d/m H-i-s") . ":\t" . $dt . "\t" . $sSql . "\t" . $_SERVER['REQUEST_URI'] . "\n\n", 3, __DIR__ . "/../../../_logs/sql.log");
         }
     } // function log_time
-} // class \core\service\database\adodb
+} // class \fan\core\service\database\adodb
 
 /**
  * Parse Data Base error and output message to screen, logfile or email
@@ -268,6 +268,6 @@ class adodb extends base
  */
 function adodb_error_handler($sDBType, $sOperation, $nErrorNum, $sErrMsg, $mMainParam, $mAddParam, $oObj)
 {
-    \project\service\error::instance()->database_error($sDBType, $sOperation, $nErrorNum, $sErrMsg, $mMainParam, $mAddParam, $oObj);
+    \fan\project\service\error::instance()->database_error($sDBType, $sOperation, $nErrorNum, $sErrMsg, $mMainParam, $mAddParam, $oObj);
 } // function adodb_error_handler
 ?>

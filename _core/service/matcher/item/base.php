@@ -1,4 +1,4 @@
-<?php namespace core\service\matcher\item;
+<?php namespace fan\core\service\matcher\item;
 /**
  * Description of item
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class base implements \ArrayAccess, \Iterator
 {
@@ -37,21 +37,21 @@ abstract class base implements \ArrayAccess, \Iterator
 
     /**
      * Facade of service
-     * @var \core\service\matcher\item
+     * @var \fan\core\service\matcher\item
      */
     protected $oItem = null;
 
     /**
      * Facade of service
-     * @var core\base\service
+     * @var fan\core\base\service
      */
     protected $oFacade = null;
 
     /**
      * Make matcher data
-     * @param \core\service\matcher\item $oItem
+     * @param \fan\core\service\matcher\item $oItem
      */
-    public function __construct(\core\service\matcher\item $oItem)
+    public function __construct(\fan\core\service\matcher\item $oItem)
     {
         $this->oItem = $oItem;
     }
@@ -123,7 +123,7 @@ abstract class base implements \ArrayAccess, \Iterator
      * Set data by keys
      * @param string $sKey
      * @param mixed $mValue
-     * @return \core\service\matcher\item\base
+     * @return \fan\core\service\matcher\item\base
      */
     public function set($sKey, $mValue)
     {
@@ -160,10 +160,10 @@ abstract class base implements \ArrayAccess, \Iterator
 
     /**
      * Set Facade
-     * @param core\service\matcher $oFacade
-     * @return \core\service\matcher\item\base
+     * @param fan\core\service\matcher $oFacade
+     * @return \fan\core\service\matcher\item\base
      */
-    public function setFacade(\core\service\matcher $oFacade)
+    public function setFacade(\fan\core\service\matcher $oFacade)
     {
         $this->oFacade = $oFacade;
         return $this;
@@ -203,15 +203,15 @@ abstract class base implements \ArrayAccess, \Iterator
     /**
      * Make Exception
      * @param string $sErrMsg
-     * @throws \project\exception\service\fatal
-     * @throws \project\exception\fatal
+     * @throws \fan\project\exception\service\fatal
+     * @throws \fan\project\exception\fatal
      */
     protected function _makeException($sErrMsg)
     {
         if ($this->oFacade) {
-            throw new \project\exception\service\fatal($this->oFacade, $sErrMsg);
+            throw new \fan\project\exception\service\fatal($this->oFacade, $sErrMsg);
         }
-        throw new \project\exception\fatal($sErrMsg);
+        throw new \fan\project\exception\fatal($sErrMsg);
     }
 
     /**
@@ -225,5 +225,5 @@ abstract class base implements \ArrayAccess, \Iterator
         return $this->oFacade->getConfig()->get($mKey, $mDefault);
     } // function _getConfig
 
-} // class \core\service\matcher\item\base
+} // class \fan\core\service\matcher\item\base
 ?>

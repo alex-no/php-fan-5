@@ -1,5 +1,5 @@
-<?php namespace core\service\entity;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\service\entity;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
  * Designer of SQL-request
  *
@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class designer
 {
@@ -24,7 +24,7 @@ abstract class designer
     protected $aQueryParts = array();
     /**
      * Entity - table data
-     * @var \core\base\model\entity
+     * @var \fan\core\base\model\entity
      */
     protected $oEntity = null;
 
@@ -39,7 +39,7 @@ abstract class designer
      */
     protected $aAdjustedParam = null;
 
-    public function __construct(\core\base\model\entity $oEntity = null)
+    public function __construct(\fan\core\base\model\entity $oEntity = null)
     {
         $this->oEntity = $oEntity;
     } // function __construct
@@ -81,7 +81,7 @@ abstract class designer
      * Set value of SQL-part
      * @param string $sPartName
      * @param mixed $mPartValue
-     * @return \core\service\entity\designer
+     * @return \fan\core\service\entity\designer
      */
     public function set($sPartName, $mPartValue, $bAllowException = true)
     {
@@ -106,7 +106,7 @@ abstract class designer
      * @param string $sPartName
      * @param mixed $mNewPart
      * @param boolean $bToEnd
-     * @return \core\service\entity\designer
+     * @return \fan\core\service\entity\designer
      */
     public function add($sPartName, $mNewPart, $bToEnd = true, $bAllowException = true)
     {
@@ -204,7 +204,7 @@ abstract class designer
     } // function toArray
     /**
      * Get link to Entity
-     * @return \core\service\entity\entity
+     * @return \fan\core\service\entity\entity
      */
     public function getEntity()
     {
@@ -245,7 +245,7 @@ abstract class designer
                 if (is_array($v)) {
                     $sPart = $this->_mergeParts($v);
                 } elseif (is_object($v)) {
-                    if ($v instanceof \core\service\entity\snippet) {
+                    if ($v instanceof \fan\core\service\entity\snippet) {
                         list($sPart, $aTmpParam) = $v->getSnippetQuery($this->aSrcParam);
                         if (!empty($aTmpParam)) {
                             $aAdjustedParam = array_merge($aAdjustedParam, $aTmpParam);
@@ -300,5 +300,5 @@ abstract class designer
         return $sResult;
     } // function _makeSetupPart
 
-} // class \core\service\entity\designer
+} // class \fan\core\service\entity\designer
 ?>

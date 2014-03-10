@@ -1,4 +1,4 @@
-<?php namespace core\service\session;
+<?php namespace fan\core\service\session;
 /**
  * PHP native session engine
  *
@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.002
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class inbuilt
 {
     /**
      * Facade of service
-     * @var core\service\session
+     * @var fan\core\service\session
      */
     protected $oFacade = null;
 
@@ -33,10 +33,10 @@ class inbuilt
 
     /**
      * Set Facade
-     * @param \core\service\session $oFacade
-     * @return \core\service\session\inbuilt
+     * @param \fan\core\service\session $oFacade
+     * @return \fan\core\service\session\inbuilt
      */
-    public function setFacade(\core\service\session $oFacade)
+    public function setFacade(\fan\core\service\session $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -56,7 +56,7 @@ class inbuilt
     /**
      * Set Session ID
      * @param string $sSid
-     * @return \core\service\session\inbuilt
+     * @return \fan\core\service\session\inbuilt
      */
     public function setSessionId($sSid)
     {
@@ -100,12 +100,12 @@ class inbuilt
 
     /**
      * Destroy the session
-     * @return \core\service\session\inbuilt
+     * @return \fan\core\service\session\inbuilt
      */
     public function destroy()
     {
         @session_destroy();
         return $this;
     } // function destroy
-} // class core\service\session\inbuilt
+} // class \fan\core\service\session\inbuilt
 ?>

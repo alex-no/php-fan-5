@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Parsing form service
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class form extends \core\base\service\multi
+class form extends \fan\core\base\service\multi
 {
     /**
      * @var array Service's Instances
@@ -23,12 +23,12 @@ class form extends \core\base\service\multi
     private static $aInstances = array();
 
     /**
-     * @var \core\block\form\usual
+     * @var \fan\core\block\form\usual
      */
     protected $oBlock;
 
     /**
-     * @var \core\base\meta\row
+     * @var \fan\core\base\meta\row
      */
     protected $aFormMeta;
     /**
@@ -90,9 +90,9 @@ class form extends \core\base\service\multi
 
     /**
      * Service's constructor
-     * @param \core\block\form\usual $oBlock
+     * @param \fan\core\block\form\usual $oBlock
      */
-    protected function __construct(\core\block\form\usual $oBlock)
+    protected function __construct(\fan\core\block\form\usual $oBlock)
     {
         parent::__construct(empty(self::$aInstances));
 
@@ -125,10 +125,10 @@ class form extends \core\base\service\multi
     // ======== Static methods ======== \\
     /**
      * Get instance of form
-     * @param \core\block\form\usual $oBlock
-     * @return \core\service\form
+     * @param \fan\core\block\form\usual $oBlock
+     * @return \fan\core\service\form
      */
-    public static function instance(\core\block\form\usual $oBlock)
+    public static function instance(\fan\core\block\form\usual $oBlock)
     {
         $sName = $oBlock->getBlockName();
         if (!isset(self::$aInstances[$sName])) {
@@ -192,14 +192,14 @@ class form extends \core\base\service\multi
                         $bRet = false;
                         break;
                     } else {
-                        $oRole = \project\service\role::instance();
-                        /* @var $oRole \core\service\role */
+                        $oRole = \fan\project\service\role::instance();
+                        /* @var $oRole \fan\core\service\role */
                         if (!$this->_getFormMeta('not_role')) {
                             $oRole->setFixQttRoles($this->oBlock->getRoleName());
                         }
 
                         //ToDo: Clear cache of some blocks there
-                        //\project\service\cache::instance()->clear($this->aFormMeta->get(array('cache', 'clear')));
+                        //\fan\project\service\cache::instance()->clear($this->aFormMeta->get(array('cache', 'clear')));
 
                         $this->_broadcastMessage('onSubmit', $this);
 
@@ -211,7 +211,7 @@ class form extends \core\base\service\multi
                             $oRole->killSessionRoles($this->sRoleName);
                         } elseif ($bAllowTransfer) {
                             if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
-                                \project\service\session::instance($this->_getFormMeta('form_id'), 'form_key')->remove('csrf');
+                                \fan\project\service\session::instance($this->_getFormMeta('form_id'), 'form_key')->remove('csrf');
                             }
                             $this->_onSubmitTransfer('commit');
                         }
@@ -240,14 +240,14 @@ class form extends \core\base\service\multi
             return true;
         }
 
-        $oRequest     = \project\service\request::instance();
+        $oRequest     = \fan\project\service\request::instance();
         $sRequestType = $this->_getFormMeta('request_type', 'GP');
 
         // Analyse key field
         $sSrcKeyVal = $this->_getFormMeta('form_id');
         if (!empty($sSrcKeyVal)) {
             if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
-                $sCsrfCode   = \project\service\session::instance($sSrcKeyVal, 'form_key')->get('csrf');
+                $sCsrfCode   = \fan\project\service\session::instance($sSrcKeyVal, 'form_key')->get('csrf');
                 $sSrcKeyVal .= '_' . $sCsrfCode;
             }
             $sKeyField = $oRequest->get('form_key_field', 'GP');
@@ -295,7 +295,7 @@ class form extends \core\base\service\multi
      */
     public function getFieldValuesFromRequest()
     {
-        $oRequest     = \project\service\request::instance();
+        $oRequest     = \fan\project\service\request::instance();
         $sRequestType = $this->_getFormMeta('request_type');
 
         if (!$sRequestType) {
@@ -336,7 +336,7 @@ class form extends \core\base\service\multi
                     if (!($bIsMulti ? is_array($mVal) : is_scalar($mVal))) {
                         continue;
                     }
-                    $this->aFieldValue[$sFieldName] = $this->trimDataRecursive($mVal, $aParameters, $sFieldName);
+                    $this->aFieldValue[$sFieldName] = $this->_trimDataRecursive($mVal, $aParameters, $sFieldName);
                     //, array_val($aParameters, 'default_value')
                 }
             }
@@ -433,7 +433,7 @@ class form extends \core\base\service\multi
     public function isMultiLanguage()
     {
         $bRet = $this->_getFormMeta('useMultiLanguage', null);
-        return is_null($bRet) ? \project\service\locale::instance()->isEnabled() : $bRet;
+        return is_null($bRet) ? \fan\project\service\locale::instance()->isEnabled() : $bRet;
     } // function isMultiLanguage
 
     /**
@@ -498,7 +498,7 @@ class form extends \core\base\service\multi
      * Set field data
      * @param string $mFieldName
      * @param mixed $mFieldValue
-     * @return \core\service\form
+     * @return \fan\core\service\form
      */
     public function setFieldData($mFieldName, $mFieldValue)
     {
@@ -508,7 +508,7 @@ class form extends \core\base\service\multi
 
     /**
      * Make field data for select, radio, checkbox e.g.
-     * @param \core\base\model\rowset $aRowset
+     * @param \fan\core\base\model\rowset $aRowset
      * @param string $sFormField
      * @param string $sTextKey
      * @param string $sValueKey
@@ -548,10 +548,10 @@ class form extends \core\base\service\multi
      * Get flag of error
      * @return boolean
      */
-    public function getIsError()
+    public function isError()
     {
         return $this->bIsError;
-    } // function getIsError
+    } // function isError
 
     /**
      * Check Form Role
@@ -570,7 +570,7 @@ class form extends \core\base\service\multi
      * Get form's meta data
      * @param string|array $mKey
      * @param mixed $mDefault
-     * @return \core\base\meta\row
+     * @return \fan\core\base\meta\row
      */
     protected function _getFormMeta($mKey, $mDefault = null)
     {
@@ -632,23 +632,25 @@ class form extends \core\base\service\multi
     {
         $aData = $this->getFieldData($sFieldName);
         if (!empty($aData)) {
-            $aTmp  = reset($aData);
-            if (!array_diff_key($aTmp, array('value' => 0, 'text'  => 0))) {
-                $mValue = $this->aFieldValue[$sFieldName];
-                foreach ($aData as $v) {
-                    if (is_array($mValue) ? in_array($v['value'], $mValue) : $mValue == $v['value']) {
-                        return true;
+            $mValue = array_val($this->aFieldValue, $sFieldName);
+            if (isset($mValue)) {
+                $aTmp = reset($aData);
+                if (!array_diff_key($aTmp, array('value' => 0, 'text'  => 0))) {
+                    foreach ($aData as $v) {
+                        if (is_array($mValue) ? in_array($v['value'], $mValue) : $mValue == $v['value']) {
+                            return true;
+                        }
                     }
+                    $this->bIsError = true;
+                    trigger_error(
+                            'Error in the form "' . get_class($this->oBlock) . '". Value of "' . $sFieldName . '" doesn\'t correspond to source.',
+                            E_USER_WARNING
+                    );
+                    $this->aErrorMsg[$sFieldName] = $this->isMultiLanguage() ?
+                            msg('ERROR_FIELD_HAS_INCORRECT_VALUE', $sLabel) :
+                            msgAlt('Field "{combi_part}" has incorrect value', $sLabel);
+                    return false;
                 }
-                $this->bIsError = true;
-                trigger_error(
-                        'Error in the form "' . get_class($this->oBlock) . '". Value of "' . $sFieldName . '" doesn\'t correspond to source.',
-                        E_USER_WARNING
-                );
-                $this->aErrorMsg[$sFieldName] = $this->isMultiLanguage() ?
-                    msg('ERROR_FIELD_HAS_INCORRECT_VALUE', $sLabel) :
-                    msgAlt('Field "{combi_part}" has incorrect value', $sLabel);
-                return false;
             }
         }
         return true;
@@ -661,8 +663,12 @@ class form extends \core\base\service\multi
      */
     protected function _isMultiVal($sInpType)
     {
+        if (!isset($this->aFieldTypes[$sInpType])) {
+            return false;
+        }
         $sFieldType = $this->aFieldTypes[$sInpType];
-        return in_array($sFieldType, array('select_multi', 'select_multi_separated'));
+        $aTypeMulty = adduceToArray($this->getConfig('MULTIVAL_TYPES', array('select_multi', 'select_multi_separated')));
+        return in_array($sFieldType, $aTypeMulty);
     } // function _isMultiVal
 
     /**
@@ -724,7 +730,7 @@ class form extends \core\base\service\multi
     /**
      * If the validation was successful the Transfer'll be performed on success url
      * @param string $sDbOper - DB operation: "commit" or "rollback"
-     * @return \core\service\form
+     * @return \fan\core\service\form
      */
     protected function _onSubmitTransfer($sDbOper = null)
     {
@@ -834,5 +840,5 @@ class form extends \core\base\service\multi
     } // function _parseFormParts
 
 
-} // class \core\service\form
+} // class \fan\core\service\form
 ?>

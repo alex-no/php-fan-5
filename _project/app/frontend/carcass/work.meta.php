@@ -1,15 +1,15 @@
 <?php
 /**
  * Main carcass meta
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 return array(
     'own' => array(
         'embeddedBlocks' => array( // Key - template var; Value - path to block
-            //'header'     => '{CAPP}/design/header',
-            //'columnLeft' => '{CAPP}/design/column_left',
+            //'header'     => 'design/header',
+            //'columnLeft' => 'design/column_left',
             'main'       => '{MAIN}',
-            'footer'     => '{CAPP}/design/footer',
+            'footer'     => 'design/footer',
         ),
         'externalCss' => array( // css files
             //'new' => array('/css/layout.css'),

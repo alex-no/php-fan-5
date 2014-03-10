@@ -1,5 +1,5 @@
-<?php namespace core\base;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\base;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Base abstract service
  *
@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
 abstract class service
@@ -26,7 +26,7 @@ abstract class service
 
     /**
      * service's configuration data
-     * @var \core\service\config\row
+     * @var \fan\core\service\config\row
      */
     protected $oConfig = null;
 
@@ -114,7 +114,7 @@ abstract class service
     /**
      * Set DB-operation ('rollback', 'commit', 'nothing' OR null) when the Exception is occurred
      * @param string $sExceptionDbOper
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     public function setExceptionDbOper($sExceptionDbOper = null)
     {
@@ -146,7 +146,7 @@ abstract class service
 
     /**
      * Set Type of logging Error-message ('php', 'service', 'nothing' OR null)
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     public function setExceptionLogType($sExceptionLog)
     {
@@ -160,7 +160,7 @@ abstract class service
      * Add listener to service
      * @param string $sEventName
      * @param callback $mCallBack
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     public function addListener($sEventName, $mCallBack)
     {
@@ -172,7 +172,7 @@ abstract class service
 
     /**
      * Save service's Instance
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     protected function _saveInstance()
     {
@@ -197,8 +197,8 @@ abstract class service
      */
     protected function _getCacheData($sKey, $mDefault = null)
     {
-        $oCache = \project\service\cache::instance('service_data');
-        /* @var $oCache \core\service\cache */
+        $oCache = \fan\project\service\cache::instance('service_data');
+        /* @var $oCache \fan\core\service\cache */
         $aData  = $oCache->get(get_class_name($this), array());
         return array_val($aData, $sKey, $mDefault);
     } // function _getCacheData
@@ -206,12 +206,12 @@ abstract class service
      * Set Cached Data for current service
      * @param string $sKey
      * @param mixed $mValue
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     protected function _setCacheData($sKey, $mValue)
     {
-        $oCache = \project\service\cache::instance('service_data');
-        /* @var $oCache \core\service\cache */
+        $oCache = \fan\project\service\cache::instance('service_data');
+        /* @var $oCache \fan\core\service\cache */
         $sName  = get_class_name($this);
         $aData  = $oCache->get($sName, array());
         $aData[$sKey] = $mValue;
@@ -221,11 +221,11 @@ abstract class service
 
     /**
      * Get Configurator
-     * @return \core\service\config
+     * @return \fan\core\service\config
      */
     protected function _getConfigurator()
     {
-        return \project\service\config::instance();
+        return \fan\project\service\config::instance();
     } // function _getConfigurator
 
     /**
@@ -236,8 +236,8 @@ abstract class service
     protected function _getEngine($sName, $bObject = true)
     {
         $sClass = get_class($this) . '\\' . $sName;
-        if (substr($sClass, 0, 5) == 'core\\') {
-            $sClass = 'project\\' . substr($sClass, 5);
+        if (substr($sClass, 0, 9) == 'fan\core\\') {
+            $sClass = 'fan\project\\' . substr($sClass, 9);
         }
 
         if (!\bootstrap::loadClass($sClass, true)) {
@@ -259,8 +259,8 @@ abstract class service
     /**
      * Get delegate class
      * @param string $sClass
-     * @return \core\service\tab\delegate
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\tab\delegate
+     * @throws \fan\project\exception\service\fatal
      */
     protected function _getDelegate($sClass)
     {
@@ -279,7 +279,7 @@ abstract class service
      * @param sting $sExceptionDbOper
      * @param numeric $nCode
      * @param \Exception $oPrevious
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     protected function _makeServiceException($sLogErrMsg, $sExceptionDbOper = 'rollback', $nCode = E_USER_ERROR, $oPrevious = null)
     {
@@ -294,7 +294,7 @@ abstract class service
      * @param string $sServiceName
      * @param string $sEventName
      * @param callback $mCallBack
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     protected function _subscribeForService($sServiceName, $sEventName, $mCallBack)
     {
@@ -328,7 +328,7 @@ abstract class service
      * @param string $sMethod method name
      * @param array $aArgs arguments
      * @return mixed Value return by engine
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     public function __call($sMethod, $aArgs)
     {
@@ -343,5 +343,5 @@ abstract class service
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\base\service
+} // class \fan\core\base\service
 ?>

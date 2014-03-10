@@ -1,4 +1,4 @@
-<?php namespace core\view\parser;
+<?php namespace fan\core\view\parser;
 /**
  * View parser HTML-type
  *
@@ -12,23 +12,23 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class debug1 extends html
 {
     /**
-     * @var \core\service\debug Root block
+     * @var \fan\core\service\debug Root block
      */
     protected $oDebug;
 
     /**
      * View meta constructor
-     * @param core\block\base $oBlock
+     * @param fan\core\block\base $oBlock
      */
-    public function __construct(\core\block\base $oMainBlock)
+    public function __construct(\fan\core\block\base $oMainBlock)
     {
         parent::__construct($oMainBlock);
-        $this->oDebug = \project\service\debug::instance();
+        $this->oDebug = \fan\project\service\debug::instance();
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -39,7 +39,7 @@ class debug1 extends html
      * Get Final Content Code
      * @return string
      */
-    public function getResultData(\core\block\base $oRootBlock)
+    public function getResultData(\fan\core\block\base $oRootBlock)
     {
         $this->oDebug->setExtFiles($oRootBlock, 1);
 
@@ -64,7 +64,7 @@ class debug1 extends html
      * Get Internal Result Data
      * @return array
      */
-    public function _getInternalResultData(\core\block\base $oBlock)
+    public function _getInternalResultData(\fan\core\block\base $oBlock)
     {
         $aTplVar = $oBlock->getViewData();
 
@@ -75,5 +75,5 @@ class debug1 extends html
 
         return array($oBlock->getBlockName() => $this->oDebug->wrapHtmlCode($this->_parseTemplate($oBlock, $aTplVar), $oBlock));
     } // function _getInternalResultData
-} // class \core\view\parser\debug1
+} // class \fan\core\view\parser\debug1
 ?>

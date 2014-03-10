@@ -1,4 +1,4 @@
-<?php namespace app\__tools\form;
+<?php namespace fan\app\__tools\form;
 /**
  * entity_filter block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class entity_filter extends \project\block\form\usual
+class entity_filter extends \fan\project\block\form\usual
 {
     /**
      * Init block
@@ -53,7 +53,7 @@ class entity_filter extends \project\block\form\usual
             'text'  => $sText,
             'value' => $sPrefix,
         ));
-        $sSep  = \core\bootstrap\loader::DEFAULT_DIR_SEPARATOR;
+        $sSep  = \fan\core\bootstrap\loader::DEFAULT_DIR_SEPARATOR;
         $sPath = \bootstrap::getLoader()->getPathByNS($sPrefix);
         foreach (scandir($sPath) as $v) {
             if (
@@ -70,5 +70,5 @@ class entity_filter extends \project\block\form\usual
         }
         return $aDir;
     } // function getDirList
-} // class \app\__tools\form\entity_filter
+} // class \fan\app\__tools\form\entity_filter
 ?>

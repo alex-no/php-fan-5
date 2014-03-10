@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Admin data class for loader block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class data extends base
 {
@@ -105,7 +105,7 @@ abstract class data extends base
      * Parse changed/inserted Data
      * @param array $aEdit
      * @param array $aInsert
-     * @return \core\block\admin\data
+     * @return \fan\core\block\admin\data
      */
     public function parseData($aEdit, $aInsert)
     {
@@ -114,11 +114,11 @@ abstract class data extends base
 
     /**
      * Save Entity Data
-     * @param \core\base\model\row $oRow
+     * @param \fan\core\base\model\row $oRow
      * @param array $aData
      * @param array $aFields
      * @param array $aAddFields
-     * @return \core\block\admin\data
+     * @return \fan\core\block\admin\data
      */
     public function saveRow($oRow, $aData, $aFields, $aAddFields = array())
     {
@@ -141,7 +141,7 @@ abstract class data extends base
 
     /**
      * Parse delete Data
-     * @return \core\block\admin\data
+     * @return \fan\core\block\admin\data
      */
     public function deleteData($aDel)
     {
@@ -150,13 +150,13 @@ abstract class data extends base
 
     /**
      * Check DataBase Error
-     * @param \core\base\model\row $oRow
+     * @param \fan\core\base\model\row $oRow
      * @return boolean
      */
-    protected function checkDBerror(\core\base\model\row $oRow, $sErrPref = '')
+    protected function checkDBerror(\fan\core\base\model\row $oRow, $sErrPref = '')
     {
         $oCon = $oRow->getEntity()->getConnection();
-        if ($oCon->getIsError()) {
+        if ($oCon->isError()) {
             $sErrMsg = $oCon->getErrorMessage();
             if (preg_match('/^(?:.+\:)?([^(]+)/', $sErrMsg, $aMatches)) {
                 $sErrMsg = trim($aMatches[1]);
@@ -221,7 +221,7 @@ abstract class data extends base
 
     /**
      * Init Template Vars
-     * @return \core\block\admin\data
+     * @return \fan\core\block\admin\data
      */
     public function initTplVar()
     {
@@ -585,5 +585,5 @@ abstract class data extends base
         return true;
     } // function rule_lesser_or_equal_to
 
-} // class \core\block\admin\data
+} // class \fan\core\block\admin\data
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Class admin index block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.005
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class index extends \core\block\common\simple
+class index extends \fan\core\block\common\simple
 {
 
     /**
@@ -32,5 +32,5 @@ class index extends \core\block\common\simple
     {
         $this->oTab->disableCache();
     }
-} // class \core\block\admin\index
+} // class \fan\core\block\admin\index
 ?>

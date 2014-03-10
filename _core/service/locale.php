@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Service defines several parameters of locale:
  *  - language
@@ -18,9 +18,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class locale extends \core\base\service\single
+class locale extends \fan\core\base\service\single
 {
     /**
      * List of Available Languages
@@ -61,9 +61,15 @@ class locale extends \core\base\service\single
 
     /**
      * Service session
-     * @var \core\service\session
+     * @var \fan\core\service\session
      */
     protected $oSession = null;
+
+    /**
+     * If is locale defined
+     * @var boolean
+     */
+    protected $bIsDefined = false;
 
     /**
      * Constructor of service
@@ -73,25 +79,11 @@ class locale extends \core\base\service\single
     {
         parent::__construct($bAllowIni);
         $this->_getSession($this->getConfig('USE_SESSION4LNG', false));
-        $this->sCharacterSet = $this->getConfig('CHARACTER_SET', 'utf-8');
-        $this->sDefaultLng   = $this->getConfig('DEFAULT_LANGUAGE', 'en');
+        $this->_setBasicProp();
 
-        // Define Available languages and Curren Language
-        $oAvailableLng = $this->getConfig('AVAILABLE_LANGUAGE');
-        if (!$this->isEnabled() || empty($oAvailableLng)) {
-            $this->oConfig['ENABLED'] = false;
-            $this->aAvailableLng    = $this->_getDefultLanguages($oAvailableLng);
-            $this->sCurrentLanguage = $this->sDefaultLng;
-        } else {
-            $this->aAvailableLng = $oAvailableLng->toArray();
-            $this->_defineLanguage();
-            $this->_subscribeForService('matcher', 'setNewUri', array($this, 'onSetNewUri'));
-        }
-
-        // Dedine country, time-zone and currency-code
-        $this->_defineExtraData();
-
-        $this->_subscribeForService('session', 'sesson_start', array($this, 'onSessonStart'));
+        $this->_subscribeForService('application', 'setAppName',   array($this, 'onAppChange'));
+        $this->_subscribeForService('matcher',     'setNewUri',    array($this, 'onSetNewUri'));
+        $this->_subscribeForService('session',     'sesson_start', array($this, 'onSessonStart'));
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -119,16 +111,18 @@ class locale extends \core\base\service\single
     /**
      * Set current Language
      * @param string $sLanguage
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function setLanguage($sLanguage)
     {
         if ($this->isEnabled() && isset($this->aAvailableLng[$sLanguage])) {
-            \project\service\cookie::instance('/')->setByTime($this->getConfig('LANGUAGE_KEY', 'lng'), $sLanguage, $this->getConfig('COOKIE_TIME', 2592000));
-            if ($this->sCurrentLanguage != $sLanguage && $this->_setCurrentLanguage($sLanguage)) {
-                $this->_broadcastMessage('setNewLanguage', $this);
-            }
-            return true;
+            $this->_defineLocale();
+            \fan\project\service\cookie::instance('/')->setByTime(
+                    $this->getConfig('LANGUAGE_KEY', 'lng'),
+                    $sLanguage,
+                    $this->getConfig('COOKIE_TIME', 2592000)
+            );
+            return $this->_setCurrentLanguage($sLanguage);
         }
         return false;
     } // function setLanguage
@@ -138,7 +132,7 @@ class locale extends \core\base\service\single
      */
     public function getLanguage()
     {
-        return $this->sCurrentLanguage;
+        return $this->_defineLocale()->sCurrentLanguage;
     } // function getLanguage
     /**
      * Get Default Language
@@ -154,7 +148,7 @@ class locale extends \core\base\service\single
      * @param string $sCode Language Code
      * @param string $sName Language Name
      * @param string $sShortName Language Short Name
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function addLanguage($sCode, $sName, $sShortName)
     {
@@ -167,7 +161,7 @@ class locale extends \core\base\service\single
     /**
      * Remove Language
      * @param string $sCode Language Code
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function removeLanguage($sCode)
     {
@@ -177,7 +171,7 @@ class locale extends \core\base\service\single
     /**
      * Set current CharacterSet
      * @param string $sCharacterSet
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function setCharacterSet($sCharacterSet)
     {
@@ -199,7 +193,7 @@ class locale extends \core\base\service\single
     /**
      * Set current Time Zone
      * @param string $iTimeZone
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function setTimeZone($iTimeZone)
     {
@@ -222,7 +216,7 @@ class locale extends \core\base\service\single
     /**
      * Set current Currency Code
      * @param string $sCurrencyCode
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function setCurrencyCode($sCurrencyCode)
     {
@@ -245,7 +239,7 @@ class locale extends \core\base\service\single
     /**
      * Set current Country
      * @param string $sCountry
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function setCountry($sCountry)
     {
@@ -279,33 +273,85 @@ class locale extends \core\base\service\single
     public function onSessonStart()
     {
         $this->_getSession();
-        $this->_defineExtraData();
+        $this->_defineLocale();
     } // function onSessonStart
 
     /**
-     * Parse event matcher:onNewItem
-     * @param \core\service\matcher $oMatcher
+     * Parse event matcher: onNewItem
+     * @param \fan\core\service\matcher $oMatcher
      */
-    public function onSetNewUri(\core\service\matcher $oMatcher)
+    public function onSetNewUri(\fan\core\service\matcher $oMatcher)
     {
+        $this->_defineLocale();
         $sLanguage = $this->_getLanguageByMatcher($oMatcher);
         $this->_setCurrentLanguage($sLanguage);
     } // function onSetNewUri
+
+    /**
+     * Parse event application - apply new config
+     */
+    public function onAppChange()
+    {
+        $this->_setBasicProp();
+        if (!in_array($this->sCurrentLanguage, $this->aAvailableLng)) {
+            $this->sCurrentLanguage = $this->sDefaultLng;
+        }
+    } // function onAppChange
 
     // ======== Private/Protected methods ======== \\
 
     /**
      * Get Service Session if it is already define
      * @param type $bForse
-     * @return \core\service\session
+     * @return \fan\core\service\session
      */
     protected function _getSession($bForse = true)
     {
-        if (empty($this->oSession) && (class_exists('\core\service\session', false) || $bForse)) {
-            $this->oSession = \project\service\session::instance('locale', 'service');
+        if (empty($this->oSession) && (class_exists('\fan\core\service\session', false) || $bForse)) {
+            $this->oSession = \fan\project\service\session::instance('locale', 'service');
         }
         return $this->oSession;
     } // function _getSession
+
+    /**
+     * Set Basic Property by config
+     * @return \fan\core\service\locale
+     */
+    protected function _setBasicProp()
+    {
+        $this->sCharacterSet = $this->getConfig('CHARACTER_SET', 'utf-8');
+        $this->sDefaultLng   = $this->getConfig('DEFAULT_LANGUAGE', 'en');
+
+        // Define Available languages and Curren Language
+        $oAvailableLng = $this->getConfig('AVAILABLE_LANGUAGE');
+        if (!$this->isEnabled() || empty($oAvailableLng)) {
+            $this->oConfig['ENABLED'] = false;
+            $this->aAvailableLng    = $this->_getDefultLanguages($oAvailableLng);
+            $this->sCurrentLanguage = $this->sDefaultLng;
+        } else {
+            $this->aAvailableLng    = $oAvailableLng->toArray();
+        }
+        return $this;
+    } // function _setBasicProp
+
+    /**
+     * Define current Language
+     * @return string
+     */
+    protected function _defineLocale()
+    {
+        if (!$this->bIsDefined) {
+            if ($this->isEnabled()) {
+                $this->_defineLanguage();
+            } else {
+                $this->sCurrentLanguage = $this->sDefaultLng;
+            }
+            // Dedine country, time-zone and currency-code
+            $this->_defineExtraData();
+            $this->bIsDefined = true;
+        }
+        return $this;
+    } // function _defineLocale
 
     /**
      * Define current Language
@@ -313,14 +359,16 @@ class locale extends \core\base\service\single
      */
     protected function _defineLanguage()
     {
-        if (class_exists('\core\service\matcher', false)) {
-            $sLanguage = $this->_getLanguageByMatcher(\project\service\matcher::instance());
+        // Define by request in the matcher
+        if (class_exists('\fan\core\service\matcher', false)) {
+            $sLanguage = $this->_getLanguageByMatcher(\fan\project\service\matcher::instance());
             if ($this->_setCurrentLanguage($sLanguage)) {
                 return;
             }
         }
 
-        $oReq = \project\service\request::instance();
+        // Define by GET
+        $oReq = \fan\project\service\request::instance();
         $sLngKey = $this->getConfig('LANGUAGE_KEY', 'lng');
         // Define by GET or POST key
         if ($this->_setCurrentLanguage($oReq->get($sLngKey, 'GP'))) {
@@ -328,11 +376,10 @@ class locale extends \core\base\service\single
         }
 
         // Define by SESSION or COOKIES
-        $sLanguage = $oReq->get($sLngKey, 'C');
         $oSes = $this->_getSession(false);
-        if (!empty($oSes)) {
-            $sLanguage = $oSes->get('current_language', $sLanguage);
-        }
+        $sLanguage = empty($oSes) ?
+                $oReq->get($sLngKey, 'C') :
+                $oSes->get('current_language', $sLanguage);
         if ($this->_setCurrentLanguage($sLanguage)) {
             return;
         }
@@ -355,7 +402,6 @@ class locale extends \core\base\service\single
         }
 
         $this->sCurrentLanguage = $this->sDefaultLng;
-        return $this;
     } // function _defineLanguage
 
     /**
@@ -371,6 +417,7 @@ class locale extends \core\base\service\single
                     $this->_getSession()->set('current_language', $sLanguage);
                 }
                 $this->sCurrentLanguage = $sLanguage;
+                $this->_broadcastMessage('setNewLanguage', $this);
             }
             return true;
         }
@@ -392,7 +439,7 @@ class locale extends \core\base\service\single
 
     /**
      * Define Extra Data of locale: CurrentCountry, CurrentTimeZone, CurrencyCode,
-     * @return \core\service\locale
+     * @return \fan\core\service\locale
      */
     public function _defineExtraData()
     {
@@ -412,10 +459,10 @@ class locale extends \core\base\service\single
         return $this;
     } // function _defineExtraData
 
-    public function _getLanguageByMatcher(\core\service\matcher $oMatcher)
+    public function _getLanguageByMatcher(\fan\core\service\matcher $oMatcher)
     {
         $oParsed = $oMatcher->getLastItem()->parsed;
-        return empty($oParsed['language']) ? null : $oParsed['language'];
+        return empty($oParsed->language) ? null : $oParsed->language;
     } // function _defineExtraData
 
     // ======== The magic methods ======== \\
@@ -423,5 +470,5 @@ class locale extends \core\base\service\single
     // ======== Required Interface methods ======== \\
 
 
-} // \core\service\locale
+} // class \fan\core\service\locale
 ?>

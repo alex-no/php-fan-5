@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Admin info data class for loader block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class data_info extends data
 {
@@ -43,5 +43,5 @@ class data_info extends data
         }
         return $aRet;
     } // function getExtraData
-} // class \core\block\admin\data_info
+} // class \fan\core\block\admin\data_info
 ?>

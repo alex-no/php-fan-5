@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Timer manager service
  *
@@ -13,10 +13,10 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 // ToDo: redesign this class
-class date extends \core\base\service\multi
+class date extends \fan\core\base\service\multi
 {
     /**
      * @var boolean Is Global init
@@ -148,12 +148,12 @@ class date extends \core\base\service\multi
      * Get Service's instance of specific date
      * @param string $sDate date
      * @param string $sFormat date format
-     * @return \core\service\date
+     * @return \fan\core\service\date
      */
     public static function instance($sDate = null, $sFormat = null, $sTimezone = null)
     {
         if (is_null($sTimezone)) {
-            $sTimezone = \project\service\config::instance()->get('date')->get('TIMEZONE', 'Europe/Kiev');
+            $sTimezone = \fan\project\service\config::instance()->get('date')->get('TIMEZONE', 'Europe/Kiev');
         }
         if (empty(self::$aInstances)) {
             date_default_timezone_set($sTimezone);
@@ -237,7 +237,7 @@ class date extends \core\base\service\multi
         if (!$this->isValid($bFullValidate)) {
             return null;
         }
-        $oDate2 = \project\service\date::instance($sDate2, $this->sFormat);
+        $oDate2 = \fan\project\service\date::instance($sDate2, $this->sFormat);
         $nRet = $this->getTimeStamp() - $oDate2->getTimeStamp($bFullValidate);
         return $oDate2->isValid($bFullValidate) ? ($bNotAbs ? $nRet : abs($nRet)) : null;
     } // function getDifference
@@ -324,11 +324,11 @@ class date extends \core\base\service\multi
     /**
      * Parse Pattern of config Date-format
      * @param string $sFormat
-     * @param \core\service\config\row $oConf
+     * @param \fan\core\service\config\row $oConf
      * @param string $sType
      * @throws fatalException
      */
-    protected function _parsePattern($sFormat, \core\service\config\row $oConf, $sType)
+    protected function _parsePattern($sFormat, \fan\core\service\config\row $oConf, $sType)
     {
         if ($oConf[$sType . '_pattern']) {
             $aMatches = array();
@@ -425,5 +425,5 @@ class date extends \core\base\service\multi
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\date
+} // class \fan\core\service\date
 ?>

@@ -1,5 +1,5 @@
-<?php namespace core\service\config;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\config;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Description of base
  *
@@ -13,13 +13,13 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class base
 {
     /**
      * Facade of service
-     * @var \core\service\config
+     * @var \fan\core\service\config
      */
     protected $oFacade = null;
     /**
@@ -30,9 +30,9 @@ abstract class base
 
     /**
      * Set Facade
-     * @param \core\service\config $oFacade
+     * @param \fan\core\service\config $oFacade
      */
-    public function setFacade(\core\service\config $oFacade)
+    public function setFacade(\fan\core\service\config $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -68,7 +68,7 @@ abstract class base
     /**
      * Set Source Directory path
      * @param string $sSourceDir
-     * @return \core\service\config\base
+     * @return \fan\core\service\config\base
      */
     public function setDirPath($sSourceDir)
     {
@@ -85,5 +85,5 @@ abstract class base
     {
         return array();
     } // function _loadSourceData
-} // class \core\service\config\base
+} // class \fan\core\service\config\base
 ?>

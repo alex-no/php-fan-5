@@ -1,9 +1,9 @@
-<?php namespace app\__tools\carcass;
+<?php namespace fan\app\__tools\carcass;
 /**
  * counter_carcass block for tools
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class counter_carcass extends \project\block\carcass\common
+class counter_carcass extends \fan\project\block\carcass\common
 {
-} // class \app\__tools\carcass\counter
+} // class \fan\app\__tools\carcass\counter
 ?>

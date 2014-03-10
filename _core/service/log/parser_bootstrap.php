@@ -1,4 +1,4 @@
-<?php namespace core\service\log;
+<?php namespace fan\core\service\log;
 /**
  * Parser of log bootstrap-file
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class parser_bootstrap extends parser_base
 {
@@ -59,5 +59,5 @@ class parser_bootstrap extends parser_base
         parent::setFilePath($sVariety, $sFile);
     } // function setFilePath
 
-} // class \core\service\log\parser_bootstrap
+} // class \fan\core\service\log\parser_bootstrap
 ?>

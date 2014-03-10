@@ -1,9 +1,9 @@
-<?php namespace app\__log_viewer\main;
+<?php namespace fan\app\__log_viewer\main;
 /**
  * Error 403 class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class error403 extends \project\block\error\error403
+class error403 extends \fan\project\block\error\error403
 {
     /**
      * Init block data
@@ -12,5 +12,5 @@ class error403 extends \project\block\error\error403
     {
         $this->setViewVars('Error 403', 'Access to this page is denied.', 'Access is denied.');
     } // function init
-} // class \app\__log_viewer\main\error403
+} // class \fan\app\__log_viewer\main\error403
 ?>

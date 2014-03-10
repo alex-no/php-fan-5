@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Description of log
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class log extends \core\base\service\single
+class log extends \fan\core\base\service\single
 {
     /**
      * Array of log parcers
@@ -52,7 +52,7 @@ class log extends \core\base\service\single
             $oEngine = $this->_getEngine('parser_'  . $sVariety);
             $this->aParcers[$sVariety][$sFile] = $oEngine;
             if (empty($oEngine)) {
-                throw new \project\exception\service\fatal($this, $sVariety ? 'Incorrect Variety of log-file: "' . $sVariety . '"' : 'Unset Variety of log-file.');
+                throw new \fan\project\exception\service\fatal($this, $sVariety ? 'Incorrect Variety of log-file: "' . $sVariety . '"' : 'Unset Variety of log-file.');
             }
             $oEngine->setFilePath($sVariety, $sFile);
         } else {
@@ -271,7 +271,7 @@ class log extends \core\base\service\single
         if (!isset($this->aDir[$sVariety])) {
             $this->aDir[$sVariety] = \bootstrap::parsePath($this->oConfig['LOG_DIR'][$sVariety]);
             if (!@is_writable($this->aDir[$sVariety])) {
-                throw new \project\exception\fatal('Directory "' . $sFile . '" isn\'t writable.');
+                throw new \fan\project\exception\fatal('Directory "' . $sFile . '" isn\'t writable.');
             }
         }
 
@@ -281,11 +281,11 @@ class log extends \core\base\service\single
                 if (!@is_dir($sDir)) {
                     $sDir = $this->aDir[$sVariety] . '/' . $sDir;
                     if (!@is_dir($sDir)) {
-                        throw new \project\exception\fatal('Incorrect log-file path "' . $sFile . '".');
+                        throw new \fan\project\exception\fatal('Incorrect log-file path "' . $sFile . '".');
                     }
                 }
                 if (!@is_writable($sDir)) {
-                    throw new \project\exception\fatal('Directory "' . $sFile . '" isn\'t writable.');
+                    throw new \fan\project\exception\fatal('Directory "' . $sFile . '" isn\'t writable.');
                 }
                 return $sDir . '/' . $sFile;
             }
@@ -353,5 +353,5 @@ class log extends \core\base\service\single
         return $sRet;
     } // function _checkIncorrectSymbol
 
-} // class \core\service\log
+} // class \fan\core\service\log
 ?>

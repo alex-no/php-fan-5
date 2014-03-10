@@ -1,4 +1,4 @@
-<?php namespace app\__log_viewer\main;
+<?php namespace fan\app\__log_viewer\main;
 /**
  * index block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class index extends \project\block\common\simple
+class index extends \fan\project\block\common\simple
 {
     /**
      * Init block
@@ -32,5 +32,5 @@ class index extends \project\block\common\simple
         $this->view->isDelete = role('allow_delete');
     } // init
 
-} // class \app\__log_viewer\main\index
+} // class \fan\app\__log_viewer\main\index
 ?>

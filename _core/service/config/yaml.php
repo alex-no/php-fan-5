@@ -1,4 +1,4 @@
-<?php namespace core\service\config;
+<?php namespace fan\core\service\config;
 /**
  * Description of ini
  *
@@ -13,7 +13,7 @@
  *
  * @author: Otchenashenko Sergey (dinvisible@gmail.com)
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class yaml extends base
 {
@@ -24,5 +24,5 @@ class yaml extends base
     protected $sFileExtention = 'yaml';
 
     //put your code here
-} // class \core\service\config\yaml
+} // class \fan\core\service\config\yaml
 ?>

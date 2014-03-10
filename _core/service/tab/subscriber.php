@@ -1,4 +1,4 @@
-<?php namespace core\service\tab;
+<?php namespace fan\core\service\tab;
 /**
  * Description of subscriber
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class subscriber extends \core\service\tab\delegate
+class subscriber extends \fan\core\service\tab\delegate
 {
     /**
      * List of Subscriber by block name and by class (with namespace)
@@ -27,79 +27,79 @@ class subscriber extends \core\service\tab\delegate
 
     /**
      * Subscribe for events By Block-Name
-     * @param \core\block\base $oListener
+     * @param \fan\core\block\base $oListener
      * @param string $sEventName
      * @param string $sListenerMethod
-     * @return \core\service\tab\delegate\subscriber
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\tab\delegate\subscriber
+     * @throws \fan\project\exception\service\fatal
      */
-    public function subscribeForEvent(\core\block\base $oListener, $sEventName, $sListenerMethod = 'eventHandler')
+    public function subscribeForEvent(\fan\core\block\base $oListener, $sEventName, $sListenerMethod = 'eventHandler')
     {
         return $this->_addSubscriber($oListener, $sListenerMethod, 'any', 0, $sEventName);
     } // function subscribeForEvent
 
     /**
      * Subscribe for events By Block-Name
-     * @param \core\block\base $oListener
+     * @param \fan\core\block\base $oListener
      * @param string $sBroadcasterName
      * @param string $sEventName
      * @param string $sListenerMethod
-     * @return \core\service\tab\delegate\subscriber
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\tab\delegate\subscriber
+     * @throws \fan\project\exception\service\fatal
      */
-    public function subscribeByName(\core\block\base $oListener, $sBroadcasterName, $sEventName, $sListenerMethod = 'eventHandler')
+    public function subscribeByName(\fan\core\block\base $oListener, $sBroadcasterName, $sEventName, $sListenerMethod = 'eventHandler')
     {
         return $this->_addSubscriber($oListener, $sListenerMethod, 'name', $sBroadcasterName, $sEventName);
     } // function subscribeByName
 
     /**
      * Subscribe for events By Block-Name
-     * @param \core\block\base $oListener
+     * @param \fan\core\block\base $oListener
      * @param string $sClassName
      * @param string $sEventName
      * @param string $sListenerMethod
-     * @return \core\service\tab\delegate\subscriber
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\tab\delegate\subscriber
+     * @throws \fan\project\exception\service\fatal
      */
-    public function subscribeByClass(\core\block\base $oListener, $sClassName, $sEventName, $sListenerMethod = 'eventHandler')
+    public function subscribeByClass(\fan\core\block\base $oListener, $sClassName, $sEventName, $sListenerMethod = 'eventHandler')
     {
         return $this->_addSubscriber($oListener, $sListenerMethod, 'class', trim($sClassName, '\\'), $sEventName);
     } // function subscribeByClass
 
     /**
      * unSubscribe for events By Block-Name
-     * @param \core\block\base $oListener
+     * @param \fan\core\block\base $oListener
      * @param string $sBroadcasterName
      * @param string $sEventName
      * @param string $sListenerMethod
-     * @return \core\service\tab\delegate\subscriber
+     * @return \fan\core\service\tab\delegate\subscriber
      */
-    public function unSubscribeByName(\core\block\base $oListener, $sBroadcasterName, $sEventName, $sListenerMethod = 'eventHandler')
+    public function unSubscribeByName(\fan\core\block\base $oListener, $sBroadcasterName, $sEventName, $sListenerMethod = 'eventHandler')
     {
         return $this->_removeSubscriber($oListener, $sListenerMethod, 'name', $sBroadcasterName, $sEventName);
     } // function unSubscribeByName
 
     /**
      * unSubscribe for events By Block-Name
-     * @param \core\block\base $oListener
+     * @param \fan\core\block\base $oListener
      * @param string $sClassName
      * @param string $sEventName
      * @param string $sListenerMethod
-     * @return \core\service\tab\delegate\subscriber
+     * @return \fan\core\service\tab\delegate\subscriber
      */
-    public function unSubscribeByClass(\core\block\base $oListener, $sClassName, $sEventName, $sListenerMethod = 'eventHandler')
+    public function unSubscribeByClass(\fan\core\block\base $oListener, $sClassName, $sEventName, $sListenerMethod = 'eventHandler')
     {
         return $this->_removeSubscriber($oListener, $sListenerMethod, 'class', trim($sClassName, '\\'), $sEventName);
     } // function unSubscribeByClass
 
     /**
      * Broadcast Event to other blocks
-     * @param \core\block\base $oBroadcaster
+     * @param \fan\core\block\base $oBroadcaster
      * @param string $sEventName
      * @param array $aData
-     * @return \core\service\tab\delegate\subscriber
+     * @return \fan\core\service\tab\delegate\subscriber
      */
-    public function broadcastEvent(\core\block\base $oBroadcaster, $sEventName, $aData = array())
+    public function broadcastEvent(\fan\core\block\base $oBroadcaster, $sEventName, $aData = array())
     {
         $aKeys = array(
             'any'   => 0,
@@ -120,15 +120,15 @@ class subscriber extends \core\service\tab\delegate
 
     /**
      * Add new Subscriber
-     * @param \core\block\base $oListener
+     * @param \fan\core\block\base $oListener
      * @param string $sListenerMethod
      * @param string $sType
      * @param string $sKey
      * @param string $sEventName
-     * @return \core\service\tab\delegate\subscriber
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\tab\delegate\subscriber
+     * @throws \fan\project\exception\service\fatal
      */
-    protected function _addSubscriber(\core\block\base $oListener, $sListenerMethod, $sType, $sKey, $sEventName)
+    protected function _addSubscriber(\fan\core\block\base $oListener, $sListenerMethod, $sType, $sKey, $sEventName)
     {
         if (!method_exists($oListener, $sListenerMethod) || !is_callable(array($oListener, $sListenerMethod))) {
             $this->_makeException('Incorrect method name "' . $sListenerMethod . '" in block "' . $oListener->getBlockName() . '".');
@@ -144,15 +144,15 @@ class subscriber extends \core\service\tab\delegate
 
     /**
      * Remove Subscriber
-     * @param \core\block\base $oListener
+     * @param \fan\core\block\base $oListener
      * @param string $sListenerMethod
      * @param string $sType
      * @param string $sKey
      * @param string $sEventName
-     * @return \core\service\tab\delegate\subscriber
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\tab\delegate\subscriber
+     * @throws \fan\project\exception\service\fatal
      */
-    protected function _removeSubscriber(\core\block\base $oListener, $sListenerMethod, $sType, $sKey, $sEventName)
+    protected function _removeSubscriber(\fan\core\block\base $oListener, $sListenerMethod, $sType, $sKey, $sEventName)
     {
         if (isset($this->aSubscriber[$sType][$sKey][$sEventName])) {
             foreach ($this->aSubscriber[$sType][$sKey][$sEventName] as $k => $v) {
@@ -167,5 +167,5 @@ class subscriber extends \core\service\tab\delegate
 
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
-} // class \core\service\tab\subscriber
+} // class \fan\core\service\tab\subscriber
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\view;
+<?php namespace fan\core\view;
 /**
  * View element of Block
  *
@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class router implements \ArrayAccess, \Countable
 {
     /**
      * Parent block
-     * @var \core\block\base
+     * @var \fan\core\block\base
      */
     protected $oBlock;
     /**
@@ -34,18 +34,18 @@ abstract class router implements \ArrayAccess, \Countable
 
     /**
      * Constructor of View router
-     * @param core\block\base $oBlock
+     * @param fan\core\block\base $oBlock
      */
-    public function __construct(\core\block\base $oBlock)
+    public function __construct(\fan\core\block\base $oBlock)
     {
         if (empty($this->aKeepers) || !is_array($this->aKeepers)) {
-            throw new \project\exception\block\fatal($this, 'Keepers list doesn\'t set at the class "' . get_class($this) . '"');
+            throw new \fan\project\exception\block\fatal($this, 'Keepers list doesn\'t set at the class "' . get_class($this) . '"');
         }
         if (empty($this->sDefaultKey)) {
             reset($this->aKeepers);
             $this->sDefaultKey = key($this->aKeepers);
         } elseif (!array_key_exists($this->sDefaultKey, $this->aKeepers)) {
-            throw new \project\exception\block\fatal($this, 'Incorrect default Keepers key "' . $this->sDefaultKey . '" at the class "' . get_class($this) . '"');
+            throw new \fan\project\exception\block\fatal($this, 'Incorrect default Keepers key "' . $this->sDefaultKey . '" at the class "' . get_class($this) . '"');
         }
         $this->oBlock = $oBlock;
     } // function __construct
@@ -92,7 +92,7 @@ abstract class router implements \ArrayAccess, \Countable
      * Set special or default view data
      * @param string $sKey
      * @param mixed $mValue
-     * @return \core\view\router
+     * @return \fan\core\view\router
      */
     public function set($sKey, $mValue)
     {
@@ -132,7 +132,7 @@ abstract class router implements \ArrayAccess, \Countable
 
     /**
      * Get block-owner
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getBlock()
     {
@@ -177,17 +177,17 @@ abstract class router implements \ArrayAccess, \Countable
     /**
      * Get Keeper
      * @param string $sKey
-     * @return \core\view\keeper
-     * @throws \core\exception\block\fatal
+     * @return \fan\core\view\keeper
+     * @throws \fan\core\exception\block\fatal
      */
     public function _getKeeper($sKey)
     {
         if (!array_key_exists($sKey, $this->aKeepers)) {
-            throw new \project\exception\block\fatal($this, 'Incorrect name of Keeper "' . $sKey . '"');
+            throw new \fan\project\exception\block\fatal($this, 'Incorrect name of Keeper "' . $sKey . '"');
         }
         if (empty($this->aKeepers[$sKey])) {
             $sMethod = '_get' . ucfirst($sKey) . 'Keeper';
-            $this->aKeepers[$sKey] = method_exists($this, $sMethod) ? $this->$sMethod() : new \project\view\keeper($this);
+            $this->aKeepers[$sKey] = method_exists($this, $sMethod) ? $this->$sMethod() : new \fan\project\view\keeper($this);
         }
         return $this->aKeepers[$sKey];
     }
@@ -209,5 +209,5 @@ abstract class router implements \ArrayAccess, \Countable
         }
         return false;
     } // function _checkSetter
-} // class \core\view\router
+} // class \fan\core\view\router
 ?>

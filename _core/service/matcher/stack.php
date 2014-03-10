@@ -1,4 +1,4 @@
-<?php namespace core\service\matcher;
+<?php namespace fan\core\service\matcher;
 /**
  * Description of stack
  *
@@ -12,13 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class stack extends \ArrayIterator
 {
     /**
      * Facade of service
-     * @var core\base\service
+     * @var fan\core\base\service
      */
     protected $oFacade = null;
     /**
@@ -28,10 +28,10 @@ class stack extends \ArrayIterator
 
     /**
      * Set Facade
-     * @param \core\base\service $oFacade
+     * @param \fan\core\base\service $oFacade
      * @return stack
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         $this->oFacade = $oFacade;
 
@@ -51,7 +51,7 @@ class stack extends \ArrayIterator
             $this->iCurrent = $iIndex;
         }
 
-        $oItem = new \project\service\matcher\item($iIndex);
+        $oItem = new \fan\project\service\matcher\item($iIndex);
         $this[$iIndex] = $oItem;
         $oItem->setFacade($this->oFacade);
 
@@ -86,5 +86,5 @@ class stack extends \ArrayIterator
         return $this->iCurrent;
     } // function getCurrentIndex
 
-} // class \core\service\matcher\stack
+} // class \fan\core\service\matcher\stack
 ?>

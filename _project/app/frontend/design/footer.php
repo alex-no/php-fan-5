@@ -1,10 +1,10 @@
-<?php namespace app\frontend\design;
+<?php namespace fan\app\frontend\design;
 /**
  * footer class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class footer extends \project\block\common\simple
+class footer extends \fan\project\block\common\simple
 {
 
-} // class \app\frontend\design\footer
+} // class \fan\app\frontend\design\footer
 ?>

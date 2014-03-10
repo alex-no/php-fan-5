@@ -1,7 +1,7 @@
-<?php namespace core\base\model;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\base\model;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
- * Loader of Source SQL-requests for \core\service\entity\designer\request
+ * Loader of Source SQL-requests for \fan\core\service\entity\designer\request
  *
  * This file is part PHP-FAN (php-framework from Alexandr Nosov)
  * Copyright (C) 2005-2007 Alexandr Nosov, http://www.alex.4n.com.ua/
@@ -13,7 +13,7 @@ use project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class request
 {
@@ -25,16 +25,16 @@ class request
 
     /**
      * Entity - table data
-     * @var \core\base\model\entity
+     * @var \fan\core\base\model\entity
      */
     protected $oEntity = null;
 
     /**
      * Row-data constructor
-     * @param \core\base\model\entity $oEntity
+     * @param \fan\core\base\model\entity $oEntity
      * @param array $aData
      */
-    public function __construct(\core\base\model\entity $oEntity)
+    public function __construct(\fan\core\base\model\entity $oEntity)
     {
         $this->oEntity = $oEntity;
     } // function __construct
@@ -92,7 +92,7 @@ class request
      * Set SQL
      * @param string $sKey
      * @param string $sValue
-     * @return \core\base\model\request
+     * @return \fan\core\base\model\request
      */
     public function set($sKey, $sValue)
     {
@@ -103,7 +103,7 @@ class request
     /**
      * Set several Requests (usualy at the start
      * @param array $aSQL
-     * @return \core\base\model\request
+     * @return \fan\core\base\model\request
      */
     public function setRequests($aSQL)
     {
@@ -122,7 +122,7 @@ class request
 
     /**
      * Get instace of Entity
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function getEntity()
     {
@@ -160,5 +160,5 @@ class request
         return null;
     } // function _checkSQLfile
 
-} // class \core\base\model\request
+} // class \fan\core\base\model\request
 ?>

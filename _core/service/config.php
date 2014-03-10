@@ -1,6 +1,6 @@
-<?php namespace core\service;
-use \core\service\config\row as row;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use \fan\core\service\config\row as row;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Configuration manager service
  *
@@ -14,9 +14,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-final class config extends \core\base\service\multi
+final class config extends \fan\core\base\service\multi
 {
     /**
      * @var array Service's Instances
@@ -29,13 +29,13 @@ final class config extends \core\base\service\multi
     protected static $aEgines = array();
     /**
      * Instance of Cache servise
-     * @var \core\service\cache
+     * @var \fan\core\service\cache
      */
     protected static $oCache = null;
 
     /**
      * Config of this Service
-     * @var \core\service\config\row
+     * @var \fan\core\service\config\row
      */
     private static $oThisConf = null;
     /**
@@ -54,7 +54,7 @@ final class config extends \core\base\service\multi
     private $sSourceType = null;
 
     /**
-     * @var \core\service\config\row Row of configuration data
+     * @var \fan\core\service\config\row Row of configuration data
      */
     private $oConfData;
 
@@ -62,7 +62,7 @@ final class config extends \core\base\service\multi
      * Constructor of Service config
      * @param string $sConfigType
      * @param string $sSourceType
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     protected function __construct($sConfigType, $sSourceType)
     {
@@ -142,7 +142,7 @@ final class config extends \core\base\service\multi
      * @param string $mKey Key of variable
      * @param string $mValue Value of variable
      * @param boolean $bRewriteExisting
-     * @return \core\service\config
+     * @return \fan\core\service\config
      */
     public function set($sName, $mKey, $mValue, $bRewriteExisting = true)
     {
@@ -156,9 +156,9 @@ final class config extends \core\base\service\multi
 
     /**
      * Merge new config data with previous values
-     * @param array|\core\service\config\row $aData
+     * @param array|\fan\core\service\config\row $aData
      * @param booulean $bPriority
-     * @return \core\service\config
+     * @return \fan\core\service\config
      */
     public function merge($aData, $bPriority = true)
     {
@@ -175,7 +175,7 @@ final class config extends \core\base\service\multi
      * Reset Data applicaiton's config
      * @param string $sName Service's name
      * @param mixed $mKey Key of parameter
-     * @return \core\service\config
+     * @return \fan\core\service\config
      */
     public function reset($sName = null, $mKey = null)
     {
@@ -211,20 +211,20 @@ final class config extends \core\base\service\multi
 
     /**
      * Get Service Config by Instace of Service
-     * @param \core\base\service $oService
-     * @return \core\service\config\row
+     * @param \fan\core\base\service $oService
+     * @return \fan\core\service\config\row
      */
-    public function getServiceConfig(\core\base\service $oService)
+    public function getServiceConfig(\fan\core\base\service $oService)
     {
         $sName = get_class_name($oService);
         if (empty($this->oConfData)) {
-            throw new \core\exception\error500('Data row isn\'t for config "' . $this->sConfigType . '"');
+            throw new fatalException('Data row isn\'t for config "' . $this->sConfigType . '"');
         }
         if (!$this->oConfData[$sName]) {
             $this->oConfData->set($sName, array());
             /*
             // ToDo: Check code above
-            $this->oConfData[$sName] = new \project\service\config\row(array(), $sName, $this->oConfData);
+            $this->oConfData[$sName] = new \fan\project\service\config\row(array(), $sName, $this->oConfData);
             $this->oConfData[$sName]->setFacade($this);
              */
         }
@@ -235,13 +235,13 @@ final class config extends \core\base\service\multi
      * Get configs of plain/cli controllers
      * @param object $oCtrl
      * @param string $sName
-     * @return \core\service\config\row
-     * @throws \core\exception\error500
+     * @return \fan\core\service\config\row
+     * @throws \fan\core\exception\error500
      */
     public function getControllerConfig($oCtrl, $sName)
     {
         if (empty($this->oConfData)) {
-            throw new \core\exception\error500('Data row isn\'t for config "' . $this->sConfigType . '"');
+            throw new fatalException('Data row isn\'t for config "' . $this->sConfigType . '"');
         }
         if (!$this->oConfData[$sName]) {
             $this->oConfData->set($sName, array());
@@ -253,10 +253,10 @@ final class config extends \core\base\service\multi
     } // function getControllerConfig
     /**
      * Get Entity Config by Instace of Entity
-     * @param \core\base\model\entity $oEntity
-     * @return \core\service\config\row
+     * @param \fan\core\base\model\entity $oEntity
+     * @return \fan\core\service\config\row
      */
-    public function getEntityConfig(\core\base\model\entity $oEntity, $sName = null)
+    public function getEntityConfig(\fan\core\base\model\entity $oEntity, $sName = null)
     {
         if (is_null($sName)) {
             $sName = $oEntity->getTableName();
@@ -283,7 +283,7 @@ final class config extends \core\base\service\multi
      */
     protected function _initServiceConfig()
     {
-        self::$oCache    = \project\service\cache::configInstance();
+        self::$oCache    = \fan\project\service\cache::configInstance();
 
         $this->oConfData = new row($this->_getData('service'));
         $this->oConfData->setFacade($this);
@@ -345,7 +345,7 @@ final class config extends \core\base\service\multi
 
     /**
      * Set service's Config
-     * @return \core\service\config
+     * @return \fan\core\service\config
      */
     protected function _setConfig()
     {
@@ -354,7 +354,7 @@ final class config extends \core\base\service\multi
 
     /**
      * Get Config Engine
-     * @return \core\service\config\ini
+     * @return \fan\core\service\config\ini
      */
     protected function _getConfigEngine()
     {
@@ -362,7 +362,7 @@ final class config extends \core\base\service\multi
         if (!isset(self::$aEgines[$sType])) {
             $oEngine = parent::_getEngine($sType, true);
             if (empty($oEngine)) {
-                throw new \project\exception\service\fatal($this, 'Unknown engine type!');
+                throw new \fan\project\exception\service\fatal($this, 'Unknown engine type!');
             }
             self::$aEgines[$sType] = $oEngine;
             $oEngine->setDirPath(
@@ -377,7 +377,7 @@ final class config extends \core\base\service\multi
      * @param string $sFileName Configuration file name
      * @param string $bResetConf Allow to reset configuration file before marging
      * @param string $bCheckExist Check - is file name
-     * @return \core\service\config
+     * @return \fan\core\service\config
      */
     protected function _mergeConfig($sFileName, $bResetConf, $bCheckExist)
     {
@@ -390,7 +390,7 @@ final class config extends \core\base\service\multi
 
     /**
      * Check is instance of row
-     * @param \core\service\config\row $oObj
+     * @param \fan\core\service\config\row $oObj
      * @return boolean
      */
     protected function _isRow($oObj)
@@ -398,5 +398,5 @@ final class config extends \core\base\service\multi
         return is_object($oObj) && $oObj instanceof row;
     } // function _isRow
 
-} // class \core\service\config
+} // class \fan\core\service\config
 ?>

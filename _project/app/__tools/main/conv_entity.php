@@ -1,9 +1,9 @@
-<?php namespace app\__tools\main;
+<?php namespace fan\app\__tools\main;
 /**
  * Covert entity from old to new format
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class conv_entity extends \project\block\form\usual
+class conv_entity extends \fan\project\block\form\usual
 {
 
     /**
@@ -23,10 +23,10 @@ class conv_entity extends \project\block\form\usual
      * @var array
      */
     protected $aExt = array(
-        'entity'  => '\\project\\base\\model\\entity',
-        'rowset'  => '\\project\\base\\model\\rowset',
-        'row'     => '\\project\\base\\model\\row',
-        'request' => '\\project\\base\\model\\request',
+        'entity'  => '\fan\project\base\model\entity',
+        'rowset'  => '\fan\project\base\model\rowset',
+        'row'     => '\fan\project\base\model\row',
+        'request' => '\fan\project\base\model\request',
     );
     /**
      * Init block
@@ -281,7 +281,7 @@ class conv_entity extends \project\block\form\usual
         $sPath = $this->sDstDir . $sTableName . '/' . $sClass . '.php';
         $sNS   = $this->sBaseNs . $sTableName;
 
-        file_put_contents($sPath, '<?php namespace ' . $sNS . ';
+        file_put_contents($sPath, '<?php namespace \fan' . $sNS . ';
 /**
  * Description of ' . $sClass . '
 ' . (empty($aContent['comments']) ? '' : ' ' . trim($aContent['comments']) . "\n") . ' *
@@ -335,5 +335,5 @@ class ' . $sClass . ' extends ' . $this->aExt[$sClass] . '
         return $this;
     } // function _addSpace
 
-} // class \app\__tools\main\conv_entity
+} // class \fan\app\__tools\main\conv_entity
 ?>

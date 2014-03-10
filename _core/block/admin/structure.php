@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Admin structure class for loader block
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class structure extends base
 {
@@ -86,5 +86,5 @@ class structure extends base
     {
         return $this->getMeta('cond', array());
     } // function getCondition
-} // class \core\block\admin\structure
+} // class \fan\core\block\admin\structure
 ?>

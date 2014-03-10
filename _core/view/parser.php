@@ -1,4 +1,4 @@
-<?php namespace core\view;
+<?php namespace fan\core\view;
 /**
  * Base abstract html type of block
  *
@@ -12,17 +12,17 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
 abstract class parser
 {
     /**
-     * @var \core\block\base Root block
+     * @var \fan\core\block\base Root block
      */
     protected $oRootBlock;
     /**
-     * @var \core\block\base Main block
+     * @var \fan\core\block\base Main block
      */
     protected $oMainBlock;
 
@@ -35,9 +35,9 @@ abstract class parser
 
     /**
      * View meta constructor
-     * @param core\block\base $oBlock
+     * @param fan\core\block\base $oBlock
      */
-    public function __construct(\core\block\base $oMainBlock)
+    public function __construct(\fan\core\block\base $oMainBlock)
     {
         $this->oMainBlock = $oMainBlock;
     } // function __construct
@@ -48,16 +48,16 @@ abstract class parser
      * @return string
      */
     static public function getType() {
-     throw new \core\exception\error500('Class "' . get_called_class() . '" can\'t be use for define View-type');
+     throw new \fan\project\exception\error500('Class "' . get_called_class() . '" can\'t be use for define View-type');
     } // function getType
 
     /**
      * Get View-Router for block
-     * @param \core\block\base $oBlock
-     * @return \core\view\router\simple
+     * @param \fan\core\block\base $oBlock
+     * @return \fan\core\view\router\simple
      */
-    static public function getRouter(\core\block\base $oBlock) {
-        return new \project\view\router\simple($oBlock);
+    static public function getRouter(\fan\core\block\base $oBlock) {
+        return new \fan\project\view\router\simple($oBlock);
     } // function getRouter
 
     // ======== The magic methods ======== \\
@@ -65,10 +65,10 @@ abstract class parser
     // ======== Main Interface methods ======== \\
     /**
      * Start Parsing View data
-     * @param \core\block\base $oRootBlock
-     * @return \core\view\parser
+     * @param \fan\core\block\base $oRootBlock
+     * @return \fan\core\view\parser
      */
-    public function startParsing(\core\block\base $oRootBlock)
+    public function startParsing(\fan\core\block\base $oRootBlock)
     {
         $this->oRootBlock = $oRootBlock;
         $this->aResult = $this->getResultData($this->oRootBlock);
@@ -90,7 +90,7 @@ abstract class parser
      * Get Final Content Code
      * @return string
      */
-    public function getResultData(\core\block\base $oBlock)
+    public function getResultData(\fan\core\block\base $oBlock)
     {
         return $this->_assembleToArray($oBlock);
     } // function getResultData
@@ -98,10 +98,10 @@ abstract class parser
     // ======== Protected methods ======== \\
     /**
      * Assemble View data to Array
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      * @return array
      */
-    protected function _assembleToArray(\core\block\base $oBlock)
+    protected function _assembleToArray(\fan\core\block\base $oBlock)
     {
         $aViewData = $oBlock->getViewData();
 
@@ -128,18 +128,18 @@ abstract class parser
 
     /**
      * Parse Template
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      * @param type $aTplVar
      * @return string
      */
-    protected function _parseTemplate(\core\block\base $oBlock, $aTplVar)
+    protected function _parseTemplate(\fan\core\block\base $oBlock, $aTplVar)
     {
         $sTemplate = $oBlock->getTemplate();
         if ($sTemplate) {
             // If template exists - assign variables and parse template
             $sTplParentClass = $oBlock->getMeta('tpl_parent_class');
 
-            $oTemplate = \project\service\template::instance()->get($sTemplate, $sTplParentClass, $oBlock);
+            $oTemplate = \fan\project\service\template::instance()->get($sTemplate, $sTplParentClass, $oBlock);
             foreach ($aTplVar as $k => $v) {
                 $oTemplate->assign($k, $v);
             }
@@ -159,12 +159,12 @@ abstract class parser
 
     /**
      * Parse Template
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      * @param array $aSrcData
      * @param string $sTplResult
      * @return mixed
      */
-    protected function _formatResultData(\core\block\base $oBlock, $aSrcData, $sTplResult)
+    protected function _formatResultData(\fan\core\block\base $oBlock, $aSrcData, $sTplResult)
     {
         return array($oBlock->getBlockName() => $sTplResult);
     } // function _formatResultData
@@ -174,16 +174,16 @@ abstract class parser
      * @param string $sResult
      * @param string $sContentType
      * @param boolean $sEncoding
-     * @return \core\service\header
+     * @return \fan\core\service\header
      */
     protected function _setHeaders($sResult, $sContentType = 'text/plain', $sEncoding = null)
     {
-        $oHeader = \project\service\header::instance();
+        $oHeader = \fan\project\service\header::instance();
         $oHeader->addHeader('length', strlen($sResult));
 
         if (!empty($sContentType)) {
             if (is_null($sEncoding)) {
-                $sEncoding = \core\service\locale::instance()->getCharacterSet();
+                $sEncoding = \fan\core\service\locale::instance()->getCharacterSet();
             }
             $oHeader->addHeader('contentType', $sContentType);
             if (!empty($sEncoding)) {
@@ -195,5 +195,5 @@ abstract class parser
         return $oHeader;
     } // function _setHeaders
 
-} // class \core\view\parser
+} // class \fan\core\view\parser
 ?>

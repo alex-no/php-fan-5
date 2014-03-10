@@ -1,4 +1,4 @@
-<?php namespace core\exception\template;
+<?php namespace fan\core\exception\template;
 /**
  * Exception a template fatal error
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class fatal extends  \core\exception\base
+class fatal extends  \fan\core\exception\base
 {
     /**
      * Exception's constructor
@@ -32,5 +32,5 @@ class fatal extends  \core\exception\base
 
         $this->_logByService($sLogMessage, 'Template\'s exception (' . get_class($oTemplate) . ').');
     }
-} // class \core\exception\template\fatal
+} // class \fan\core\exception\template\fatal
 ?>

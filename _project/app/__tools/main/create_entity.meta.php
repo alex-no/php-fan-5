@@ -1,7 +1,7 @@
 <?php
 /**
  * Create entity tools meta
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 return array(
     'own' => array(
@@ -14,7 +14,7 @@ return array(
         ),
 
         'embeddedBlocks' => array(
-            'entity_filter' => '{CAPP}/form/entity_filter',
+            'entity_filter' => 'form/entity_filter',
         ),
 
         'form' => array(

@@ -1,14 +1,14 @@
-<?php namespace app\__tools\main;
+<?php namespace fan\app\__tools\main;
 /**
  * create_entity block
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class create_entity extends \project\block\form\usual
+class create_entity extends \fan\project\block\form\usual
 {
 
     /**
      * Object of database-service
-     * @var \core\service\database
+     * @var \fan\core\service\database
      */
     protected $oDb = null;
 
@@ -26,7 +26,7 @@ class create_entity extends \project\block\form\usual
         $aTableList = array();
 
         $oReq = service('request');
-        /* @var $oReq \core\service\request */
+        /* @var $oReq \fan\core\service\request */
         $sCon  = $oReq->get('connection',   'G');
         $sNsPr = $oReq->get('ns_pref',      'G');
         $sRE   = $oReq->get('table_regexp', 'G');
@@ -50,7 +50,7 @@ class create_entity extends \project\block\form\usual
                 }
                 $aTableList = array_flip($aTableList);
                 ksort($aTableList);
-                $sSep  = \core\bootstrap\loader::DEFAULT_DIR_SEPARATOR;
+                $sSep  = \fan\core\bootstrap\loader::DEFAULT_DIR_SEPARATOR;
 
                 foreach ($aTableList as $sTableName => &$v) {
                     $sDir = $this->sEttDir . $sSep . $sTableName;
@@ -80,7 +80,7 @@ class create_entity extends \project\block\form\usual
     public function onSubmit()
     {
         $sNsPr = trim(service('request')->get('ns_pref', 'G'), '\\');
-        $sSep  = \core\bootstrap\loader::DEFAULT_DIR_SEPARATOR;
+        $sSep  = \fan\core\bootstrap\loader::DEFAULT_DIR_SEPARATOR;
         $aTbl = $this->getForm()->getFieldValue('tbl');
         if (!empty($aTbl)) {
             foreach ($aTbl as $sTableName => $v) {
@@ -94,7 +94,7 @@ class create_entity extends \project\block\form\usual
  * Entity of `' . $sTableName . '` table
  * @version 1.0
  */
-class entity extends \project\base\model\entity
+class entity extends \fan\project\base\model\entity
 {
 
     /*
@@ -117,7 +117,7 @@ class entity extends \project\base\model\entity
  * Row of `' . $sTableName . '` table' . $this->getMethodList($sTableName) . '
  * @version 1.0
  */
-class row extends \project\base\model\row
+class row extends \fan\project\base\model\row
 {
 
     /*
@@ -201,5 +201,5 @@ class row extends \project\base\model\row
     {
         return $this->oDb->getAll('DESCRIBE `' . $sTableName . '`');
     } // function getFields
-} // class \app\__tools\main\create_entity
+} // class \fan\app\__tools\main\create_entity
 ?>

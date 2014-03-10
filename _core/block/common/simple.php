@@ -1,4 +1,4 @@
-<?php namespace core\block\common;
+<?php namespace fan\core\block\common;
 /**
  * Base abstract simple block
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class simple extends \core\block\base
+abstract class simple extends \fan\core\block\base
 {
-} // class \core\block\common\simple
+} // class \fan\core\block\common\simple
 ?>

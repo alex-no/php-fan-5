@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Service Image Processor
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class image extends \core\base\service\multi
+class image extends \fan\core\base\service\multi
 {
     /**
      * @var array Service's Instances
@@ -91,7 +91,7 @@ class image extends \core\base\service\multi
      * If $sSourcePath isn't set - Get defaul instance
      * @param string $sSourcePath Create Path
      * @param string $aCreateParam Create parameters
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public static function instance($sSourcePath = null, $aCreateParam = array(), $bSaveInstance = true)
     {
@@ -114,7 +114,7 @@ class image extends \core\base\service\multi
      * Make image object from file and set input image parameters
      * @param string $sSourcePath Path to sourse image
      * @param array $aCreateParam array of image parameters (not required)
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function setSource($sSourcePath, $aCreateParam = array())
     {
@@ -164,7 +164,7 @@ class image extends \core\base\service\multi
     /**
      * Set parameter Image
      * @param array $aCreateParam Path to sourse image
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function setParam($aCreateParam)
     {
@@ -199,7 +199,7 @@ class image extends \core\base\service\multi
      * @param number $nHeight Height of scaling area
      * @param number $nFixRatio: 0 - not fix ratio, 1 - fix ratio (correct size), 2 - fix ratio (fill free area)
      * @param number $nBgrColor Background Color for fill free area (if $nFixRatio=2)
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function scal(&$nWidth, &$nHeight, $nFixRatio = 1, $nBgrColor = 0XFFFFFF)
     {
@@ -251,7 +251,7 @@ class image extends \core\base\service\multi
      * @param number $nWidth Width of scaling area
      * @param number $nWidth Width of scaling area
      * @param number $nBgrColor Background Color for fill free area (if $nFixRatio=2)
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function relocate(&$nWidth, &$nHeight, $nBgrColor = 0XFFFFFF)
     {
@@ -272,7 +272,7 @@ class image extends \core\base\service\multi
      * Drawing watermark
      * @param string $sMarkerMode mode of markering
      * @param number $nOpacity opacity of markering
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function markering($sMarkerMode = 'left_bottom', $nOpacity = 10)
     {
@@ -345,7 +345,7 @@ class image extends \core\base\service\multi
      * @param number $nTop Top point of cropping area
      * @param number $nWidth Width of cropping area
      * @param number $nHeight Height of cropping area
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function crop($nLeft, $nTop, $nWidth, $nHeight)
     {
@@ -377,7 +377,7 @@ class image extends \core\base\service\multi
      * @param number $nAngle Angle of rotate in degrees
      * @param number $nBgrColor Background color
      * @param number $nFix: 0 - not change size, 1-fix width, 2-fix height, 3-fix width and height
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function rotate($nAngle, $nBgrColor = 0xFFFFFF, $nFix = 0)
     {
@@ -408,7 +408,7 @@ class image extends \core\base\service\multi
      * @param number $nDepth Border width
      * @param number $nBgrColor Background color
      * @param number $nPos: 0 - outline border, 1 - inline
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function border($nDepth, $nBgrColor = 0x000000, $nPos = 0)
     {
@@ -435,7 +435,7 @@ class image extends \core\base\service\multi
      * @param number $nRedColor Adding Red color
      * @param number $nBlueColor Adding Blue color
      * @param number $nGreenColor Adding Green color
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function colorize($nRedColor, $nBlueColor, $nGreenColor)
     {
@@ -450,7 +450,7 @@ class image extends \core\base\service\multi
 
     /**
      * Blur Image
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function blur()
     {
@@ -460,7 +460,7 @@ class image extends \core\base\service\multi
 
     /**
      * Grayscale Image
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function grayscale()
     {
@@ -470,7 +470,7 @@ class image extends \core\base\service\multi
 
     /**
      * Sepia Image
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function sepia()
     {
@@ -482,7 +482,7 @@ class image extends \core\base\service\multi
     /**
      * Make color transparent
      * @param integer $nColor
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function transparent($nColor)
     {
@@ -549,7 +549,7 @@ class image extends \core\base\service\multi
     /**
      * Save as new Image
      * @param string $sNewFile Path to new image
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function saveAsNew($sNewFile)
     {
@@ -570,7 +570,7 @@ class image extends \core\base\service\multi
     /**
      * Save and replase current Image
      * @param string $sExt Additional extantion for save old image (null - it is not saved bakup)
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     public function saveAndReplace($sExt = 'bak')
     {
@@ -589,7 +589,7 @@ class image extends \core\base\service\multi
      * Set $nHeight and $nWidth if it is NULL
      * @param number $nWidth Width of image
      * @param number $nHeight Height of image
-     * @return \core\service\image
+     * @return \fan\core\service\image
      */
     private function _correctSize(&$nWidth, &$nHeight, $nOldWidth, $nOldHeight)
     {
@@ -601,5 +601,5 @@ class image extends \core\base\service\multi
         return $this;
     } // function _correctSize
 
-} // class \core\service\image
+} // class \fan\core\service\image
 ?>

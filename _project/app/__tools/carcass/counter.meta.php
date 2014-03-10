@@ -1,12 +1,12 @@
 <?php
 /**
  * Counter carcass meta
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 return array(
     'header' => array(
         'embeddedBlocks' => array(
-            'addMenu' => '{TOOLS_DESIGN}/menu_block/counter_submenu',
+            'addMenu' => 'design/menu_block/counter_submenu',
         ),
     ),
 );

@@ -1,4 +1,4 @@
-<?php namespace core\base\model\spec_file\image;
+<?php namespace fan\core\base\model\spec_file\image;
 /**
  * Entity of image file
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class entity extends \core\base\model\spec_file\entity
+abstract class entity extends \fan\core\base\model\spec_file\entity
 {
     /**
      * @var string RegExp for IMG placeholder
@@ -168,5 +168,5 @@ abstract class entity extends \core\base\model\spec_file\entity
         return ge($sEntityName)->getRowsetByParam($sKeyField . ' IN(' . implode(',', array_keys($aRepl)) . ')');
     }// function replaceCodeToImgTag
 
-} // class \core\base\model\spec_file\image\entity
+} // class \fan\core\base\model\spec_file\image\entity
 ?>

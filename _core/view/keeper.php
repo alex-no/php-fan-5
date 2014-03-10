@@ -1,4 +1,4 @@
-<?php namespace core\view;
+<?php namespace fan\core\view;
 /**
  * View data-keeper
  *
@@ -12,20 +12,20 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class keeper extends \core\base\data
+class keeper extends \fan\core\base\data
 {
     /**
-     * @var \core\view\router
+     * @var \fan\core\view\router
      */
     protected $oRouter;
 
     /**
      * View meta constructor
-     * @param core\block\base $oRouter
+     * @param fan\core\block\base $oRouter
      */
-    public function __construct(\core\view\router $oRouter)
+    public function __construct(\fan\core\view\router $oRouter)
     {
         $this->oRouter = $oRouter;
         $this->_setSetter($oRouter);
@@ -53,7 +53,7 @@ class keeper extends \core\base\data
      * @param mixed $mValue
      * @param boolean $bRewriteExisting - rewrite exists value
      * @param boolean $bConvArray - convert array to object of this class (null is true for Multi-Level data)
-     * @return \core\view\keeper
+     * @return \fan\core\view\keeper
      */
     public function set($mKey, $mValue, $bRewriteExisting = true, $bConvArray = null)
     {
@@ -67,7 +67,7 @@ class keeper extends \core\base\data
 
     /**
      * Clear view data
-     * @return \core\view\keeper
+     * @return \fan\core\view\keeper
      */
     public function clear()
     {
@@ -79,7 +79,7 @@ class keeper extends \core\base\data
 
     /**
      * Get router
-     * @return \core\view\router
+     * @return \fan\core\view\router
      */
     public function getRouter()
     {
@@ -88,12 +88,12 @@ class keeper extends \core\base\data
 
     /**
      * Get block-owner
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getBlock()
     {
         return $this->oRouter->getBlock();
     }
 
-} // class \core\view\keeper
+} // class \fan\core\view\keeper
 ?>

@@ -1,9 +1,9 @@
-<?php namespace app\__tools\design\menu;
+<?php namespace fan\app\__tools\design;
 /**
  * counter_submenu block for tools
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class counter_submenu extends \project\block\base
+class counter_submenu extends \fan\project\block\base
 {
 
     /**
@@ -21,7 +21,7 @@ class counter_submenu extends \project\block\base
         $this->sMainKey = $aMainRequest[0];
         $sCurrent = @$aMainRequest[1];
 
-        $this->setTemplateVar("sCurrent", $sCurrent);
+        $this->view->sCurrent = $sCurrent;
     }
 
     /**
@@ -35,5 +35,5 @@ class counter_submenu extends \project\block\base
         return $this->oTab->getURI("/" . $this->sMainKey . "/" . $sKey . $sAddUrl . ".html", "link", null, null);
     }
 
-} // class \app\__tools\design\menu\counter_submenu
+} // class \fan\app\__tools\design\counter_submenu
 ?>

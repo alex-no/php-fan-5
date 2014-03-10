@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Request service
  *
@@ -13,22 +13,22 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class request extends \core\base\service\single
+class request extends \fan\core\base\service\single
 {
     /**
      * @var array Requested data
      */
     private $aData = array(
-        'A' => null, // Add(itional) request (See \core\service\matcher\item\parsed)
-        'B' => null, // Both = Main request + Add request (See \core\service\matcher\item\parsed)
+        'A' => null, // Add(itional) request (See \fan\core\service\matcher\item\parsed)
+        'B' => null, // Both = Main request + Add request (See \fan\core\service\matcher\item\parsed)
         'C' => null, // Cookies:               $_COOKIE
         'E' => null, // Environment variables: $_ENV
         'F' => null, // Files (uploaded):      $_FILES
         'G' => null, // Get parameters:        $_GET
         'H' => null, // Headers
-        'M' => null, // Main request (See \core\service\matcher\item\parsed)
+        'M' => null, // Main request (See \fan\core\service\matcher\item\parsed)
         'O' => null, // Option list in CLI-mode
         'P' => null, // Post parameters:       $_POST
         'R' => null, // Request parameters:    $_REQUEST
@@ -62,14 +62,14 @@ class request extends \core\base\service\single
      * @var array
      */
     protected $aMakerIndex = array(
-        'A' => -1,
-        'B' => -1,
-        'G' => -1,
-        'M' => -1,
+        'A' => -2,
+        'B' => -2,
+        'G' => -2,
+        'M' => -2,
     );
 
     /**
-     * @var \core\service\matcher
+     * @var \fan\core\service\matcher
      */
     private $oMatcher = '';
 
@@ -87,7 +87,6 @@ class request extends \core\base\service\single
     {
         parent::__construct();
         $this->sOrder   = strtoupper($this->getConfig('DEFAULT_ORDER', 'PAG'));
-        $this->oMatcher = \project\service\matcher::instance();
 
         // Ses all basic data
         $bIsMQ = get_magic_quotes_gpc();
@@ -190,11 +189,12 @@ class request extends \core\base\service\single
      */
     public function getQueryString($bByGetData = true, $bCurrent =  true, $sSprtr = null)
     {
-        if ($bByGetData) {
-            $aGet = $bCurrent ? $this->getAll('G') : $_GET;
+        $oMatcher = $this->_getMatcher();
+        if ($bByGetData || empty($oMatcher)) {
+            $aGet = $bCurrent && !empty($oMatcher) ? $this->getAll('G') : $_GET;
             return http_build_query($aGet, '', ($sSprtr ? : '&'));
         }
-        $oItem = $bCurrent ? $this->oMatcher->getCurrentItem() : $this->oMatcher->getItem(0);
+        $oItem = $bCurrent ? $oMatcher->getCurrentItem() : $oMatcher->getItem(0);
         return ltrim($oItem->parsed->query, '?');
     } // function getQueryString
 
@@ -236,13 +236,14 @@ class request extends \core\base\service\single
      * Separate Data into array By $sOrder
      * @param string $sOrder
      * @return array
-     * @throws \project\exception\service\fatal
+     * @throws \fan\project\exception\service\fatal
      */
     protected function _separateData($sOrder)
     {
-        $aData  = array();
-        $sOrder = empty($sOrder) ? $this->sOrder : strtoupper($sOrder);
-        $nIndex = $this->oMatcher->getCurrentIndex();
+        $aData    = array();
+        $sOrder   = empty($sOrder) ? $this->sOrder : strtoupper($sOrder);
+        $oMatcher = $this->_getMatcher();
+        $nIndex   = empty($oMatcher) ? -1 : $oMatcher->getCurrentIndex();
 
         for ($i = 0; $i < strlen($sOrder); $i++) {
             $k = $sOrder{$i};
@@ -305,7 +306,7 @@ class request extends \core\base\service\single
      */
     protected function _makeAddRequest()
     {
-        $aAddRequest = $this->_getParsedData()->add_request ? : array();
+        $aAddRequest = $this->_getRequestData('add_request');
         foreach ($aAddRequest as $v) {
             $aTmp = explode($this->oConfig->get('ADD_REQUEST_DELIMITER', '-'), $v, 2);
             if (count($aTmp) == 2 && !isset($aAddRequest[$aTmp[0]])) {
@@ -321,7 +322,7 @@ class request extends \core\base\service\single
      */
     protected function _makeMainRequest()
     {
-        $aMainRequest = $this->_getParsedData()->main_request;
+        $aMainRequest = $this->_getRequestData('main_request');
         return empty($aMainRequest) ? array() : $aMainRequest;
     } // function _makeMainRequest
 
@@ -362,16 +363,30 @@ class request extends \core\base\service\single
      */
     protected function _makeCookies()
     {
-        return \project\service\cookie::instance()->getAll();
+        return \fan\project\service\cookie::instance()->getAll();
     } // function _makeCookies
 
     /**
-     * Get Parsed Data
-     * @return \core\service\matcher\item\parsed
+     * Get Parsed Request Data
+     * @param string $sProp
+     * @return array
      */
-    protected function _getParsedData()
+    protected function _getRequestData($sProp)
     {
-        return $this->oMatcher->getCurrentItem()->parsed;
-    } // function _getParsedData
-} // class \core\service\request
+        $oMatcher = $this->_getMatcher();
+        return $oMatcher ? $oMatcher->getCurrentItem()->parsed->$sProp : array();
+    } // function _getRequestData
+
+    /**
+     * Get object of Matcher
+     * @return \fan\core\service\matcher
+     */
+    protected function _getMatcher()
+    {
+        if (empty($this->oMatcher) && class_exists('\fan\core\service\matcher', false)) {
+            $this->oMatcher = \fan\project\service\matcher::instance();
+        }
+        return $this->oMatcher;
+    } // function _getMatcher
+} // class \fan\core\service\request
 ?>

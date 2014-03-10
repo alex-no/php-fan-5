@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.01.001 (29.09.2011)
  */
 if (!defined('BASE_DIR')) {
     define('BASE_DIR', dirname($_SERVER['SCRIPT_FILENAME']));

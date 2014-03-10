@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Description of matcher
  *
@@ -12,12 +12,12 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class matcher extends \core\base\service\single
+class matcher extends \fan\core\base\service\single
 {
     /**
-     * @var \core\service\matcher\stack Stack of requested URI
+     * @var \fan\core\service\matcher\stack Stack of requested URI
      */
     protected $oStack;
 
@@ -36,7 +36,7 @@ class matcher extends \core\base\service\single
      * Set Uniform Resource Indicator
      * @param string $sRequest
      * @param string $sHost
-     * @return \core\service\matcher
+     * @return \fan\core\service\matcher
      */
     public function setUri($sRequest, $sHost = null, $bShiftCurrent = true)
     {
@@ -45,6 +45,12 @@ class matcher extends \core\base\service\single
         return $this;
     } // function setUri
 
+    /**
+     * Set Command Line Interface
+     * @param type $sFile
+     * @param type $sPath
+     * @return \fan\core\service\matcher
+     */
     public function setCli($sFile, $sPath = null)
     {
         $this->oStack->setNewItem($sFile, $sPath, false);
@@ -74,7 +80,7 @@ class matcher extends \core\base\service\single
     // ============= Get Common Data ============= \\
     /**
      * Get Stack of Transfers
-     * @return \core\service\matcher\stack
+     * @return \fan\core\service\matcher\stack
      */
     public function getStack()
     {
@@ -84,20 +90,20 @@ class matcher extends \core\base\service\single
     /**
      * Get item of stack by number
      * @param integer $nNumber
-     * @return \core\service\matcher\item
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\matcher\item
+     * @throws \fan\project\exception\service\fatal
      */
     public function getItem($nNumber)
     {
         if (!isset($this->oStack[$nNumber])) {
-            throw new \project\exception\service\fatal($this, 'Requested item number "' . $nNumber . '" isn\'t set');;
+            throw new \fan\project\exception\service\fatal($this, 'Requested item number "' . $nNumber . '" isn\'t set');;
         }
         return $this->oStack[$nNumber];
     } // function getItem
 
     /**
      * Get Last item of stack
-     * @return \core\service\matcher\item
+     * @return \fan\core\service\matcher\item
      */
     public function getLastItem()
     {
@@ -106,7 +112,7 @@ class matcher extends \core\base\service\single
 
     /**
      * Get Current item of stack
-     * @return \core\service\matcher\item
+     * @return \fan\core\service\matcher\item
      */
     public function getCurrentItem()
     {
@@ -117,7 +123,7 @@ class matcher extends \core\base\service\single
     /**
      * Get URI by number
      * @param integer $nNumber
-     * @return \core\service\matcher\item\uri
+     * @return \fan\core\service\matcher\item\uri
      */
 
     public function getUri($nNumber)
@@ -128,7 +134,7 @@ class matcher extends \core\base\service\single
 
     /**
      * Get last URI
-     * @return \core\service\matcher\item\uri
+     * @return \fan\core\service\matcher\item\uri
      */
     public function getLastUri()
     {
@@ -137,7 +143,7 @@ class matcher extends \core\base\service\single
 
     /**
      * Get Current URI
-     * @return \core\service\matcher\item\uri
+     * @return \fan\core\service\matcher\item\uri
      */
     public function getCurrentUri()
     {
@@ -148,7 +154,7 @@ class matcher extends \core\base\service\single
     /**
      * Get Handler by number
      * @param integer $nNumber
-     * @return \core\service\matcher\item\handler
+     * @return \fan\core\service\matcher\item\handler
      */
     public function getHandler($nNumber)
     {
@@ -158,7 +164,7 @@ class matcher extends \core\base\service\single
 
     /**
      * Get Current Handler
-     * @return \core\service\matcher\item\handler
+     * @return \fan\core\service\matcher\item\handler
      */
     public function getCurrentHandler()
     {
@@ -169,7 +175,7 @@ class matcher extends \core\base\service\single
     /**
      * Get Parsed Data by number
      * @param integer $nNumber
-     * @return \core\service\matcher\item\parsed
+     * @return \fan\core\service\matcher\item\parsed
      */
     public function getParsedData($nNumber)
     {
@@ -179,7 +185,7 @@ class matcher extends \core\base\service\single
 
     /**
      * Get Last URI
-     * @return \core\service\matcher\item\parsed
+     * @return \fan\core\service\matcher\item\parsed
      */
     public function getLastParsedData()
     {
@@ -188,12 +194,12 @@ class matcher extends \core\base\service\single
 
     /**
      * Get Current URI
-     * @return \core\service\matcher\item\parsed
+     * @return \fan\core\service\matcher\item\parsed
      */
     public function getCurrentParsedData()
     {
         return $this->getParsedData($this->getCurrentIndex());
     } // function getCurrentParsedData
 
-} // class \core\service\matcher
+} // class \fan\core\service\matcher
 ?>

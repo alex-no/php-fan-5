@@ -1,4 +1,4 @@
-<?php namespace core\view\parser;
+<?php namespace fan\core\view\parser;
 /**
  * View parser Loader-type
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class loader extends \core\view\parser
+class loader extends \fan\core\view\parser
 {
     // ======== Static methods ======== \\
     /**
@@ -27,11 +27,11 @@ class loader extends \core\view\parser
 
     /**
      * Get View-Router for block
-     * @param \core\block\base $oBlock
-     * @return \core\view\router\simple
+     * @param \fan\core\block\base $oBlock
+     * @return \fan\core\view\router\simple
      */
-    static public function getRouter(\core\block\base $oBlock) {
-        return new \project\view\router\loader($oBlock);
+    static public function getRouter(\fan\core\block\base $oBlock) {
+        return new \fan\project\view\router\loader($oBlock);
     } // function getRouter
 
     // ======== The magic methods ======== \\
@@ -62,7 +62,7 @@ class loader extends \core\view\parser
      * Get Final Content Code
      * @return string
      */
-    public function getResultData(\core\block\base $oBlock)
+    public function getResultData(\fan\core\block\base $oBlock)
     {
         $oViewRouter = $oBlock->getView();
         $aTplResult  = $this->_getTplResult($oBlock);
@@ -78,7 +78,7 @@ class loader extends \core\view\parser
      * Get Final Content Code
      * @return string
      */
-    public function _getTplResult(\core\block\base $oBlock)
+    public function _getTplResult(\fan\core\block\base $oBlock)
     {
         $aTplVar = $oBlock->getView()->html->toArray();
 
@@ -89,5 +89,5 @@ class loader extends \core\view\parser
 
         return array($oBlock->getBlockName() => $this->_parseTemplate($oBlock, $aTplVar));
     } // function _getTplResult
-} // class \core\view\parser\loader
+} // class \fan\core\view\parser\loader
 ?>

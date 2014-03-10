@@ -1,4 +1,4 @@
-<?php namespace core\block\form;
+<?php namespace fan\core\block\form;
 /**
  * Usual form block abstract
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class usual extends \core\block\base
+abstract class usual extends \fan\core\block\base
 {
 
     /**
@@ -26,7 +26,7 @@ abstract class usual extends \core\block\base
 
     /**
      * Form service
-     * @var \core\service\form
+     * @var \fan\core\service\form
      */
     protected $oForm;
 
@@ -44,12 +44,12 @@ abstract class usual extends \core\block\base
 
     /**
      * Get service of form
-     * @return \core\service\form
+     * @return \fan\core\service\form
      */
     public function getForm()
     {
         if (empty($this->oForm)) {
-            $this->oForm = \project\service\form::instance($this);
+            $this->oForm = \fan\project\service\form::instance($this);
             $this->oForm->addListener('onSubmit', array($this, 'onSubmit'));
             $this->oForm->addListener('onError',  array($this, 'onError'));
         }
@@ -60,7 +60,7 @@ abstract class usual extends \core\block\base
      * Get Form Meta
      * @param string $mKey
      * @param mixed $mDefault
-     * @return \core\base\meta\row
+     * @return \fan\core\base\meta\row
      */
     public function getFormMeta($mKey = null, $mDefault = null)
     {
@@ -73,7 +73,7 @@ abstract class usual extends \core\block\base
 
     /**
      * Get Fields Meta
-     * @return \core\base\meta\row
+     * @return \fan\core\base\meta\row
      */
      public function getFieldsMeta()
     {
@@ -82,7 +82,7 @@ abstract class usual extends \core\block\base
 
     /**
      * Finish Construction of block
-     * @param \core\block\base $oContainer
+     * @param \fan\core\block\base $oContainer
      * @param array $aContainerMeta
      * @param boolean $bAllowSetEmbedded
      */
@@ -188,8 +188,8 @@ abstract class usual extends \core\block\base
                 $this->aFormTpl[$sFieldName]['label'] = empty($aParameters['label']) ? null : $aParameters['label'];
                 //value of the form element
                 //it can be an array. if it is, it's mean that may be a few elements with same name and different indexes
-                $this->aFormTpl[$sFieldName]['value'] = $oForm->getIsError() || isset($aFieldValue[$sFieldName]) ?
-                        $aFieldValue[$sFieldName] :
+                $this->aFormTpl[$sFieldName]['value'] = $oForm->isError() || isset($aFieldValue[$sFieldName]) ?
+                        array_val($aFieldValue, $sFieldName) :
                         empty($aParameters['default_value']) ? null : $aParameters['default_value'];
                 //parameters of the form element
                 $this->aFormTpl[$sFieldName]['parameters'] = empty($aParameters['parameters']) ? null : $aParameters['parameters'];
@@ -201,7 +201,7 @@ abstract class usual extends \core\block\base
         $aResult['aFormTpl'] = $this->aFormTpl;
         $sActionUrl = $this->getFormMeta('action_url');
         if(empty($sActionUrl)) {
-            $sActionUrl    = $this->oTab->getCurrentURI(true, true, strtoupper($this->getFormMeta('action_method')) != 'GET', true);
+            $sActionUrl    = $this->oTab->getCurrentURI(false, true, strtoupper($this->getFormMeta('action_method')) != 'GET', false);
             $sDefaultHttps = $this->oTab->getTabMeta('page_https');
         } else {
             $sDefaultHttps = null;
@@ -307,5 +307,5 @@ abstract class usual extends \core\block\base
         return $this->getForm()->parseForm($bParceEmpty, $bParsingCondition, $bAllowTransfer);
     } // function _parseForm
 
-} // class \core\block\form\usual
+} // class \fan\core\block\form\usual
 ?>

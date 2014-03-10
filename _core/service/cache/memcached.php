@@ -1,5 +1,5 @@
-<?php namespace core\service\cache;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\cache;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * ADOdb wrapper for template engine
  *
@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class memcached extends base
 {
@@ -43,5 +43,5 @@ class memcached extends base
 
     }
 
-} // class \core\service\cache\memcached
+} // class \fan\core\service\cache\memcached
 ?>

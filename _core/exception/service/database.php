@@ -1,4 +1,4 @@
-<?php namespace core\exception\service;
+<?php namespace fan\core\exception\service;
 /**
  * Exception an error 500
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class database extends fatal
 {
@@ -42,14 +42,14 @@ class database extends fatal
 
     /**
      * Exception's constructor
-     * @param \core\service\database $oDatabase
+     * @param \fan\core\service\database $oDatabase
      * @param numeric $nOperCode
      * @param string  $sOperMessage
      * @param numeric $nErrorCode
      * @param string  $sErrorMessage
      * @param string  $sParsedSql
      */
-    public function __construct(\core\service\database $oDatabase, $nOperCode, $sOperMessage, $nErrorCode, $sErrorMessage, $sParsedSql)
+    public function __construct(\fan\core\service\database $oDatabase, $nOperCode, $sOperMessage, $nErrorCode, $sErrorMessage, $sParsedSql)
     {
         $this->nOperCode    = $nOperCode;
         $this->sOperMessage = $sOperMessage;
@@ -101,14 +101,14 @@ class database extends fatal
     /**
      * Get Instance of service
      * @param string $sLogType
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     protected function _logErrorMessage($sLogType)
     {
         if ($this->nOperCode < 3) {
             parent::_logErrorMessage($sLogType);
         } elseif ($sLogType != 'nothing') {
-            \project\service\error::instance()->logDatabaseError(
+            \fan\project\service\error::instance()->logDatabaseError(
                     $this->oService->getConnectionName(),
                     $this->sOperMessage,
                     $this->sShowErrMsg,
@@ -119,5 +119,5 @@ class database extends fatal
         return $this;
     }
 
-} // class \core\exception\service\database
+} // class \fan\core\exception\service\database
 ?>

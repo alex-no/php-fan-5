@@ -1,4 +1,4 @@
-<?php namespace core\base\service;
+<?php namespace fan\core\base\service;
 /**
  * Base abstract service
  *
@@ -12,10 +12,10 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class single extends \core\base\service
+abstract class single extends \fan\core\base\service
 {
     /**
      * @var array service's Instances
@@ -60,7 +60,7 @@ abstract class single extends \core\base\service
     {
         $sClassName = self::checkName(get_class($this));
         if(isset(self::$aInstances[$sClassName])) {
-            throw new \project\exception\service\fatal($this, 'Dublicate of service init "' . $sClassName . '"');
+            throw new \fan\project\exception\service\fatal($this, 'Dublicate of service init "' . $sClassName . '"');
         }
         self::$aInstances[$sClassName] = $this;
         return $this;
@@ -69,5 +69,5 @@ abstract class single extends \core\base\service
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
 
-} // class \core\base\service\single
+} // class \fan\core\base\service\single
 ?>

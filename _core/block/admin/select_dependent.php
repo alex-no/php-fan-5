@@ -1,4 +1,4 @@
-<?php namespace core\block\admin;
+<?php namespace fan\core\block\admin;
 /**
  * Block admin select dependent
  *
@@ -12,14 +12,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class select_dependent extends base
 {
     /**
      * Block constructor
      * @param string $sBlockName Block Name
-     * @param service_tab $oTab
+     * @param \core\service\tab $oTab
      * /
     public function __construct($oTab, $sBasicFilePatch)
     {
@@ -59,5 +59,5 @@ class select_dependent extends base
         );
     } // function do_load_next_list
 
-} // class \core\block\admin\select_dependent
+} // class \fan\core\block\admin\select_dependent
 ?>

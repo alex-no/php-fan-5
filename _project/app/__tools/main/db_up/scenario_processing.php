@@ -1,9 +1,9 @@
-<?php namespace app\__tools\main\db_up;
+<?php namespace fan\app\__tools\main;
 /**
  * Scenario processing block
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class scenario_processing extends \project\block\common\simple
+class scenario_processing extends \fan\project\block\common\simple
 {
     /**
      * @var string Source meta file
@@ -18,7 +18,7 @@ class scenario_processing extends \project\block\common\simple
         if (!role('tools_access')) {
             return;
         }
-        
+
         require_once(dirname(__FILE__) . '/scenario.php');
 
         $this->sScenarioFile = service('request')->get('scenario', 'GP', null);
@@ -30,9 +30,9 @@ class scenario_processing extends \project\block\common\simple
         }
         if ($this->sScenarioFile) {
             $this->oTab->setOutputtingMethod($this, 'perform_db');
-            $this->setTemplateVar('bIsCorrect', 1);
+            $this->view->bIsCorrect = 1;
         } else {
-            $this->setTemplateVar('bIsCorrect', 0);
+            $this->view->bIsCorrect = 0;
         }
     }
 
@@ -50,5 +50,5 @@ class scenario_processing extends \project\block\common\simple
 
         echo $aCode[1];
     }
-} // class \app\__tools\main\db_up\scenario_processing
+} // class \fan\app\__tools\main\scenario_processing
 ?>

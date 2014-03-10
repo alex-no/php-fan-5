@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main;
+<?php namespace fan\app\frontend\main;
 /**
  * Test class index
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class index extends \project\block\common\simple
+class index extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -15,5 +15,5 @@ class index extends \project\block\common\simple
         $this->view->tests = $this->getMeta('tests');
     } // function init
 
-} // class \app\frontend\main\index
+} // class \fan\app\frontend\main\index
 ?>

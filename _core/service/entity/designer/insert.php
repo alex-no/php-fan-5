@@ -1,4 +1,4 @@
-<?php namespace core\service\entity\designer;
+<?php namespace fan\core\service\entity\designer;
 /**
  * Designer of SQL-request INSERT
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class insert extends \core\service\entity\designer
+class insert extends \fan\core\service\entity\designer
 {
     /**
      * SQL-request parts
@@ -35,7 +35,7 @@ class insert extends \core\service\entity\designer
     /**
      * Set parts of SQL-requests for Insert by parameters
      * @param array $mParam
-     * @return \core\service\entity\designer\insert
+     * @return \fan\core\service\entity\designer\insert
      */
     public function setInsertByParam($mParam)
     {
@@ -49,5 +49,5 @@ class insert extends \core\service\entity\designer
 
     // ======== Private/Protected methods ======== \\
 
-} // class \core\service\entity\designer\insert
+} // class \fan\core\service\entity\designer\insert
 ?>

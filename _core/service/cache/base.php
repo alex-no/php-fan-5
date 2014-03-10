@@ -1,5 +1,5 @@
-<?php namespace core\service\cache;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\cache;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Description of cache-engine base
  *
@@ -13,13 +13,13 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class base
 {
     /**
      * Facade of service
-     * @var core\base\service
+     * @var fan\core\base\service
      */
     protected $oFacade;
 
@@ -72,12 +72,12 @@ abstract class base
 
     /**
      * Constructor of cache-engine
-     * @param \core\base\service $oFacade
+     * @param \fan\core\base\service $oFacade
      * @param string $sType
      * @param string $sKey
      * @param array $aConfig
      */
-    public function __construct(\core\service\cache $oFacade, $sType, $sKey, $aConfig)
+    public function __construct(\fan\core\service\cache $oFacade, $sType, $sKey, $aConfig)
     {
         $this->setFacade($oFacade);
         $this->sType   = $sType;
@@ -119,7 +119,7 @@ abstract class base
      * Set data value
      * @param mixed $mValue
      * @param boolean $bAutoSave
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function set($mValue, $bAutoSave)
     {
@@ -136,7 +136,7 @@ abstract class base
     /**
      * Add Meta-data
      * @param array $mMetaData
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function addMeta($mMetaData)
     {
@@ -179,7 +179,7 @@ abstract class base
      * Set Extra Meta-data
      * @param string $sParam
      * @param mixed $mValue
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function setExtraMeta($sParam, $mValue)
     {
@@ -195,7 +195,7 @@ abstract class base
     /**
      * Set Lifetime
      * @param integer $iTime
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function setLifetime($iTime)
     {
@@ -207,7 +207,7 @@ abstract class base
     /**
      * Start time of create cache must be later than pointed
      * @param string $sDateTime
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function setStartLimit($sDateTime)
     {
@@ -231,7 +231,7 @@ abstract class base
 
     /**
      * Save cahe-data
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function save()
     {
@@ -244,7 +244,7 @@ abstract class base
 
     /**
      * Delete cahe-data
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function delete()
     {
@@ -257,7 +257,7 @@ abstract class base
     /**
      * Set Extra Path for cahce directory
      * @param type $sExtraPath
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      */
     public function setExtraPath($sExtraPath)
     {
@@ -285,10 +285,10 @@ abstract class base
 
     /**
      * Set Facade
-     * @param \core\base\service $oFacade
-     * @return \core\service\database\base
+     * @param \fan\core\base\service $oFacade
+     * @return \fan\core\service\database\base
      */
-    public function setFacade(\core\base\service $oFacade)
+    public function setFacade(\fan\core\base\service $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -356,7 +356,7 @@ abstract class base
     /**
      * Check Date Format
      * @param string $sDateTime
-     * @return \core\service\cache\base
+     * @return \fan\core\service\cache\base
      * @throws fatalException
      */
     protected function _checkDateFormat($sDateTime)
@@ -372,5 +372,5 @@ abstract class base
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\cache\base
+} // class \fan\core\service\cache\base
 ?>

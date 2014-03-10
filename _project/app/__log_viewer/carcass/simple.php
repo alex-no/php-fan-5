@@ -1,4 +1,4 @@
-<?php namespace app\__log_viewer\carcass;
+<?php namespace fan\app\__log_viewer\carcass;
 /**
  * empty_viewer_carcass block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.002
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class simple extends \project\block\carcass\common
+class simple extends \fan\project\block\carcass\common
 {
-} // class \app\__log_viewer\carcass\simple
+} // class \fan\app\__log_viewer\carcass\simple
 ?>

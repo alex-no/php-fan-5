@@ -1,12 +1,12 @@
 <?php
 /**
  * Carcass with db_connection meta
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 return array(
     'header' => array(
         'embeddedBlocks' => array(
-            'addMenu' => '{TOOLS_DESIGN}/menu_block/db_connection_submenu',
+            'addMenu' => 'design/menu_block/db_connection_submenu',
         ),
     ),
 );

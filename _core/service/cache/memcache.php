@@ -1,5 +1,5 @@
-<?php namespace core\service\cache;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service\cache;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * ADOdb wrapper for template engine
  *
@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.004 (31.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class memcache extends base
 {
@@ -74,7 +74,7 @@ class memcache extends base
             if (!class_exists('\Memcache')) {
                 $sErrMsg = 'Memcache doesn\'t setup there.';
                 if ($this->sType == 'config') {
-                    throw new \core\exception\fatal($sErrMsg);
+                    throw new \fan\core\exception\fatal($sErrMsg);
                 } else {
                     throw new fatalException($this->oFacade, $sErrMsg);
                 }
@@ -98,5 +98,5 @@ class memcache extends base
         return $this->sType . '-' . $this->sKey . '-' . $sSuffix;
     }
 
-} // class \core\service\cache\memcache
+} // class \fan\core\service\cache\memcache
 ?>

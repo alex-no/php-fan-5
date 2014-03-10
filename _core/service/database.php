@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Database manager service
  *
@@ -13,9 +13,9 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.005 (14.01.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class database extends \core\base\service\multi
+class database extends \fan\core\base\service\multi
 {
     /**
      * @var array Service's Instances
@@ -24,13 +24,13 @@ class database extends \core\base\service\multi
 
     /**
      * Index of Current instance
-     * @var \core\service\database
+     * @var \fan\core\service\database
      */
     private static $oCurrentInstance;
 
     /**
      * Index of Default instance
-     * @var \core\service\database
+     * @var \fan\core\service\database
      */
     private static $oDefaultInstance;
 
@@ -43,12 +43,12 @@ class database extends \core\base\service\multi
     protected $sConnectionName;
 
     /**
-     * @var \core\service\database\base Current Engine
+     * @var \fan\core\service\database\base Current Engine
      */
     protected $oEngine = null;
 
     /**
-     * @var \core\exception\service\database Database exception
+     * @var \fan\core\exception\service\database Database exception
      */
     protected $oException = null;
 
@@ -100,7 +100,7 @@ class database extends \core\base\service\multi
             }
             if (empty($this->sErrorMessage)) {
                 $oTmp = $oConfig->get(array('DATABASE', $sConnectionName));
-                if ($oTmp instanceof \core\service\config\row) {
+                if ($oTmp instanceof \fan\core\service\config\row) {
                     $aParam = $oTmp->toArray();
                 } else {
                     $this->sErrorMessage = 'Can\'t find Parameters for connection name: "' . $sConnectionName . '"';
@@ -125,7 +125,7 @@ class database extends \core\base\service\multi
         $this->oEngine = new $sClass($this, $aParam);
         $this->oEngine->reconnect($aParam, true);
 
-        if(!$this->getIsError()) {
+        if(!$this->isError()) {
             $sScenario = isset($aParam['SCENARIO']) ? $aParam['SCENARIO'] : $oConfig->get('DEFAULT_SCENARIO');
             if ($sScenario) {
                 $this->runScenario($sScenario);
@@ -148,7 +148,7 @@ class database extends \core\base\service\multi
      * If $sConnectionName isn't set - Get defaul instance
      * @param string $sConnectionName Connection name
      * @param string $nExtraKey Allow to create alternate connection
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public static function instance($sConnectionName = null, $nExtraKey = 0)
     {
@@ -170,7 +170,7 @@ class database extends \core\base\service\multi
      *
      * @param type $aParam
      * @param type $nExtraKey
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public static function instanceByParam($aParam, $nExtraKey = 0)
     {
@@ -205,11 +205,11 @@ class database extends \core\base\service\multi
 
     /**
      * Get current Service's instance
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public static function getCurrentInstance()
     {
-        return self::$oCurrentInstance ? self::$oCurrentInstance : \project\service\database::instance();
+        return self::$oCurrentInstance ? self::$oCurrentInstance : \fan\project\service\database::instance();
     } // function getCurrentInstance
 
     /**
@@ -279,7 +279,7 @@ class database extends \core\base\service\multi
      * Set Result Types for methods: execute, getRow, getAll, getAllLimit
      * Possible values: MYSQL_ASSOC, MYSQL_NUM, MYSQL_BOTH
      * @param type $iResultType
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function setResultTypes($iResultType = MYSQL_ASSOC)
     {
@@ -304,14 +304,14 @@ class database extends \core\base\service\multi
      * Return flag of error: true if is Error
      * @return boolean
      */
-    public function getIsError()
+    public function isError()
     {
         return $this->bIsError;
-    } // function getIsError
+    } // function isError
 
     /**
      * Reset error flag
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function resetError()
     {
@@ -324,7 +324,7 @@ class database extends \core\base\service\multi
 
     /**
      * Start transaction
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function startTransaction()
     {
@@ -337,7 +337,7 @@ class database extends \core\base\service\multi
 
     /**
      * Set Autostart Transaction for Modification SQL
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function setAutoTransaction($bAutoTransaction)
     {
@@ -360,7 +360,7 @@ class database extends \core\base\service\multi
 
     /**
      * Commit transaction
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function commit()
     {
@@ -375,7 +375,7 @@ class database extends \core\base\service\multi
      * Rollback current transaction
      * @param string $sSavePoint
      * @param boolean $bSetError
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function rollback($sSavePoint = null, $bSetError = true)
     {
@@ -388,7 +388,7 @@ class database extends \core\base\service\multi
             $this->bIsError      = true;
             $this->sErrorMessage = 'ROLLBACK';
         }
-        //\project\service\entity::fullClearEntity();
+        //\fan\project\service\entity::fullClearEntity();
         return $this;
     } // function rollback
 
@@ -396,7 +396,7 @@ class database extends \core\base\service\multi
      * Run Scenario from Config-file
      * @param type $sScenario
      * @param type $aData
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function runScenario($sScenario, $aData = array())
     {
@@ -607,21 +607,21 @@ class database extends \core\base\service\multi
 
     /**
      * Fix information about Error
-     * @param \core\service\database\base $oEngine
+     * @param \fan\core\service\database\base $oEngine
      * @param boolean $bMakeException
-     * @return \core\service\database
-     * @throws \core\exception\service\database
+     * @return \fan\core\service\database
+     * @throws \fan\core\exception\service\database
      */
-    public function fixError(\core\service\database\base $oEngine, $bMakeException)
+    public function fixError(\fan\core\service\database\base $oEngine, $bMakeException)
     {
-        $oErr = \project\service\error::instance();
-        /* @var $oErr \core\service\error */
+        $oErr = \fan\project\service\error::instance();
+        /* @var $oErr \fan\core\service\error */
         $aErrData = $oEngine->getErrorData();
         if (!empty($aErrData) && empty($this->oException)) {
             $this->bIsError      = true;
             $this->sErrorMessage = $aErrData['err_msg'];
             if ($bMakeException) {
-                $this->oException = new \project\exception\service\database(
+                $this->oException = new \fan\project\exception\service\database(
                         $this,
                         $aErrData['oper_code'],
                         $aErrData['oper_msg'],
@@ -690,7 +690,7 @@ class database extends \core\base\service\multi
     {
         $aMatches = array();
         if ($this->getConfig('SQL_LNG_CORRECTION', true) && preg_match_all('/\W(\{((?:\w+\.)?\`?\w+)(\`?)\})\W/', $sSql, $aMatches, PREG_SET_ORDER)) {
-            $oSL = \project\service\locale::instance();
+            $oSL = \fan\project\service\locale::instance();
             $sLngCur = '_' . $oSL->getLanguage();
             $sLngDef = '_' . $oSL->getDefaultLanguage();
 
@@ -709,8 +709,8 @@ class database extends \core\base\service\multi
     /**
      * Check SQL-request
      * @param string $sSql
-     * @return \core\service\database
-     * @throws \core\exception\service\database
+     * @return \fan\core\service\database
+     * @throws \fan\core\exception\service\database
      * @throws fatalException
      */
     protected function _checkSql($sSql)
@@ -748,13 +748,13 @@ class database extends \core\base\service\multi
 
             $oConfig = $this->oConfig;
             if ($oConfig['LOG_MORE_THAN'] && $nTime * 1000 >= $oConfig['LOG_MORE_THAN']) {
-                \project\service\log::instance()->logMessage('sql_execute', $sMsg, 'SQL overtime', $sSql);
+                \fan\project\service\log::instance()->logMessage('sql_execute', $sMsg, 'SQL overtime', $sSql);
             }
             if ($oConfig['MAIL_MORE_THAN'] && $nTime * 1000 >= $oConfig['MAIL_MORE_THAN']) {
-                \project\service\error::instance()->makeErrorEmail('overtime', 'SQL overtime', $sMsg . '<br /><br />' . $sSql);
+                \fan\project\service\error::instance()->makeErrorEmail('overtime', 'SQL overtime', $sMsg . '<br /><br />' . $sSql);
             }
         }
     } // function _fixExecuteTime
 
-} // class \core\service\database
+} // class \fan\core\service\database
 ?>

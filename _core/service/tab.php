@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Class of tab handler
  *
@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -21,7 +21,7 @@ use project\exception\service\fatal as fatalException;
  * @method string addQuery() addQuery(string $sUrn, string $sKey, string $sVal)
  * @method string getDefaultExtension() getDefaultExtension()
  */
-class tab extends \core\base\service\single
+class tab extends \fan\core\base\service\single
 {
     /**
      *  Marker of URN application prefix
@@ -46,13 +46,13 @@ class tab extends \core\base\service\single
     );
 
     /**
-     * @var \core\service\matcher
+     * @var \fan\core\service\matcher
      */
     protected $oMatcher = null;
 
     /**
      * View Type definder
-     * @var \core\view\definer
+     * @var \fan\core\view\definer
      */
     protected $oViewDefiner = null;
     /**
@@ -68,28 +68,28 @@ class tab extends \core\base\service\single
 
     /**
      * Current parsed data
-     * @var \core\service\matcher\item\parsed
+     * @var \fan\core\service\matcher\item\parsed
      */
     protected $aCurrentData = null;
 
     /**
      * Last parsed data
-     * @var \core\service\matcher\item\parsed
+     * @var \fan\core\service\matcher\item\parsed
      */
     protected $aLastData = null;
 
     /**
-     * @var \core\block\base Main Tab block
+     * @var \fan\core\block\base Main Tab block
      */
     protected $oMainBlock = null;
 
     /**
-     * @var \core\block\base Root Tab block
+     * @var \fan\core\block\base Root Tab block
      */
     protected $oRootBlock = null;
 
     /**
-     * @var \core\block\base Current (performent at this time) Tab block
+     * @var \fan\core\block\base Current (performent at this time) Tab block
      */
     protected $oCurrentBlock = null;
 
@@ -169,7 +169,7 @@ class tab extends \core\base\service\single
     protected function __construct($bAllowIni = true)
     {
         parent::__construct($bAllowIni);
-        $this->oMatcher = \project\service\matcher::instance();
+        $this->oMatcher = \fan\project\service\matcher::instance();
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -180,14 +180,14 @@ class tab extends \core\base\service\single
      */
     public static function getContent()
     {
-        return \project\service\tab::instance()->_controlTabTransfer()->mContent;
+        return \fan\project\service\tab::instance()->_controlTabTransfer()->mContent;
     }
 
     // ======== Main Interface methods ======== \\
 
     /**
      * Get Current Content Block
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getMainBlock()
     {
@@ -205,7 +205,7 @@ class tab extends \core\base\service\single
 
     /**
      * Get Current Root Block
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getRootBlock()
     {
@@ -214,12 +214,12 @@ class tab extends \core\base\service\single
 
     /**
      * Get View Definer
-     * @return \core\view\definer
+     * @return \fan\core\view\definer
      */
     public function getViewDefiner()
     {
         if(empty($this->oViewDefiner)) {
-            $this->oViewDefiner = new \project\view\definer($this->oConfig->get('VIEW_DEFINER', array())->toArray());
+            $this->oViewDefiner = new \fan\project\view\definer($this->oConfig->get('VIEW_DEFINER', array())->toArray());
         }
         return $this->oViewDefiner;
     } // function getViewDefiner
@@ -234,10 +234,10 @@ class tab extends \core\base\service\single
 
     /**
      * Check is Block "Root" or "Main"
-     * @param \core\block\base $oBlock
+     * @param \fan\core\block\base $oBlock
      * @return array
      */
-    public function checkBlockStatus(\core\block\base $oBlock)
+    public function checkBlockStatus(\fan\core\block\base $oBlock)
     {
         return array($oBlock == $this->oRootBlock, $oBlock == $this->oMainBlock);
     } // function checkBlockStatus
@@ -297,7 +297,7 @@ class tab extends \core\base\service\single
             } while (false);
 
             if ($bAllowTransfer) {
-                $oServSes = \project\service\session::instance();
+                $oServSes = \fan\project\service\session::instance();
                 $sExpire_URL = $oServSes->isExpired() && !$this->getTabMeta('notRedirectByExpire', false) ? $this->oConfig['EXPIRE_URL'] : null;
 
                 if ($sExpire_URL) {
@@ -319,9 +319,27 @@ class tab extends \core\base\service\single
     } // function checkTabRoles
 
     /**
+     * Load by path (from meta-data)
+     * Return class of block
+     * @param string $sPath
+     * @return string
+     */
+    public function loadBlock($sPath)
+    {
+        if ($sPath{0} != '{') {
+            $sPath = '{CAPP}/' . $sPath;
+        }
+        if (substr($sPath, -4) != '.php') {
+            $sPath .= '.php';
+        }
+        $oLoader = \bootstrap::getLoader();
+        return $oLoader->loadBlockByPath($sPath);
+    } // function loadBlock
+
+    /**
      * Set Current Block
-     * @param \core\block\base $oBlock
-     * @return \core\service\tab
+     * @param \fan\core\block\base $oBlock
+     * @return \fan\core\service\tab
      */
     public function setCurrentBlock($oBlock)
     {
@@ -331,7 +349,7 @@ class tab extends \core\base\service\single
 
     /**
      * Get Current Block
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getCurrentBlock()
     {
@@ -342,8 +360,8 @@ class tab extends \core\base\service\single
      * Set Tab Block
      * @param type $oBlock
      * @param type $sName
-     * @return \core\service\tab
-     * @throws \project\exception\service\fatal
+     * @return \fan\core\service\tab
+     * @throws \fan\project\exception\service\fatal
      */
     public function setTabBlock($oBlock, $sName)
     {
@@ -363,7 +381,7 @@ class tab extends \core\base\service\single
      * Get Tab Block object
      * @param sting $sBlockName - name of block
      * @param boolean $bAllowException - Allow Exception if name of block is incorrect
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     public function getTabBlock($sBlockName, $bAllowException = true)
     {
@@ -401,7 +419,7 @@ class tab extends \core\base\service\single
     public function isDebugAllowed()
     {
         if (is_null($this->bAllowDebug)) {
-            $aDebugConfig      = \project\service\config::instance()->get('debug');
+            $aDebugConfig      = \fan\project\service\config::instance()->get('debug');
             $this->bAllowDebug = $aDebugConfig['ENABLED'] && $aDebugConfig['DEBUG_IP'] && !empty($_SERVER['SERVER_ADDR']) && preg_match($aDebugConfig['DEBUG_IP'], $_SERVER['SERVER_ADDR']);
         }
         return $this->bAllowDebug;
@@ -423,7 +441,7 @@ class tab extends \core\base\service\single
     /**
      * @param numeric $nFileTime
      * @param numeric $nExpireTime
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     public function setFileTime($nFileTime, $nExpireTime)
     {
@@ -444,7 +462,7 @@ class tab extends \core\base\service\single
     } // function getCacheMode
     /**
      * Disable Cache
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     public function disableCache()
     {
@@ -464,14 +482,13 @@ class tab extends \core\base\service\single
         $nMaxQttTransfer = $this->getConfig('MAX_QTT_TRANSFER', 10);
         do {
             try {
-                // Preparing Tab-property
+                // Preparing Tab-property. Parse error of request and set Main block
                 $this->_resetProperty()
                      ->_parseError();
 
                 if (empty($this->mContent)) {
-                    // Define Main Block. Set Tab meta. Check Tab Roles
-                    $this->_setMainBlock($this->aLastData['class'])
-                         ->_setTabMeta()
+                    // Set Tab meta. Check Tab Roles
+                    $this->_setTabMeta()
                          ->checkTabRoles();
 
                     // Set View Class. Set Meta data for Other block by Main block. Set Default Meta by View-type. Make Tab-content.
@@ -482,7 +499,7 @@ class tab extends \core\base\service\single
                 }
 
                 return $this;
-            } catch (\core\base\transfer $e) {
+            } catch (\fan\core\base\transfer $e) {
                 // Catch and make transfer
                 $sTransferType = $e->getTransferType();
 
@@ -491,7 +508,7 @@ class tab extends \core\base\service\single
 
                 // Out transfer
                 if ($sTransferType == 'out') {
-                    \project\service\header::instance()->sendLocation($sUri);
+                    \fan\project\service\header::instance()->sendLocation($sUri);
                 }
 
                 $this->oMatcher->setUri($sUri, $e->getHost(), $e->isShiftCurrent());
@@ -508,7 +525,7 @@ class tab extends \core\base\service\single
 
     /**
      * Reset Tab property for new content
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     protected function _resetProperty()
     {
@@ -521,7 +538,7 @@ class tab extends \core\base\service\single
         $this->aInitOrder   = array();
         $this->sViewClass   = null;
         $this->mContent     = '';
-        $this->sAppName     = \project\service\application::instance()->getAppName();
+        $this->sAppName     = \fan\project\service\application::instance()->getAppName();
         $this->aCurrentData = $this->oMatcher->getCurrentParsedData();
         $this->aLastData    = $this->oMatcher->getLastParsedData();
         return $this;
@@ -529,7 +546,7 @@ class tab extends \core\base\service\single
 
     /**
      * Parse Error of Request to Tab
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     public function _parseError()
     {
@@ -542,50 +559,47 @@ class tab extends \core\base\service\single
         if (!empty($aMainRequest)) {
             $sFile = $this->aLastData['file'];
             if (!empty($sFile)) {
-                if (file_exists($sFile)) {
-                    $sProjectDir = \bootstrap::getLoader()->project;
-                    if (substr($sFile, 0, strlen($sProjectDir)) != $sProjectDir) {
-                        throw new fatalException($this, 'File "' . $sFile . '" is placed out of Project Dir');
-                    }
-                    include_once $sFile;
-                } else {
+                $oLoader = \bootstrap::getLoader();
+                if (!$oLoader->loadBlockByPath($sFile)) {
                     $this->mContent = $this->_parseError404(true);
                     return $this;
                 }
             }
         }
-        if (!class_exists($this->aLastData['class'], false)) {
-            $this->mContent = $this->_parseError500('Class "' . $this->aLastData['class'] . '" isn\'t found.');
-        }
+        // Define Main Block.
+        $this->_setMainBlock();
         return $this;
     } // function _parseError
 
     /**
      * Get Tab Content
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     public function _makeContent()
     {
         // Start creating blocks
         $this->sStage = 'creating';
         $nStartTime   = microtime(true);
-        $this->_createBlocks();
-        $this->aTimesStamp['creating'] = microtime(true) - $nStartTime;
+        if ($this->_createRootBlock()) {
+            $this->aTimesStamp['creating'] = microtime(true) - $nStartTime;
 
-        // Init data blocks
-        $this->sStage = 'init';
-        $this->_initBlocks($this->_getInitBlocks());
+            // Init data blocks
+            $this->sStage = 'init';
+            $this->_initBlocks($this->_getInitBlocks());
 
-        // Additional init for base blocks
-        $this->sStage = 'after_init';
-        $this->_runAfterInit();
+            // Additional init for base blocks
+            $this->sStage = 'after_init';
+            $this->_runAfterInit();
 
-        $nInitTime = microtime(true);
+            $nInitTime = microtime(true);
 
-        // Get output Content
-        $this->sStage   = 'output';
-        $this->mContent = $this->_getFinalContent($this->oRootBlock);
-        $this->_fixPerformance($nStartTime, $nInitTime);
+            // Get output Content
+            $this->sStage   = 'output';
+            $this->mContent = $this->_getFinalContent($this->oRootBlock);
+            $this->_fixPerformance($nStartTime, $nInitTime);
+        } else {
+            $this->mContent = $this->_parseError500('Root block isn\'t defined.');
+        }
 
         return $this;
     } // function _makeContent
@@ -593,14 +607,14 @@ class tab extends \core\base\service\single
     /**
      * Set View Class
      * @param string $sViewClass
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     protected function _setViewClass($sViewClass)
     {
         if (empty($sViewClass)) {
             throw new fatalException($this, 'Type of view can\'t be empty.');
         }
-        $sClass = '\project\view\parser\\' . $sViewClass;
+        $sClass = '\fan\project\view\parser\\' . $sViewClass;
         if (!class_exists($sClass, true)) {
             throw new fatalException($this, 'Class "' . $sClass . '" isn\'t found. Please check your "View definer"');
         }
@@ -609,20 +623,24 @@ class tab extends \core\base\service\single
     } // function _setViewClass
 
     /**
-     * Create Blocks
-     * @return \core\service\tab
+     * Create Root Block
+     * @return boolean
      */
-    protected function _createBlocks()
+    protected function _createRootBlock()
     {
-        $aRootMeta        = $this->_getRootMeta();
-        $this->oRootBlock = $this->_defineRootBlock($aRootMeta);
-        return $this;
-    } // _createBlocks
+        $aRootMeta  = $this->_getRootMeta();
+        $oRootBlock = $this->_defineRootBlock($aRootMeta);
+        if (empty($oRootBlock)) {
+            return false;
+        }
+        $this->oRootBlock = $oRootBlock;
+        return true;
+    } // _createRootBlock
 
     /**
      * Init Blocks
      * @param array $aInitOrderBlock
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     protected function _initBlocks($aInitOrderBlock)
     {
@@ -651,7 +669,7 @@ class tab extends \core\base\service\single
     } // _initBlocks
     /**
      * Additional init for "main", "carcass" and "root"
-     * @return \core\service\tab
+     * @return \fan\core\service\tab
      */
     protected function _runAfterInit()
     {
@@ -668,61 +686,66 @@ class tab extends \core\base\service\single
 
     /**
      * Get Final View Content
-     * @param \core\block\base $oRootBlock
+     * @param \fan\core\block\base $oRootBlock
      * @return string
      */
-    protected function _getFinalContent(\core\block\base $oRootBlock)
+    protected function _getFinalContent(\fan\core\block\base $oRootBlock)
     {
         $nDebugMode = $this->_getDebugMode();
         if ($nDebugMode > 0) {
-            $sClass = '\project\view\parser\\' . ($nDebugMode == 1 && $this->oMainBlock->getViewType() == 'html' ? 'debug1' : 'debug2');
+            $sClass = '\fan\project\view\parser\\' . ($nDebugMode == 1 && $this->oMainBlock->getViewType() == 'html' ? 'debug1' : 'debug2');
         } else {
             $sClass = $this->getViewClass();
             if ($this->isDebugAllowed()) {
-                $oDebug = \project\service\debug::instance();
-                /* @var $oDebug \core\service\debug */
+                $oDebug = \fan\project\service\debug::instance();
+                /* @var $oDebug \fan\core\service\debug */
                 $oDebug->setExtFiles($oRootBlock, 0);
             }
         }
-        /* @var $oViewParser \core\view\parser */
+        /* @var $oViewParser \fan\core\view\parser */
         $oViewParser = new $sClass($this->oMainBlock);
         $oViewParser->startParsing($oRootBlock);
         return $oViewParser->getFinalContent();
     } // function _getFinalContent
 
     /**
-     *
+     * Define Root Block
      * @param array $aRootMeta
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
     protected function _defineRootBlock($aRootMeta)
     {
         $aDefaultMeta = $this->getDefaultMeta();
-        $sRootClass = $this->getTabMeta(
+        $sRootPath = $this->getTabMeta(
                 'root',
                 isset($aDefaultMeta['main']['root']) ? $aDefaultMeta['main']['root'] : null
             );
-        $sCarcassClass = $this->getTabMeta(
+        $sCarcassPath = $this->getTabMeta(
                 'carcass',
                 isset($aDefaultMeta['main']['carcass']) ? $aDefaultMeta['main']['carcass'] : null
             );
 
         $sBlockName = 'root';
-        if (empty($sRootClass)) {
-            $sRootClass      = $sCarcassClass;
-            $sCarcassClass   = null;
-            $sBlockName = 'carcass';
+        if (empty($sRootPath)) {
+            $sRootPath    = $sCarcassPath;
+            $sCarcassPath = null;
+            $sBlockName   = 'carcass';
         }
 
-        if (empty($sRootClass)) {
+        if (empty($sRootPath)) {
             $this->oMainBlock->finishConstruct(null, $aRootMeta, true);
             return $this->oMainBlock;
         }
 
-        if (empty($sCarcassClass)) {
+        if (empty($sCarcassPath)) {
             $aRootMeta['own']['embeddedBlocks']['main'] = '{MAIN}';
         } elseif (!isset($aRootMeta['own']['embeddedBlocks']['carcass'])) {
-            $aRootMeta['own']['embeddedBlocks']['carcass'] = $sCarcassClass;
+            $aRootMeta['own']['embeddedBlocks']['carcass'] = $sCarcassPath;
+        }
+
+        $sRootClass = $this->loadBlock($sRootPath);
+        if (empty($sRootClass)) {
+            return null;
         }
 
         $oRootBlock = new $sRootClass($sBlockName, $this, null, $aRootMeta, true);
@@ -761,7 +784,7 @@ class tab extends \core\base\service\single
      */
     protected function _parseError403()
     {
-        \project\service\header::instance()->error403(false);
+        \fan\project\service\header::instance()->error403(false);
         if (!in_array(403, self::$aErrTransfer)) {
             array_push(self::$aErrTransfer, 403);
             $sUrn = $this->getConfig('error_403', self::URN_AP . '/error403');
@@ -779,7 +802,7 @@ class tab extends \core\base\service\single
      */
     protected function _parseError404($bForse)
     {
-        \project\service\header::instance()->error404(false);
+        \fan\project\service\header::instance()->error404(false);
         if (empty($bForse) && empty(self::$aErrTransfer)) {
             array_push(self::$aErrTransfer, 404);
             $sUrn = $this->getConfig('error_404', self::URN_AP . '/error404');
@@ -798,16 +821,16 @@ class tab extends \core\base\service\single
     protected function _parseError500($sErrorLog = null)
     {
         if (!empty($sErrorLog)) {
-            \project\service\error::instance()->logErrorMessage($sErrorLog, 'Tab Error');
+            \fan\project\service\error::instance()->logErrorMessage($sErrorLog, 'Tab Error');
         }
-        \project\service\header::instance()->error500(false);
+        \fan\project\service\header::instance()->error500(false);
         if (!in_array(500, self::$aErrTransfer)) {
             array_push(self::$aErrTransfer, 500);
             $sUrn = $this->getConfig('error_500', self::URN_AP . '/error500');
             transfer_sham($this->_getPathWithExt($sUrn));
         }
 
-        $oRunner    = \bootstrap::getRunner();
+        $oRunner = \bootstrap::getRunner();
         return $oRunner->showError(array(), 'error_500', false);
     } // function _parseError500
 
@@ -823,12 +846,17 @@ class tab extends \core\base\service\single
 
     /**
      * Set Current Main Content Block
-     * @param string $sClass
-     * @return \core\block\base
+     * @return \fan\core\block\base
      */
-    protected function _setMainBlock($sClass)
+    protected function _setMainBlock()
     {
-        $this->oMainBlock = new $sClass('main', $this, null, null, false);
+        $aMainRequest = $this->aLastData['main_request'];
+        $sClass = \bootstrap::getLoader()->loadBlockByMR($this->sAppName, $aMainRequest);
+        if (empty($sClass)) { // ToDo: check it!
+            $this->mContent = $this->_parseError500('Main class for Main Request "' . implode('/', $aMainRequest) . '" isn\'t found.');
+        } else {
+            $this->oMainBlock = new $sClass('main', $this, null, null, false);
+        }
         return $this;
     } // function _setMainBlock
 
@@ -867,8 +895,8 @@ class tab extends \core\base\service\single
     {
         $nDebugMode = 0;
         if ($this->isDebugAllowed()) {
-            $oSR    = \project\service\request::instance();
-            $oSC    = \project\service\cookie::instance();
+            $oSR    = \fan\project\service\request::instance();
+            $oSC    = \fan\project\service\cookie::instance();
             $sKey   = $this->getConfig('debug_key', 'debug');
             $nDebug = $oSR->get($sKey, 'PGC', 0);
             if (in_array($nDebug, array(1, 2, 10, 20))) {
@@ -916,5 +944,5 @@ class tab extends \core\base\service\single
 
     // ======== The magic methods ======== \\
 
-} // class \core\service\tab
+} // class \fan\core\service\tab
 ?>

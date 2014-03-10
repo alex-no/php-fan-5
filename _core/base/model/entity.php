@@ -1,5 +1,5 @@
-<?php namespace core\base\model;
-use project\exception\model\entity\fatal as fatalException;
+<?php namespace fan\core\base\model;
+use fan\project\exception\model\entity\fatal as fatalException;
 /**
  * Entity - table data
  *
@@ -12,10 +12,10 @@ use project\exception\model\entity\fatal as fatalException;
  * Do not remove this comment if you want to use script!
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
- * @property-read \core\service\entity\description $description
- * @property-read \core\base\model\request $request
+ * @property-read \fan\core\service\entity\description $description
+ * @property-read \fan\core\base\model\request $request
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class entity
 {
@@ -33,26 +33,26 @@ abstract class entity
 
     /**
      * Service of entity
-     * @var \core\service\config\row
+     * @var \fan\core\service\config\row
      */
     protected $oConfig = null;
     /**
      * Service of entity
-     * @var \core\service\entity
+     * @var \fan\core\service\entity
      */
     protected $oService = null;
     /**
      * Service of entity
-     * @var \core\service\database
+     * @var \fan\core\service\database
      */
     protected $oConnection = null;
     /**
-     * Connection Name for \core\service\database
+     * Connection Name for \fan\core\service\database
      * @var string
      */
     protected $sConnectionName = null;
     /**
-     * Connection Key for \core\service\database
+     * Connection Key for \fan\core\service\database
      * @var string
      */
     protected $nConnectionKey = null;
@@ -64,12 +64,12 @@ abstract class entity
 
     /**
      * Description of table of current Entity
-     * @var \core\service\entity\description
+     * @var \fan\core\service\entity\description
      */
     protected $oDescription = null;
     /**
      * Loader of SQL-request
-     * @var \core\base\model\request
+     * @var \fan\core\base\model\request
      */
     protected $oRequest = null;
 
@@ -101,16 +101,16 @@ abstract class entity
      *   'connectionName', 'connectionKey', 'cacheEnabled',
      *   'tableName', 'primeryKey', 'fields', 'keys', 'relations',
      *   ''
-     * @param \core\service\entity $oService
+     * @param \fan\core\service\entity $oService
      * @param type $aParam
      */
-    public function __construct(\core\service\entity $oService, $sName, $aParam = array())
+    public function __construct(\fan\core\service\entity $oService, $sName, $aParam = array())
     {
         $this->oService  = $oService;
         $this->sName     = $sName;
 
         $this->aBakParam = $aParam;
-        $this->oConfig   = \project\service\config::instance('entity')->getEntityConfig($this, $sName);
+        $this->oConfig   = \fan\project\service\config::instance('entity')->getEntityConfig($this, $sName);
 
         $this->_setConnectionParam($aParam);
 
@@ -155,7 +155,7 @@ abstract class entity
      * Get Row By Id (array, scalar value OR object with convert to string)
      * @param mixed $mRowId
      * @param boolean $bIdIsEncrypt
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getRowById($mRowId, $bIdIsEncrypt = false)
     {
@@ -172,7 +172,7 @@ abstract class entity
      * @param mixed $mParam
      * @param number $nOffset
      * @param string $sOrderBy
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getRowByParam($mParam = null, $nOffset = 0, $sOrderBy = null)
     {
@@ -186,7 +186,7 @@ abstract class entity
      * @param array $aLoadParam
      * @param array $amSaveParam
      * @param boolean $bSaveNew
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getRowOrCreate($aLoadParam = null, $aSaveParam = array(), $bSaveNew = true)
     {
@@ -203,7 +203,7 @@ abstract class entity
      * @param mixed $mParam Assotiative array of field names and values
      * @param number $nOffset line
      * @param string $sOrderBy Select order
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getRowByKey($sQueryKey, $mParam = null, $nOffset = 0, $sOrderBy = null)
     {
@@ -212,11 +212,11 @@ abstract class entity
     } // function getRowByKey
 
     /**
-     * Get Row By the SQL-request (string OR \core\service\entity\designer) and Parameters
-     * @param string|\core\service\entity\designer $mQuery
+     * Get Row By the SQL-request (string OR \fan\core\service\entity\designer) and Parameters
+     * @param string|\fan\core\service\entity\designer $mQuery
      * @param mixed $mParam Assotiative array of field names and values
      * @param number $nOffset line
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      */
     public function getRowByQuery($mQuery, $mParam = null, $nOffset = 0)
     {
@@ -232,7 +232,7 @@ abstract class entity
      * @param number $nQtt Quantity of rows (-1 - no limit)
      * @param number $nOffset line
      * @param string $sOrderBy Select order
-     * @return \core\base\model\rowset
+     * @return \fan\core\base\model\rowset
      */
     public function getRowsetByParam($mParam = null, $nQtt = -1, $nOffset = -1, $sOrderBy = '')
     {
@@ -248,7 +248,7 @@ abstract class entity
      * @param number $nQtt Quantity of rows (-1 - no limit)
      * @param number $nOffset line
      * @param string $sOrderBy Select order
-     * @return \core\base\model\rowset
+     * @return \fan\core\base\model\rowset
      */
     public function getRowsetByKey($sQueryKey, $mParam = null, $nQtt = -1, $nOffset = -1, $sOrderBy = '')
     {
@@ -257,12 +257,12 @@ abstract class entity
     } // function getRowsetByKey
 
     /**
-     * Get Rowset By the SQL-request (string OR \core\service\entity\designer) and Parameters
-     * @param string|\core\service\entity\designer $mQuery
+     * Get Rowset By the SQL-request (string OR \fan\core\service\entity\designer) and Parameters
+     * @param string|\fan\core\service\entity\designer $mQuery
      * @param mixed $mParam Assotiative array of field names and values
      * @param number $nQtt Quantity of rows (-1 - no limit)
      * @param number $nOffset line
-     * @return \core\base\model\rowset
+     * @return \fan\core\base\model\rowset
      */
     public function getRowsetByQuery($mQuery, $mParam = null, $nQtt = -1, $nOffset = -1)
     {
@@ -297,7 +297,7 @@ abstract class entity
 
     /**
      * Get count records by parameters
-     * @param string|\core\service\entity\designer $mQuery
+     * @param string|\fan\core\service\entity\designer $mQuery
      * @param mixed $mParam Assotiative array of field names and values
      * @return integer
      */
@@ -306,14 +306,14 @@ abstract class entity
         list($sQuery, $aNewParam) = $this->_getSqlAsString($mQuery, $mParam);
         // ToDo: Take account of Union
         $aMatches = array();
-        if (preg_match_all('/\s+ORDER\s+BY\s+.*/', $sQuery, $aMatches)) {
+        if (preg_match_all('/\s+ORDER\s+BY\s+[^)]*$/', $sQuery, $aMatches)) {
             $sQuery = str_replace(end($aMatches[0]), '', $sQuery);
         }
 
         $sMethod = $this->oConfig['COUNT_METHOD'];
         if (empty($sMethod)) {
-            /* @var $oGlobalConf \core\service\config\row */
-            $oGlobalConf = \project\service\config::instance('entity')->get('common');
+            /* @var $oGlobalConf \fan\core\service\config\row */
+            $oGlobalConf = \fan\project\service\config::instance('entity')->get('common');
             $sMethod = $oGlobalConf->get('DEFAULT_COUNT_METHOD', 'SUBQUERY');
         }
 
@@ -342,7 +342,7 @@ abstract class entity
      * Get Array of parameters By Id (Id as array, scalar value OR object with converting to string)
      * @param mixed $mRowId
      * @param boolean $bIdIsEncrypt
-     * @return \core\base\model\row
+     * @return \fan\core\base\model\row
      * @throws fatalException
      */
     public function getParamById($mRowId, $bIdIsEncrypt = false)
@@ -390,7 +390,7 @@ abstract class entity
 
     /**
      * Get link to DATA as Array by the SQL-request and Parameters
-     * @param string|\core\service\entity\designer $mQuery
+     * @param string|\fan\core\service\entity\designer $mQuery
      * @param mixed $mParam
      * @param numeric $nQtt
      * @param numeric $nOffset
@@ -413,7 +413,7 @@ abstract class entity
      * Set the SQL-query by key
      * @param string $sQueryKey SQL-key
      * @param string $sValue
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function setSQL($sQueryKey, $sValue)
     {
@@ -432,12 +432,12 @@ abstract class entity
     /**
      * Get Snippety SQL-designer
      * @param string $sQueryKey SQL-key
-     * @return \core\service\entity\designer\snippety
+     * @return \fan\core\service\entity\designer\snippety
      */
     public function getSnippetyDesigner($sQueryKey)
     {
         $oDesigner = $this->getDesigner('snippety');
-        /* @var $oDesigner \core\service\entity\designer\snippety */
+        /* @var $oDesigner \fan\core\service\entity\designer\snippety */
         $oDesigner->setSqlRequest($sQueryKey);
         return $oDesigner;
     } // function getSnippetyDesigner
@@ -446,7 +446,7 @@ abstract class entity
      * Set Connection of entity
      * @param type $mConnection
      * @param type $nExtraKey
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function setConnection($mConnection = null, $nExtraKey = 0)
     {
@@ -458,8 +458,8 @@ abstract class entity
             if (empty($nExtraKey)) {
                 $nExtraKey = $this->nConnectionKey;
             }
-            $oConnection = \project\service\database::instance($mConnection, $nExtraKey);
-        } elseif (is_object($mConnection) && $mConnection instanceof \core\service\database) {
+            $oConnection = \fan\project\service\database::instance($mConnection, $nExtraKey);
+        } elseif (is_object($mConnection) && $mConnection instanceof \fan\core\service\database) {
             $oConnection = $mConnection;
         } else {
             throw new fatalException($this, 'Incorrect connection.');
@@ -471,7 +471,7 @@ abstract class entity
     } // function setConnection
     /**
      * Get Connection of entity
-     * @return \core\service\database
+     * @return \fan\core\service\database
      */
     public function getConnection()
     {
@@ -484,7 +484,7 @@ abstract class entity
     /**
      * Set Name of Connection
      * @param string $sConnectionName
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function setConnectionName($sConnectionName)
     {
@@ -503,7 +503,7 @@ abstract class entity
     /**
      * Set Extra key of Connection
      * @param mixed $nConnectionKey
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     public function setConnectionKey($nConnectionKey)
     {
@@ -547,7 +547,7 @@ abstract class entity
 
     /**
      * Get Service of Entity
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
     public function getService()
     {
@@ -557,7 +557,7 @@ abstract class entity
      * Get Config of Entity
      * @param string $sKey
      * @param null $mDefault
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
     public function getConfig($sKey = null, $mDefault = null)
     {
@@ -567,7 +567,7 @@ abstract class entity
     /**
      * Get SQL-designer
      * @param string $sType
-     * @return \core\service\entity\designer
+     * @return \fan\core\service\entity\designer
      */
     public function getDesigner($sType = 'select')
     {
@@ -576,7 +576,7 @@ abstract class entity
 
     /**
      * Get Entity table Description
-     * @return \core\service\entity\description
+     * @return \fan\core\service\entity\description
      */
     public function getDescription($aParam = array())
     {
@@ -588,7 +588,7 @@ abstract class entity
     /**
      * Get Request Loader
      * @param array $aSQL
-     * @return \core\base\model\request
+     * @return \fan\core\base\model\request
      */
     public function getRequestLoader($aSQL = array())
     {
@@ -706,7 +706,7 @@ abstract class entity
     /**
      * Set Connection Parameters
      * @param array $aParam
-     * @return \core\base\model\entity
+     * @return \fan\core\base\model\entity
      */
     protected function _setConnectionParam($aParam)
     {
@@ -715,7 +715,7 @@ abstract class entity
         } else {
             $sConnectionName = $this->oConfig['CONNECTION'];
             while (empty($sConnectionName)) {
-                $aGlobalConf = \project\service\config::instance('entity')->get('common');
+                $aGlobalConf = \fan\project\service\config::instance('entity')->get('common');
                 if (isset($aGlobalConf['CONNECTIONS'])) {
                     $sPrefix = trim($this->getService()->getNsPrefix(), '\\');
                     $nLen    = strlen($sPrefix);
@@ -763,35 +763,35 @@ abstract class entity
             $sClassName = $sPrefix . $sName . '\\' . $sKey;
         }
         if (empty($sClassName) || !class_exists($sClassName)) {
-            $sClassName = '\project\base\model\\' . $sKey;
+            $sClassName = '\fan\project\base\model\\' . $sKey;
         }
 
         $oReflection = new \ReflectionClass($sClassName);
         do {
-            if($oReflection->getName() == 'core\base\model\\' . $sKey) {
+            if($oReflection->getName() == 'fan\core\base\model\\' . $sKey) {
                 return $sClassName;
             }
             $oReflection = $oReflection->getParentClass();
         } while(!empty($oReflection));
 
-        throw new fatalException($this, 'Class "' . $sClassName . '" must be instance of "\core\base\model\\' . $sKey . '".');
+        throw new fatalException($this, 'Class "' . $sClassName . '" must be instance of "\fan\core\base\model\\' . $sKey . '".');
     } // function _getClassName
 
     /**
      * Get Sql-request as String
-     * @param string|\core\service\entity\designer $mQuery
+     * @param string|\fan\core\service\entity\designer $mQuery
      * @param mixed $mParam
      * @return string
      * @throws fatalException
      */
     protected function _getSqlAsString($mQuery, $mParam)
     {
-        if (is_object($mQuery) && $mQuery instanceof \core\service\entity\designer) {
+        if (is_object($mQuery) && $mQuery instanceof \fan\core\service\entity\designer) {
             return array($mQuery->assemble($mParam), $mQuery->getAdjustedParam());
         } elseif (!is_string($mQuery)) {
             return array($mQuery, $mParam);
         }
         throw new fatalException($this, 'Incorrect format of SQL-request.');
     } // function _getSqlAsString
-} // class \core\base\model\entity
+} // class \fan\core\base\model\entity
 ?>

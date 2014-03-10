@@ -1,4 +1,4 @@
-<?php  namespace core\service\database;
+<?php namespace fan\core\service\database;
 /**
  *
  *
@@ -13,7 +13,7 @@
  *
  * @author: Otchenashenko Sergey (dinvisible@gmail.com)
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.006 (11.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 class mysql extends base
 {
@@ -405,5 +405,5 @@ class mysql extends base
         return $sSql;
     } // function _parseSql
 
-} // class \core\service\database\mysql
+} // class \fan\core\service\database\mysql
 ?>

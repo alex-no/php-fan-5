@@ -1,4 +1,4 @@
-<?php namespace core\base\model\spec_file;
+<?php namespace fan\core\base\model\spec_file;
 /**
  * Row of special files
  *
@@ -12,14 +12,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
-abstract class row extends \core\base\model\row
+abstract class row extends \fan\core\base\model\row
 {
     /**
      * Entity File Data
-     * @var \core\base\model\file_data\row
+     * @var \fan\core\base\model\file_data\row
      */
     protected $oEntityFile = null;
 
@@ -132,5 +132,5 @@ abstract class row extends \core\base\model\row
     {
         return $this->getEntityFile()->checkIsOwner();
     }// function checkIsOwner
-} // class \core\base\model\spec_file\entity
+} // class \fan\core\base\model\spec_file\entity
 ?>

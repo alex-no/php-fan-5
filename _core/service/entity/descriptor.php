@@ -1,4 +1,4 @@
-<?php namespace core\service\entity;
+<?php namespace fan\core\service\entity;
 /**
  * Description of descriptor
  *
@@ -12,18 +12,18 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class descriptor
 {
     /**
      * Description object
-     * @var \core\service\entity\description
+     * @var \fan\core\service\entity\description
      */
     protected $oDescription = null;
     /**
      * Connection to database
-     * @var \core\service\database
+     * @var \fan\core\service\database
      */
     protected $oConnection = null;
 
@@ -33,7 +33,7 @@ abstract class descriptor
      */
     protected $sTableName = null;
 
-    public function __construct(\core\service\entity\description $oDescription)
+    public function __construct(\fan\core\service\entity\description $oDescription)
     {
         $this->oDescription = $oDescription;
         $this->oConnection  = $oDescription->getEntity()->getConnection();
@@ -80,5 +80,5 @@ abstract class descriptor
      */
     abstract public function getComment();
     // ======== Private/Protected methods ======== \\
-} // class \core\service\entity\descriptor
+} // class \fan\core\service\entity\descriptor
 ?>

@@ -1,4 +1,4 @@
-<?php namespace core\service\form\validator;
+<?php namespace fan\core\service\form\validator;
 /**
  * Base class of validators
  *
@@ -12,27 +12,27 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 abstract class base
 {
     /**
      * Form config
-     * @var \core\service\form
+     * @var \fan\core\service\form
      */
     protected $oFacade;
 
     /**
      * Form config
-     * @var \core\service\config\row
+     * @var \fan\core\service\config\row
      */
     protected $oConfig;
 
     /**
      * Set Facade
-     * @param \core\service\form $oFacade
+     * @param \fan\core\service\form $oFacade
      */
-    public function setFacade(\core\service\form $oFacade)
+    public function setFacade(\fan\core\service\form $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -40,5 +40,5 @@ abstract class base
         }
         return $this;
     } // function setFacade
-} // class \core\service\form\validator\base
+} // class \fan\core\service\form\validator\base
 ?>

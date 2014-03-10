@@ -1,4 +1,4 @@
-<?php namespace core\service\matcher\item;
+<?php namespace fan\core\service\matcher\item;
 /**
  * Separated URI data
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  *
  * @property string $scheme
  * @property string $host
@@ -38,5 +38,5 @@ class cli extends base
     public function __toString() {
         return $this->aData['path'] . '/' . $this->aData['file'] . (empty($this->aData['argv']) ? '' : ' ' . implode(' ', $this->aData['argv']));
     }
-} // class \core\service\matcher\item\cli
+} // class \fan\core\service\matcher\item\cli
 ?>

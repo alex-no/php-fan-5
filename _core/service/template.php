@@ -1,4 +1,4 @@
-<?php namespace core\service;
+<?php namespace fan\core\service;
 /**
  * Template manager service
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class template extends \core\base\service\single
+class template extends \fan\core\base\service\single
 {
     /**
      * Constant of PCRE for plain code
@@ -72,7 +72,7 @@ return $sReturnHtmlVal;}
     /**
      * Get object of block template
      * @param string $sTemplatePath
-     * @param \core\block\base $mBlock
+     * @param \fan\core\block\base $mBlock
      * @param string $sParent
      * @return template_base
      */
@@ -151,7 +151,7 @@ return $sReturnHtmlVal;}
     /**
      * Get Attributes of Class
      * @param string $sTemplatePath
-     * @param \core\block\base $mBlock
+     * @param \fan\core\block\base $mBlock
      * @return array
      */
     protected function _getClassAttributes($sTemplatePath, $mBlock)
@@ -265,5 +265,5 @@ return $sReturnHtmlVal;}
     {
         return '\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $sData) . '\'';
     } // function addSlashes
-} // class \core\service\template
+} // class \fan\core\service\template
 ?>

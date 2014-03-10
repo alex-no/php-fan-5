@@ -1,4 +1,4 @@
-<?php namespace core\service\entity\descriptor;
+<?php namespace fan\core\service\entity\descriptor;
 /**
  * Description of descriptor
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001
+ * @version of file: 05.02.001 (10.03.2014)
  */
-abstract class mysql extends \core\service\entity\descriptor
+abstract class mysql extends \fan\core\service\entity\descriptor
 {
     /**
      * Info about fields
@@ -79,7 +79,7 @@ abstract class mysql extends \core\service\entity\descriptor
     /**
      * Reset Default Value
      * @param array $aField
-     * @return \core\service\entity\descriptor
+     * @return \fan\core\service\entity\descriptor
      */
     protected function _resetDefaultVal(&$aField)
     {
@@ -101,5 +101,5 @@ abstract class mysql extends \core\service\entity\descriptor
         return $this->aSrcKeys;
     } // function _getKeys
 
-} // class \core\service\entity\descriptor\mysql
+} // class \fan\core\service\entity\descriptor\mysql
 ?>

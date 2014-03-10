@@ -1,5 +1,5 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Class of plain handler
  *
@@ -13,20 +13,20 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class plain extends \core\base\service\single
+class plain extends \fan\core\base\service\single
 {
 
     /**
      * Instance of matcher
-     * @var \core\service\matcher
+     * @var \fan\core\service\matcher
      */
     protected $oMatcher = null;
 
     /**
      * Used Application Names
-     * @var \core\service\plain\base
+     * @var \fan\core\service\plain\base
      */
     protected $oController = null;
 
@@ -63,7 +63,7 @@ class plain extends \core\base\service\single
     protected function __construct($bAllowIni = true)
     {
         parent::__construct($bAllowIni);
-        $this->oMatcher = \project\service\matcher::instance();
+        $this->oMatcher = \fan\project\service\matcher::instance();
         //$oTmp = $this->oMatcher->getCurrentItem()->handler->toArray();
     } // function __construct
 
@@ -77,7 +77,7 @@ class plain extends \core\base\service\single
      */
     public static function getContent($sKey, $sControllerClass, $sMethod)
     {
-        $oInstance = \project\service\plain::instance();
+        $oInstance = \fan\project\service\plain::instance();
         return $oInstance->_setController($sKey, $sControllerClass)->_getFinalContent($sMethod);
     }
 
@@ -87,7 +87,7 @@ class plain extends \core\base\service\single
      * Set value of Header for current stack
      * @param string $sKey
      * @param string $mValue
-     * @return \core\service\plain
+     * @return \fan\core\service\plain
      * @throws fatalException
      */
     public function setHeader($sKey, $mValue)
@@ -103,7 +103,7 @@ class plain extends \core\base\service\single
      * Set Error Message
      * @param string $sErrMsg
      * @param numeric $nErrCode
-     * @return \core\service\plain
+     * @return \fan\core\service\plain
      * @throws fatalException
      */
     public function setErrorMessage($sErrMsg, $nErrCode = 404)
@@ -154,7 +154,7 @@ class plain extends \core\base\service\single
     /**
      * Set Engine for plain output
      * @param string $sControllerClass
-     * @return \core\service\plain
+     * @return \fan\core\service\plain
      * @throws fatalException
      */
     protected function _setController($sControllerKey, $sControllerClass)
@@ -164,7 +164,7 @@ class plain extends \core\base\service\single
         }
         $this->oController = new $sControllerClass($this, $sControllerKey);
         if (method_exists($this->oController, 'setConfig')) {
-            $oConfig = \core\service\config::instance('plain')->getControllerConfig($this->oController, $sControllerKey);
+            $oConfig = \fan\core\service\config::instance('plain')->getControllerConfig($this->oController, $sControllerKey);
             $this->oController->setConfig($oConfig);
         }
         return $this;
@@ -172,13 +172,13 @@ class plain extends \core\base\service\single
 
     protected function _assignHeaders()
     {
-        \project\service\header::instance()->setHeaders($this->aHeaders);
+        \fan\project\service\header::instance()->setHeaders($this->aHeaders);
         return $this;
     } // function _assignHeaders
 
     /**
      * Set value of Headers by current stack
-     * @return \core\service\plain
+     * @return \fan\core\service\plain
      */
     protected function _defineErrorHeaders()
     {
@@ -200,5 +200,5 @@ class plain extends \core\base\service\single
 
     // ======== Required Interface methods ======== \\
 
-} // class \core\service\plain
+} // class \fan\core\service\plain
 ?>

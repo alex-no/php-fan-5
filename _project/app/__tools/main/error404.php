@@ -1,9 +1,9 @@
-<?php namespace app\__tools\main;
+<?php namespace fan\app\__tools\main;
 /**
  * Error 404 class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class error404 extends \project\block\error\error404
+class error404 extends \fan\project\block\error\error404
 {
     /**
      * Init block data
@@ -12,5 +12,5 @@ class error404 extends \project\block\error\error404
     {
         $this->setViewVars('Error 404', 'Such page is\'t available.', 'Page is\'t available.');
     } // function init
-} // class \app\__tools\main\error404
+} // class \fan\app\__tools\main\error404
 ?>

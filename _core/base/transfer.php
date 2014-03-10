@@ -1,4 +1,4 @@
-<?php namespace core\base;
+<?php namespace fan\core\base;
 /**
  * Base abstract service
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.007 (23.02.2014)
+ * @version of file: 05.02.001 (10.03.2014)
  * @abstract
  */
 abstract class transfer extends \Exception
@@ -41,7 +41,7 @@ abstract class transfer extends \Exception
         $this->sNewUrn = $sNewUrn;
         $this->sNewQueryString = $sNewQueryString;
         if ($sDbOper) {
-            \project\service\database::fixAll($sDbOper, false);
+            \fan\project\service\database::fixAll($sDbOper, false);
         }
         parent::__construct($this->sTransferType, E_USER_NOTICE);
     }
@@ -101,5 +101,5 @@ abstract class transfer extends \Exception
         return $this->sNewQueryString;
     } // function getNewQueryString
 
-} // class \core\base\transfer
+} // class \fan\core\base\transfer
 ?>

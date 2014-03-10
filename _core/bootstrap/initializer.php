@@ -1,4 +1,4 @@
-<?php namespace core\bootstrap;
+<?php namespace fan\core\bootstrap;
 /**
  * Description of initializer
  *
@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
 
 class initializer
@@ -72,7 +72,7 @@ class initializer
     public function initAfterLoader()
     {
         set_error_handler('handleError');
-        $oMatcher = \project\service\matcher::instance();
+        $oMatcher = \fan\project\service\matcher::instance();
         if (\bootstrap::isCli()) {
             $aPathParts = pathinfo($GLOBALS['argv'][0]);
             $oMatcher->setCli($aPathParts['basename'], $aPathParts['dirname']);
@@ -167,5 +167,5 @@ class initializer
         return null;
     } // function _setPhpConf
 
-} // class \core\bootstrap\initializer
+} // class \fan\core\bootstrap\initializer
 ?>

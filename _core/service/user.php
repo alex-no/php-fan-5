@@ -1,6 +1,6 @@
-<?php namespace core\service;
-use project\exception\service\fatal as fatalException;
-use \project\exception\error500 as error500;
+<?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
+use \fan\project\exception\error500 as error500;
 /**
  * user manager service
  *
@@ -14,7 +14,7 @@ use \project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.003 (23.12.2013)
+ * @version of file: 05.02.001 (10.03.2014)
  * @method mixed getId()
  * @method string getLogin()
  * @method string getNickName()
@@ -31,28 +31,28 @@ use \project\exception\error500 as error500;
  * @method string getJoinDate()
  * @method string getVisitDate()
  * @method array|object getAllData()
- * @method \core\service\user setLogin()     setLogin(string $sLogin)
- * @method \core\service\user setNickName()  setNickName(string $sNickName)
- * @method \core\service\user setFirstName() setFirstName(string $sFirstName)
- * @method \core\service\user setLastName()  setLastName(string $sLastName)
- * @method \core\service\user setTitle()     setTitle(string $sTitle)
- * @method \core\service\user setGender()    setGender(string $sGender)
- * @method \core\service\user setEmail()     setEmail(string $sEmail)
- * @method \core\service\user setPhone()     setPhone(string $sPhone)
- * @method \core\service\user setLocale()    setLocale(string $sLocale)
- * @method \core\service\user setAddress()   setAddress(string|array $aAddress)
- * @method \core\service\user setStatus()    setStatus(string $sStatus)
- * @method \core\service\user setVisitDate() setVisitDate(string $sDate)
- * @method \core\service\user setPassword()  setPassword(string $sPassword)
+ * @method \fan\core\service\user setLogin()     setLogin(string $sLogin)
+ * @method \fan\core\service\user setNickName()  setNickName(string $sNickName)
+ * @method \fan\core\service\user setFirstName() setFirstName(string $sFirstName)
+ * @method \fan\core\service\user setLastName()  setLastName(string $sLastName)
+ * @method \fan\core\service\user setTitle()     setTitle(string $sTitle)
+ * @method \fan\core\service\user setGender()    setGender(string $sGender)
+ * @method \fan\core\service\user setEmail()     setEmail(string $sEmail)
+ * @method \fan\core\service\user setPhone()     setPhone(string $sPhone)
+ * @method \fan\core\service\user setLocale()    setLocale(string $sLocale)
+ * @method \fan\core\service\user setAddress()   setAddress(string|array $aAddress)
+ * @method \fan\core\service\user setStatus()    setStatus(string $sStatus)
+ * @method \fan\core\service\user setVisitDate() setVisitDate(string $sDate)
+ * @method \fan\core\service\user setPassword()  setPassword(string $sPassword)
  * @method string getPassword()
  * @method boolean checkPassword(string $sPassword)
- * @method \core\service\user load()
- * @method \core\service\user save()
+ * @method \fan\core\service\user load()
+ * @method \fan\core\service\user save()
  * @method boolean isValid()
  * @method boolean isNew()
  * @method boolean isChanged()
  */
-class user extends \core\base\service\multi implements \Serializable
+class user extends \fan\core\base\service\multi implements \Serializable
 {
     /**
      *
@@ -65,12 +65,12 @@ class user extends \core\base\service\multi implements \Serializable
     private static $aInstances = array();
 
     /**
-     * @var \core\service\session
+     * @var \fan\core\service\session
      */
     private static $oSession = null;
 
     /**
-     * @var \core\service\user[]
+     * @var \fan\core\service\user[]
      */
     private static $aCurrentUsers = null;
 
@@ -90,7 +90,7 @@ class user extends \core\base\service\multi implements \Serializable
     protected $mIdentifyer = null;
 
     /**
-     * @var \core\service\user\base
+     * @var \fan\core\service\user\base
      */
     protected $oUserData = null;
 
@@ -148,7 +148,7 @@ class user extends \core\base\service\multi implements \Serializable
      * Get instance of service of user
      * @param mixed $mIdentifyer Identifyer of user
      * @param string $sUserSpace
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public static function instance($mIdentifyer, $sUserSpace = null)
     {
@@ -165,7 +165,7 @@ class user extends \core\base\service\multi implements \Serializable
 
     /**
      * Check Logout condition and return current user OR null
-     * @return null|\core\service\user
+     * @return null|\fan\core\service\user
      */
     public static function checkLogout()
     {
@@ -174,7 +174,7 @@ class user extends \core\base\service\multi implements \Serializable
             $sField = $oUser->getConfig('LOGOUT_FIELD');
             if (!empty($sField)) {
                 $sOrder  = $oUser->getConfig('LOGOUT_ORDER', 'GP');
-                $bLogout = \core\service\request::instance()->get($sField, $sOrder);
+                $bLogout = \fan\core\service\request::instance()->get($sField, $sOrder);
                 if (!empty($bLogout)) {
                     for($i = 0; $i < 100 && !empty($oUser); $i++) {
                         $oUser->logout();
@@ -193,7 +193,7 @@ class user extends \core\base\service\multi implements \Serializable
     /**
      * Get instance of service of Current user
      * @param string $sReqUserSpace
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public static function getCurrent($sReqUserSpace = null)
     {
@@ -214,8 +214,8 @@ class user extends \core\base\service\multi implements \Serializable
      */
     public static function getCurrentSpace()
     {
-        $oConfig   = \project\service\config::instance()->get('user');
-        $sAppName  = \project\service\application::instance()->getAppName();
+        $oConfig   = \fan\project\service\config::instance()->get('user');
+        $sAppName  = \fan\project\service\application::instance()->getAppName();
         $aCurUsers = self::_getCurrentUsers();
 
         // If is Priority Space and has current user - use it
@@ -329,7 +329,7 @@ class user extends \core\base\service\multi implements \Serializable
      * Add User Role
      * @param string $mRole
      * @param number $sExpiredTime - Date/time of expired in mysql-format ("Y-m-d H:i:s")
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function addRole($mRole, $sExpiredTime = null)
     {
@@ -340,7 +340,7 @@ class user extends \core\base\service\multi implements \Serializable
      * Add User Roles
      *   where array: role_name => expire time
      * @param array $mRole
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function addRoles(array $mRole)
     {
@@ -370,7 +370,7 @@ class user extends \core\base\service\multi implements \Serializable
     /**
      * Remove User Role(s) - just names of role(s) only
      * @param string|array $mRole
-     * @return \core\service\user
+     * @return \fan\core\service\user
      */
     public function removeRole($mRole)
     {
@@ -419,7 +419,7 @@ class user extends \core\base\service\multi implements \Serializable
 
     /**
      * Get Data
-     * @return \core\service\user\base
+     * @return \fan\core\service\user\base
      */
     public function getData()
     {
@@ -442,7 +442,7 @@ class user extends \core\base\service\multi implements \Serializable
 
     /**
      * Save service's Instance
-     * @return \core\base\service
+     * @return \fan\core\base\service
      */
     protected function _saveInstance()
     {
@@ -453,7 +453,7 @@ class user extends \core\base\service\multi implements \Serializable
     /**
      * Get list of current users by all User Spaces
      * If it is not set - restore them from session
-     * @return \core\service\user[]
+     * @return \fan\core\service\user[]
      */
     protected static function _getCurrentUsers()
     {
@@ -483,7 +483,7 @@ class user extends \core\base\service\multi implements \Serializable
         if (empty($sUserSpace)) {
             return self::getCurrentSpace();
         }
-        $oConfig = \project\service\config::instance();
+        $oConfig = \fan\project\service\config::instance();
         if (!$oConfig->get(array('user', 'space', $sUserSpace))) {
             throw new error500('Incorrect identifyer of user space - "' . $sUserSpace . '".');
         }
@@ -492,12 +492,12 @@ class user extends \core\base\service\multi implements \Serializable
 
     /**
      * Get Session
-     * @return \core\service\session
+     * @return \fan\core\service\session
      */
     protected static function _getSession()
     {
         if (empty(self::$oSession)) {
-            self::$oSession = \project\service\session::instance(self::SES_NAMESPACE, 'system');
+            self::$oSession = \fan\project\service\session::instance(self::SES_NAMESPACE, 'system');
         }
         return self::$oSession;
     } // function _getSession
@@ -512,7 +512,7 @@ class user extends \core\base\service\multi implements \Serializable
 
     /**
      * Get Config of Current User Space
-     * @return \core\service\config\row
+     * @return \fan\core\service\config\row
      */
     protected function _getSpaceConfig()
     {
@@ -526,7 +526,7 @@ class user extends \core\base\service\multi implements \Serializable
     protected function _isCorrespondApp($sAppName = null)
     {
         if (empty($sAppName)) {
-            $sAppName = \project\service\application::instance()->getAppName();
+            $sAppName = \fan\project\service\application::instance()->getAppName();
         }
         $aSpaceConfig = $this->_getSpaceConfig()->toArray();
         return in_array($sAppName, $aSpaceConfig['APPLICATIONS']) ? $sAppName : null;
@@ -578,5 +578,5 @@ class user extends \core\base\service\multi implements \Serializable
     }
 
 
-} // class \core\service\user
+} // class \fan\core\service\user
 ?>
