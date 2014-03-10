@@ -13,7 +13,7 @@ return array (
   ),
   'a-contact' => 
   array (
-    'tag' => '<a href="{\project\service\tab:getStaticUrl:/contact_us.html}">',
+    'tag' => '<a href="{\fan\project\service\tab:getStaticUrl:/contact_us.html}">',
     'link' => '/a',
     'isFunc' => true,
   ),
@@ -24,12 +24,12 @@ return array (
   ),
   'combi_part' => 
   array (
-    'tag' => '{\project\service\translation:getCombiPart:}',
+    'tag' => '{\fan\project\service\translation:getCombiPart:}',
     'isFunc' => true,
   ),
   'fc-size' => 
   array (
-    'tag' => '{\app\frontend\main\contact_us:getMaxFileSize:}',
+    'tag' => '{\fan\app\frontend\main\contact_us:getMaxFileSize:}',
     'isFunc' => true,
   ),
 );

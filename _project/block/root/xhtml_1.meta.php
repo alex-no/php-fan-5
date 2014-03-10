@@ -1,6 +1,7 @@
 <?php
 /**
  * Basiс xhtml_1 Meta data
+ * @version of file: 05.02.001 (10.03.2014)
  */
 return array(
     /**

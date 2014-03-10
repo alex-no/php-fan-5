@@ -1,8 +1,9 @@
-<?php namespace project\block\carcass;
+<?php namespace fan\project\block\carcass;
 /**
  * Block of carcass
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class common extends \project\block\base
+class common extends \fan\project\block\base
 {
 
     /**
@@ -50,5 +51,5 @@ class common extends \project\block\base
             }
         }
     } // function set_message_after
-} // class \project\block\carcass\common
+} // class \fan\project\block\carcass\common
 ?>

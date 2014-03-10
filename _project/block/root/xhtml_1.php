@@ -1,8 +1,9 @@
-<?php namespace project\block\root;
+<?php namespace fan\project\block\root;
 /**
  * xhtml 1.x root template block
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class xhtml_1 extends \core\block\root\html
+class xhtml_1 extends \fan\core\block\root\html
 {
-} // class \project\block\root\xhtml_1
+} // class \fan\project\block\root\xhtml_1
 ?>
