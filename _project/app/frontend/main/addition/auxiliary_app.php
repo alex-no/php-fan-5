@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\addition;
+<?php namespace fan\app\frontend\main;
 /**
  * Test format class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class auxiliary_app extends \project\block\common\simple
+class auxiliary_app extends \fan\project\block\common\simple
 {
-} // class \app\frontend\main\addition\auxiliary_app
+} // class \fan\app\frontend\main\auxiliary_app
 ?>

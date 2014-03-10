@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test role
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class role extends \project\block\common\simple
+class role extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -30,5 +30,5 @@ class role extends \project\block\common\simple
         $this->view['all_U']     = print_r($oRole->getRoles(), true);
         $this->view['userId']    = empty($oUser) ? '' : $oUser->getId();
     } // function init
-} // class \app\frontend\main\test\role
+} // class \fan\app\frontend\main\role
 ?>

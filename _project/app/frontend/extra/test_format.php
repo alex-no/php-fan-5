@@ -1,9 +1,9 @@
-<?php namespace app\frontend\extra;
+<?php namespace fan\app\frontend\extra;
 /**
  * Test format class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class test_format extends \project\block\common\simple
+class test_format extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -13,5 +13,5 @@ class test_format extends \project\block\common\simple
         $this->view->xxx = 'embedded';
         $this->view->yyy = array('aaa' => 1, 'bbb');
     } // function init
-} // class \app\frontend\extra\test_format
+} // class \fan\app\frontend\extra\test_format
 ?>

@@ -1,4 +1,4 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test zend block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class zend extends \project\block\common\simple
+class zend extends \fan\project\block\common\simple
 {
     /**
      * Init block
@@ -28,5 +28,5 @@ class zend extends \project\block\common\simple
 
         $this->view->data2 = \Zend_Json::encode(array('aaa' => 1111, 'bbb' => 2222));
     }
-} // class \app\frontend\main\test\zend
+} // class \fan\app\frontend\main\zend
 ?>

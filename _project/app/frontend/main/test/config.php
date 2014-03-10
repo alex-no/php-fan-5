@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test config
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class config extends \project\block\common\simple
+class config extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -16,5 +16,5 @@ class config extends \project\block\common\simple
         // Note: Try to change Project name in "service.ini" and reload page
         //   Next step: Try to change ENGINE for "config_cache" in "bootstrap.ini" and repeat previous test
     } // function init
-} // class \app\frontend\main\test\_config
+} // class \fan\app\frontend\main\_config
 ?>

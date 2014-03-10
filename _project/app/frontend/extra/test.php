@@ -1,9 +1,9 @@
-<?php namespace app\frontend\extra;
+<?php namespace fan\app\frontend\extra;
 /**
  * test class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class test extends \project\block\common\simple
+class test extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -12,5 +12,5 @@ class test extends \project\block\common\simple
     {
         $this->_broadcastEvent('someEvent', array('xxx-1' => 'yyy-1'));
     } // function init
-} // class \app\frontend\extra\test
+} // class \fan\app\frontend\extra\test
 ?>

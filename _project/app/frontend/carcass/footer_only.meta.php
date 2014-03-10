@@ -1,12 +1,12 @@
 <?php
 /**
  * Meta of empty carcass with bottom
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 return array(
     'own' => array(
         'embeddedBlocks' => array(
-            'footer' => '{CAPP}/design/footer',
+            'footer' => 'design/footer',
             'main'   => '{MAIN}',
         ),
         'externalCss' => array(

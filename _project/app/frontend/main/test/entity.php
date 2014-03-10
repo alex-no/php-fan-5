@@ -1,12 +1,12 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test session
  * Data for this test:
  *  * DB-sheme - test_entity.mwb
  *  * DB-dump  - test_entity.sql
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class entity extends \project\block\common\simple
+class entity extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -51,7 +51,7 @@ class entity extends \project\block\common\simple
         // Table description for "test_subtable".
         // Описание таблицы "test_subtable".
         $oDescr = ge('test\test_subtable')->description;
-        /* @var $oDescr \core\service\entity\description */
+        /* @var $oDescr \fan\core\service\entity\description */
         $this->view->comment     = $oDescr->comment;
         $this->view->description = print_r($oDescr->toArray(), true);
 
@@ -81,7 +81,7 @@ class entity extends \project\block\common\simple
         // Get Arbitrary entity by common class
         // Получить произвольный entity с помощью общего класса
         /*
-        $oEntity = service('entity')->getAnonymous('\project\model\any', array('tableName' => 'test_primary'));
+        $oEntity = service('entity')->getAnonymous('\fan\model\any', array('tableName' => 'test_primary'));
         $oRow6 = $oEntity->getRowById(18);
         $oRow6->set('header', 'Random: ' . rand(1,1000))->save();
         $this->view->test_arbitrary = $oRow6;
@@ -98,5 +98,5 @@ class entity extends \project\block\common\simple
 
     } // function init
 
-} // class \app\frontend\main\test\entity
+} // class \fan\app\frontend\main\entity
 ?>

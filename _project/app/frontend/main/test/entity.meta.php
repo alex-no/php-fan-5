@@ -1,14 +1,14 @@
 <?php
 /**
  * Home page meta-data
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
 return array(
     'own' => array(
         'title' => 'PHP-FAN.5: PHP-FAN.5: Test of operation with DB by entity',
 
         'embeddedBlocks' => array(
-            'check_db' => '{CAPP}/extra/check_db',
+            'check_db' => 'extra/check_db',
         ),
     ),
     'check_db' => array(

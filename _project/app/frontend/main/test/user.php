@@ -1,4 +1,4 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test user block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class user extends \project\block\form\usual
+class user extends \fan\project\block\form\usual
 {
     /**
      * Init block
@@ -49,5 +49,5 @@ class user extends \project\block\form\usual
         }
     }
 
-} // class \app\frontend\main\test\user
+} // class \fan\app\frontend\main\user
 ?>

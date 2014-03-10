@@ -1,9 +1,9 @@
-<?php namespace app\frontend\carcass;
+<?php namespace fan\app\frontend\carcass;
 /**
  * Block of empty carcass with bottom
- * @version 1.0
+ * @version 05.02.001 (10.03.2014)
  */
-class footer_only extends \project\block\carcass\common
+class footer_only extends \fan\project\block\carcass\common
 {
-} // class \app\frontend\carcass\footer_only
+} // class \fan\app\frontend\carcass\footer_only
 ?>

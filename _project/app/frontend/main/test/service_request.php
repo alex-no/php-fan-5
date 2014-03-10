@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test service_request
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class service_request extends \project\block\common\simple
+class service_request extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -12,7 +12,7 @@ class service_request extends \project\block\common\simple
     {
         //$oRequest = service('request');
         $oRequest = $this->request;
-        /* @var $oRequest \core\service\request */
+        /* @var $oRequest \fan\core\service\request */
         $this->view->request0 = $this->array_values($oRequest->getAll('H'));
 
         $this->view->request1 = $this->array_values($oRequest->get('aaa', 'A'));
@@ -43,5 +43,5 @@ class service_request extends \project\block\common\simple
     {
         return 'PHP-FAN.5: Main/Add request. Service of request';
     } // function getTitle
-} // class \app\frontend\main\test\service_request
+} // class \fan\app\frontend\main\service_request
 ?>

@@ -1,4 +1,4 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test form block
  *
@@ -12,9 +12,9 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.001 (29.09.2011)
+ * @version of file: 05.02.001 (10.03.2014)
  */
-class form extends \project\block\common\simple
+class form extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -23,9 +23,9 @@ class form extends \project\block\common\simple
     {
         $this->view->meta_example = realpath(\bootstrap::parsePath('{PROJECT}/../doc/meta_example/form.meta.php'));
 
-        $aPaths = \project\service\reflector::instance()->getParentPaths($this->_getBlock('test_form'));
+        $aPaths = \fan\project\service\reflector::instance()->getParentPaths($this->_getBlock('test_form'));
         $this->view->form_block = pathinfo(reset($aPaths));
         //$this->view->form_block = realpath(end($aPaths));
     } // function init
-} // class \app\frontend\main\test\form
+} // class \fan\app\frontend\main\form
 ?>

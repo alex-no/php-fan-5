@@ -12,14 +12,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.004
+ * @version of file: 05.02.001 (10.03.2014)
  */
 return array(
     'own' => array(
         'title' => 'PHP-FAN.5: Test HTML-form',
 
         'embeddedBlocks' => array(
-            'test_form' => '{CAPP}/form/test_form_mono',
+            'test_form' => 'form/test_form_mono',
         ),
     ), //'own'
 );

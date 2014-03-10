@@ -1,9 +1,9 @@
-<?php namespace app\frontend\extra;
+<?php namespace fan\app\frontend\extra;
 /**
  * Check  class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class check_db extends \project\block\common\simple
+class check_db extends \fan\project\block\common\simple
 {
     /**
      * Flag: Is correct DB setting
@@ -31,7 +31,7 @@ class check_db extends \project\block\common\simple
             // ------ Check connection to database ------ \\
             try {
                 service('database', $this->getMeta('db_connection', 'common'));
-            } catch (\core\exception\service\database $e) {
+            } catch (\fan\core\exception\service\database $e) {
                 $this->view->nOperationCode = $e->getOperationCode();
                 $this->view->sErrorMessage  = nl2br($e->getMessageForLog());
                 $this->view->nErrorNumber   = $e->getErrorNum();
@@ -46,12 +46,12 @@ class check_db extends \project\block\common\simple
                     $v['entity']    = ge($k);
                     $v['db_fields'] = $v['entity']->getDescription()->get('fields', true);
                 }
-            } catch (\core\exception\service\fatal $e) {
+            } catch (\fan\core\exception\service\fatal $e) {
                 $this->view->nOperationCode = 50;
                 $this->view->sErrorMessage  = nl2br($e->getMessageForLog());
                 break;
             // ------ Check table in DB ------ \\
-            } catch (\core\exception\model\entity\fatal $e) {
+            } catch (\fan\core\exception\model\entity\fatal $e) {
                 $this->view->nOperationCode = 51;
                 $this->view->sErrorMessage  = nl2br($e->getMessageForLog());
                 $this->view->sTableName     = $e->getEntity()->getTableName();
@@ -94,5 +94,5 @@ class check_db extends \project\block\common\simple
         }
         return $this->bIsCorrect;
     } // function isCorrect
-} // class \app\frontend\extra\check_db
+} // class \fan\app\frontend\extra\check_db
 ?>

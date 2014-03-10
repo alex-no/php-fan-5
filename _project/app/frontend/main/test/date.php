@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test date
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class date extends \project\block\common\simple
+class date extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -19,5 +19,5 @@ class date extends \project\block\common\simple
         $this->view['date2']  = $oDate2;
         $this->view['shift2'] = $oDate2->shiftDate(60*60*24*31);
     } // function init
-} // class \app\frontend\main\test\date
+} // class \fan\app\frontend\main\date
 ?>

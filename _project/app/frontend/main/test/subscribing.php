@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test subscribing
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class subscribing extends \project\block\common\simple
+class subscribing extends \fan\project\block\common\simple
 {
     /**
      * Test data
@@ -39,5 +39,5 @@ class subscribing extends \project\block\common\simple
         parent::_preOutput();
         $this->view->event = print_r($this->aTestData, true);
     } // function _preOutput
-} // class \app\frontend\main\test\subscribing
+} // class \fan\app\frontend\main\subscribing
 ?>

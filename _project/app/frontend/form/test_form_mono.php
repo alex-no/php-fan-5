@@ -1,9 +1,9 @@
-<?php namespace app\frontend\form;
+<?php namespace fan\app\frontend\form;
 /**
  * Test format class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class test_form_mono extends \project\block\form\usual
+class test_form_mono extends \fan\project\block\form\usual
 {
     /**
      * Init block
@@ -48,5 +48,5 @@ class test_form_mono extends \project\block\form\usual
         $this->setSessionData('field_value', $oForm->getFieldValue());
     } // function onSubmit
 
-} // class \app\frontend\form\test_form_mono
+} // class \fan\app\frontend\form\test_form_mono
 ?>

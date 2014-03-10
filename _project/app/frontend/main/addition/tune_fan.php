@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\addition;
+<?php namespace fan\app\frontend\main;
 /**
  * Test format class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class tune_fan extends \project\block\common\simple
+class tune_fan extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -11,5 +11,5 @@ class tune_fan extends \project\block\common\simple
     public function init()
     {
     } // function init
-} // class \app\frontend\main\addition\tune_fan
+} // class \fan\app\frontend\main\tune_fan
 ?>

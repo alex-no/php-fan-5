@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\test;
+<?php namespace fan\app\frontend\main;
 /**
  * Test class test_view_data
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class view_data extends \project\block\common\simple
+class view_data extends \fan\project\block\common\simple
 {
     /**
      * Init block data
@@ -15,5 +15,5 @@ class view_data extends \project\block\common\simple
         $this->view->set('meta-data', $this->getMeta('some-data'));
     } // function init
 
-} // class \app\frontend\main\test\view_data
+} // class \fan\app\frontend\main\view_data
 ?>

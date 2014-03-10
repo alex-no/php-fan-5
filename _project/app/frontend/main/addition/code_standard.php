@@ -1,9 +1,9 @@
-<?php namespace app\frontend\main\addition;
+<?php namespace fan\app\frontend\main;
 /**
  * Coding standard class
- * @version 1.1
+ * @version 05.02.001 (10.03.2014)
  */
-class code_standard extends \project\block\common\simple
+class code_standard extends \fan\project\block\common\simple
 {
-} // class \app\frontend\main\addition\code_standard
+} // class \fan\app\frontend\main\code_standard
 ?>
