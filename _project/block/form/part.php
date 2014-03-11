@@ -17,6 +17,5 @@
  */
 abstract class part extends \fan\core\block\form\part
 {
-
 } // class \fan\project\block\form\part
 ?>
