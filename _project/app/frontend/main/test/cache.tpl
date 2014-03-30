@@ -51,7 +51,7 @@
     {if !$adv}
     <p>
         <hr />
-        Если Вы хотите больше узнать о кэшировании в PHP-FAN - кликните <a href="test_cache/advanced-1.html#adv-info">здесь</a>.
+        Если Вы хотите больше узнать о кэшировании в PHP-FAN - кликните <a href="cache/advanced-1.html#adv-info">здесь</a>.
     </p>
     {else}
     <a name="adv-info" ></a>
