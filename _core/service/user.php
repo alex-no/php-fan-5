@@ -14,7 +14,7 @@ use \fan\project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  * @method mixed getId()
  * @method string getLogin()
  * @method string getNickName()
@@ -104,7 +104,7 @@ class user extends \fan\core\base\service\multi implements \Serializable
             'getLogin',    'getNickName',  'getFullName', 'getFirstName', 'getLastName', // Name data
             'getTitle',    'getGender',                                                  // Personal data
             'getEmail',    'getPhone',     'getLocale',   'getAddress',                  // Contact data
-            'getStatus',   'getRoles',                                                   // Status-role data
+            'getStatus',   /*getRoles*/                                                  // Status-role data
             'getJoinDate', 'getVisitDate',                                               // Rating-visit data
             'getAllData',                                                                // All above and another data
 
@@ -112,7 +112,7 @@ class user extends \fan\core\base\service\multi implements \Serializable
             'setLogin',     'setNickName', 'setFirstName', 'setLastName', // Name data
             'setTitle',     'setGender',                                  // Personal data
             'setEmail',     'setPhone',    'setLocale',    'setAddress',  // Contact data
-            'setStatus',    'addRole',     'removeRole',                  // Status-role data
+            'setStatus',    /*setRoles*/   /*addRole*/     /*removeRole*/ // Status-role data
             'setVisitDate',                                               // Rating-visit data
 
             // --- Verifying/manipulation method --- \\
@@ -326,6 +326,17 @@ class user extends \fan\core\base\service\multi implements \Serializable
     } // function logout
 
     /**
+     * Get User Roles
+     * If don't "Force" - returns just list of "Curren User" else All user's roles
+     * @param boolean $bForce
+     * @return array
+     */
+    public function getRoles($bForce = false)
+    {
+        return $this->oUserData->getRoles($bForce);
+    } // function getRoles
+
+    /**
      * Add User Role
      * @param string $mRole
      * @param number $sExpiredTime - Date/time of expired in mysql-format ("Y-m-d H:i:s")
@@ -333,39 +344,10 @@ class user extends \fan\core\base\service\multi implements \Serializable
      */
     public function addRole($mRole, $sExpiredTime = null)
     {
-        return $this->addRoles(array($mRole => $sExpiredTime));
+        $aCurRoles = $this->getRoles(true);
+        $aCurRoles[$mRole] = $sExpiredTime;
+        return $this->setRoles($aCurRoles);
     } // function addRole
-
-    /**
-     * Add User Roles
-     *   where array: role_name => expire time
-     * @param array $mRole
-     * @return \fan\core\service\user
-     */
-    public function addRoles(array $mRole)
-    {
-        $bIsChange = false;
-        $aCurRoles = $this->oUserData->getRoles();
-        $sCurDate  = date('Y-m-d H:i:s');
-
-        foreach ($mRole as $k => $v) {
-            $bExpired = !is_null($v) && strcmp($v, $sCurDate) > 0;
-            if (array_key_exists($k, $aCurRoles)) {
-                if ($bExpired) {
-                    $this->oUserData->removeRole($v);
-                    $bIsChange = true;
-                }
-            } elseif ($bExpired) {
-                $this->oUserData->addRole($v);
-                $bIsChange = true;
-            }
-        }
-
-        if ($bIsChange) {
-            $this->_broadcastMessage('changeRoles', $this);
-        }
-        return $this;
-    } // function addRoles
 
     /**
      * Remove User Role(s) - just names of role(s) only
@@ -374,29 +356,36 @@ class user extends \fan\core\base\service\multi implements \Serializable
      */
     public function removeRole($mRole)
     {
-        $bIsChange = false;
-        $aCurRoles = $this->oUserData->getRoles();
-        foreach ($this->_convertToArray($mRole) as $v) {
-            if (in_array($v, $aCurRoles)) {
-                $this->oUserData->removeRole($v);
-                $bIsChange = true;
-            }
-        }
-        if ($bIsChange) {
-            $this->_broadcastMessage('changeRoles', $this);
-        }
-        return $this;
+        $aCurRoles = $this->getRoles(true);
+        unset($aCurRoles[$mRole]);
+        return $this->setRoles($aCurRoles);
     } // function removeRole
 
     /**
-     * Get User Roles
-     * @param boolean $bForce
-     * @return array
+     * Set User Roles
+     *   where array: role_name => expire time
+     * @param array $aNewRoles
+     * @return \fan\core\service\user
      */
-    public function getRoles($bForce = false)
+    public function setRoles(array $aNewRoles)
     {
-        return $this->oUserData->getRoles($bForce);
-    } // function getRoles
+        $aCurRoles = $this->getRoles(true);
+        $sCurDate  = date('Y-m-d H:i:s');
+
+        foreach ($aNewRoles as $k => $v) {
+            if (!is_null($v) && strcmp($v, $sCurDate) < 0) {
+                unset($aNewRoles[$k]);
+            }
+        }
+
+        if (array_diff_assoc($aNewRoles, $aCurRoles) || array_diff_assoc($aCurRoles, $aNewRoles)) {
+            $this->oUserData->setRoles($aNewRoles);
+            if ($this->isCurrent()) {
+                $this->_broadcastMessage('changeRoles', $this);
+            }
+        }
+        return $this;
+    } // function setRoles
 
     /**
      * Get User Space

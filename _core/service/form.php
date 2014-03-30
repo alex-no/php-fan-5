@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class form extends \fan\core\base\service\multi
 {
@@ -192,10 +192,11 @@ class form extends \fan\core\base\service\multi
                         $bRet = false;
                         break;
                     } else {
-                        $oRole = \fan\project\service\role::instance();
+                        $sRoleName = $this->oBlock->getRoleName();
+                        $oRole     = \fan\project\service\role::instance();
                         /* @var $oRole \fan\core\service\role */
                         if (!$this->_getFormMeta('not_role')) {
-                            $oRole->setFixQttRoles($this->oBlock->getRoleName());
+                            $oRole->setFixQttRoles($sRoleName);
                         }
 
                         //ToDo: Clear cache of some blocks there
@@ -203,17 +204,20 @@ class form extends \fan\core\base\service\multi
 
                         $this->_broadcastMessage('onSubmit', $this);
 
+                        $aForm = $this->aFormMeta;
                         if (is_null($bAllowTransfer)) {
-                            $bAllowTransfer = strtoupper($this->aFormMeta['action_method']) != 'GET';
-                            // ToDo: Do not disable transfer there, but remove form_key_field from query string
+                            $bAllowTransfer = !isset($aForm['redirect_required']) || $aForm['redirect_required'];
                         }
-                        if (!$this->bIsError) {
-                            $oRole->killSessionRoles($this->sRoleName);
+                        if ($bAllowTransfer && empty($aForm['redirect_uri'])) {
+                            \fan\project\service\request::instance()->remove('form_key_field', 'G');
+                        }
+                        if ($this->bIsError) {
+                            $oRole->killSessionRoles($sRoleName);
                         } elseif ($bAllowTransfer) {
                             if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
                                 \fan\project\service\session::instance($this->_getFormMeta('form_id'), 'form_key')->remove('csrf');
                             }
-                            $this->_onSubmitTransfer('commit');
+                            $this->_onSubmitTransfer('commit', strtoupper($aForm['action_method']) != 'GET');
                         }
                         $bRet = !$this->bIsError;
                         break;
@@ -732,17 +736,15 @@ class form extends \fan\core\base\service\multi
      * @param string $sDbOper - DB operation: "commit" or "rollback"
      * @return \fan\core\service\form
      */
-    protected function _onSubmitTransfer($sDbOper = null)
+    protected function _onSubmitTransfer($sDbOper = null, $bAddQueryStr = true)
     {
         $aForm = $this->aFormMeta;
         if (!isset($aForm['redirect_required']) || $aForm['redirect_required']) {
             $oTab = $this->oBlock->getTab();
             if(empty($aForm['redirect_uri'])) {
-                $sUri          = $oTab->getCurrentURI(true, true, strtoupper($aForm['action_method']) != 'GET', true);
-                $sDefaultHttps = $oTab->getTabMeta('page_https');
+                $sUri = $oTab->getCurrentURI($this->isMultiLanguage(), true, $bAddQueryStr, true);
             } else {
-                $sUri          = $aForm['redirect_uri'];
-                $sDefaultHttps = null;
+                $sUri = $aForm['redirect_uri'];
             }
             transfer_out($sUri, null, $sDbOper);
         }

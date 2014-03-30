@@ -13,7 +13,7 @@ use fan\project\exception\block\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  *
  * @abstract
  *
@@ -366,31 +366,6 @@ abstract class base
         $this->_makeDynamicMeta(true);
         return $this;
     } // function setDynamicMeta
-
-    /**
-     * Set cache consider role
-     * @param mixed $mRole
-     */
-    public function setCacheRole($mRole)
-    {
-        if (is_array($mRole)) {
-            foreach ($mRole as $v) {
-                $this->setCacheRole($v);
-            }
-            return $this;
-        }
-/*
-//ToDo: Redesign it
-        $aCacheRole = $this->getMeta(array('cache','considerRole'));
-
-        if(!is_array($aCacheRole)) {
-            $aCacheRole = array($mRole);
-        } elseif (!in_array($mRole, $aCacheRole)) {
-            $aCacheRole[] = $mRole;
-        }
- */
-        return $this;
-    } // function setCacheRole
 
     /**
      * Get Role Conditions if role isn't fit
@@ -877,6 +852,31 @@ abstract class base
         }
         return $sClass;
     } // function _parseClassName
+
+    /**
+     * Set cache consider role
+     * @param mixed $mRole
+     */
+    protected function _setCacheRole($mRole)
+    {
+        if (is_array($mRole)) {
+            foreach ($mRole as $v) {
+                $this->_setCacheRole($v);
+            }
+            return $this;
+        }
+/*
+//ToDo: Redesign it
+        $aCacheRole = $this->getMeta(array('cache','considerRole'))->toArray();
+
+        if(!is_array($aCacheRole)) {
+            $aCacheRole = array($mRole);
+        } elseif (!in_array($mRole, $aCacheRole)) {
+            $aCacheRole[] = $mRole;
+        }
+ */
+        return $this;
+    } // function _setCacheRole
 
     /**
      * Call Ordinary Delegate

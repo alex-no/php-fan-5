@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class entity extends base
 {
@@ -31,7 +31,6 @@ class entity extends base
 
     // ======== Static methods ======== \\
     // ======== Main Interface methods ======== \\
-
     /**
      * Convert text of password to text of hash
      * @param string $sPassword
@@ -70,12 +69,15 @@ class entity extends base
      */
     protected function _saveData()
     {
-        $oRow  = $this->_getRow();
-        if (!empty($oRow)) {
+        $oRow = $this->_getRow();
+        if (!empty($oRow) && $this->isChanged()) {
             $aMethods = $this->_getMethodList('Setting');
             if (!empty($aMethods)) {
-                foreach ($aMethods as $k => $v) {
-                    $oRow->$v($this->mData[$k]);
+                foreach ($this->aChanged as $k => $v) {
+                    if (!empty($aMethods[$k])) {
+                        $sMethod = $aMethods[$k];
+                        $oRow->$sMethod($v);
+                    }
                 }
                 $oRow->save();
             }
@@ -104,7 +106,7 @@ class entity extends base
         if (!empty($aMethods)) {
             $aRequired = array('id' => 0, 'password' => 0, 'login' => 0, 'roles' => 0);
             if (count(array_intersect_key($aMethods, $aRequired)) < 4) {
-                throw new fatalException($this->oFacade, 'Required keys "' . implode('", "', $aRequired) . '" are not get by method "getGettingMap".');
+                throw new fatalException($this->oFacade, 'Required keys "' . implode('", "', aray_keys($aRequired)) . '" are not get by method "getGettingMap".');
             }
         }
 

@@ -222,7 +222,9 @@ var logCtrl = newObject({
     {
         var list, rec, arr, i;
         this.sendQtt = 0;
-        if (txt == "ok") {
+        if (txt != "ok") {
+            alert(txt);
+        } else if (isDefined(json, 'oper')) {
             if (json.oper == "redraw") {
                 this.data_title.setInnerHtml("<b>" + this.headTitle[json.vr] + "</b> for <i>" + json.date + "</i>");
                 this.pidArr = {};
@@ -244,8 +246,6 @@ var logCtrl = newObject({
             if (json.oper != "none") {
                 this.makePages(json.curPage, json.pageQtt);
             }
-        } else {
-            alert(txt);
         }
         if (this.cur_loadWr) {
             this.cur_loadWr.remove();

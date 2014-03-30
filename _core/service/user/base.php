@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFirstName()
@@ -95,10 +95,10 @@ abstract class base implements \Serializable
      */
     protected $bIsNew = true;
     /**
-     * This flag is TRUE while new user created OR some data of existed user is modified
-     * @var boolean
+     * This array contain modified data
+     * @var array
      */
-    protected $bIsChanged = false;
+    protected $aChanged = array();
 
     /**
      * Constructor of user engine
@@ -199,35 +199,18 @@ abstract class base implements \Serializable
 
     // --- Setters method --- \\
     /**
-     * Add Role
-     * @param string $mRole
-     * @param number $nExpiredTime - live time of setted role in second
-     * @return \fan\core\service\user
-     */
-    public function addRole($sRole, $nExpiredTime)
-    {
-        return $this->oFacade;
-    } // function addRole
-
-    /**
-     * Remove Role
-     * @param string $mRole
-     * @return \fan\core\service\user
-     */
-    public function removeRole($sRole)
-    {
-        return $this->oFacade;
-    } // function removeRole
-
-    /**
      * Set Visit Date as string in format "Y-m-d"
      * @param string $sDate
      * @return \fan\core\service\user
      */
     public function setVisitDate($sDate = null)
     {
-        $this->mData['visit_date'] = is_null($sDate) ? date('Y-m-d') : $sDate;
-        $this->bIsChanged = true;
+        if (is_null($sDate)) {
+            $sDate = date('Y-m-d');
+        }
+        if (!isset($this->mData['visit_date']) || $this->mData['visit_date'] != $sDate) {
+            $this->mData['visit_date'] = $this->aChanged['visit_date'] = $sDate;
+        }
         return $this->oFacade;
     } // function setVisitDate
 
@@ -239,9 +222,11 @@ abstract class base implements \Serializable
      */
     public function setPassword($sPassword)
     {
-        $this->mData['password'] = $this->makePasswordHash($sPassword);
-        $this->bIsValid   = true;
-        $this->bIsChanged = true;
+        $sHash = $this->makePasswordHash($sPassword);
+        if (!isset($this->mData['password']) || $this->mData['password'] != $sHash) {
+            $this->mData['password'] = $this->aChanged['password'] = $sHash;
+        }
+        $this->bIsValid = true;
         return $this->oFacade;
     } // function setPassword
 
@@ -252,8 +237,8 @@ abstract class base implements \Serializable
      */
     public function checkPassword($sPassword)
     {
-        $sHashe = $this->makePasswordHash($sPassword);
-        $this->bIsValid = !empty($this->mData['password']) && $this->mData['password'] == $sHashe;
+        $sHash = $this->makePasswordHash($sPassword);
+        $this->bIsValid = !empty($this->mData['password']) && $this->mData['password'] == $sHash;
 
         // Log Error Authentication if it is allowed
         if (!$this->bIsValid && $this->oConfig['LOG_ERR_AUTH']) {
@@ -262,7 +247,7 @@ abstract class base implements \Serializable
                 $sNote   = '';
             } else {
                 $sErrMsg = 'Error password for "' . $this->mIdentifyer . '".';
-                $sNote   = 'Hashe: ' . $sHashe . "\n" . 'NS: ' . $this->oFacade->getUserSpace();
+                $sNote   = 'Hash: ' . $sHash . "\n" . 'NS: ' . $this->oFacade->getUserSpace();
             }
             $sErrMsg .= "\nTime: " . date('Y-m-d H:i:s') . "\nClient IP: " . $_SERVER['REMOTE_ADDR'];
             service('error')->logErrorMessage($sErrMsg, 'Error authentication', $sNote);
@@ -279,8 +264,8 @@ abstract class base implements \Serializable
     {
         $this->bIsValid = false;
         if ($this->_loadData()) {
-            $this->bIsNew     = false;
-            $this->bIsChanged = false;
+            $this->bIsNew   = false;
+            $this->aChanged = array();
         }
         return $this->oFacade;
     } // function load
@@ -303,9 +288,9 @@ abstract class base implements \Serializable
             $this->mData['join_date'] = date('Y-m-d');
         }
 
-        if ($this->bIsChanged && $this->_validateForSave() && $this->_saveData()) {
-            $this->bIsNew     = false;
-            $this->bIsChanged = false;
+        if ($this->isChanged() && $this->_validateForSave() && $this->_saveData()) {
+            $this->bIsNew   = false;
+            $this->aChanged = array();
         }
         return $this->oFacade;
     } // function save
@@ -332,7 +317,7 @@ abstract class base implements \Serializable
      */
     public function isChanged()
     {
-        return $this->bIsChanged;
+        return !empty($this->aChanged);
     } // function isChanged
 
     // ======== Private/Protected methods ======== \\
@@ -389,7 +374,9 @@ abstract class base implements \Serializable
      */
     protected function _set($sKey, $mVal)
     {
-        $this->bIsChanged = $this->bIsChanged || (isset($this->mData[$sKey]) ? $this->mData[$sKey] != $mVal : !is_null($mVal));
+        if (!isset($this->mData[$sKey]) && !is_null($mVal) || $this->mData[$sKey] != $mVal) {
+            $this->aChanged[$sKey] = $mVal;
+        }
         $this->mData[$sKey] = $mVal;
         return $this->oFacade;
     } // function _set
@@ -441,7 +428,7 @@ abstract class base implements \Serializable
             'flags' => array(
                 'valid'   => $this->bIsValid,
                 'new'     => $this->bIsNew,
-                'changed' => $this->bIsChanged,
+                'changed' => $this->aChanged,
             ),
             'identifyer' => $this->mIdentifyer,
             'main'       => serialize($this->mData),
@@ -452,9 +439,9 @@ abstract class base implements \Serializable
     {
         $aData = unserialize($sData);
 
-        $this->bIsValid   = $aData['flags']['valid'];
-        $this->bIsNew     = $aData['flags']['new'];
-        $this->bIsChanged = $aData['flags']['changed'];
+        $this->bIsValid = $aData['flags']['valid'];
+        $this->bIsNew   = $aData['flags']['new'];
+        $this->aChanged = $aData['flags']['changed'];
 
         $this->mIdentifyer = $aData['identifyer'];
         $this->mData       = unserialize($aData['main']);

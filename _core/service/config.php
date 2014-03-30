@@ -14,7 +14,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 final class config extends \fan\core\base\service\multi
 {
@@ -218,7 +218,7 @@ final class config extends \fan\core\base\service\multi
     {
         $sName = get_class_name($oService);
         if (empty($this->oConfData)) {
-            throw new fatalException('Data row isn\'t for config "' . $this->sConfigType . '"');
+            throw new fatalException($this, 'Data row isn\'t set for config "' . $this->sConfigType . '"');
         }
         if (!$this->oConfData[$sName]) {
             $this->oConfData->set($sName, array());
@@ -241,7 +241,7 @@ final class config extends \fan\core\base\service\multi
     public function getControllerConfig($oCtrl, $sName)
     {
         if (empty($this->oConfData)) {
-            throw new fatalException('Data row isn\'t for config "' . $this->sConfigType . '"');
+            throw new fatalException($this, 'Data row isn\'t set for config "' . $sName . '"');
         }
         if (!$this->oConfData[$sName]) {
             $this->oConfData->set($sName, array());

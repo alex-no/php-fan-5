@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class error extends \fan\core\base\service\single
 {
@@ -387,7 +387,7 @@ class error extends \fan\core\base\service\single
         if (@$aConfig['MAIL_TO']) {
             $sFile = @$aConfig['MAIL_FILE'];
             if (strstr($sSubject, 'fatal') === false && $sFile) {
-                $nCtime = mktime();
+                $nCtime = time();
                 $sFile = \bootstrap::parsePath($sFile) . $sType . '.log.php';
                 $bFileExists = file_exists($sFile);
 
@@ -428,7 +428,7 @@ class error extends \fan\core\base\service\single
         $aConfig = $this->oConfig;
         if (@$aConfig['MAIL_TO'] && @$aConfig['MAIL_FILE']) {
 
-            $nCtime = mktime();
+            $nCtime = time();
 
             $sPath = \bootstrap::parsePath(@$aConfig['MAIL_FILE']);
 

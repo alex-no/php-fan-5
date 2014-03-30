@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class urlMaker extends \fan\core\service\tab\delegate
 {
@@ -83,8 +83,11 @@ class urlMaker extends \fan\core\service\tab\delegate
             array_unshift($aRequest, trim($oParsed->app_prefix, '/'));
         }
         // Add language
+        if (is_null($bCorLanguage)) {
+            $bCorLanguage = \fan\project\service\locale::instance()->isEnabled();
+        }
         if ($bCorLanguage) {
-            $sLng = \fan\core\service\locale::instance()->getLanguage();
+            $sLng = \fan\project\service\locale::instance()->getLanguage();
             if (!empty($sLng)) {
                 array_unshift($aRequest, $sLng);
             }
