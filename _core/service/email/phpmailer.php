@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class phpmailer extends \PHPMailer
 {
@@ -56,6 +56,10 @@ class phpmailer extends \PHPMailer
                 $this->Host = $oConfig->SMTP_HOST;
             }
 
+            if ($oConfig->PORT) {
+                $this->Port = $oConfig->PORT;
+            }
+
             if ($oConfig->CHARSET) {
                 $this->CharSet = $oConfig->CHARSET;
             }
@@ -69,10 +73,11 @@ class phpmailer extends \PHPMailer
 
             if ($oConfig->AUTH_TYPE) {
                 $this->AuthType = $oConfig->AUTH_TYPE;
-            } // check SMTP_USER
+            }
+
+            $this->SMTPDebug = $oConfig->get('DEBUG', false);
         }
 
-        //$this->SMTPDebug = true;
         return $this;
     } // function setFacade
 

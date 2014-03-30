@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class request extends \fan\core\base\service\single
 {
@@ -175,13 +175,22 @@ class request extends \fan\core\base\service\single
      */
     public function set($sKey, $mValue, $sType = 'P')
     {
-        if (strlen($sType) != 1 || !array_key_exists($sType, $this->aData)) {
-            throw new fatalException($this, 'Incorrect type for set "' . $sType . '". Possible one of symbols "' . implode('', array_keys($this->aData)) . '".');
-        }
-        if (!empty($this->oConfig['ALLOW_SET'][$sType])) {
+        if ($this->_isAllowToSet($sType)) {
             $this->aData[$sType][$sKey] = $mValue;
         }
     } // function set
+
+    /**
+     * Remove Request parameter.
+     * @param string $sKey The Request key
+     * @param string $sType Type of data (like $sOrder in get, but one symbol only)
+     */
+    public function remove($sKey, $sType = 'G')
+    {
+        if ($this->_isAllowToSet($sType)) {
+            unset($this->aData[$sType][$sKey]);
+        }
+    } // function remove
 
     /**
      * Get query string
@@ -376,6 +385,20 @@ class request extends \fan\core\base\service\single
         $oMatcher = $this->_getMatcher();
         return $oMatcher ? $oMatcher->getCurrentItem()->parsed->$sProp : array();
     } // function _getRequestData
+
+    /**
+     * Check - is allowed setting this Type
+     * @param string $sType
+     * @return boolean
+     * @throws fatalException
+     */
+    protected function _isAllowToSet($sType)
+    {
+        if (strlen($sType) != 1 || !array_key_exists($sType, $this->aData)) {
+            throw new fatalException($this, 'Incorrect type for set "' . $sType . '". Possible one of symbols "' . implode('', array_keys($this->aData)) . '".');
+        }
+        return !empty($this->oConfig['ALLOW_SET'][$sType]);
+    } // function _isAllowToSet
 
     /**
      * Get object of Matcher

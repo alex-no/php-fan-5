@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -52,12 +52,12 @@ class row implements \ArrayAccess, \Serializable
 
     /**
      * This property true if data is load
-     * @var bool
+     * @var boolean
      */
     protected $bIsDataLoad = false;
     /**
      * This property true if Init Id Only without Loading (Used for update part/full of Row-data)
-     * @var bool
+     * @var boolean
      */
     protected $bInitIdOnly = false;
 
@@ -71,7 +71,8 @@ class row implements \ArrayAccess, \Serializable
     protected $sDefaultLocal;
 
     /**
-     * @var boolean - Show error message
+     * Flag for show error message
+     * @var boolean
      */
     protected $bShowError = true;
 
@@ -144,6 +145,17 @@ class row implements \ArrayAccess, \Serializable
     // ======== Static methods ======== \\
 
     // ======== Main Interface methods ======== \\
+    /**
+     * Get Config of Entity
+     * @param string $sKey
+     * @param null $mDefault
+     * @return \fan\core\service\config\row
+     */
+    public function getConfig($sKey = null, $mDefault = null)
+    {
+        return $this->getEntity()->getConfig($sKey, $mDefault);
+    } // function getConfig
+
     /**
      * Load current entity by ID
      * @param mixed $mRowId
@@ -879,7 +891,7 @@ class row implements \ArrayAccess, \Serializable
      */
     protected function _restoreProperties()
     {
-        $this->bShowError = $this->getEntity()->getConfig('SHOW_ERROR', $this->bShowError);
+        $this->bShowError = $this->getConfig('SHOW_ERROR', $this->bShowError);
         return $this;
     } // function _restoreProperties
 

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  * @abstract
  */
 abstract class usual extends \fan\core\block\base
@@ -286,7 +286,7 @@ abstract class usual extends \fan\core\block\base
                 $this->sRoleName = $this->getFormMeta('role_name') ? $this->getFormMeta('role_name') : 'form_submit_successful_' . $this->getFormMeta('form_id');
             }
 
-            $this->setCacheRole($this->sRoleName);
+            $this->_setCacheRole($this->sRoleName);
         }
     } // function doRoleOperations
 

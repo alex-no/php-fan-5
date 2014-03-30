@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 class request_password extends \fan\project\block\form\usual
 {
@@ -25,10 +25,10 @@ class request_password extends \fan\project\block\form\usual
     /**
      * Init block
      */
-    public function init ()
+    public function init()
     {
         $this->_parseForm();
-    }
+    } // function init
 
     /**
      * Check password and login
@@ -44,14 +44,17 @@ class request_password extends \fan\project\block\form\usual
         }
         $this->oUser->checkPassword($mValue);
         return $this->oUser->isValid();
-    }
+    } // function checkPassword
 
+    /**
+     * On submit
+     */
     public function onSubmit()
     {
         if (!empty($this->oUser)) {
             $this->oUser->setCurrent();
         }
-    }
+    } // function onSubmit
 
 } // class \fan\app\__log_viewer\main\request_password
 ?>

@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.002 (31.03.2014)
  */
 abstract class row extends \fan\core\base\model\row
 {
@@ -73,7 +73,7 @@ abstract class row extends \fan\core\base\model\row
             $sPath = $this->getMainFilePath($mIdVal);
             $this->sInfoPath = empty($sPath) || !$this->bSaveInfo ?
                 '' :
-                \bootstrap::parsePath($this->getEntity()->getConfig('INFO_FILE_PATH', '{TEMP}/file_data/file_info/')) . $sPath . '.php';
+                \bootstrap::parsePath($this->getConfig('INFO_FILE_PATH', '{TEMP}/file_data/file_info/')) . $sPath . '.php';
         }
          */
         $this->sInfoPath = '';
@@ -175,9 +175,9 @@ return ' . var_export($aRow, true) . ';
         }
         $sPath = $this->getMainFilePath($nId);
         if (!empty($sPath) && (!$bCheckAddCondition || $this->get_is_accessible() && !$this->get_is_deleted())) {
-            $sPath = \bootstrap::parsePath($this->getEntity()->getConfig('file_store') . $sPath);
+            $sPath = \bootstrap::parsePath($this->getConfig('file_store') . $sPath);
             $aParts = pathinfo($this->get_src_name($sSrcName, false));
-            $sPath .= '.' . (empty($aParts['extension']) || $aParts['extension'] == 'php' ? $this->getEntity()->getConfig('file_ext') : $aParts['extension']);
+            $sPath .= '.' . (empty($aParts['extension']) || $aParts['extension'] == 'php' ? $this->getConfig('file_ext') : $aParts['extension']);
             return $sPath;
         }
         return null;
@@ -195,7 +195,7 @@ return ' . var_export($aRow, true) . ';
         if (!empty($nId)) {
             $nTriadLen = strlen($nId) % 3;
             $sPath = str_repeat('0', ($nTriadLen ? 3 - $nTriadLen : 0)) . number_format((int)$nId, 0, '.', '/');
-            if ($this->getEntity()->getConfig('path_with_connection')) {
+            if ($this->getConfig('path_with_connection')) {
                 $sPath = $this->getEntity()->getConnection()->getConnectionName() . '/' . $sPath;
             }
          }
@@ -269,11 +269,12 @@ return ' . var_export($aRow, true) . ';
         if ($sFilePath && file_exists($sFilePath)) {
             $oSH = service('headers');
             /* @var $oSH \fan\core\service\header */
-            $oSH->addHeader('set_content_type', array($this->get_mime_type()));
-            $oSH->addHeader('set_filename',     array($this->get_src_name(), is_null($bContentDisposition) ? $this->getContentDisposition() : $bContentDisposition));
-            $oSH->addHeader('set_length',       array(filesize($sFilePath)));
-            $oSH->addHeader('set_time',         array(filemtime($sFilePath)));
-            $oSH->addHeader('set_cache',        array(0));
+            $oSH->addHeader('contentType', $this->get_mime_type());
+            $oSH->addHeader('filename',    $this->get_src_name());
+            $oSH->addHeader('disposition', is_null($bContentDisposition) ? $this->getContentDisposition() : $bContentDisposition);
+            $oSH->addHeader('length',      filesize($sFilePath));
+            $oSH->addHeader('modified',    filemtime($sFilePath));
+            $oSH->addHeader('cacheLimit',  0);
             return $sFilePath;
         }
         return null;
