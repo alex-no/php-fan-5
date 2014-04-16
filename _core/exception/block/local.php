@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 class local extends \fan\core\exception\base
 {
@@ -43,6 +43,14 @@ class local extends \fan\core\exception\base
     {
         return $this->oBlock;
     } // function getBlock
+
+    /**
+     * Remove property "oBlock" before "print_r" this object
+     */
+    public function clearProperty()
+    {
+        $this->_removeEmbededObject('oBlock');
+    } // function clearProperty
 
     /**
      * Get operation for Db (rollback, commit or nothing) when exception occured

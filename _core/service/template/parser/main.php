@@ -12,14 +12,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 class main extends base
 {
     /**
      * @var array Defined tpl-tag list
      */
-    protected $aTagList = array('assign', 'if', 'elseif', 'foreach', 'for', 'msg', 'get_url');
+    protected $aTagList = array('assign', 'if', 'elseif', 'foreach', 'for', 'msg', 'uri', 'get_url');
 
     /**
      * Parse assign code
@@ -80,7 +80,7 @@ class main extends base
     public function parse_for($sData)
     {
         $aParam = $this->getStandardParam($sData);
-        $sCode = empty($aParam['name']) ? '' : '$this->setObjectData(\'for\', ' . $aParam['name'] . ');';
+        $sCode  = empty($aParam['name']) ? '' : '$this->setObjectData(\'for\', ' . $aParam['name'] . ');';
         $sCode .= 'for (' . (empty($aParam['start']) ? '' : $aParam['start']) . ';';
         $sCode .= (empty($aParam['condition']) ? '' : $aParam['condition']) . ';';
         $sCode .= (empty($aParam['each']) ? '' : $aParam['each']) . '):' . "\n";
@@ -98,7 +98,17 @@ class main extends base
     public function parse_msg($sData)
     {
         return '$sReturnHtmlVal.=msg(' . implode(',', $this->getSimpleParam($sData)) . ");\n";
-    } // function parse_if
+    } // function parse_msg
+
+    /**
+     * Parse "uri" code
+     * @param string $sData
+     * @return string
+     */
+    public function parse_uri($sData)
+    {
+        return '$sReturnHtmlVal.=$this->oBlock->getTab()->getURI(' . implode(',', $this->getSimpleParam($sData)) . ");\n";
+    } // function parse_url
 
     /**
      * Parse getURI

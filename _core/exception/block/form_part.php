@@ -12,12 +12,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 class form_part extends local
 {
     /**
-     * @var block_html_form_base Parsed form block
+     * Parsed form block
+     * @var \fan\core\block\base
      */
     protected $oFormPart = null;
 
@@ -57,6 +58,14 @@ class form_part extends local
     {
         return $this->aErrorMsg;
     } // function getErrorMessages
+
+    /**
+     * Remove property "oBlock" before "print_r" this object
+     */
+    public function clearProperty()
+    {
+        $this->_removeEmbededObject('oFormPart')->_removeEmbededObject('oBlock');
+    } // function clearProperty
 
     /**
      * Get operation for Db (nothing) when exception occured

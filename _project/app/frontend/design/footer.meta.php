@@ -6,16 +6,11 @@
 
 return array(
     'own' => array(
-
-        'embeddedBlocks' => array( // Key - template var; Value - path to block
-            //'menu_bottom' => 'design/menu/menu_bottom',
-        ),
-
+        /*
         'staticContent' => array(
-            'addressData' => 'addressData',
-            //'copyRight' => 'CopyRight',
             'producerData' => 'producerData',
         ),
+         */
 
         'cache' => array(
             'mode' => 1,

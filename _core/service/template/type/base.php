@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 abstract class base implements \ArrayAccess
 {
@@ -38,7 +38,7 @@ abstract class base implements \ArrayAccess
     /**
      * @var array Exception keys
      */
-    private $aExceptVar = array('this', 'oBlock', 'oTab', 'sAssignTplKey', 'sAssignTplVal', 'sReturnHtmlVal');
+    private $aExceptVar = array('this', 'oBlock', 'oTab', 'sAssignTplKey', 'mAssignTplVal', 'sReturnHtmlVal');
 
     /**
      * @var array Foreach sourse data

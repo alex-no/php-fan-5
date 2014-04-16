@@ -6,15 +6,13 @@
 return array(
     'own' => array(
         'embeddedBlocks' => array( // Key - template var; Value - path to block
-            //'header'     => 'design/header',
-            //'columnLeft' => 'design/column_left',
+            'header'     => 'design/header',
             'main'       => '{MAIN}',
             'footer'     => 'design/footer',
         ),
         'externalCss' => array( // css files
             //'new' => array('/css/layout.css'),
         ),
-        'template' => 'work.tpl',
     ),
 );
 ?>

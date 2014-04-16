@@ -1,11 +1,11 @@
 <?php
 /**
  * Index tools meta
- * @version 05.01.002 (01.05.2013)
+ * @version 05.02.003 (16.04.2014)
  */
 return array(
     'own' => array(
-        'mainCarcass' => '{CARCASS}/carcass_with_application',
+        'carcass' => 'carcass/with_app',
 
         'title' => 'Create site block',
         'dontCrawl' => true,
