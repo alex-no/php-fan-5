@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -541,6 +541,8 @@ class tab extends \fan\core\base\service\single
         $this->sAppName     = \fan\project\service\application::instance()->getAppName();
         $this->aCurrentData = $this->oMatcher->getCurrentParsedData();
         $this->aLastData    = $this->oMatcher->getLastParsedData();
+        $this->aTimesStamp  = array();
+        $this->bCheckPerformance = $this->getConfig('CHECK_PERFORMANCE', false);
         return $this;
     } // function _resetProperty
 
@@ -718,12 +720,12 @@ class tab extends \fan\core\base\service\single
         $aDefaultMeta = $this->getDefaultMeta();
         $sRootPath = $this->getTabMeta(
                 'root',
-                isset($aDefaultMeta['main']['root']) ? $aDefaultMeta['main']['root'] : null
-            );
+                array_val($aDefaultMeta, array('main', 'root'))
+        );
         $sCarcassPath = $this->getTabMeta(
                 'carcass',
-                isset($aDefaultMeta['main']['carcass']) ? $aDefaultMeta['main']['carcass'] : null
-            );
+                array_val($aDefaultMeta, array('main', 'carcass'))
+        );
 
         $sBlockName = 'root';
         if (empty($sRootPath)) {
@@ -763,8 +765,8 @@ class tab extends \fan\core\base\service\single
             $aDefaultMeta = method_exists($aDefaultMeta, 'toArray') ? $aDefaultMeta->toArray() : array();
         }
         return array(
-            'own'    => isset($aDefaultMeta['root'])   ? $aDefaultMeta['root']   : array(),
-            'common' => isset($aDefaultMeta['common']) ? $aDefaultMeta['common'] : array(),
+            'own'    => array_val($aDefaultMeta, 'root',   array()),
+            'common' => array_val($aDefaultMeta, 'common', array()),
         );
     } // function _getRootMeta
 
@@ -810,7 +812,9 @@ class tab extends \fan\core\base\service\single
         }
 
         $oFirstItem = $this->oMatcher->getItem(0);
-        $oRunner    = \bootstrap::getRunner();
+        trigger_error(print_r($oFirstItem->parsed->toArray(), true), E_USER_WARNING);
+
+        $oRunner = \bootstrap::getRunner();
         return $oRunner->showError(array('urn', $oFirstItem['source']['request']), 'error_404', false);
     } // function _parseError404
 

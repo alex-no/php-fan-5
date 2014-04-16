@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  * @abstract
  */
 abstract class base extends \Exception
@@ -138,6 +138,20 @@ abstract class base extends \Exception
         \fan\project\service\error::instance()->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
         return $this;
     } // function _logByService
+
+    /**
+     * Remove Embeded Object before "print_r" this object
+     * @param string $sProperty
+     */
+    protected function _removeEmbededObject($sProperty)
+    {
+        if (is_object($this->$sProperty)) {
+            $this->$sProperty = 'Object ' . get_class($this->$sProperty);
+        } elseif (isset ($this->$sProperty)) {
+            $this->$sProperty = null;
+        }
+        return $this;
+    } // function _removeEmbededObject
 
     /**
      * Get operation for Db (rollback, commit or nothing) when exception occured

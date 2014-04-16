@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 class error extends \fan\core\base\service\single
 {
@@ -194,12 +194,6 @@ class error extends \fan\core\base\service\single
                 'service_header'      => $sHeader
             );
         } else {
-            array_walk_recursive($aErrConText, function(&$mItem)
-            {
-                if (is_object($mItem)) {
-                    $mItem = 'Object of class "' . @get_class($mItem) . '"';
-                }
-            });
             $aNote = array();
             $t1 = '<i style="color:#999999; font-size:9px;">';
             $t2 = '</i>';

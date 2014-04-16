@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 class template extends \fan\core\base\service\single
 {
@@ -61,7 +61,7 @@ class template extends \fan\core\base\service\single
 //SRC: {SOURCE_PATH}
 class {CLASS_NAME} extends {PARENT_CLASS}{
 protected function parseHtml(){
-foreach($this->aTplVar as $sAssignTplKey=>$sAssignTplVal){$$sAssignTplKey =& $this->aTplVar[$sAssignTplKey];}
+foreach($this->aTplVar as $sAssignTplKey=>&$mAssignTplVal){$$sAssignTplKey=&$mAssignTplVal;}
 $sReturnHtmlVal = \'\';
 {COMPILE_CODE}
 return $sReturnHtmlVal;}

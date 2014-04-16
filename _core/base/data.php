@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializable
 {
@@ -240,9 +240,9 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
 
     /**
      * Get Multilevel Data
-     * @param type $mKey
-     * @param type $mDefault
-     * @return type
+     * @param mixed $mKey
+     * @param mixed $mDefault
+     * @return mixed
      */
     protected function _getMultilevelData($mKey, $mDefault, $bLogError)
     {
@@ -270,7 +270,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
 
     /**
      * Check is Object instance of this Class
-     * @param array $aLink
+     * @param object $oObject
      * @return boolean
      */
     protected function _isThisClass($oObject)
@@ -327,21 +327,40 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
 
     // ======== The magic methods ======== \\
 
+    /**
+     * Magic set method for data-array
+     * @param mixed $sKey
+     * @param mixed $mValue
+     */
     public function __set($sKey, $mValue)
     {
         $this->set($sKey, $mValue);
-    }
+    } // function __set
 
+    /**
+     * Magic get method for data-array
+     * @param mixed $sKey
+     * @return mixed
+     */
     public function __get($sKey)
     {
         return $this->get($sKey);
-    }
+    } // function __get
 
+    /**
+     * Magic isset method for data-array
+     * @param mixed $sKey
+     * @return boolean
+     */
     public function __isset($sKey)
     {
         return isset($this->aData[$sKey]);
-    }
+    } // function __isset
 
+    /**
+     * Magic unset method for data-array
+     * @param mixed $sKey
+     */
     public function __unset($sKey)
     {
         if ($this->_checkSetter()) {
@@ -349,19 +368,14 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
         } else {
             $this->_logError(12, array('key' => $sKey));
         }
-    }
+    } // function __unset
 
-    public function __sleep()
+    /**
+     * Magic method for convert this object to string
+     * @return string
+     */
+    public function __toString()
     {
-        return array('aData', 'bMultilevel');
-    }
-
-    public function __wakeup()
-    {
-        $this->_restoreSetters();
-    }
-
-    public function __toString() {
         $sRet = '';
         foreach ($this->aData as $k => $v) {
             if (!empty($sRet)) {
@@ -388,68 +402,120 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
             }
         }
         return $sRet;
-    }
+    } // function __toString
 
     // ======== Required Interface methods ======== \\
-
-    public function offsetSet($sKey, $mValue)
-    {
-        $this->set($sKey, $mValue);
-    }
-
+    /**
+     * Method of interface ArrayAccess
+     * @param mixed $sKey
+     * @return boolean
+     */
     public function offsetExists($sKey)
     {
         return isset($this->aData[$sKey]);
-    }
+    } // function offsetExists
 
-    public function offsetUnset($sKey)
-    {
-        unset($this->aData[$sKey]);
-    }
-
+    /**
+     * Method of interface ArrayAccess
+     * @param mixed $sKey
+     * @return mixed
+     */
     public function offsetGet($sKey)
     {
         return $this->get($sKey);
-    }
+    } // function offsetGet
 
-    public function rewind()
+    /**
+     * Method of interface ArrayAccess
+     * @param mixed $sKey
+     * @param mixed $mValue
+     */
+    public function offsetSet($sKey, $mValue)
     {
-        reset($this->aData);
-    }
+        $this->set($sKey, $mValue);
+    } // function offsetSet
 
+    /**
+     * Method of interface ArrayAccess
+     * @param mixed $sKey
+     */
+    public function offsetUnset($sKey)
+    {
+        unset($this->aData[$sKey]);
+    } // function offsetUnset
+
+    /**
+     * Method of interface Iterator
+     * @return mixed
+     */
     public function current()
     {
         return current($this->aData);
-    }
+    } // function current
 
+    /**
+     * Method of interface Iterator
+     * @return mixed
+     */
     public function key()
     {
         return key($this->aData);
-    }
+    } // function key
 
+    /**
+     * Method of interface Iterator
+     */
     public function next()
     {
         next($this->aData);
-    }
+    } // function next
 
+    /**
+     * Method of interface Iterator
+     */
+    public function rewind()
+    {
+        reset($this->aData);
+    } // function rewind
+
+    /**
+     * Method of interface Iterator
+     * @return booleean
+     */
     public function valid()
     {
         return key($this->aData) !== null;
-    }
+    } // function valid
 
-    public function count() {
+    /**
+     * Method of interface Countable
+     * @return integer
+     */
+    public function count()
+    {
         return count($this->aData);
-    }
+    } // function count
 
-    public function serialize() {
+    /**
+     * Method of interface Serializable
+     * @return string
+     */
+    public function serialize()
+    {
         return serialize(array(
             'multiLevel'  => $this->bMultiLevel,
             'fullRewrite' => $this->bFullRewrite,
             'errMsg'      => $this->aErrMsg,
             'data'        => $this->aData,
         ));
-    }
-    public function unserialize($sRecover) {
+    } // function serialize
+
+    /**
+     * Method of interface Serializable
+     * @param string $sRecover
+     */
+    public function unserialize($sRecover)
+    {
         $aRecover = unserialize($sRecover);
 
         $this->bMultiLevel  = $aRecover['multiLevel'];
@@ -466,7 +532,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
             }
         }
         // Attention: restore Setter in the children class by method _setSetter
-    }
+    } // function unserialize
 
 } // class \fan\core\base\data
 ?>

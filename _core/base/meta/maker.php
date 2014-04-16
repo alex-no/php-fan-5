@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 class maker implements \IteratorAggregate
 {
@@ -36,7 +36,7 @@ class maker implements \IteratorAggregate
      * Array of source Meta-data
      * Keys "folder", "parent", "block" in the Main block
      *   also contain Meta-data where key equal to name of another Blocks
-     * Key "content" contain Meta-data from the Main block
+     * Key "main" contain Meta-data from the Main block
      *   and can't be used in the the Main block
      * @var array
      */
@@ -45,7 +45,7 @@ class maker implements \IteratorAggregate
         'parent'    => array('common' => null, 'own' => null),
         'block'     => array('common' => null, 'own' => null),
         'container' => array('common' => null, 'own' => null),
-        'content'   => array('blockName' => null),
+        'main'      => array('blockName' => null),
     );
 
     /**
@@ -74,7 +74,7 @@ class maker implements \IteratorAggregate
             array('block',     'own'      ),
             array('folder',    'blockName'),
             array('container', 'own'      ),
-            array('content',   'blockName'),
+            array('main',      'blockName'),
         ),
         'other' => array(
             'folder',
@@ -149,15 +149,15 @@ class maker implements \IteratorAggregate
      * Set Meta-data assigned for current block in Main-Content block
      * @return \fan\core\base\meta\maker
      */
-    public function setContentMeta()
+    public function setMainBlockMeta()
     {
         $oTab = $this->oBlock->getTab();
-        $aContentMeta = array(
-            $this->sBlockName  => $oTab->getBlocksMetaByMain($this->sBlockName)
+        $aMainMeta = array(
+            $this->sBlockName => $oTab->getBlocksMetaByMain($this->sBlockName)
         );
-        $this->_setSource('content', $aContentMeta);
+        $this->_setSource('main', $aMainMeta);
         return $this;
-    } // function setContentMeta
+    } // function setMainBlockMeta
 
     /**
      * Assemble meta-data for Tab

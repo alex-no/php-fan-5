@@ -13,7 +13,7 @@ use fan\project\exception\block\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  *
  * @abstract
  *
@@ -41,19 +41,23 @@ use fan\project\exception\block\fatal as fatalException;
 abstract class base
 {
     /**
-     * @var string Block's name
+     * Name of block
+     * @var string
      */
     protected $sBlockName = '';
     /**
-     * @var boolean Flag: Is current block "Root"
+     * Flag: Current block is "Root"
+     * @var boolean
      */
     protected $bIsRoot = false;
     /**
-     * @var boolean Flag: Is current block "Main"
+     * Flag: Current block is "Main"
+     * @var boolean
      */
     protected $bIsMain = false;
 
     /**
+     * Service Tab
      * @var \fan\core\service\tab
      */
     protected $oTab;
@@ -64,7 +68,8 @@ abstract class base
      */
     private $oMetaMaker;
     /**
-     * @var MetaData
+     * MetaData
+     * @var fan\core\base\meta[]
      */
     protected $aMeta;
     /**
@@ -74,7 +79,8 @@ abstract class base
     protected $bIsDynMeta = false;
 
     /**
-     * @var array of Role Condition
+     * Role Conditions
+     * @var array
      */
     protected $aRoleCondition = null;
 
@@ -96,7 +102,8 @@ abstract class base
     private $oContainer;
 
     /**
-     * @var array of Embedded Blocks
+     * Embedded Blocks
+     * @var array
      */
     private $aEmbeddedBlocks = array();
 
@@ -174,7 +181,7 @@ abstract class base
         if (!empty($aContainerMeta)) {
             $this->oMetaMaker->setContainerMeta($aContainerMeta);
         }
-        $this->oMetaMaker->setContentMeta();
+        $this->oMetaMaker->setMainBlockMeta();
 
         $this->aMeta = $this->oMetaMaker->assembleBlock();
 

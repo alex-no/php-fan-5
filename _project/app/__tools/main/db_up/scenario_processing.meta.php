@@ -1,12 +1,12 @@
 <?php
 /**
  * Index tools meta
- * @version 05.01.002 (01.05.2013)
+ * @version 05.02.003 (16.04.2014)
  */
 return array(
     'own' => array(
 
-        'mainCarcass' => '{CARCASS}/empty_tools_carcass',
+        'carcass' => 'carcass/simple',
 
         'title' => 'Scenario processing',
 

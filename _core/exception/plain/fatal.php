@@ -12,13 +12,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.003 (16.04.2014)
  */
 class fatal extends \fan\core\exception\base
 {
 
     /**
-     * @var object Instance of class maked exception
+     * Instance of class maked exception
+     * @var object
      */
     protected $oController = null;
 
@@ -44,12 +45,20 @@ class fatal extends \fan\core\exception\base
 
     /**
      * Get Instance of service
-     * @return \fan\core\service\base
+     * @return object
      */
     public function getController()
     {
         return $this->oController;
     }
+
+    /**
+     * Remove property "oBlock" before "print_r" this object
+     */
+    public function clearProperty()
+    {
+        $this->_removeEmbededObject('oController');
+    } // function clearProperty
 
 } // class \fan\core\exception\plain\fatal
 ?>

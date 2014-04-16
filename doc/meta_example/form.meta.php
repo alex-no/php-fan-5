@@ -2,7 +2,7 @@
 /**
  * Example of meta file for block
  * Note:
- *   - All pathes to some other blocks set by {CONSTANTS}, which are defined in ini-file
+ *   - All paths to some other blocks set by {CONSTANTS}, which are defined in ini-file
  *   - NR - Not required parameter
  *
  * This file is part PHP-FAN (php-framework of Alexandr Nosov)
@@ -36,12 +36,14 @@ return array(
             'redirect_https'    => null OR true OR false, // NR. null: Current protocol; true: HTTPS false: HTTP. By default: redirect_protocol = null
 
             'always_parse'     => true OR false, // NR. Always validate this form. By default: validate_required = false
-            'form_submit_name' => 'name(s) of Submmit form button(s)', //NR. If specified key(s) has any value - it is need validate form
+            'form_submit_name' => 'name(s) of Submit form button(s)', //NR. If specified key(s) has any value - it is need validate form
             'form_exceptions'  => array('value1','value2', 'etc'), //NR. If specified keys form id parsed always if they don't set
 
-            'form_id'       => 'id of form tag', // Required if form has validation rules. You can (NR) set it also as value for hidden 'form_key_field'
-            'form_key_name' => 'name of key', //  Name of key for button when complex form is used
-            'role_name'     => 'name of one_time_roles', // It's used for show other html-code after submit. By defual: 'form_submit_successful_' . form_id
+            'form_id'         => 'id of form tag', // Required if form has validation rules. You can (NR) set it also as value for hidden 'form_key_field'
+            'form_key_name'   => 'name of key', //  Name of key for button when complex form is used
+            'csrf_protection' => 8, //NR. By default 8. The length of CSRF-protection code from 4 to 32 (add it to form-key). If length is out of range - CSRF-protection is not used.
+
+            'role_name' => 'name of one_time_roles', // It's used for show other html-code after submit. By defual: 'form_submit_successful_' . form_id
             'element_id_prefix' => 'id prefix', // (NR) Prefix for Id of elements
 
             'js_url' => array( // URLs for JS-validators
@@ -71,11 +73,12 @@ return array(
                     'label'        => 'text before field', //Required if form has validation rules or 'is required'
                     'note'         => 'note for field',    //NR
                     'fill_empty'   => 'text into field before typing', //NR
-                    'input_type'   => 'text/password/checkbox...etc',  //NR
-                    'trim_data'    => true OR false, // NR. By default: true for all input type except 'password'
-                    'trim_tag'     => true OR false, // NR. Trim tag in get data. By default: true
-                    'trim_tag_val' => '&"\'<>',      // NR. This parameter work together with trim_tag=true. There is list of symbols, which must be replaced. By default: '&"\'<>'
-                    'is_required'  => true OR false, // NR. By default: if field has validation rule with ('not_empty' = false) - it is required, else it isn't
+                    'input_type'   => 'text/password/checkbox...etc', //NR
+                    'trim_data'    => true OR false, //NR. By default: true for all input type except 'password'
+                    'trim_tag'     => true OR false, //NR. Trim tag in get data. By default: true
+                    'trim_tag_val' => '&"\'<>\\',    //NR. This parameter work together with trim_tag=true. There is list of symbols, which must be replaced. By default: '&"\'<>\\'
+                    'is_required'  => true OR false, //NR. By default: if field has validation rule with ('not_empty' = false) - it is required, else it isn't
+                    'depth'        => 1, //NR. Used for multi-value elents. It is points depth of data-array
 
                     'data' => array( //NR. Data for select, radio-group, etc
                         array('value' => 'value1', 'text' => 'text1'),
@@ -87,11 +90,12 @@ return array(
                         'method' => 'Method name',
                         'class'  => 'Class name', //NR. If class is set - call static method of this class else method of current block
                     ),
+                    'not_check_by_data' => false, //NR. Used for select, radio, etc elemets only for disable check value by data
 
                     'default_value' => 'default value', //NR.
-                    'attributes' => array( //NR. List of additional attributes with arbitrary name and value
+                    'maxlength'     => 23, // NR. This parameter is set as attribute for input-tag. If it is set received value will be cut for this length defore validation
+                    'attributes'    => array( //NR. List of additional attributes with arbitrary name and value
                         'name_of_attr' => 'value_of_attr',
-                        'maxlength' => 48, // Example of maxlength set
                         // ...
                     ),
                     'validate_rules' => array( //NR.
