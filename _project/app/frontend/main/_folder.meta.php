@@ -9,7 +9,7 @@ return array(
     ),
 	'own' => array (
         'externalCss' => array(
-            'new' => array('~/fan-tests.css'),
+            'new' => array('/css/main.css', '~/fan-tests.css'),
         ),
     ),
 );

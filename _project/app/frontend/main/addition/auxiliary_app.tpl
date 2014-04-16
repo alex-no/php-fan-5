@@ -12,7 +12,3 @@
     </p>
 
 </article>
-
-<div class="back2index">
-    <a href="/index.html"><span>Return to list of tests</span><span class="no_unl"> / </span><span>Вернуться к списку тестовых файлов</span></a>
-</div>

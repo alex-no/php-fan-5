@@ -5,19 +5,16 @@
  */
 return array(
     'own' => array(
-        'embeddedBlocks' => array( // Key - template var; Value - path to block
-            //'header'     => 'design/header',
-            //'columnLeft' => 'design/column_left',
-            'main'       => '{MAIN}',
-            //'footer'     => 'design/footer',
-        ),
-        'externalCss' => array( // css files
-            //'new' => array('/css/layout.css'),
+        'embeddedBlocks' => array(
+            'header' => 'design/header',
+            'main'   => '{MAIN}',
+            'footer' => 'design/footer',
         ),
     ),
-
-    'authorization_top' => array(
-        'template' => 'authorization_top',
+    'footer' => array(
+        'tplVars' => array(
+            'hide_nav' => 1,
+        ),
     ),
 );
 ?>

@@ -36,15 +36,24 @@ class cache extends \fan\project\block\common\simple
             //$oCache2->delete('t2');
             $this->view['is_memcache']  = true;
         }
+
+        $this->view->adv = $this->isAdvanced();
+        if ($this->view->adv) {
+            $oTasks = $this->_getBlock('task_list');
+            /* @var $oTasks \fan\app\frontend\extra\task_list */
+            foreach ($this->aMeta['additional_tasks']['ru'] as $v) {
+                $oTasks->addTask($v);
+            }
+        }
     } // function init
 
     /**
-     * Get Title
-     * @return string
+     * Check - is show advanced text
+     * @return boolean
      */
-    public function getTitle()
+    public function isAdvanced()
     {
-        return 'PHP-FAN.5: Test of cache';
-    } // function getTitle
+        return service('request')->get('advanced', 'AG', false);
+    } // function isAdvanced
 } // class \fan\app\frontend\main\cache
 ?>

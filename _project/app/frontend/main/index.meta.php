@@ -1,17 +1,13 @@
 <?php
 /**
  * Home page meta-data
- * @version 05.01.002 (01.05.2013)
+ * @version 05.02.003 (16.04.2014)
  */
 return array(
     'own' => array(
         'title' => 'PHP-FAN.5: Presentation and testing',
 
-        /** /
-        'carcass'     => '{CARCASS}/home_carcass',
-        'externalCss' => array( // css files
-            'new' => array('/css/home.css'),
-        ),/**/
+        'carcass' => 'carcass/home',
 
         'tests' => array(
             'view_data' => array(

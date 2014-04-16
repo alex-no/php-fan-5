@@ -5,8 +5,9 @@
  */
 return array(
 	'own' => array (
+        'carcass' => 'carcass/test',
         'externalCss' => array(
-            'new' => array('~/fan-tests.css'),
+            'new' => array('/css/main.css', '~/fan-tests.css'),
         ),
     ),
 );

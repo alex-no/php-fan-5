@@ -32,14 +32,5 @@ class session extends \fan\project\block\common\simple
 
 
     } // function init
-
-    /**
-     * Get Title
-     * @return string
-     */
-    public function getTitle()
-    {
-        return 'PHP-FAN.5: Test of session';
-    } // function getTitle
 } // class \fan\app\frontend\main\session
 ?>

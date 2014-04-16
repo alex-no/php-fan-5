@@ -19,8 +19,23 @@ return array(
         'title' => 'PHP-FAN.5: Test HTML-form',
 
         'embeddedBlocks' => array(
-            'test_form' => 'form/test_form_mono',
+            'test_form'    => 'form/test_form_mono',
+            'description1' => 'description/form1',
+            'description2' => 'description/form2',
+            'task_list'    => 'extra/task_list',
         ),
     ), //'own'
+
+    'task_list' => array(
+        'tasks' => array(
+            'ru' => array(
+                'Попробуйте в мета-данных изменить \'input_type\' для поля \'variant\' с \'select\' на \'radio_group\'. В качестве примера соответствующая строка в meta-файле закоментирована',
+                'Данные для поля \'variant\' сейчас берутся непосредственно из meta-файла. Попробуйте получить их с помощью метода getVariants, описанного высше',
+                'Попробуйте изменить граничные значения для валидации поля date, а затем введите запредельное значение и посмотрите на результат',
+                'Попробуйте изменить в шаблоне порядок элементов для поля date',
+                'Добавьте в форму одно или несколько своих полей - их надо прописать meta-файле и в шаблоне',
+            ),
+        ),
+    ),
 );
 ?>

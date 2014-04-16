@@ -1,5 +1,5 @@
 <div id="content">
-    <div id="mainContent">{$messBefore}{$main}{$messAfter}</div>
-    <div id="mainClear"></div>
+    <main>{@$messBefore}{$main}{@$messAfter}</main>
+    <div id="clear">&nbsp;</div>
 </div>
-<div id="bottomContent">{$bottomContent}</div>
+<footer>{$footer}</footer>

@@ -16,16 +16,5 @@
  */
 class form extends \fan\project\block\common\simple
 {
-    /**
-     * Init block data
-     */
-    public function init()
-    {
-        $this->view->meta_example = realpath(\bootstrap::parsePath('{PROJECT}/../doc/meta_example/form.meta.php'));
-
-        $aPaths = \fan\project\service\reflector::instance()->getParentPaths($this->_getBlock('test_form'));
-        $this->view->form_block = pathinfo(reset($aPaths));
-        //$this->view->form_block = realpath(end($aPaths));
-    } // function init
 } // class \fan\app\frontend\main\form
 ?>
