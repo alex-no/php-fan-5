@@ -1,0 +1,11 @@
+/* Static HTML-content */
+#cont_client_stat h2 {
+    text-align:center;
+}
+#cont_client_stat .graf {
+	margin: 3px auto 3px;
+}
+#cont_client_stat .s250_100 {
+	width: 250px;
+	height: 100px;
+}

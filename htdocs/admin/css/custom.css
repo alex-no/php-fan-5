@@ -1,0 +1,112 @@
+/* Static content */
+#cont_site_url_content .page_content textarea {
+	height:250px;
+}
+#cont_site_url_content .multiRowDataTable {
+	width:95%;
+}
+#cont_site_url_content .id {
+	width:55px;
+}
+#cont_site_url_content .img{
+	width:95px;
+}
+#cont_site_url_content .adm_img_ln {
+	height:270px;
+}
+#cont_site_url_attribute .param_label {
+    color:#1C3955;
+    font-style:italic;
+    text-decoration:none;
+    white-space:nowrap;
+}
+#cont_site_url_attribute .notEdit {
+    display:inline;
+    padding:0;
+}
+#cont_site_url_attribute textarea {
+    height:48px;
+}
+#cont_short_messages td.id {
+    text-align:left;
+}
+#cont_short_messages .rowId {
+    font-size:9px;
+    width:150px;
+    overflow:hidden;
+}
+
+/* internal news */
+#cont_intNews .newsSort {
+	width: 714px;
+}
+#cont_intNews .news_date {
+	width:90px;
+}
+#cont_intNews .news_complete {
+	width:40px;
+}
+#cont_intNews .news_date input{
+	font-weight: bold;
+}
+#cont_intNews .news_head input{
+	color: #990000;
+	font-weight: bold;
+}
+#cont_intNews .news_img{
+	width:90px;
+	overflow: auto;
+}
+
+#cont_intNews .announce textarea{
+	width:550px;
+	height:53px;
+	color: #000099;
+}
+#cont_intNews .news_cont textarea{
+	width:550px;
+	height:122px;
+}
+#cont_intNews .adm_img_ln{
+	height: 181px;
+}
+
+/* FAQ */
+#cont_FAQ .quest textarea {
+	width:400px;
+	height:53px;
+	color: #000099;
+}
+#cont_FAQ .answer textarea {
+	height:200px;
+	width:760px;
+}
+#cont_FAQ .order_key {
+	width: 55px;
+}
+
+/* articles */
+#cont_article {
+	margin-left: 110px;
+}
+#cont_article .art_page{
+	height: 20px;
+}
+#cont_article .article_img{
+	width:90px;
+	overflow:auto;
+}
+#cont_article .art_content textarea{
+	width: 600px;
+	height:550px;
+}
+/* article images */
+#cont_article_image{
+	float: left;
+}
+#cont_article_image .formDataInput{
+	padding-left: 15px;
+}
+#cont_article_image .adm_img_ln{
+	position: fixed;
+}

@@ -1,0 +1,1 @@
+<span>Quest type:</span> {ldelim}radio_group-quest_type{rdelim}

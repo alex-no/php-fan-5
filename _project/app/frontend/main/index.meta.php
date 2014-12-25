@@ -31,11 +31,11 @@ return array(
                 'ru' => 'Проверка работы с кэшем',
                 'en' => 'Test of operation with cache',
             ),
-/*
             'config' => array(
                 'ru' => '',
                 'en' => '',
             ),
+/*
             'date' => array(
                 'ru' => '',
                 'en' => '',
@@ -49,7 +49,6 @@ return array(
                 'ru' => 'Тестирование HTML-форм',
                 'en' => 'Test HTML-form',
             ),
-/*
             'msg' => array(
                 'ru' => '',
                 'en' => '',
@@ -70,7 +69,6 @@ return array(
                 'ru' => '',
                 'en' => '',
             ),
-*/
         ),
 
         /**

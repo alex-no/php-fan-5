@@ -1,0 +1,1 @@
+<span>Место под баннер:</span> {ldelim}select-id_banner_place{rdelim}

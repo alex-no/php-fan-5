@@ -3,6 +3,13 @@
     {form_row name='text1'}
     <div class="formRow">{form_label name='date'}{form_field name='date'}{form_error name='date'}{form_note name='date'}</div>
     {form_row name='variant'}
+
+    {form_row name='mv[xxx]'}
+    {form_row name='mv[2]'}
+
+    {form_row name='f[a]'}
+    {form_row name='f[b]'}
+
     {form_button text=Submit}
 </form>
 

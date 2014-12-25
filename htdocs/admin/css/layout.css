@@ -1,0 +1,372 @@
+table td, table th{
+	padding: 0px;
+}
+#work_part, #login_part {
+	height: 100%;
+	display: none;
+}
+
+h1 {
+	font-size: 14px;
+	color: #0000A0;
+	margin-bottom: 7px; 
+}
+h1 b{
+	color: #000040;
+}
+/* Java Script is disable */
+#not_js {
+	display: block;
+	height: 100%;
+	position: relative;
+}
+#not_js div {
+	display: block;
+	top: 45%;
+	left: 50%;
+	position: absolute;
+	width: 150px;
+	height: 60px;
+	margin: -30px 0px 0px -75px;
+	font-size: 12px;
+	color: #800000;
+	text-align: center;
+}
+
+/* Login */
+#login_part {
+	position: relative;
+}
+#login_part fieldset {
+	display: block;
+	top: 45%;
+	left: 50%;
+	position: absolute;
+	width: 250px;
+	height: 80px;
+	margin: -40px 0px 0px -125px;
+	border: 1px solid #000066;
+	padding: 14px 8px 0px;
+	background-color: #E5EAF1;
+	font-size: 12px;
+}
+#login_part div{
+	margin-bottom: 8px;
+}
+#login_part label{
+	display: block;
+	float: left;
+	width: 85px;
+}
+#login_part input{
+	border: 1px solid #000033;
+	width: 160px;
+}
+#login_part #login_submit {
+	display: block;
+	margin: 0px auto;
+	width: 90px;
+	padding: 0px 10px;
+	border: 1px solid #000033;
+}
+
+/* Main menu elements */
+#blMainMenu {
+	position: absolute;
+	width: 170px;
+	background-color: #D2D2D2;
+}
+#blMainMenuContent {
+	padding: 0px 4px;
+	display: block;
+	height: 100%;
+	overflow: auto;
+}
+#blMainMenuContent li{
+	display: block;
+	list-style: none;
+	margin: 5px 0 0 0;
+}
+#blMainMenuContent a{
+	display: block;
+	padding: 3px 3px 3px 8px;
+	color: #000000;
+	text-decoration: none;
+}
+#blMainMenuContent a:hover{
+	color: #FFFFFF;
+	background-color: #08246B;
+}
+#blMainMenu .lev1 {
+	list-style: none;
+	font-weight: bold;
+	font-size: 12px;
+}
+#blMainMenu .lev2 {
+	list-style: disc;
+	font-weight: normal;
+	font-size: 11px;
+	padding-left: 10px;
+}
+#blMainMenu .lev3 {
+	list-style: square;
+	font-style: italic;
+	padding-left: 10px;
+}
+#blMainMenu .addTop {
+	cursor: pointer;
+}
+#blMainMenu .addTop:hover {
+	text-decoration: underline;
+	color: #000066;
+}
+/* Global elements */
+#blTop {
+	overflow: auto;
+}
+#blTop ul, #blBottom ul, #blTop li, #blBottom li {
+	list-style: none;
+	display: block;
+	float: left;
+	margin-left: 0px;
+}
+#blTopMenu, #conditionForm, #blBottom {
+	font-size: 11px;
+	color: #000;
+	display: block;
+	background-color: #D6D3CE;
+	border-top: 1px solid #FFF;
+	border-bottom: 1px solid #848284;
+}
+#blTopMenu, #conditionForm {
+}
+#vSeparator1, #vSeparator2 {
+	display: block;
+	height: 100%;
+}
+#vSeparator1 {
+	width: 8px;
+	float: right;
+	background: url(../image/v-separator1.gif) repeat-y left;
+}
+#vSeparator1_{
+	width: 3px;
+	height: 81px;
+	margin: 13px 0px 0px 2px;
+}
+#vSeparator1 .line_arrow1{
+	background: url(../image/line_arrow_1.gif) no-repeat center;
+}
+#vSeparator1 .line_arrow2{
+	background: url(../image/line_arrow_2.gif) no-repeat center;
+}
+#vSeparator2 {
+	width: 6px;
+	cursor: e-resize;
+	background: url(../image/v-separator2.gif) repeat-y left;
+}
+#vSeparator2_ {
+	display: none;
+	width: 3px;
+	background: #5E5E5E none;
+	border-left: 1px #2B2B2B solid;
+	border-right: 1px #2B2B2B solid;
+	height: 600px;
+	position: absolute;
+	bottom: 40px;
+	z-index: 10;
+	cursor: e-resize;
+}
+
+/* Top elements */
+#blTopMenu, #conditionForm {
+	padding-bottom: 1px;
+}
+ul#blTopMenu {
+	height: 21px;
+	width: auto;
+	padding-left: 16px;
+	float: none;
+}
+#selectWkPn{
+	margin-top: 5px;
+	font-size: 9px;
+	color: #000066;
+	background: url(../image/start_arrow.gif) no-repeat 0px 6px;
+	padding-left: 10px;
+	margin-left: -3px;
+}
+#blTopMenu #logout{
+	float: right;
+	font-weight: bold;
+	margin-right: 3px;
+}
+#blTopMenu a{
+	display: block;
+	padding: 5px 9px 5px 8px;
+	height: 11px;
+	color: #000;
+	text-decoration: none;
+	white-space: nowrap;
+	background-color: #C6C3BD;
+	margin-right: 2px;
+}
+#blTopMenu a:hover{
+	color: #FFF;
+	background-color: #08246B;
+}
+#blTopMenu a.current{
+	color: #FFF;
+	background-color: #5F5F5F;
+	font-weight: bold;
+}
+#conditionForm {
+	clear: both;
+	min-height: 21px;
+	padding: 3px 10px 2px;
+	display: none;
+}
+
+
+
+
+#work_part, #mainBody {
+	min-width: 750px;
+}
+#work_part {
+	height: 100%;
+}
+#mainBody {
+	min-height: 100%; 
+}
+a.win_close {
+	display: block;
+	width: 14px;
+	height: 14px;
+	background: url(../image/win-close.gif) no-repeat right top;
+}
+a.win_close:hover {
+	background-image: url(../image/win-close_over.gif);
+}
+
+/* Bottom elements */
+#blClear {
+	clear: both;
+	height: 40px;
+	width: 100%;
+}
+#blBottom {
+	margin-top: -24px;
+	height: 22px;
+}
+.pager {
+	display: block;
+	height: 16px;
+	overflow: hidden;
+	clear: both;
+	background-color:#D6D3CE;
+	border-top:1px solid #FFFFFF;
+}
+
+.pager .pageScroll, .pager .pageScroll li, .pager .pageScroll a {
+	background: none;
+	margin: 0px;
+	height: auto;
+}
+.pager .pageScroll {
+	border-top: 1px solid #848284;
+	border-right: 1px solid #848284;
+	padding-bottom: 1px;
+}
+.pager .pageScroll a {
+	padding: 3px 3px 2px 3px;
+	border: 1px solid #D6D3CE;
+	background-color: #D6D3CE;
+	font-size: 1px;
+}
+.pager .pageScroll a:hover {
+	border-color: #08246B;
+	background-color: #B5BED6;
+}
+.pager .pageScroll img {
+	width: 6px;
+	height: 7px;
+}
+
+.pager li{
+	display: block;
+	background: url(../image/pager-li.gif) no-repeat left top;
+	margin: 0px 0px 1px -9px;
+	float: left;
+}
+.pager li.current{
+	background: url(../image/pager-li_current.gif) no-repeat left top;
+}
+.pager li.pre_first{
+	display: block;
+	background: url(../image/pager-pre_first.gif) no-repeat left top;
+	margin-left: 0px;
+	width: 9px;
+	height: 15px;
+}
+.pager a{
+	display: block;
+	background: url(../image/pager-a.gif) no-repeat right top;
+	padding: 1px 17px 4px 16px;
+	height: 11px;
+	font-size: 11px;
+	color: #000;
+	text-decoration: none;
+}
+.pager a:hover{
+	color: #0000FF;
+	/*font-weight: bold;*/
+}
+.pager li.current a{
+	background: url(../image/pager-a_current.gif) no-repeat right top;
+	font-weight: bold;
+}
+#blSubBottom {
+	clear: both;
+}
+#blButtons {
+	display: none;/**/
+}
+#blButtons button{
+	display: block;
+	float: right;
+	height: 21px;
+	font-size: 12px;
+	font-weight: bold;
+	margin: -1px 8px 0px 8px;
+}
+#saveButton {
+	padding: 0px 14px;
+	color: #336633;
+}
+#cancelButton {
+	padding: 0px 2px;
+	color: #990000;
+}
+#blStatusBar {
+	height: 16px;
+	margin: 0px 2px 2px 2px;
+	padding: 1px;
+	border: 1px solid #848284;
+	border-bottom-color: #FFF;
+	border-right-color: #FFF;
+	overflow: hidden;
+}
+/* temporary block */
+#temporaryLoadBlock {
+	display: none;
+}
+#upLoadFrames {
+	height: 1px;
+	margin-top: -1px;
+	width: 1px;
+	margin-right: -1px;
+	overflow: hidden;
+	float: left;
+	/*border: 1px solid #FF0033;*/
+}

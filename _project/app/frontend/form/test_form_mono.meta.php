@@ -7,8 +7,8 @@
 return array(
     'own' => array(
         'form' => array(
-            'action_method'    => 'POST',
-            'request_type'     => 'PG',
+            'action_method'    => 'FILE',
+            'request_type'     => 'PGF',
             //'redirect_uri'     => '~/index.html',
             'form_key_name'    => 'test_form_1',
             'form_id'          => 'test_form_1',
@@ -36,6 +36,35 @@ return array(
                     ),
                 ),
 
+                'mv' => array(
+                    'label'       => 'Multi-value',
+                    'input_type'  => 'text',
+                    'is_required' => false,
+                    'maxlength'   => 4,
+                    'depth'       => 1,
+                    'validate_rules' => array(
+                        array(
+                            'rule_name' => 'strlen',
+                            'error_msg' => 'Incorrect len',
+                            'rule_data' => array('max_length' => 3),
+                        )
+                    ),
+                ),
+                'mv[2]' => array(
+                    'label'       => 'Multi-value222',
+                    'input_type'  => 'text',
+                    'is_required' => false,
+                    'maxlength'   => 8,
+                    'depth'       => 1,
+                    'validate_rules' => array(
+                        array(
+                            'rule_name' => 'strlen',
+                            'error_msg' => 'Incorrect len2',
+                            'rule_data' => array('max_length' => 8),
+                        )
+                    ),
+                ),
+
                 'variant' => array(
                     'label'       => 'Variant',
                     'input_type'  => 'select',
@@ -50,6 +79,12 @@ return array(
                         //'class'  => 'Class name',
                     ),
                      */
+                ),
+                'f' => array(
+                    'label'       => 'Upload file',
+                    'input_type'  => 'file',
+                    'is_required' => false,
+                    'depth'       => 1,
                 ),
             ),
             'design' => array(

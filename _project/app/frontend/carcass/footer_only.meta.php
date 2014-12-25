@@ -6,11 +6,11 @@
 return array(
     'own' => array(
         'embeddedBlocks' => array(
-            'footer' => 'design/footer',
             'main'   => '{MAIN}',
+            'footer' => 'design/footer',
         ),
         'externalCss' => array(
-            //'new' => array('/css/layout.css'),
+            'new' => array('/css/main.css', '/css/layout.css'),
         ),
     ),
 );

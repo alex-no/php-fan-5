@@ -1,0 +1,81 @@
+* {
+	font-family: inherit;
+	font-size: inherit;
+	margin: 0px;
+	padding: 0px;
+}
+
+body,html {width: 100%; height:100%; background: #F8F8F8;}
+body {
+	font-family: Verdana, Arial, Geneva, Helvetica, sans-serif;
+	font-size: 0.9em;
+	border: 0px;
+	color: #000000;
+}
+
+a {text-decoration: underline; color: #00008B;}
+a:active, a:hover {text-decoration: underline; color: #8B0000;}
+
+a img {border: 0px;}
+
+h1 {
+	margin: 10px 0px 5px;
+	font-size: 1.2em;
+	color: #1D1350;
+	text-align: center;
+}
+	
+h2 {
+	margin: 8px 0px 0px;
+	font-size: 1.15em;
+	color: #1D1350;
+}
+
+p { margin: 6px 0px 0px; }
+
+table {
+	border-collapse: collapse;
+	margin: 0px auto;
+}
+
+table td, table th{
+	padding: 1px 3px;
+	border: none;
+}
+
+/* Special classes */
+.clear{clear: both;}
+div.clear{ width: 100%; height: 1px; font-size: 1px;}
+
+.float_left{ display: block; float: left; }
+.float_right{ display: block; float: right; }
+.no_bgr{background: none !important;}
+.relative{position: relative;}
+
+.normal{ font-weight: normal; font-style: normal; }
+.bold{ font-weight: bold; }
+.italic{ font-style: italic; }
+
+.left { text-align: left; }
+.center { text-align: center; }
+.right { text-align: right; }
+.justify{ text-align: justify; }
+
+
+.center_block { margin: 0px auto; }
+
+.w25{width: 25px !important;}
+.w30{width: 30px !important;}
+.w40{width: 40px !important;}
+.w50{width: 50px !important;}
+.w75{width: 75px !important;}
+.w100{width: 100px !important;}
+.w200{width: 200px !important;}
+.w250{width: 250px !important;}
+.w300{width: 300px !important;}
+.w400{width: 400px !important;}
+.w500{width: 500px !important;}
+
+.red{color: #CC0000 !important;}
+.green{color: #00CC00 !important;}
+.grey{color: #333333 !important;}

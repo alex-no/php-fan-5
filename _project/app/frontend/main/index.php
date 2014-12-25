@@ -1,6 +1,6 @@
 <?php namespace fan\app\frontend\main;
 /**
- * Test class index
+ * Block class index
  * @version 05.02.001 (10.03.2014)
  */
 class index extends \fan\project\block\common\simple

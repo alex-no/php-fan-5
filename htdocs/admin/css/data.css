@@ -1,0 +1,371 @@
+/*Main/Add Frame*/
+#blContent {
+	clear: both;
+	width: 100%;
+	overflow: hidden;
+	position: relative;
+}
+td {
+	vertical-align: top;
+}
+#blMain, #blAdd {
+	height: 100%;
+	min-height: 100%;
+}
+#blMain {
+	padding: 0px 0px 0px 6px;
+}
+#blAdd {
+	padding: 0px 4px 0px 2px;
+}
+#vSeparator2 {
+	padding: 0px !important;
+}
+#blMainContent, #blAddContent {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+/*Main Frame*/
+#blMainContent {
+}
+#blMainContent__ {
+	margin: 0px 0px 0px 6px;
+	padding: 0px 2px;
+	height: 100%;
+}
+
+/*Add Frame*/
+#blAddContent {
+	float: left;
+}
+#blAddContent__ {
+	padding: 0px 2px;
+}
+
+#blAddSubSel{
+	width: 100%;
+	min-width: 100%;
+	padding: 0px 0px 5px;
+	background: #B4B1AA url(../image/ssel_background.gif) repeat-x bottom;
+}
+#blAddSubSelect{
+	padding: 2px 2px 0px 10px;
+	overflow: hidden;
+}
+#blAddSubSelect ul{
+	display: block;
+	margin-right: 26px;
+}
+#blAddSubSelect li{
+	list-style: none;
+	display: block;
+	float: left;
+	background: #C3C0BA url(../image/ssel_label_l.gif) no-repeat top left;
+	margin: 0 1px 0 0;
+}
+#blAddSubSelect a{
+	display: block;
+	padding: 5px 7px 1px;
+	height: 16px;
+	text-decoration: none;
+	font-size: 11px;
+	color: #1D1D1D;
+	background: url(../image/ssel_label_r.gif) no-repeat top right;
+	white-space: nowrap;
+}
+#blAddSubSelect li.current{
+	background: #D6D3CE url(../image/ssel_label_cur_l.gif) no-repeat top left;
+	margin-bottom: -1px;
+}
+#blAddSubSelect li.current a{
+	height: 17px;
+	background: url(../image/ssel_label_cur_r.gif) no-repeat top right;
+	font-weight: bold;
+	color: #006600;
+}
+#blAddSubSelect a:hover{
+	color: #000099;
+}
+#closeAdd {
+	float: right;
+	padding: 6px 8px 0px 0px;
+	margin-left:  -20px;
+}
+
+/*content Data*/
+.contentData {
+	margin: 0px auto;
+	height: 100%;
+	width: 100%;
+}
+.contentData *{
+	font-size: 12px;
+}
+.contentDataTop {
+	vertical-align: top;
+	width: 100%;
+}
+.contentDataBottom {
+	vertical-align: bottom;
+	padding-bottom: 40px;
+}
+.stub_load{
+	display:block;
+	padding: 60px 0;
+	background: url(../image/is_loading.gif) no-repeat center;
+}
+.stub_make{
+	display:block;
+	padding: 60px 0;
+	background: url(../image/is_preparing.gif) no-repeat center;
+}
+
+/* ---- multiRowDataTable ---- */
+.multiRowDataTable {
+	border-collapse: collapse;
+	border-bottom: 1px solid #808080;
+	border-left: 1px solid #808080;
+}
+.multiRowDataTable td {
+	padding: 1px 2px;
+	border-right: 1px solid #C0C0C0;
+	border-top: 1px solid #C0C0C0;
+}
+.multiRowDataTable th {
+	background-color: #D4D0C8;
+	padding: 0px 4px 1px;
+	border-top: 1px solid #808080;
+	border-bottom: 1px solid #808080;
+	border-right: 1px solid #808080;
+	font-weight: normal;
+}
+.multiRowDataTable th a{
+	display: block;
+	text-decoration: none;
+	color: #000000;
+	padding: 2px 10px 1px 4px;
+	font-size: 11px;
+	line-height: 9px;
+}
+.multiRowDataTable th a:hover{
+	color: #000066;
+}
+.multiRowDataTable th .order_1{
+background: url(/admin/image/s_asc.png) no-repeat right;
+}
+.multiRowDataTable th .order_2{
+background: url(/admin/image/s_desc.png) no-repeat right;
+}
+.multiRowDataTable .headSpacer{
+	display: block;
+	height: 1px;
+	margin-bottom: -1px;
+}
+
+.row td {
+	background-color: #E6E6E6;
+}
+.row0 td {
+	background-color: #F3F3F3;
+}
+.row1 td {
+	background-color: #ECECEC;
+}
+table .active td {
+	background-color: #D3DDD4;
+}
+
+td.id {
+	padding: 0px 4px 0px 3px;
+	background-color: #D4D0C8;
+	border-bottom: 1px solid #808080;
+	border-right: 1px solid #808080;
+	text-align: right;
+}
+td.id b {
+	color: #005004;
+}
+td.id *{
+	font-size: 11px;
+	padding-top: 3px;
+}
+
+td.del {
+	padding: 0px 4px 0px 3px;
+	border-bottom: 1px solid #808080;
+	border-right: 1px solid #808080;
+}
+
+td.del, th.del {
+	background-color: #C0A8A8;
+}
+td.del a{
+	display: block;
+	margin: 2px auto 0px;
+	font-size: 1px;
+	text-decoration: none;
+	width: 16px;
+	height: 14px;
+	background: #C30000 url(../image/del_but_0.gif) no-repeat;
+}
+td.del a:active{
+	background-image: url(../image/del_but_1.gif);
+}
+
+.multiRowDataTable .gSeparator_0, .multiRowDataTable .gSeparator_1, .multiRowDataTable .gSeparator_2 {
+	font-size:1px;
+	height:5px;
+	background-color: #FFFFFF;
+}
+.multiRowDataTable .gSeparator_1 {
+	border-right: none;
+}
+.multiRowDataTable .gSeparator_2 {
+	border-left: none;
+}
+.total_qtt {
+	float: right;
+	padding: 7px 2px 5px 0px;
+	color: #0000A0;
+}
+.total_qtt span{
+	color: #000000;
+}
+
+
+/* ---- FormTable ---- */
+.formDataTable {
+	margin: 0 auto 10px;
+	padding-right: 15px;
+}
+.formDataTable td {
+	padding: 2px 2px 6px 0;
+	vertical-align: top;
+}
+td.formDataInput {
+	padding: 0 0 6px 0;
+	vertical-align: bottom;
+	width: 65%;
+}
+
+
+/*File foms*/
+.modalBgr {
+	/*display: none;*/
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 999;
+	background-color: #000;
+	opacity: .3;
+	/*moz-opacity: 30;*/
+}
+#formElements {
+	display: none;/**/
+}
+.uplForm, .wysiwygForm, .modalPreview {
+	display: none;
+}
+.modal_win {
+	border-top: 1px solid #D6D3CE;
+	border-left: 1px solid #D6D3CE;
+	border-right: 1px solid #424142;
+	border-bottom: 1px solid #424142;
+	position: absolute;
+	left: 50%;
+	top: 30%;
+	width: 280px;
+	margin-left: -140px;
+	z-index: 1000;
+}
+.wysiwygForm .modal_win {
+	left: 5%;
+	top: 6%;
+	width: 90%;
+	/*height: 80%;*/
+	margin-left: 0;
+}
+.modalPreview .modal_win {
+	top: 7%;
+	width: 700px;
+	margin-left: -350px;
+}
+.modal_win fieldset{
+	border-top: 1px solid #FFFFFF;
+	border-left: 1px solid #FFFFFF;
+	border-right: 1px solid #848284;
+	border-bottom: 1px solid #848284;
+	background-color: #D6D3CE;
+	padding: 1px;
+}
+.modal_win h3{
+	padding: 2px 5px 4px;
+	background-color: #000099;
+	color: #FFFFFF;
+}
+.modal_content{
+	padding: 5px 10px 10px;
+	overflow: auto;
+}
+.modal_file{
+	text-align: right;
+	overflow: hidden;
+	clear: both;
+}
+.modal_win_row{
+	overflow: auto;
+	margin-top: 5px;
+	clear: both;
+}
+.modal_win_row span, .modal_file span{
+	font-size: 12px;
+	display: block;
+	float: left;
+	text-align: left;
+	width: 25%;
+	margin-top: 2px;
+}
+.modal_file input{
+	display: block;
+	float: right;
+	margin-right: 0px;
+}
+.modal_win_row input.text, .modal_win_row textarea{
+	display: block;
+	width: 183px;
+	float: right;
+}
+.modal_win_row textarea{
+	height: 28px;
+}
+.modal_win .buttons{
+	width: 200px;
+	margin: 10px auto 0px;
+}
+.modal_win .buttons button{
+	width: 90px;
+	padding: 0px 5px;
+}
+
+.imgBigFile {
+	width: 680px;
+	height: 460px;
+	overflow: auto;
+	margin: 10px auto;
+	padding: 5px;
+	text-align: center;
+	background-color: #EDEDED;
+	border: 1px solid #5A5A5A;
+}
+
+.modalPreview .modal_win_row span{
+	width: 80px;
+	margin-left: 200px;
+}
+.modalPreview .modal_win_row input, .modalPreview .modal_win_row textarea{
+	float: left;
+    width: 220px;
+}

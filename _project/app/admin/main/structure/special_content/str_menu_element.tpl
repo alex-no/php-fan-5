@@ -1,0 +1,1 @@
+<span>Группа меню:</span> {ldelim}select-group_key{rdelim}
