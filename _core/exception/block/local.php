@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class local extends \fan\core\exception\base
 {
@@ -45,7 +45,7 @@ class local extends \fan\core\exception\base
     } // function getBlock
 
     /**
-     * Remove property "oBlock" before "print_r" this object
+     * Remove property "oBlock" before "var_export" this object
      */
     public function clearProperty()
     {

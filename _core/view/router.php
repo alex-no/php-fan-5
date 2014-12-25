@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class router implements \ArrayAccess, \Countable
 {
@@ -55,38 +55,38 @@ abstract class router implements \ArrayAccess, \Countable
     public function __set($sKey, $mValue)
     {
         $this->set($sKey, $mValue);
-    }
+    } // function __set
 
     public function __get($sKey)
     {
         return $this->get($sKey);
-    }
+    } // function __get
 
     public function __isset($sKey)
     {
         return !empty($this->aKeepers[$sKey]);
-    }
+    } // function __isset
 
     // ======== Required Interface methods ======== \\
 
     public function offsetSet($sKey, $mValue)
     {
         $this->set($sKey, $mValue);
-    }
+    } // function offsetSet
 
     public function offsetGet($sKey)
     {
         return $this->get($sKey);
-    }
+    } // function offsetGet
 
     public function offsetExists($sKey)
     {
         return array_key_exists($sKey, $this->aKeepers);
-    }
+    } // function offsetExists
 
     public function offsetUnset($sKey)
     {
-    }
+    } // offsetUnset
     // ======== Main Interface methods ======== \\
     /**
      * Set special or default view data
@@ -110,14 +110,16 @@ abstract class router implements \ArrayAccess, \Countable
             }
         }
         return $this;
-    }
+    } // function set
 
     /**
      * Get special or default view data
      * @param string $sKey
+     * @param mixed $mDefault
+     * @param boolean $bLogError
      * @return mixed
      */
-    public function get($sKey)
+    public function get($sKey, $mDefault = null, $bLogError = true)
     {
         $sMethod = 'get' . ucfirst(strtolower($sKey));
         if (method_exists($this, $sMethod)) {
@@ -127,8 +129,21 @@ abstract class router implements \ArrayAccess, \Countable
             return $this->_getKeeper($sKey);
         }
         $oKeeper = $this->_getKeeper($this->sDefaultKey);
-        return $oKeeper->get($sKey);
-    }
+        return $oKeeper->get($sKey, $mDefault, $bLogError);
+    } // function get
+
+    /**
+     * Set Several value of view
+     * @param array $aValues
+     * @return \fan\core\view\router
+     */
+    public function setSeveral($aValues)
+    {
+        foreach ($aValues as $k => $v) {
+            $this->set($k, $v);
+        }
+        return $this;
+    } // function setSeveral
 
     /**
      * Get block-owner
@@ -137,7 +152,7 @@ abstract class router implements \ArrayAccess, \Countable
     public function getBlock()
     {
         return $this->oBlock;
-    }
+    } // function getBlock
 
     /**
      * Alias of getAll-method
@@ -146,7 +161,7 @@ abstract class router implements \ArrayAccess, \Countable
     public function toArray()
     {
         return $this->getAll();
-    }
+    } // function toArray
 
     /**
      * Get All data as array
@@ -162,16 +177,16 @@ abstract class router implements \ArrayAccess, \Countable
             $aResult[$k] = adduceToArray($v);
         }
         return $aResult;
-    }
+    } // function getAll
 
     /**
      * Count of Keepers
      * @return integer
      */
     public function count()
-     {
-         return count($this->aKeepers);
-     }
+    {
+        return count($this->aKeepers);
+    } // function count
 
     // ======== Private/Protected methods ======== \\
     /**
@@ -190,7 +205,7 @@ abstract class router implements \ArrayAccess, \Countable
             $this->aKeepers[$sKey] = method_exists($this, $sMethod) ? $this->$sMethod() : new \fan\project\view\keeper($this);
         }
         return $this->aKeepers[$sKey];
-    }
+    } // function _getKeeper
 
     /**
      * Check Setter

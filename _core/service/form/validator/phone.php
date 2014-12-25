@@ -12,9 +12,33 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class phone extends base
 {
+    /**
+     * Rule phone is correct
+     * @return bool
+     */
+    public function isUkrainian($mValue)
+    {
+        $sPhone = preg_replace('/\D+/', '', $mValue);
+        if (strlen($sPhone) == 9) {
+            $sPhone = '380' . $sPhone;
+        } elseif (strlen($sPhone) == 10) {
+            $sPhone = '38' . $sPhone;
+        } elseif (strlen($sPhone) != 12) {
+            return false;
+        }
+        if (preg_match('/^380\d{9}$/', $sPhone)) {
+            $sPhone = '+' . $sPhone;
+            return true;
+        }
+       return false;
+    } // function phone_is_correct
+
+
+
+
 } // class \fan\core\service\form\validator\phone
 ?>

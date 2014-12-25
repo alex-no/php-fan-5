@@ -14,7 +14,7 @@ use fan\project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class cache extends \fan\core\base\service\multi
 {
@@ -24,7 +24,8 @@ class cache extends \fan\core\base\service\multi
     const CONFIG_TYPE = 'config';
 
     /**
-     * @var array Service's Instances
+     * Service's Instances
+     * @var \fan\core\service\cache[]
      */
     private static $aInstances = array();
 
@@ -35,12 +36,14 @@ class cache extends \fan\core\base\service\multi
     protected $sType;
 
     /**
-     * @var \fan\core\service\cache\base[] Engines of current cache type
+     * Engines of current cache type
+     * @var \fan\core\service\cache\base[]
      */
     protected $aEngine = null;
 
     /**
-     * @var Configuration of Cache-config
+     * Configuration of Cache-config
+     * @var array
      */
     protected $aConfigCache = null;
 
@@ -352,6 +355,9 @@ class cache extends \fan\core\base\service\multi
                 throw new fatalException($this, 'Not found configuration for "' . $this->sType . '".');
             }
 
+            if (empty($aConfig['ENGINE'])) {
+                throw new fatalException($this, 'Cache engine isn\'t defined.');
+            }
             $sClass  = $this->_getEngine($aConfig['ENGINE'], false);
             $this->aEngine[$sKey] = new $sClass($this, $this->sType, $sKey, $aConfig);
         }

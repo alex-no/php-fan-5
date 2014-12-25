@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class string extends base
 {
@@ -41,7 +41,7 @@ class string extends base
      * @param array $aData
      * @return bool
      */
-    protected function isUtf8($mValue, $aData)
+    public function isUtf8($mValue, $aData)
     {
         if (!mb_check_encoding($mValue, 'UTF-8')) {
             return false;

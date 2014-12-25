@@ -13,18 +13,18 @@ use fan\project\exception\block\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  *
  * @abstract
  *
  * @property-read string $blockName
  * @property-read \fan\core\block\base $container
+ * @property-read \fan\core\block\base[] $embeddedBlocks
  * @property-read \fan\core\base\meta\row $meta
  * @property-read string $namespace
  * @property-read \fan\core\service\request $request
- * @property-read \fan\core\service\session $session
  * @property-read \fan\core\service\tab $tab
- * @property-read \fan\core\view\router $view
+ * @property \fan\core\view\router $view
  *
  * @method mixed getSessionData() getSessionData(array|string $mKey, mixed $mDefaultValue = null, boolean $bRemoveFromSes = false)
  * @method mixed setSessionData() setSessionData(array|string $mKey, mixed $mValue)
@@ -69,7 +69,7 @@ abstract class base
     private $oMetaMaker;
     /**
      * MetaData
-     * @var fan\core\base\meta[]
+     * @var fan\core\base\meta\row[]
      */
     protected $aMeta;
     /**
@@ -103,7 +103,7 @@ abstract class base
 
     /**
      * Embedded Blocks
-     * @var array
+     * @var \fan\core\block\base[]
      */
     private $aEmbeddedBlocks = array();
 
@@ -149,6 +149,8 @@ abstract class base
      */
     public function __construct($sBlockName = null, \fan\core\service\tab $oTab = null, base $oContainer = null, $aContainerMeta = array(), $bFullConstr = true)
     {
+        $this->_transferor(); // Unconditional transfer to another block
+
         $this->sBlockName = $sBlockName;
         $this->oTab       = empty($oTab) ? \fan\project\service\tab::instance() : $oTab;
         $this->oRequest   = \fan\project\service\request::instance();
@@ -200,12 +202,13 @@ abstract class base
             list($this->bIsRoot, $this->bIsMain) = $this->oTab->checkBlockStatus($this);
         }
 
+        $this->_setTemplate();
+        $this->_preparseMeta();
+
         if ($bAllowSetEmbedded) {
             $this->_setEmbeddedBlocks();
         }
 
-        $this->_setTemplate();
-        $this->_preparseMeta();
         $this->_postCreate();
     } // function finishConstruct
 
@@ -271,9 +274,10 @@ abstract class base
      * @param mixed $mDefault
      * @return \fan\core\base\meta\row
      */
-    public function getMeta($mKey = null, $mDefault = null)
+    public function getMeta($mKey = null, $mDefault = null, $bConvToArray = false)
     {
-        return $this->oMetaMaker->getMeta($mKey, $mDefault);
+        $oMeta = $this->oMetaMaker->getMeta($mKey, $mDefault);
+        return $bConvToArray && is_object($oMeta) && $oMeta instanceof \fan\core\base\meta\row ? $oMeta->toArray() : $oMeta;
     } // function getMeta
 
     /**
@@ -385,13 +389,13 @@ abstract class base
         }
         $this->aRoleCondition = array();
 
-        $aRoles = $this->getMeta('roles');
+        $aRoles = $this->getMeta('roles', array(), true);
         if (!$aRoles) {
             return null;
         }
 
         foreach ($aRoles as $v) {
-            if(!role(@$v['condition'])) {
+            if(isset($v['condition']) && !role($v['condition'])) {
                 $this->aRoleCondition = $v;
                 return $v;
             }
@@ -415,10 +419,10 @@ abstract class base
      * Get View Type
      * @return string
      */
-    public function getViewType()
+    public function getViewFormat()
     {
-        return call_user_func(array($this->oTab->getViewClass(), 'getType'));
-    } // function getViewType
+        return call_user_func(array($this->oTab->getViewClass(), 'getFormat'));
+    } // function getViewFormat
 
     /**
      * Get View Router
@@ -488,11 +492,24 @@ abstract class base
 
     /**
      * Get Embedded Blocks
-     * @return array
+     * @return \fan\core\block\base[]
      */
     public function getEmbeddedBlocks()
     {
         return $this->aEmbeddedBlocks;
+    } // function getEmbeddedBlocks
+
+    /**
+     * Get Embedded Blocks
+     * @return \fan\core\block\base[]
+     */
+    public function getEmbeddedBlock($sKey)
+    {
+        if (!isset($this->aEmbeddedBlocks[$sKey])) {
+            trigger_error('Call to unknown Embedded Block "' . $sKey . '"', E_USER_WARNING);
+            return null;
+        }
+        return $this->aEmbeddedBlocks[$sKey];
     } // function getEmbeddedBlocks
 
     /**
@@ -587,14 +604,14 @@ abstract class base
      */
     protected function _preparseMeta()
     {
-        $sViewType = $this->getViewType();
-        if ($sViewType == 'html') {
+        $sViewFormat = $this->getViewFormat();
+        if ($sViewFormat == 'html') {
             $oRoot = $this->_getBlock('root', false);
             if ($oRoot) {
                 $this->_setRootBlockParameters($oRoot);
             }
         }
-        if (in_array($sViewType, array('html', 'loader'))) {
+        if (in_array($sViewFormat, array('html', 'loader'))) {
             $aTplVars = $this->getMeta('tplVars');
             if($aTplVars) {
                 $this->_setTplVarsByMeta($aTplVars);
@@ -613,10 +630,7 @@ abstract class base
             $this->bIsDynMeta = true;
             $aDynMeta = $this->getDynamicMeta($this->aMeta);
             if (!empty($aDynMeta)) {
-                $this->aMeta = array_merge_recursive_alt(
-                    $this->aMeta,
-                    $aDynMeta
-                );
+                $this->aMeta->mergeData($aDynMeta);
             }
         }
     } // function _makeDynamicMeta
@@ -627,6 +641,14 @@ abstract class base
     protected function _doRoleOperations()
     {
     } // function _doRoleOperations
+
+    /**
+     * Method for redefine in child class
+     * Method allows you to do unconditional transfer before current block has been created
+     */
+    protected function _transferor()
+    {
+    } // function _transferor
 
     /**
      * Method for redefine in child class
@@ -780,6 +802,7 @@ abstract class base
 
     /**
      * Set Embedded Blocks
+     * @return \fan\core\block\base
      * @throws \fan\project\exception\block\fatal
      */
     protected function _setEmbeddedBlocks()
@@ -874,7 +897,7 @@ abstract class base
         }
 /*
 //ToDo: Redesign it
-        $aCacheRole = $this->getMeta(array('cache','considerRole'))->toArray();
+        $aCacheRole = $this->getMeta(array('cache','considerRole'), array(), true);
 
         if(!is_array($aCacheRole)) {
             $aCacheRole = array($mRole);

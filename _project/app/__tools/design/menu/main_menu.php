@@ -3,15 +3,15 @@
  * main_menu block for tools
  * @version 05.02.001 (10.03.2014)
  */
-class main_menu extends \fan\project\block\base
+class main_menu extends \fan\project\block\common\simple
 {
     /**
      * Init block
      */
     public function init()
     {
-        $aMainRequest = service('request')->getAll('M');
-        $this->view->sCurrent = $aMainRequest[0];
+        $sMainRequest = $this->getRequest()->get(0, 'M');
+        $this->view->sCurrent .= $sMainRequest;
     }
 
     /**

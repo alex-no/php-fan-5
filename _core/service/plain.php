@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class plain extends \fan\core\base\service\single
 {
@@ -64,7 +64,6 @@ class plain extends \fan\core\base\service\single
     {
         parent::__construct($bAllowIni);
         $this->oMatcher = \fan\project\service\matcher::instance();
-        //$oTmp = $this->oMatcher->getCurrentItem()->handler->toArray();
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -78,10 +77,18 @@ class plain extends \fan\core\base\service\single
     public static function getContent($sKey, $sControllerClass, $sMethod)
     {
         $oInstance = \fan\project\service\plain::instance();
+        /* @var $oInstance \fan\core\service\plain */
         return $oInstance->_setController($sKey, $sControllerClass)->_getFinalContent($sMethod);
     }
 
     // ======== Main Interface methods ======== \\
+
+    /**
+     */
+    public function getHandleData()
+    {
+        return $this->oMatcher->getCurrentItem()->handler->toArray();
+    }
 
     /**
      * Set value of Header for current stack

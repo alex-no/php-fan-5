@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class upload_file extends base
 {
@@ -69,13 +69,13 @@ class upload_file extends base
         }
         $aLink = $this->getMeta('link_table');
 
-        if (!$this->checkMainTableId($oMainEtt, $aData, $aMain, $aLink)) {
+        if (!$this->checkMainTableId($oMainRow, $aData, $aMain, $aLink)) {
             $this->setText('Incorrect main table ID');
             return;
         }
 
         if ($aLink) {
-            if (!$this->checkLinkTableId($oLinkEtt, $aData, $aMain, $aLink)) {
+            if (!$this->checkLinkTableId($oLinkRow, $aData, $aMain, $aLink)) {
                 $this->setText('Incorrect link table ID');
                 return;
             }
@@ -85,9 +85,11 @@ class upload_file extends base
         if ($aData['op'] == 'dl' && @$aData['fileId']) {
             if ($oFile->checkIsLoad()) {
                 if ($aLink) {
-                    $oLinkEtt->delete();
+                    $oLinkRow->delete();
+                    $oLinkRow->getEntity()->getConnection()->commit();
                 } else {
-                    $oMainEtt->setFields(array($aMain['file_id'] => null), true);
+                    $oMainRow->setFields(array($aMain['file_id'] => null), true);
+                    $oMainRow->getEntity()->getConnection()->commit();
                 }
                 $oFile->delete('file_data', $aData['fileId']);
             }
@@ -95,15 +97,16 @@ class upload_file extends base
             $oFile->setFormFile('file', array(), 'other', service('request')->get('description', 'P', ''));
             $oFile->setAccessType($this->getMeta('access_type', null));
             if ($oFile->checkIsLoad() && !@$aData['fileId']) {
+                $oFile->getEntity()->getConnection()->commit();
                 if ($aLink) {
-                    $oLinkEtt->setFields(array($aLink['main_id'] => $aData['mId'], $aLink['file_id'] => $oFile->getId()), true);
+                    $oLinkRow->setFields(array($aLink['main_id'] => $aData['mId'], $aLink['file_id'] => $oFile->getId()), true);
                 } else {
-                    $oMainEtt->setFields(array($aMain['file_id'] => $oFile->getId()), true);
+                    $oMainRow->setFields(array($aMain['file_id'] => $oFile->getId()), true);
                 }
             }
         }
 
-        $aJsonData = @$aData['line'] ? $this->getFileLineData($aData, $aLink) : $this->getFileOneData($oMainEtt, $aMain, $aLink);
+        $aJsonData = @$aData['line'] ? $this->getFileLineData($aData, $aLink) : $this->getFileOneData($oMainRow, $aMain, $aLink);
         if (!$oFile->checkIsLoad() && $aJsonData['id']) {
             $oFile->loadById($aJsonData['id']);
         }
@@ -116,27 +119,27 @@ class upload_file extends base
     /**
      * Check Main Table Id
      */
-    public function checkMainTableId(&$oMainEtt, &$aData, $aMain, $aLink)
+    public function checkMainTableId(&$oMainRow, &$aData, $aMain, $aLink)
     {
-        $oMainEtt = gr($aMain['table_name'], @$aData['mId']);
+        $oMainRow = gr($aMain['table_name'], @$aData['mId']);
         if (@$aData['fileId'] && !$aLink) {
             $sMethod = 'get_' . $aMain['file_id'];
-            return $oMainEtt->$sMethod(null, true) == $aData['fileId'];
+            return $oMainRow->$sMethod(null, true) == $aData['fileId'];
         }
-        return $oMainEtt->checkIsLoad();
+        return $oMainRow->checkIsLoad();
     } // function checkMainTableId
 
     /**
      * Check Link Table Id
      */
-    public function checkLinkTableId(&$oLinkEtt, &$aData, $aMain, $aLink)
+    public function checkLinkTableId(&$oLinkRow, &$aData, $aMain, $aLink)
     {
         if (!@$aData['fileId']) {
-            $oLinkEtt = gr($aLink['table_name']);
+            $oLinkRow = gr($aLink['table_name']);
             return true;
         } else {
-            $oLinkEtt = gr($aLink['table_name'], array($aLink['main_id'] => $aData['mId'], $aLink['file_id'] => $aData['fileId']));
-            return $oLinkEtt->checkIsLoad();
+            $oLinkRow = gr($aLink['table_name'], array($aLink['main_id'] => $aData['mId'], $aLink['file_id'] => $aData['fileId']));
+            return $oLinkRow->checkIsLoad();
         }
     } // function checkMainTableId
 
@@ -156,20 +159,20 @@ class upload_file extends base
     /**
      * Get File Data
      */
-    public function getFileOneData($oMainEtt, $aMain, $aLink)
+    public function getFileOneData($oMainRow, $aMain, $aLink)
     {
         if ($aLink) {
             $aLstId = ge($aLink['table_name'])->getRowsetByParam($aLink['main_id'])->getColumn($aLink['file_id']);
             return $this->getFileData(@$aLstId[0]);
         } else {
             $sMethod = 'get_' . $aMain['file_id'];
-            return $this->getFileData($oMainEtt->$sMethod());
+            return $this->getFileData($oMainRow->$sMethod());
         }
     } // function getFileLineData
 
     /**
      * Get File Data
-     * @param mixed $fileId
+     * @param mixed $mFileId
      * @return array
      */
     public function getFileData($mFileId)

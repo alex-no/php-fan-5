@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class file extends base
 {
@@ -92,15 +92,15 @@ class file extends base
     protected function _getFilePath()
     {
         if (empty($this->sFileData) || empty($this->sFileMeta)) {
-            if (empty($this->aConfig['BASE_DIR'])) {
+            if (empty($this->oConfig['BASE_DIR'])) {
                 throw new fatalException($this->oFacade, 'Base cache doesn\'t set for "' . $this->sType . '".');
             }
-            $sPath = rtrim(\bootstrap::parsePath($this->aConfig['BASE_DIR']), '/\\');
+            $sPath = rtrim(\bootstrap::parsePath($this->oConfig['BASE_DIR']), '/\\');
             if (!empty($this->sExtraPath)) {
                 $sPath .= '/' . trim($this->sExtraPath, '/\\');
             }
             if (!is_dir($sPath)) {
-                $nDirMode = empty($this->aConfig['DIR_MODE']) ? 0777 : $this->aConfig['DIR_MODE'];
+                $nDirMode = empty($this->oConfig['DIR_MODE']) ? 0777 : $this->oConfig['DIR_MODE'];
                 if (!mkdir($sPath, $nDirMode, true)) {
                     throw new fatalException($this->oFacade, 'Can\'t create cache directory for "' . $this->sType . '".');
                 }
@@ -108,7 +108,7 @@ class file extends base
                 throw new fatalException($this->oFacade, 'Cache directory for "' . $this->sType . '" isn\'t writable.');
             }
 
-            if (empty($this->aConfig['CODE_FILE_NAME'])) {
+            if (empty($this->oConfig['CODE_FILE_NAME'])) {
                 $sFileName = $this->sKey;
                 if (!preg_match('/^[a-z0-9\-_\(\)\!\.]+$/i', $sFileName) || substr($sFileName, -5) == '.meta') {
                     throw new fatalException($this->oFacade, 'Cache key "' . $this->sKey . '" can\'t be used for name of cache file.');
@@ -117,7 +117,7 @@ class file extends base
                 $sFileName = md5($this->sKey);
             }
 
-            $sFileExt = isset($this->aConfig['FILE_EXT']) ? $this->aConfig['FILE_EXT'] : 'cache';
+            $sFileExt = isset($this->oConfig['FILE_EXT']) ? $this->oConfig['FILE_EXT'] : 'cache';
 
             $this->sFileData = $sPath . '/' . $sFileName . (empty($sFileExt) ? '' : '.' . $sFileExt);
             $this->sFileMeta = $sPath . '/' . $sFileName . '.meta';

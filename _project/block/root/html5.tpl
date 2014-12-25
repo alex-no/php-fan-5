@@ -97,7 +97,7 @@ for(var i=0; i<e.length; i++) document.createElement(e[i]);
 {/nostrip}{/if}
 {@$headAfter}
 </head>
-<!--[if gte IE 8]><body class="isIE"><![endif]--><!--[if IE 7]><body class="isIE isIE7"><![endif]--><!--[if lt IE 7]><body class="isIE isIE6"><![endif]--><!--[if !IE]>--><body{if @$bodyClass} class="{$bodyClass}"{/if}><!--<![endif]-->{if @$carcass}{$carcass}{else}{@$main}{/if}{if @$modal_win}<div id="modal_voile">&nbsp;</div>{$modal_win}{/if}
+<!--[if gte IE 8]><body class="isIE"><![endif]--><!--[if IE 7]><body class="isIE isIE7"><![endif]--><!--[if lt IE 7]><body class="isIE isIE6"><![endif]--><!--[if !IE]>--><body{if @$bodyClass} class="{$bodyClass}"{/if}><!--<![endif]-->{if @$carcass}{$carcass}{else}{@$main}{/if}{if !empty($modal_win)}<div id="modal_voile">&nbsp;</div>{$modal_win}{/if}
 {*
 
 ====== External body JavaScript (deprecated!!!) ====== *}

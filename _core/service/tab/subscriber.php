@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class subscriber extends \fan\core\service\tab\delegate
 {
@@ -107,8 +107,8 @@ class subscriber extends \fan\core\service\tab\delegate
             'class' => get_class($oBroadcaster),
         );
         foreach ($aKeys as $sType => $sKey) {
-            if (isset($this->aSubscriber[$sType][$sEventName][$sKey])) {
-                foreach ($this->aSubscriber[$sType][$sEventName][$sKey] as $v) {
+            if (isset($this->aSubscriber[$sType][$sKey][$sEventName])) {
+                foreach ($this->aSubscriber[$sType][$sKey][$sEventName] as $v) {
                     call_user_func($v, $oBroadcaster, $aData);
                 }
             }

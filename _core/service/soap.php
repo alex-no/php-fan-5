@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class soap extends \fan\core\base\service\multi
 {
@@ -21,7 +21,7 @@ class soap extends \fan\core\base\service\multi
      */
     private $oSoapObj;
     /**
-     * @var SoapFault
+     * @var \SoapFault
      */
     private $oSoapFault;
     /**
@@ -65,9 +65,8 @@ class soap extends \fan\core\base\service\multi
      */
     public static function instance($sWsdlFile, $aParam = null, $bLogEnabled = true)
     {
-        $sClassName = __CLASS__;
-        $oInstance = new $sClassName($bLogEnabled);
-        $oInstance->initSoapObj($sWsdlFile, $aParam);
+        $oInstance = new self($bLogEnabled);
+        $oInstance->_initSoapObj($sWsdlFile, $aParam);
         return $oInstance;
     } // function instance
 
@@ -140,16 +139,16 @@ class soap extends \fan\core\base\service\multi
     public function setSoapVar($mData, $aVarParam = array(), $aLevels = array(0))
     {
         sort($aLevels);
-        return $this->setSoapVarRecursive($mData, $aVarParam, $aLevels, 0);
+        return $this->_setSoapVarRecursive($mData, $aVarParam, $aLevels, 0);
     } // function setSoapVar
 
     /**
      * Allow Logging of SOAP-error
-     * @param boolean $bEnable
+     * @param boolean $bLogEnabled
      */
-    public function allowErrLogging($bEnable)
+    public function allowErrLogging($bLogEnabled)
     {
-        $this->allowLogging = !empty($bEnable);
+        $this->bLogEnabled = !empty($bLogEnabled);
     } // function allowErrLogging
 
     /**
@@ -163,7 +162,7 @@ class soap extends \fan\core\base\service\multi
 
     /**
      * Get object of SoapFault;
-     * @return SoapFault
+     * @return \SoapFault
      */
     public function getSoapFault()
     {
@@ -183,12 +182,12 @@ class soap extends \fan\core\base\service\multi
 
         $sMsg  = '<fieldset class="soap_log"><legend>Sent Request DATA</legend>';
         $sMsg .= '<fieldset><legend>Headers</legend><div>' . trim($this->oSoapObj->__getLastRequestHeaders()) . '</div></fieldset>';
-        $sMsg .= '<fieldset><legend>Request</legend><pre>' . $this->format4log($this->oSoapObj->__getLastRequest()) . '</pre></fieldset>';
+        $sMsg .= '<fieldset><legend>Request</legend><pre>' . $this->_format4log($this->oSoapObj->__getLastRequest()) . '</pre></fieldset>';
         $sMsg .= '</fieldset>';
 
         $sMsg .= '<fieldset class="soap_log"><legend>Received Response DATA</legend>';
         $sMsg .= '<fieldset><legend>Headers</legend><div>' . trim($this->oSoapObj->__getLastResponseHeaders()) . '</div></fieldset>';
-        $sMsg .= '<fieldset><legend>Response</legend><pre>' . $this->format4log($this->oSoapObj->__getLastResponse()) . '</pre></fieldset>';
+        $sMsg .= '<fieldset><legend>Response</legend><pre>' . $this->_format4log($this->oSoapObj->__getLastResponse()) . '</pre></fieldset>';
         $sMsg .= '</fieldset>';
         return $sMsg;
     } // function getDebugInfo
@@ -199,7 +198,7 @@ class soap extends \fan\core\base\service\multi
      * @param array $aParam parameter to create SOAP
      * @return \core\service\soap
      */
-    protected function initSoapObj($sWsdlFile, $aParam = null)
+    protected function _initSoapObj($sWsdlFile, $aParam = null)
     {
         $bIsURL = preg_match('/^https?:\/\//', $sWsdlFile);
         $sWsdlFile_Full = $bIsURL ? $sWsdlFile : \bootstrap::parsePath($this->oConfig['WSDL_DIR']) . $sWsdlFile;
@@ -233,8 +232,8 @@ class soap extends \fan\core\base\service\multi
         } else {
             service('error')->logErrorMessage('Error. WSDL-file "' . $sWsdlFile_Full . '" isn\'t exist.');
             return;
-        } // if check file exists
-    } // function initSoapObj
+        }
+    } // function _initSoapObj
 
     /**
      * Set SOAP var recursive
@@ -244,11 +243,11 @@ class soap extends \fan\core\base\service\multi
      * @param integer $iCurrentLevel
      * @return mixed
      */
-    protected function setSoapVarRecursive($mData, $aVarParam, $aLevels, $iCurrentLevel)
+    protected function _setSoapVarRecursive($mData, $aVarParam, $aLevels, $iCurrentLevel)
     {
         if (is_array($mData)) {
             foreach ($mData as &$v) {
-                $v = $this->setSoapVarRecursive($v, $aVarParam, $aLevels, $iCurrentLevel + 1);
+                $v = $this->_setSoapVarRecursive($v, $aVarParam, $aLevels, $iCurrentLevel + 1);
             }
         }
         if (in_array($iCurrentLevel, $aLevels) && !is_scalar($mData)) {
@@ -262,14 +261,14 @@ class soap extends \fan\core\base\service\multi
             );
         }
         return $mData;
-    } // function setSoapVarRecursive
+    } // function _setSoapVarRecursive
 
     /**
      * Format XML-code
      * @param string $sXml
      * @return string
      */
-    protected function format4log($sXml)
+    protected function _format4log($sXml)
     {
         if ($sXml == '') {
             return '';
@@ -277,6 +276,6 @@ class soap extends \fan\core\base\service\multi
         $oXml = \DOMDocument::loadXML($sXml);
         $oXml->formatOutput = true;
         return htmlspecialchars($oXml->saveXML());
-    } // function format4log
+    } // function _format4log
 } // class \fan\core\service\soap
 ?>

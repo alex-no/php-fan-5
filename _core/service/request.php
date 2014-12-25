@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class request extends \fan\core\base\service\single
 {
@@ -21,18 +21,19 @@ class request extends \fan\core\base\service\single
      * @var array Requested data
      */
     private $aData = array(
-        'A' => null, // Add(itional) request (See \fan\core\service\matcher\item\parsed)
-        'B' => null, // Both = Main request + Add request (See \fan\core\service\matcher\item\parsed)
-        'C' => null, // Cookies:               $_COOKIE
-        'E' => null, // Environment variables: $_ENV
-        'F' => null, // Files (uploaded):      $_FILES
-        'G' => null, // Get parameters:        $_GET
-        'H' => null, // Headers
-        'M' => null, // Main request (See \fan\core\service\matcher\item\parsed)
-        'O' => null, // Option list in CLI-mode
-        'P' => null, // Post parameters:       $_POST
-        'R' => null, // Request parameters:    $_REQUEST
-        'S' => null, // Server data:           $_SERVER
+        'A0' => null, // Add(itional) request (See \fan\core\service\matcher\item\parsed)
+        'A1' => null, // Extra Add(itional) request by delimiter: $key => $val
+        'B'  => null, // Both = Main request + Add request (See \fan\core\service\matcher\item\parsed)
+        'C'  => null, // Cookies:               $_COOKIE
+        'E'  => null, // Environment variables: $_ENV
+        'F'  => null, // Files (uploaded):      $_FILES
+        'G'  => null, // Get parameters:        $_GET
+        'H'  => null, // Headers
+        'M'  => null, // Main request (See \fan\core\service\matcher\item\parsed)
+        'O'  => null, // Option list in CLI-mode
+        'P'  => null, // Post parameters:       $_POST
+        'R'  => null, // Request parameters:    $_REQUEST
+        'S'  => null, // Server data:           $_SERVER
     );
 
     /**
@@ -78,15 +79,20 @@ class request extends \fan\core\base\service\single
      */
     private $sOrder;
 
+    /**
+     * Raw POST data
+     * @var string
+     */
+    private $sRawPost = null;
+
 
     /**
      * Service's constructor
-     * @param array $aConfig Configuration data
      */
     protected function __construct()
     {
         parent::__construct();
-        $this->sOrder   = strtoupper($this->getConfig('DEFAULT_ORDER', 'PAG'));
+        $this->sOrder = strtoupper($this->getConfig('DEFAULT_ORDER', 'PAG'));
 
         // Ses all basic data
         $bIsMQ = get_magic_quotes_gpc();
@@ -139,9 +145,9 @@ class request extends \fan\core\base\service\single
      * @param mixed $mDefault The Default value
      * @return mixed Request parameter's value
      */
-    public function get($sKey, $sOrder = null, $mDefault = null)
+    public function get($sKey, $sOrder = null, $mDefault = null, $bExtraAdd = true)
     {
-        foreach ($this->_separateData($sOrder) as $v) {
+        foreach ($this->_separateData($sOrder, $bExtraAdd) as $v) {
             if (isset($v[$sKey])) {
                 return $v[$sKey];
             }
@@ -155,16 +161,42 @@ class request extends \fan\core\base\service\single
      * @param mixed $mDefault The Default value
      * @return mixed Request parameter's value
      */
-    public function getAll($sOrder = null, $mDefault = array())
+    public function getAll($sOrder = null, $mDefault = array(), $bExtraAdd = true)
     {
         $aResult = array();
-        foreach ($this->_separateData($sOrder) as $v) {
+        foreach ($this->_separateData($sOrder, $bExtraAdd) as $v) {
             if (!empty($v)) {
                 $aResult = array_merge_recursive_alt($v, $aResult);
             }
         }
         return empty($aResult) ? $mDefault : $aResult;
     } // function get_all
+
+    /**
+     * Get Raw Post-data and automatically convert them to array
+     * @param string $sConvFormat
+     * @return mixed
+     */
+    public function getRawPost($sConvFormat = 'json')
+    {
+        if (is_null($this->sRawPost)) {
+            $this->sRawPost = file_get_contents('php://input'); // ToDo: Define different source there
+        }
+        switch (strtolower($sConvFormat)) {
+        case 'json':
+            return service('json')->decode($this->sRawPost);
+        case 'xml':
+            function conv($mItem)
+            {
+                if (is_object($mItem) || is_array($mItem)) {
+                    return array_map('conv', (array)$mItem);
+                }
+                return $mItem;
+            }
+            return array_map('conv', (array)simplexml_load_string($this->sRawPost));
+        }
+        return $this->sRawPost;
+    } // function getRawPost
 
     /**
      * Set Request (fake) parameter.
@@ -223,21 +255,29 @@ class request extends \fan\core\base\service\single
         return trim($sInfo);
     } // function getInfoString
 
-
     /**
      * Check: is there outer data
      * @param string $sOrder
      * @return boolean
      */
-    public function checkIsData($sOrder = null)
+    public function checkIsData($sOrder = null, $bExtraAdd = true)
     {
-        foreach ($this->_separateData($sOrder) as $v) {
+        foreach ($this->_separateData($sOrder, $bExtraAdd) as $v) {
             if (!empty($v)) {
                 return true;
             }
         }
         return false;
     } // function checkIsData
+
+    /**
+     * Get Delimiter for Add request
+     * @return string
+     */
+    public function getAddDelimiter()
+    {
+        return $this->oConfig->get('ADD_REQUEST_DELIMITER', '-');
+    } // function getAddDelimiter
 
     // ======== Private/Protected methods ======== \\
 
@@ -247,7 +287,7 @@ class request extends \fan\core\base\service\single
      * @return array
      * @throws \fan\project\exception\service\fatal
      */
-    protected function _separateData($sOrder)
+    protected function _separateData($sOrder, $bExtraAdd)
     {
         $aData    = array();
         $sOrder   = empty($sOrder) ? $this->sOrder : strtoupper($sOrder);
@@ -255,13 +295,16 @@ class request extends \fan\core\base\service\single
         $nIndex   = empty($oMatcher) ? -1 : $oMatcher->getCurrentIndex();
 
         for ($i = 0; $i < strlen($sOrder); $i++) {
-            $k = $sOrder{$i};
-            if (array_key_exists($k, $this->aData)) {
-                if (isset($this->aMaker[$k]) && $this->aMakerIndex[$k] != $nIndex) {
-                    $this->aData[$k] = call_user_func(array($this, $this->aMaker[$k]));
-                    $this->aMakerIndex[$k] = $nIndex;
+            $k0 = $k1 = $sOrder{$i};
+            if ($k1 == 'A') {
+                $k1 .= $bExtraAdd ? '0' : '1';
+            }
+            if (array_key_exists($k1, $this->aData)) {
+                if (isset($this->aMaker[$k0]) && array_val($this->aMakerIndex, $k1) !== $nIndex) {
+                    $this->aData[$k1] = call_user_func(array($this, $this->aMaker[$k0]), $bExtraAdd);
+                    $this->aMakerIndex[$k1] = $nIndex;
                 }
-                $aData[$k] = $this->aData[$k];
+                $aData[$k0] = $this->aData[$k1];
             } else {
                 throw new fatalException($this, 'Incorrect symbols in order "' . $sOrder . '". Possible symbols "' . implode('', array_keys($this->aData)) . '".');
             }
@@ -313,13 +356,20 @@ class request extends \fan\core\base\service\single
      * Make Add Request
      * @return array
      */
-    protected function _makeAddRequest()
+    protected function _makeAddRequest($bExtraAdd)
     {
         $aAddRequest = $this->_getRequestData('add_request');
-        foreach ($aAddRequest as $v) {
-            $aTmp = explode($this->oConfig->get('ADD_REQUEST_DELIMITER', '-'), $v, 2);
-            if (count($aTmp) == 2 && !isset($aAddRequest[$aTmp[0]])) {
-                $aAddRequest[$aTmp[0]] = $aTmp[1];
+        if (empty($aAddRequest)) {
+            return array();
+        }
+
+        $sDelimiter = $this->getAddDelimiter();
+        if ($bExtraAdd && $sDelimiter != '') {
+            foreach ($aAddRequest as $v) {
+                $aTmp = explode($sDelimiter, $v, 2);
+                if (count($aTmp) == 2 && !isset($aAddRequest[$aTmp[0]])) {
+                    $aAddRequest[$aTmp[0]] = $aTmp[1];
+                }
             }
         }
         return $aAddRequest;
@@ -341,15 +391,9 @@ class request extends \fan\core\base\service\single
      */
     protected function _makeBothRequest()
     {
-        $aResult = $this->_makeMainRequest();
-        $aAdd    = $this->_makeAddRequest();
-        for ($i = 0; $i < count($aAdd); $i++) {
-            if (!isset($aAdd[$i])) {
-                break;
-            }
-            $aResult[] = $aAdd[$i];
-        }
-        return $aResult;
+        $aMain = $this->_makeMainRequest();
+        $aAdd  = $this->_makeAddRequest(false);
+        return array_merge($aMain, $aAdd);
     } // function _makeBothRequest
 
     /**
@@ -376,6 +420,18 @@ class request extends \fan\core\base\service\single
     } // function _makeCookies
 
     /**
+     * Make makeOptions
+     * @return array
+     */
+    protected function _makeOptions()
+    {
+        global $argv;
+        $aOptions = $argv;
+        array_shift($aOptions);
+        return $aOptions;
+    } // function _makeOptions
+
+    /**
      * Get Parsed Request Data
      * @param string $sProp
      * @return array
@@ -394,6 +450,9 @@ class request extends \fan\core\base\service\single
      */
     protected function _isAllowToSet($sType)
     {
+        if (in_array($sType, array('A', 'B', 'M'))) {
+            return false;
+        }
         if (strlen($sType) != 1 || !array_key_exists($sType, $this->aData)) {
             throw new fatalException($this, 'Incorrect type for set "' . $sType . '". Possible one of symbols "' . implode('', array_keys($this->aData)) . '".');
         }

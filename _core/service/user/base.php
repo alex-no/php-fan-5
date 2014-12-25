@@ -1,7 +1,7 @@
 <?php namespace fan\core\service\user;
 use fan\project\exception\service\fatal as fatalException;
 /**
- * Description of user-data
+ * Basic class engine of user-data
  *
  * This file is part PHP-FAN (php-framework from Alexandr Nosov)
  * Copyright (C) 2005-2007 Alexandr Nosov, http://www.alex.4n.com.ua/
@@ -13,10 +13,11 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFirstName()
+ * @method string getPatronymic()
  * @method string getLastName()
  * @method string getTitle()
  * @method string getGender()
@@ -61,6 +62,7 @@ abstract class base implements \Serializable
      *   'login'      => !string
      *   'nickname'   => string
      *   'first_name' => string
+     *   'patronymic' => string
      *   'last_name'  => string
      *   'title'      => string
      *   'gender'     => integer
@@ -173,8 +175,10 @@ abstract class base implements \Serializable
     public function getFullName($bWithTitle = true)
     {
         $sResult  = $bWithTitle ? $this->getTitle() . ' ' : '';
-        $sResult .= $this->getFirstName() . ' ';
-        $sResult .= $this->getLastName();
+        $sResult .= $this->getFirstName();
+        $sResult .= ' ' . $this->getPatronymic();
+        $sResult  = trim($sResult);
+        $sResult .= ' ' . $this->getLastName();
         return trim($sResult);
     } // function getFullName
 
@@ -395,7 +399,7 @@ abstract class base implements \Serializable
      * @param string $sStr
      * @return string
      */
-	protected function _convCamelCase($sStr)
+    protected function _convCamelCase($sStr)
     {
         return strtolower(implode('_', preg_split('/(?<=\\w)(?=[A-Z])/', $sStr)));
     } // function _convCamelCase

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class entity extends \fan\core\base\model\spec_file\entity
@@ -20,60 +20,69 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
     /**
      * @var string RegExp for IMG placeholder
      */
-    private static $sImgRegExp = '/\{IMG(?:_(\d+)|-(\d+))\s*(.*?)\}/is';
+    protected $sImgRegExp = '/\{IMG(?:_(\d+)|-(\d+))\s*(.*?)\}/is';
 
     /**
      * @var string RegExp for NAIL placeholder
      */
-    private static $sAdvImgRegExp = '/\{(IMG|NAIL|LINK|BLOWUP1|BLOWUP2)(?:_(\d+)|-(\d+))(?:\[(\d+)*(\d+)\])\s*(.*?)\}/is';
+    protected $sAdvImgRegExp = '/\{(IMG|NAIL|LINK|BLOWUP1|BLOWUP2)(?:_(\d+)|-(\d+))(?:\[(\d+)*(\d+)\])\s*(.*?)\}/is';
 
     /**
      * Rotate Image
      * @param numeric $nId id of image
      * @param numeric $nAngle Angle of rotate in degrees
-     * @param numeric $sEntityName Name of entity
      */
-    public static function rotateImageById($nId, $nAngle, $sEntityName = 'image')
+    public function rotateImageById($nId, $nAngle)
     {
-        $oRow = gr($sEntityName, $nId);
+        $oRow = $this->getRowById($nId);
         $oRow->rotateImage($nAngle);
     }// function rotateImageById
 
     /**
      * Get Img-tag by id
-     * @return array
+     * @param numeric $nId
+     * @param string $sCssClass
+     * @param array $aParam
+     * @return string
      */
-    public static function getImgTagById($nId, $sCssClass = '', $aParam = null, $sEntityName = 'image')
+    public function getImgTagById($nId, $sCssClass = '', $aParam = null)
     {
-        $oRow = gr($sEntityName, $nId);
+        $oRow = $this->getRowById($nId);
         return $oRow->getImgTag($sCssClass, $aParam);
     }// function getImgTagById
 
     /**
      * Get Img-tag by Place-holder code
-     * @return array
+     * @param string $sCode
+     * @param array $aParam
+     * @return string
      */
-    public static function getImgTagByCode($sCode, $aParam = null, $sEntityName = 'image')
+    public function getImgTagByCode($sCode, $aParam = null)
     {
-        preg_match(self::$sImgRegExp, $sCode, $aMatches);
-        $oRow = gr($sEntityName, $aMatches[1]);
+        $aMatches = null;
+        preg_match($this->sImgRegExp, $sCode, $aMatches);
+        $oRow = $this->getRowById($aMatches[1]);
         return $oRow->getImgTag($aMatches[2], $aParam);
     }// function getImgTagByCode
 
     /**
      * Replace Place-holder code to Img-tag
+     * @param string $sCode
+     * @param array $aLinkTbl
+     * @param string $sKeyField
      * @return string
      */
-    public static function replaceCodeToImgTag($sCode, $aLinkTbl = NULL, $sEntityName = 'image', $sKeyField = 'id_file_data')
+    public function replaceCodeToImgTag($sCode, $aLinkTbl = NULL, $sKeyField = 'id_file_data')
     {
-        if (preg_match_all(self::$sImgRegExp, $sCode, $aMatches)) {
+        $aMatches = null;
+        if (preg_match_all($this->sImgRegExp, $sCode, $aMatches)) {
             $aRepl = array();
             $aPos  = array(
                 'id'    => 1,
                 'num'   => 2,
                 'class' => 3,
             );
-            $aEtt = self::prepareImgEtt($aRepl, $aMatches, $aPos, $aLinkTbl, $sEntityName, $sKeyField, false);
+            $aEtt = $this->prepareImgEtt($aRepl, $aMatches, $aPos, $aLinkTbl, $sKeyField, false);
 
             // Replace image code
             foreach ($aEtt as $e) {
@@ -88,11 +97,16 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
 
     /**
      * Replace Place-holder code to Img-tag
+     * @param string $sCode
+     * @param array $aParam
+     * @param array $aLinkTbl
+     * @param string $sKeyField
      * @return string
      */
-    public static function advReplaceCodeToImgTag($sCode, $aParam, $aLinkTbl = NULL, $sEntityName = 'image', $sKeyField = 'id_file_data')
+    public function advReplaceCodeToImgTag($sCode, $aParam, $aLinkTbl = NULL, $sKeyField = 'id_file_data')
     {
-        if (preg_match_all(self::$sAdvImgRegExp, $sCode, $aMatches)) {
+        $aMatches = null;
+        if (preg_match_all($this->sAdvImgRegExp, $sCode, $aMatches)) {
             $aRepl = array();
             $aPos  = array(
                 'type'   => 1,
@@ -102,7 +116,7 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
                 'height' => 5,
                 'class'  => 6,
             );
-            $aEtt = self::prepareImgEtt($aRepl, $aMatches, $aLinkTbl, $sEntityName, $sKeyField, true);
+            $aEtt = $this->prepareImgEtt($aRepl, $aMatches, $aLinkTbl, $sKeyField, true);
 
             // Replace image code
             foreach ($aEtt as $e) {
@@ -124,13 +138,19 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
             }
         }
         return $sCode;
-    }// function replaceCodeToImgTag
+    }// function advReplaceCodeToImgTag
 
     /**
-     * Replace Place-holder code to Img-tag
-     * @return array
+     * Prepare Entity of image
+     * @param array $aRepl
+     * @param array $aMatches
+     * @param array $aPos
+     * @param array $aLinkTbl
+     * @param string $sKeyField
+     * @param boolean $bAdv
+     * @return \fan\core\base\model\rowset
      */
-    private static function prepareImgEtt(&$aRepl, $aMatches, $aPos, $aLinkTbl, $sEntityName, $sKeyField, $bAdv)
+    private function prepareImgEtt(&$aRepl, $aMatches, $aPos, $aLinkTbl, $sKeyField, $bAdv)
     {
         // Define by ID
         foreach ($aMatches[$aPos['id']] as $k => $id) {
@@ -165,8 +185,8 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
         }
 
         // Get entity image list
-        return ge($sEntityName)->getRowsetByParam($sKeyField . ' IN(' . implode(',', array_keys($aRepl)) . ')');
-    }// function replaceCodeToImgTag
+        return $this->getRowsetByParam($sKeyField . ' IN(' . implode(',', array_keys($aRepl)) . ')');
+    }// function prepareImgEtt
 
 } // class \fan\core\base\model\spec_file\image\entity
 ?>

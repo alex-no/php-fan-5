@@ -19,7 +19,7 @@
  */
 return array(
     /**
-     * Meta data for curent form block
+     * Meta data for current form block
      */
     'own' => array(
         /**
@@ -43,7 +43,7 @@ return array(
             'form_key_name'   => 'name of key', //  Name of key for button when complex form is used
             'csrf_protection' => 8, //NR. By default 8. The length of CSRF-protection code from 4 to 32 (add it to form-key). If length is out of range - CSRF-protection is not used.
 
-            'role_name' => 'name of one_time_roles', // It's used for show other html-code after submit. By defual: 'form_submit_successful_' . form_id
+            'role_name' => 'name of one_time_roles', // It's used for show other html-code after submit. By default: 'form_submit_successful_' . form_id
             'element_id_prefix' => 'id prefix', // (NR) Prefix for Id of elements
 
             'js_url' => array( // URLs for JS-validators
@@ -51,22 +51,22 @@ return array(
                 'js-loader'  => '/javascript/load-wrapper.js',
                 'validator'  => '/javascript/form_validation.js'
             ),
-            'js_validator'  => 'form_validation', // Name of JS-class for form valiudation
-            'js_err_format' => 'alert', // Fomat of show of error messages. Available format for now: 'alert', 'div'. 'alert' - show error by alert, 'div' - show error by div near each input field
+            'js_validator'  => 'form_validation', // Name of JS-class for form validation
+            'js_err_format' => 'alert', // Format of show of error messages. Available format for now: 'alert', 'div'. 'alert' - show error by alert, 'div' - show error by div near each input field
             'js_loader' => array(
                 'url'    => '/form_validation/form_name.php',
                 'fields' => array('field_name1', 'field_name2', 'etc'),
             ),
 
             'useMultiLanguage' => true OR false, //NR. Set form vessages as multy- OR one-language. By default: true or false depending on service locale is allowed or not
-            'required_msg'     => 'Field "{FIELD_LABEL}" is required for fill!', //NR. By default: has value as show in this examlle
+            'required_msg' => 'Field "{FIELD_LABEL}" is required for fill!', //NR. By default: has value as show in this example
 
             'startTabIndex' => 1, //Start TabIndex number. NR. By default: 1
 
             'notUseHtmlMaker' => true OR false, // NR. Do not create object HTML-maker in the template. By default: notUseHtmlMaker = false
             'not_role' => true OR false, // NR. Do not create temporary role for disable form show after submit. By default: not_role = false
 
-            'form_parts' => array(), // NR. Set it for multipart form in the main part. Contain list of form-parts and order of parsing them.
+            'form_parts' => array(), // NR. Set it for multi-part form in the main part. Contain list of form-parts and order of parsing them.
 
             'fields' => array(
                 'field_name1' => array(
@@ -78,7 +78,7 @@ return array(
                     'trim_tag'     => true OR false, //NR. Trim tag in get data. By default: true
                     'trim_tag_val' => '&"\'<>\\',    //NR. This parameter work together with trim_tag=true. There is list of symbols, which must be replaced. By default: '&"\'<>\\'
                     'is_required'  => true OR false, //NR. By default: if field has validation rule with ('not_empty' = false) - it is required, else it isn't
-                    'depth'        => 1, //NR. Used for multi-value elents. It is points depth of data-array
+                    'depth'        => 1, //NR. Used for multi-value elements. It is points depth of data-array. For usual elements it equals 0
 
                     'data' => array( //NR. Data for select, radio-group, etc
                         array('value' => 'value1', 'text' => 'text1'),
@@ -90,10 +90,10 @@ return array(
                         'method' => 'Method name',
                         'class'  => 'Class name', //NR. If class is set - call static method of this class else method of current block
                     ),
-                    'not_check_by_data' => false, //NR. Used for select, radio, etc elemets only for disable check value by data
+                    'not_check_by_data' => false, //NR. Used for select, radio, etc elements only for disable check value by data
 
                     'default_value' => 'default value', //NR.
-                    'maxlength'     => 23, // NR. This parameter is set as attribute for input-tag. If it is set received value will be cut for this length defore validation
+                    'maxlength'     => 23, // NR. This parameter is set as attribute for input-tag. If it is set received value will be cut for this length before validation
                     'attributes'    => array( //NR. List of additional attributes with arbitrary name and value
                         'name_of_attr' => 'value_of_attr',
                         // ...
@@ -104,7 +104,7 @@ return array(
                             'rule_data' => array('data for rule'), //NR. It is need for rule with additional data
                             'not_empty' => true OR false, // NR. true - use rule for not empty data only; false - use rule for all type data false. By default: false
                             'error_msg' => 'Message about error for field "{FIELD_LABEL}"',
-                            'group_rule'=> true OR false, // NR. true - use rule for group values; false - use rule for eache field. By default: false
+                            'group_rule'=> true OR false, // NR. true - use rule for group values; false - use rule for each field. By default: false
                             'not_js'    => true OR false, // NR. true - do not use rule in JavaScript. By default: false
                         )
                     ),
@@ -116,8 +116,8 @@ return array(
             ),
         ), //'form'
 
-        'cache' => array( // cache-control papameters
-            'mode'     => 2, // Cache mode: 0 - don't use cache there and in container, 1 - don't use cache, 2 - clear cache by 'refrash' and 'expire', 3 - clear cache manualy only
+        'cache' => array( // cache-control parameters
+            'mode'     => 2, // Cache mode: 0 - don't use cache there and in container, 1 - don't use cache, 2 - clear cache by 'refresh' and 'expire', 3 - clear cache manually only
             'clear'    => 'path to block', // Clear cache of other block
             // <-OR->
             'clear'    => array( // Clear cache of other blocks

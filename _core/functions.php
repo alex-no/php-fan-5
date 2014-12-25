@@ -12,9 +12,25 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 
+/**
+ * Alternative function for get class name
+ * Return NULL if argument is not object (doesn't show warning)
+ * @param object $oObject
+ * @return string|null
+ */
+function get_class_alt($oObject)
+{
+    return is_object($oObject) ? get_class($oObject) : null;
+} // function get_class_alt
+
+/**
+ * Get class name without namespace
+ * @param string|object $oObject
+ * @return string|null
+ */
 function get_class_name($oObject)
 {
     if (is_object($oObject)) {
@@ -30,7 +46,7 @@ function get_class_name($oObject)
  *
  * @param string|object $oObject
  * @param integer $nDepth
- * @return null
+ * @return string|null
  */
 function get_ns_name($oObject, $nDepth = 1)
 {
@@ -52,17 +68,25 @@ function get_ns_name($oObject, $nDepth = 1)
     return $sName;
 } // function get_ns_name
 
-
+/**
+ * Alternative check is array or instance of \ArrayAccess
+ * @param mixed $aArr
+ * @return boolean
+ */
+function is_array_alt($aArr)
+{
+    return is_array($aArr) || is_object($aArr) && $aArr instanceof \ArrayAccess;
+} // function is_array_alt
 
 /**
- * Altternative (special) merge recursive function
- *
+ * Alternative merge recursive function
+ * Doesn't convert numeric indexes
  * @param mixed $aArrFirst - first parameter
  * @return array - merged array
  */
 function array_merge_recursive_alt($aArrFirst)
 {
-    if(!is_array($aArrFirst)) {
+    if(!is_array_alt($aArrFirst)) {
         if (is_null($aArrFirst)) {
             $aArrFirst = array();
         } else {
@@ -73,9 +97,9 @@ function array_merge_recursive_alt($aArrFirst)
     $argList = func_get_args();
     for ($i = 1; $i < $numArgs; $i++) {
         if (!is_null($argList[$i])) {
-            $aArrNext = is_array($argList[$i]) ? $argList[$i] : array($argList[$i]);
+            $aArrNext = is_array_alt($argList[$i]) ? $argList[$i] : array($argList[$i]);
             foreach ($aArrNext as $k => $v) {
-                $aArrFirst[$k] = isset($aArrFirst[$k]) && (is_array($aArrFirst[$k]) || is_array($v)) ?
+                $aArrFirst[$k] = isset($aArrFirst[$k]) && (is_array_alt($aArrFirst[$k]) || is_array_alt($v)) ?
                     array_merge_recursive_alt($aArrFirst[$k], $v) :
                     $v;
             }
@@ -86,7 +110,8 @@ function array_merge_recursive_alt($aArrFirst)
 
 /**
  * Check if value is available in array - return value else return Default Value
- * @param array|ArrayAccess $aArr
+ * Key can bee scalar or array for multilevel source array
+ * @param array|\ArrayAccess $aArr
  * @param mixed $mKey
  * @param mixed $mDefault
  * @return mixed
@@ -134,7 +159,7 @@ function &array_get_element(&$mSource, $mKey, $bMake = null)
     //Anonimouse function for check data
     $fChecker = function(&$aDestination, $mKey, $bMake, $bSave)
     {
-        $bIsArray = is_array($aDestination) || is_object($aDestination) && $aDestination instanceof \ArrayAccess;
+        $bIsArray = is_array_alt($aDestination);
         if ((!$bIsArray || !isset($aDestination[$mKey])) && empty($bMake)) {
             return false; // Element not found and can't be made
         }
@@ -185,21 +210,21 @@ function &array_get_element(&$mSource, $mKey, $bMake = null)
  * @return array
  */
 function adduceToArray($mSrc)
-    {
-        if (!empty($mSrc)) {
-            switch (gettype($mSrc)) {
-            case 'object':
-                return method_exists($mSrc, 'toArray') ? $mSrc->toArray() : array($mSrc);
-            case 'array':
-                return $mSrc;
-            case 'integer':
-            case 'double':
-            case 'string':
-                return array($mSrc);
-            }
+{
+    if (!empty($mSrc)) {
+        switch (gettype($mSrc)) {
+        case 'object':
+            return method_exists($mSrc, 'toArray') ? $mSrc->toArray() : array($mSrc);
+        case 'array':
+            return $mSrc;
+        case 'integer':
+        case 'double':
+        case 'string':
+            return array($mSrc);
         }
-        return array();
-    } // function adduceToArray
+    }
+    return array();
+} // function adduceToArray
 
 /**
  * Increase number by power of 10 in 2 (or $nQtt)
@@ -281,7 +306,11 @@ function handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText)
     if (!error_reporting()) {
         return;
     }
-    \fan\project\service\error::instance()->handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText);
+    if (class_exists('\fan\project\service\error', false) || !\bootstrap::getLoader()->isLoading()) {
+        \fan\project\service\error::instance()->handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText);
+    } else {
+        \bootstrap::handleError($nErrNo, $sFileName, $sErrMsg, $nErrLine, $aErrContext);
+    }
 } // function handleError
 
 /**
@@ -345,38 +374,27 @@ function le($sEntityName, $mRowId = null, $bIdIsEncrypt = false)
 } // function le
 
 /**
- * Load Dynamic Meta-data as Scalar value
+ * Get Dynamic Meta-data as Scalar value
  * @param string $sKey Data Key
  * @param mixed $mDefaultValue Default Value
  * @return mixed
  */
 function dms($sKey, $mDefaultValue = null)
 {
-    $oEtt = ge('dynamic_meta')->getRowOrCreate(array('data_key' => $sKey), array(
-        'data_name' => str_replace('_', ' ', $sKey),
-        'data_type' => 'scalar',
-        'scalar_value' => null,
-    ));
-    $mScalarValue = $oEtt->get_scalar_value();
+    $mScalarValue = service('entity')->getDynamicMetaScalar($sKey);
     return empty($mScalarValue) ? $mDefaultValue : $mScalarValue;
 } // function dms
 
 /**
- * Load Dynamic meta-data as array
+ * Get Dynamic meta-data as array
  * @param string $sKey Data Key
- * @param array $aDefaultValue Default Value
+ * @param array $mDefaultValue Default Value
  * @return array
  */
 function dma($sKey, $mDefaultValue = array())
 {
-    $aRet = ge('dynamic_meta_array')->getRowsetByParam(array('data_key' => $sKey))->getArrayHash('ns_data_key', 'ns_data_value');
-    if (empty($aRet)) {
-        ge('dynamic_meta')->loadOrCreate(array('data_key' => $sKey), array(
-            'data_name' => str_replace('_', ' ', $sKey),
-            'data_type' => 'array',
-        ));
-    }
-    return $aRet ? $aRet : $mDefaultValue;
+    $aResult = service('entity')->getDynamicMetaArray($sKey);
+    return empty($aResult) ? $mDefaultValue : $aResult;
 } // function dma
 
 /**

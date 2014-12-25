@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class service
@@ -72,7 +72,7 @@ abstract class service
      */
     public static function checkName($sName)
     {
-        return substr($sName, 0, 4) == 'core' ? 'project' . substr($sName, 4) : $sName;
+        return substr($sName, 0, 8) == 'fan\core' ? 'fan\project' . substr($sName, 8) : $sName;
     } // function checkName
 
     // ======== Main Interface methods ======== \\
@@ -259,7 +259,7 @@ abstract class service
     /**
      * Get delegate class
      * @param string $sClass
-     * @return \fan\core\service\tab\delegate
+     * @return object
      * @throws \fan\project\exception\service\fatal
      */
     protected function _getDelegate($sClass)

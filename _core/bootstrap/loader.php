@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @property-read string $core
  * @property-read string $project
  * @property-read string $app
@@ -74,6 +74,12 @@ class loader implements \ArrayAccess
      * @var array
      */
     protected $aLastBlock = array();
+
+    /**
+     * Flag - show process of autoloading is active
+     * @var boolean
+     */
+    protected $bLoading = false;
 
     /**
      * Construct of class
@@ -197,7 +203,7 @@ class loader implements \ArrayAccess
 
         $sPrimePath = $this->aNsKeys[$sKey] . $sPath;
         if (is_readable($sPrimePath)) {
-            require_once $sPrimePath;
+            $this->_requireFile($sPrimePath);
             if (class_exists($sClass, false) || interface_exists($sClass, false)) {
                 return true;
             }
@@ -208,7 +214,7 @@ class loader implements \ArrayAccess
         $sSecondPath = $this->aNsKeys['core'] . $sPath;
         if ($bMakeAlias && $sKey == 'project' && is_readable($sSecondPath)) {
             $sOriginal = 'fan\core\\' . implode('\\', $aParts);
-            require_once $sSecondPath;
+            $this->_requireFile($sSecondPath);
             if (!class_exists($sOriginal, false) && !interface_exists($sOriginal, false)) {
                 trigger_error('Class "' . $sOriginal . '" isn\'t found in the file "' . $sSecondPath . '"', E_USER_WARNING);
                 return false;
@@ -300,7 +306,7 @@ class loader implements \ArrayAccess
         }
         $this->aLastBlock[$aKey[0]][$aKey[1]] = substr($sPath, 0, -strlen(end($aKey)) - 1);
 
-        require_once $sPath;
+        $this->_requireFile($sPath);
         $sClass = '\fan\app\\' . $aKey[0] . '\\' . $aKey[1] . '\\' . substr(end($aKey), 0, -4);
         if (!class_exists($sClass, false)) {
             trigger_error('Class "' . $sClass . '" isn\'t found in the file "' . $sPath . '"', E_USER_WARNING);
@@ -360,7 +366,7 @@ class loader implements \ArrayAccess
     public function checkPath($sPath)
     {
         $sPath = $this->parsePath($sPath);
-        return file_exists($sPath) ? $sPath : null;
+        return $this->getRealPath($sPath, true);
     }
 
     /**
@@ -405,6 +411,15 @@ class loader implements \ArrayAccess
                 false
         );
     } // function defineNewApp
+
+    /**
+     * Return true if process Auto-loading is active
+     * @return bulean
+     */
+    public function isLoading()
+    {
+        return $this->bLoading;
+    } // function isLoading
 
     /**
      * Register autolod of classes Zend2
@@ -495,6 +510,12 @@ class loader implements \ArrayAccess
         return array_merge($this->aNsKeys, $this->aExtraKeys);
     } // function _getMixedKeys
 
+    /**
+     * Find Block
+     * @param string $sDir
+     * @param string $sFile
+     * @return string
+     */
     protected function _findBlock($sDir, $sFile)
     {
         if (is_file($sDir . DIR_SEPARATOR . $sFile)) {
@@ -514,6 +535,19 @@ class loader implements \ArrayAccess
 
         return null;
     } // function _findBlock
+
+    /**
+     * Require Once File and set flag of loading
+     * @param string $sPath
+     * @return \fan\core\bootstrap\loader
+     */
+    protected function _requireFile($sPath)
+    {
+        $this->bLoading = true;
+        require_once $sPath;
+        $this->bLoading = false;
+        return $this;
+    } // function _requireFile
 
     // ======== The magic methods ======== \\
 

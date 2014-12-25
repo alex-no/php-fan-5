@@ -5,8 +5,6 @@
  */
 return array(
     'own' => array(
-        'carcass' => 'carcass/with_db',
-
         'title' => 'Create entity',
 
         'externalCss' => array( // css files
@@ -26,8 +24,9 @@ return array(
 
             'fields' => array(
                 'tbl' => array(
-                    'label'          => 'Table',
-                    'input_type'     => 'checkbox',
+                    'label'      => 'Table',
+                    'input_type' => 'checkbox',
+                    'depth'      => 1
                 ),
             ),
         ), //form

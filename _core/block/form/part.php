@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class part extends usual
@@ -37,7 +37,7 @@ abstract class part extends usual
     protected function _parseForm($bParceEmpty = true, $bParsingCondition = true, $bAllowTransfer = false)
     {
         if (parent::_parseForm($bParceEmpty, $bParsingCondition, $bAllowTransfer)) {
-            return $this->aFieldValue;
+            return $this->getForm()->getFieldValue();
         }
         if ($this->bIsError) {
             throw new \fan\project\exception\block\form_part($this, $this->aErrorMsg);

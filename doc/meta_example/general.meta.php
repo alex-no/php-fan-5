@@ -2,7 +2,7 @@
 /**
  * Example of meta file for block
  * Note:
- *   - All pathes to some other blocks set by {CONSTANTS}, which are defined in ini-file
+ *   - All paths to some other blocks set by {CONSTANTS}, which are defined in ini-file
  *   - NR - Not required parameter
  *
  * This file is part PHP-FAN (php-framework of Alexandr Nosov)
@@ -22,10 +22,10 @@ return array(
      * Meta data for embedded blocks
      */
     'common' => array(
-        //<-- There is possible to set some parametes which need set in all embedded blocks
+        //<-- There is possible to set some parameters which need set in all embedded blocks
     ),
     /**
-     * Meta data for curent carcass block
+     * Meta data for current carcass block
      */
     'own' => array(
         /**
@@ -84,12 +84,12 @@ return array(
         ),
 
         'externalJS' => array( // JavaScript files
-            'head' => array('file1.js', 'file2.js', 'etc'), // files are attached into head of htmlcode
-            'body' => array('file1.js', 'file2.js', 'etc'), // files are attached into end of body of htmlcode (deprecated!!!)
+            'head' => array('file1.js', 'file2.js', 'etc'), // files are attached into head of html-code
+            'body' => array('file1.js', 'file2.js', 'etc'), // files are attached into end of body of html-code (deprecated!!!)
         ),
         'embedJS' => array( // embed JavaScript text
-            'head' => 'JavaScript-text which inserts into head of htmlcode',
-            'body' => 'JavaScript-text which inserts into end of body of htmlcode',
+            'head' => 'JavaScript-text which inserts into head of html-code',
+            'body' => 'JavaScript-text which inserts into end of body of html-code',
         ),
 
         'template' => 'used_template_name(NR - it is need to set when template_name not equal to class_name)',
@@ -97,9 +97,9 @@ return array(
 
 
         /**
-         * All parameters below it is possible to set as 'own'-part, amd in 'common'-part
+         * All parameters below it is possible to set as 'own'-part, and in 'common'-part
          */
-        'tplVars' => array( // variable, which sets in template automaticaly
+        'tplVars' => array( // variable, which sets in template automatically
             'tplVar1' => 'Value of variable 1',
             'tplVar2' => 'Value of variable 2',
         ),
@@ -109,7 +109,7 @@ return array(
         ),
         'parseImage' => true | false, // parse Image (in the output html-code)
 
-        'cache' => array( // cache-control papameters
+        'cache' => array( // cache-control parameters
             // Cache mode:
                 // 0 - don't use cache there and for container,
                 // 1 - don't use cache,
@@ -150,7 +150,7 @@ return array(
         ),
 
         'initOrder' => 1000, // Order to run init method for each data block
-        'useMultiLanguage' => true OR false, // NR. Use multi-language opoeration for some procedure. By default: useMultiLanguage = false
+        'useMultiLanguage' => true OR false, // NR. Use multi-language operation for some procedure. By default: useMultiLanguage = false
 
         'roles' => array (
             array (

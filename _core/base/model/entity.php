@@ -15,7 +15,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * @property-read \fan\core\service\entity\description $description
  * @property-read \fan\core\base\model\request $request
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class entity
 {
@@ -184,7 +184,7 @@ abstract class entity
     /**
      * Get Row By Parameters or Create new One
      * @param array $aLoadParam
-     * @param array $amSaveParam
+     * @param array $aSaveParam
      * @param boolean $bSaveNew
      * @return \fan\core\base\model\row
      */

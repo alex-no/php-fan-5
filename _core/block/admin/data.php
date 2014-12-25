@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class data extends base
 {
@@ -261,7 +261,7 @@ abstract class data extends base
      */
     public function getCondition()
     {
-        $aCond = $this->getMeta('condition', array());
+        $aCond = $this->getMeta('condition', array(), true);
         $aData = $this->getData();
         if (@$aData['cond']) {
             $aCond = array_merge_recursive_alt($aCond, $aData['cond']);
@@ -396,11 +396,12 @@ abstract class data extends base
 
         //$oDate = service('date', $mValue, 'mysql');
         $oDate = service('date', $mValue);
+        /* @var $oDate \fan\core\service\date */
         if (!$oDate->isValid()) {
             return false;
         }
-        $mValue = $oDate->convertLocal2Mysql();
-        return (!isset($aData['min_value']) || $mValue >= $aData['min_value']) && (!isset($aData['max_value']) || $mValue <= $aData['max_value']);
+        $sDate = $oDate->get('mysql');
+        return (!isset($aData['min_value']) || $sDate >= $aData['min_value']) && (!isset($aData['max_value']) || $sDate <= $aData['max_value']);
     } // function rule_is_date
 
     /**

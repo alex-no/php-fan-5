@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 
 class runner
@@ -67,10 +67,7 @@ class runner
             return $mRet;
         } catch (\fan\core\exception\base $e) {
         } catch (\Exception $e) {
-            if (method_exists($e, 'clearProperty')) {
-                $e->clearProperty();
-            }
-            \bootstrap::logError("Unrecognized fatal error.\n" . print_r($e, true)); // ToDo: There can be out of memory when $e too bir or has recourcive properties
+            $this->_logError($e);
         }
 
         ob_end_clean();
@@ -97,10 +94,7 @@ class runner
             return $mRet;
         } catch (\fan\core\exception\base $e) {
         } catch (\Exception $e) {
-            if (method_exists($e, 'clearProperty')) {
-                $e->clearProperty();
-            }
-            \bootstrap::logError("Unrecognized fatal error.\n" . print_r($e, true));
+            $this->_logError($e);
         }
 
         $this->_parseException($e, true);
@@ -188,6 +182,30 @@ class runner
         return $oDemonstrator->getTplContent();
     } // function showError
 
+    /**
+     * Log error message
+     * @param \Exception $e
+     * @return \fan\core\bootstrap\runner
+     */
+    protected function _logError(\Exception $e)
+    {
+        $sErrMsg  = method_exists($e, 'getMessageForShow') ? $e->getMessageForShow() . "\n" : '';
+        $sErrMsg .= method_exists($e, 'getErrorMessage')   ? $e->getErrorMessage() . "\n"   : '';
+        $sErrMsg .= $e->getMessage() . "\n";
+
+        if (method_exists($e, 'clearProperty')) {
+            $e->clearProperty();
+            $sErrMsg .= var_export($e, true); // ToDo: There can be out of memory when $e too bir or has recourcive properties
+        }
+        \bootstrap::logError("Unrecognized fatal error.\n" . $sErrMsg);
+        return $this;
+    } // function showError
+
+    /**
+     * Parse Exception
+     * @param \Exception $e
+     * @param boolean $bIsEcho
+     */
     public function _parseException(\Exception $e, $bIsEcho)
     {
         if (method_exists($e, 'getMessageForShow')) {

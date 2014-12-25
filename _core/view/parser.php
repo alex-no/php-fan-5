@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class parser
@@ -44,12 +44,12 @@ abstract class parser
 
     // ======== Static methods ======== \\
     /**
-     * Get View-type
+     * Get View-Format
      * @return string
      */
-    static public function getType() {
+    static public function getFormat() {
      throw new \fan\project\exception\error500('Class "' . get_called_class() . '" can\'t be use for define View-type');
-    } // function getType
+    } // function getFormat
 
     /**
      * Get View-Router for block
@@ -106,7 +106,10 @@ abstract class parser
         $aViewData = $oBlock->getViewData();
 
         foreach ($oBlock->getEmbeddedBlocks() as $oEmbeddedBlock) {
-            $aViewData[$oEmbeddedBlock->getBlockName()] = $this->getResultData($oEmbeddedBlock);
+            $mEmbData = $this->getResultData($oEmbeddedBlock);
+            if (!empty($mEmbData)) {
+                $aViewData[$oEmbeddedBlock->getBlockName()] = $mEmbData;
+            }
         }
 
         return $aViewData;
@@ -134,6 +137,10 @@ abstract class parser
      */
     protected function _parseTemplate(\fan\core\block\base $oBlock, $aTplVar)
     {
+        $aCond = $oBlock->getRoleCondition();
+        if (!empty($aCond)) {
+            return '';
+        }
         $sTemplate = $oBlock->getTemplate();
         if ($sTemplate) {
             // If template exists - assign variables and parse template

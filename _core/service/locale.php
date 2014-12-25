@@ -18,7 +18,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class locale extends \fan\core\base\service\single
 {
@@ -78,7 +78,6 @@ class locale extends \fan\core\base\service\single
     protected function __construct($bAllowIni = true)
     {
         parent::__construct($bAllowIni);
-        $this->_getSession($this->getConfig('USE_SESSION4LNG', false));
         $this->_setBasicProp();
 
         $this->_subscribeForService('application', 'setAppName',   array($this, 'onAppChange'));
@@ -117,12 +116,7 @@ class locale extends \fan\core\base\service\single
     {
         if ($this->isEnabled() && isset($this->aAvailableLng[$sLanguage])) {
             $this->_defineLocale();
-            \fan\project\service\cookie::instance('/')->setByTime(
-                    $this->getConfig('LANGUAGE_KEY', 'lng'),
-                    $sLanguage,
-                    $this->getConfig('COOKIE_TIME', 2592000)
-            );
-            return $this->_setCurrentLanguage($sLanguage);
+            return $this->_setCurrentLanguage($sLanguage, true);
         }
         return false;
     } // function setLanguage
@@ -134,6 +128,19 @@ class locale extends \fan\core\base\service\single
     {
         return $this->_defineLocale()->sCurrentLanguage;
     } // function getLanguage
+
+    /**
+     * Get Id of Current Language
+     * @return numeric
+     */
+    public function getLanguageId()
+    {
+        $oServ = service('entity');
+        if (!$oServ->getConfig(array('delegate', 'getLngByName'), false)) {
+            return null;
+        }
+        return $oServ->getLngByName($this->getLanguage())->getId(false);
+    } // function getLanguageId
     /**
      * Get Default Language
      * @return string
@@ -262,10 +269,60 @@ class locale extends \fan\core\base\service\single
     /**
      * Is need to Parse URL for get/set language
      */
-    public function isUrlParsing()
+    public function isUriParsing()
     {
-        return $this->isEnabled() && !empty($this->aConfig['REQUEST_HAS_LNG']);
-    } // function isUrlParsing
+        return $this->isEnabled() && !empty($this->oConfig['REQUEST_HAS_LNG']);
+    } // function isUriParsing
+
+    /**
+     * modify Url for substitution language key
+     * @param string $sUrn - Sourse Url
+     * @param string $sLng - new language code
+     * @return string modified URL
+     */
+    public function modifyUrn($sUrn, $sLng = null)
+    {
+        if ($this->isEnabled()  && $this->isUriParsing()) {
+            $aMatches = $this->checkUriLng($sUrn);
+            if (is_null($aMatches)) {
+                if (empty($sLng) || !isset($this->aAvailableLng[$sLng])) {
+                    $sLng = $this->getLanguage();
+                }
+                $sUrn = '/' . $sLng . $sUrn;
+            }
+        }
+        return $sUrn;
+    } // function modifyUri
+
+    /**
+     * Get array of Url for language switcher
+     * @param string $sUrl - Sourse Url
+     * @return arrae
+     */
+    public function getSwitcherLinks($sUrl = null, $sLng = null)
+    {
+        $aRet = array();
+        $oTab = service('tab');
+        /* @var $oTab \fan\core\service\tab */
+        if (empty($sUrl)) {
+            $sUrl = $oTab->getCurrentURI(false, true, true, true);
+        }
+
+        $sSep = $oTab->getConfig('GET_SEPARATOR', '&amp;');
+        foreach ($this->getAvailableLanguages() as $k => $v) {
+            $sNewUrn = empty($this->oConfig['REQUEST_HAS_LNG']) ?
+                $sUrl . (strpos($sUrl, '?') === false ? '?' : $sSep) . $this->getConfig('LANGUAGE_KEY', 'lng') . '=' . $k :
+                '/' . $k . $sUrl;
+            $aRet[$k] = array(
+                'key'     => $k,
+                'urn'     => $sNewUrn,
+                'f_name'  => $v,
+                's_name'  => $this->oConfig['SHORT_NAME'][$k],
+                'current' => $k == $this->getLanguage(),
+            );
+        }
+        return $aRet;
+    } // function getSwitcherLinks
 
     /**
      * Is need to Parse URL for get/set language
@@ -282,10 +339,28 @@ class locale extends \fan\core\base\service\single
      */
     public function onSetNewUri(\fan\core\service\matcher $oMatcher)
     {
-        $this->_defineLocale();
-        $sLanguage = $this->_getLanguageByMatcher($oMatcher);
-        $this->_setCurrentLanguage($sLanguage);
+        if ($this->bIsDefined) {
+            $sLanguage = $this->_getLanguageByMatcher($oMatcher);
+            $this->_setCurrentLanguage($sLanguage);
+        } else {
+            $this->_defineLocale();
+        }
     } // function onSetNewUri
+
+    /**
+     * Check is Url contain URL
+     * @param string $sUrl - Sourse Url
+     * @return array modified URL
+     */
+    public function checkUriLng($sUrl)
+    {
+        $sRegExp = '/^((\~?\/)(' . implode('|', array_keys($this->aAvailableLng)) . '))(?:\/|$)/';
+        $aMatches = null;
+        if (preg_match($sRegExp, $sUrl, $aMatches)) {
+            return $aMatches;
+        }
+        return null;
+    } // function checkUrlLng
 
     /**
      * Parse event application - apply new config
@@ -294,7 +369,7 @@ class locale extends \fan\core\base\service\single
     {
         $this->_setBasicProp();
         if (!in_array($this->sCurrentLanguage, $this->aAvailableLng)) {
-            $this->sCurrentLanguage = $this->sDefaultLng;
+            $this->_defineLanguage();
         }
     } // function onAppChange
 
@@ -326,10 +401,10 @@ class locale extends \fan\core\base\service\single
         $oAvailableLng = $this->getConfig('AVAILABLE_LANGUAGE');
         if (!$this->isEnabled() || empty($oAvailableLng)) {
             $this->oConfig['ENABLED'] = false;
-            $this->aAvailableLng    = $this->_getDefultLanguages($oAvailableLng);
-            $this->sCurrentLanguage = $this->sDefaultLng;
+            $this->aAvailableLng      = $this->_getDefultLanguages($oAvailableLng);
+            $this->sCurrentLanguage   = $this->sDefaultLng;
         } else {
-            $this->aAvailableLng    = $oAvailableLng->toArray();
+            $this->aAvailableLng = $oAvailableLng->toArray();
         }
         return $this;
     } // function _setBasicProp
@@ -342,7 +417,7 @@ class locale extends \fan\core\base\service\single
     {
         if (!$this->bIsDefined) {
             if ($this->isEnabled()) {
-                $this->_defineLanguage();
+                $this->_defineLanguage(true);
             } else {
                 $this->sCurrentLanguage = $this->sDefaultLng;
             }
@@ -357,31 +432,33 @@ class locale extends \fan\core\base\service\single
      * Define current Language
      * @return string
      */
-    protected function _defineLanguage()
+    protected function _defineLanguage($bForse = false)
     {
         // Define by request in the matcher
         if (class_exists('\fan\core\service\matcher', false)) {
-            $sLanguage = $this->_getLanguageByMatcher(\fan\project\service\matcher::instance());
-            if ($this->_setCurrentLanguage($sLanguage)) {
-                return;
+            if ($this->_setCurrentLanguage($this->_getLanguageByMatcher(), $bForse)) {
+                return 1;
             }
         }
 
-        // Define by GET
-        $oReq = \fan\project\service\request::instance();
-        $sLngKey = $this->getConfig('LANGUAGE_KEY', 'lng');
         // Define by GET or POST key
-        if ($this->_setCurrentLanguage($oReq->get($sLngKey, 'GP'))) {
-            return;
+        $oReq    = \fan\project\service\request::instance();
+        $sLngKey = $this->getConfig('LANGUAGE_KEY', 'lng');
+        if ($this->_setCurrentLanguage($oReq->get($sLngKey, 'GP'), $bForse)) {
+            return 2;
         }
 
-        // Define by SESSION or COOKIES
-        $oSes = $this->_getSession(false);
-        $sLanguage = empty($oSes) ?
-                $oReq->get($sLngKey, 'C') :
-                $oSes->get('current_language', $sLanguage);
-        if ($this->_setCurrentLanguage($sLanguage)) {
-            return;
+        // Define by SESSION
+        if ($this->getConfig('USE_SESSION4LNG', false)) {
+            $oSes = $this->_getSession(true);
+            if (!empty($oSes) && $this->_setCurrentLanguage($oSes->get('current_language'), $bForse)) {
+                return 3;
+            }
+        }
+
+        // Define by COOKIES
+        if ($this->_setCurrentLanguage($oReq->get($sLngKey, 'C'), $bForse)) {
+            return 4;
         }
 
         // Define by HTTP_ACCEPT_LANGUAGE
@@ -390,18 +467,18 @@ class locale extends \fan\core\base\service\single
             $aLng = explode(',', $sAcceptLng);
             foreach ($aLng as $v) {
                 if (preg_match('/^(\w+)(?:[\-_](\w+))?/', $v, $aMatches)) {
-                    $sLanguage = strtolower($aMatches[0]);
-                    if ($this->_setCurrentLanguage($sLanguage)) {
+                    if ($this->_setCurrentLanguage(strtolower($aMatches[0]), $bForse)) {
                         if (!empty($aMatches[1])) {
                             $this->setCountry($aMatches[1]);
                         }
-                        return;
+                        return 5;
                     }
                 }
             }
         }
 
         $this->sCurrentLanguage = $this->sDefaultLng;
+        return 0;
     } // function _defineLanguage
 
     /**
@@ -409,13 +486,23 @@ class locale extends \fan\core\base\service\single
      * @param string $sLanguage
      * @return boolean
      */
-    public function _setCurrentLanguage($sLanguage)
+    public function _setCurrentLanguage($sLanguage, $bForse = false)
     {
         if (!empty($sLanguage) && $this->isEnabled() && isset($this->aAvailableLng[$sLanguage])) {
-            if ($this->sCurrentLanguage != $sLanguage) {
+            $bIsNew = $this->sCurrentLanguage != $sLanguage;
+            if ($bIsNew || $bForse) {
                 if ($this->getConfig('USE_SESSION4LNG', false)) {
                     $this->_getSession()->set('current_language', $sLanguage);
                 }
+
+                \fan\project\service\cookie::instance('/')->setByTime(
+                        $this->getConfig('LANGUAGE_KEY', 'lng'),
+                        $sLanguage,
+                        $this->getConfig('COOKIE_TIME', 2592000)
+                );
+            }
+
+            if ($bIsNew) {
                 $this->sCurrentLanguage = $sLanguage;
                 $this->_broadcastMessage('setNewLanguage', $this);
             }
@@ -459,10 +546,13 @@ class locale extends \fan\core\base\service\single
         return $this;
     } // function _defineExtraData
 
-    public function _getLanguageByMatcher(\fan\core\service\matcher $oMatcher)
+    public function _getLanguageByMatcher($oMatcher = null)
     {
-        $oParsed = $oMatcher->getLastItem()->parsed;
-        return empty($oParsed->language) ? null : $oParsed->language;
+        if (empty($oMatcher)) {
+            $oMatcher = \fan\project\service\matcher::instance();
+        }
+        $sLanguage = $oMatcher->getLastItem()->parsed->language;
+        return empty($sLanguage) ? null : $sLanguage;
     } // function _defineExtraData
 
     // ======== The magic methods ======== \\

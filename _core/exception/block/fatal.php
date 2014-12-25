@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class fatal extends local
 {
@@ -23,7 +23,7 @@ class fatal extends local
      * @param numeric $nCode Error Code
      * @param \Exception $oPrevious Previous Exception
      */
-    public function __construct($oBlock, $sLogErrMsg, $nCode = E_USER_ERROR, $oPrevious = null)
+    public function __construct(\fan\core\block\base $oBlock, $sLogErrMsg, $nCode = E_USER_ERROR, $oPrevious = null)
     {
         if (!headers_sent()) {
             header('HTTP/1.1 500 Internal Server Error');

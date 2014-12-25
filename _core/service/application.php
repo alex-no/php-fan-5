@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class application extends \fan\core\base\service\single
 {
@@ -36,7 +36,11 @@ class application extends \fan\core\base\service\single
     {
         parent::__construct($bAllowIni);
         $aSysApp = array('__log_viewer', '__tools');
-        $this->aUsedNames = $this->getConfig('used_names', $aSysApp)->toArray();
+        $aUsedNames = $this->getConfig('used_names', $aSysApp);
+        if (empty($aUsedNames)) {
+            throw new fatalException($this, 'Used application names isn\'t set.');
+        }
+        $this->aUsedNames = adduceToArray($aUsedNames);
         foreach ($aSysApp as $v) {
             if (!in_array($v, $this->aUsedNames)) {
                 $this->aUsedNames[] = $v;
@@ -102,7 +106,7 @@ class application extends \fan\core\base\service\single
      */
     public function getCoreVersion()
     {
-        return 'PHP-FAN 05.02.003 (2014-04-16)';
+        return 'PHP-FAN 05.02.004 (2014-12-25)';
     } // function getCoreVersion
 } // class \fan\core\service\application
 ?>

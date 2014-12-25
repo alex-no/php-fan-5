@@ -12,10 +12,12 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class json extends \fan\core\base\service\single
 {
+    const DECODE_OPT_PHP_VERSION = '5.4.0';
+
     /**
      * Error Code
      * @var integer
@@ -40,7 +42,9 @@ class json extends \fan\core\base\service\single
             $iOptions = $this->getConfig('DECODE_OPTIONS', 0);
         }
         if ($this->getConfig('ALLOW_INTERNAL', true)) {
-            $mResult = json_decode($sJson, $bArray, $iDepth, $iOptions);
+            $mResult = version_compare(PHP_VERSION, self::DECODE_OPT_PHP_VERSION) < 0 ?
+                    json_decode($sJson, $bArray, $iDepth) :
+                    json_decode($sJson, $bArray, $iDepth, $iOptions);
             $this->iErrorCode = json_last_error();
             return $mResult;
         }
@@ -55,15 +59,24 @@ class json extends \fan\core\base\service\single
      * @param integer $iOptions
      * @return string
      */
-    public function encode($mSourse, $iOptions = null)
+    public function encode($mSourse, $iOptions = null, $bLogError = true)
     {
         $this->iErrorCode = null;
         if (is_null($iOptions)) {
             $iOptions = $this->getConfig('ENCODE_OPTIONS', 0);
         }
         if ($this->getConfig('ALLOW_INTERNAL', true)) {
-            $sResult = json_encode($mSourse, $iOptions);
+            $sResult = @json_encode($mSourse, $iOptions);
             $this->iErrorCode = json_last_error();
+            if ($this->iErrorCode != JSON_ERROR_NONE && $bLogError) {
+                service('error')->logErrorMessage(
+                        $this->getErrorText(),
+                        'JSON error',
+                        '',
+                        true,
+                        false
+                );
+            }
             return $sResult;
         }
         // ToDo: make special procedures for JSON-encode
@@ -83,13 +96,21 @@ class json extends \fan\core\base\service\single
 
     /**
      * Encode YAML-file to JSON-string
-     * @param type $sXml
-     * @param type $bIgnoreXmlAttributes
+     * @param type $sYaml
      */
-    public function fromYaml($sXml)
+    public function fromYaml($sYaml)
     {
         // ToDo: make procedures for encode YAML to JSON
     } // function fromXml.
+
+    /**
+     * Is Error
+     * @return boolean
+     */
+    public function isError()
+    {
+        return $this->iErrorCode != JSON_ERROR_NONE;
+    } // function isError.
 
     /**
      * Get Error-code

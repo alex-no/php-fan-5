@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class transfer extends \Exception
@@ -24,7 +24,7 @@ abstract class transfer extends \Exception
     /**
      * @var string Applicatin name
      */
-    protected $sNewUrn;
+    protected $sNewUri;
     /**
      * @var string New Query String
      */
@@ -32,13 +32,13 @@ abstract class transfer extends \Exception
 
     /**
      * Transfer's constructor
-     * @param string $sNewUrn New Transfer's URL
+     * @param string $sNewUri New Transfer's URL
      * @param string $sNewQueryString New Query String
      * @param string $sDbOper Database Operation (commit, rollback)
      */
-    public function __construct($sNewUrn, $sNewQueryString = null, $sDbOper = null)
+    public function __construct($sNewUri, $sNewQueryString = null, $sDbOper = null)
     {
-        $this->sNewUrn = $sNewUrn;
+        $this->sNewUri = $sNewUri;
         $this->sNewQueryString = $sNewQueryString;
         if ($sDbOper) {
             \fan\project\service\database::fixAll($sDbOper, false);
@@ -61,8 +61,13 @@ abstract class transfer extends \Exception
      */
     public function getRequest()
     {
+        $sNewUri      = $this->getNewUri();
         $sQueryString = $this->getNewQueryString();
-        return $this->getNewUrn() . (empty($sQueryString) ? '' : $sQueryString);
+        if (empty($sQueryString) || $sQueryString == '?') {
+            return  $sNewUri;
+        }
+        $sMainUri = strstr($sNewUri, '?', true);
+        return (empty($sMainUri) ? $sNewUri : $sMainUri) . '?' . ltrim($sQueryString, '?');
     } // function getRequest
 
     /**
@@ -87,10 +92,10 @@ abstract class transfer extends \Exception
      * Get New Url
      * @return string
      */
-    public function getNewUrn()
+    public function getNewUri()
     {
-        return $this->sNewUrn;
-    } // function getNewUrn
+        return $this->sNewUri;
+    } // function getNewUri
 
     /**
      * Get Public error-message

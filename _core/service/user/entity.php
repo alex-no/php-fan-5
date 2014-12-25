@@ -1,7 +1,7 @@
 <?php namespace fan\core\service\user;
 use fan\project\exception\service\fatal as fatalException;
 /**
- * Parser of log message-file
+ * User-data engine by data from entity
  *
  * This file is part PHP-FAN (php-framework from Alexandr Nosov)
  * Copyright (C) 2005-2007 Alexandr Nosov, http://www.alex.4n.com.ua/
@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class entity extends base
 {
@@ -53,9 +53,9 @@ class entity extends base
         $oConf = $this->oConfig;
         $this->oRow = null;
         foreach ($oConf->get('IDENTIFYERS') as $v) {
-            $oUser = ge($oConf->get('ENGINE_KEY'))->getRowByParam(array($v => $this->mIdentifyer));
-            if ($oUser->checkIsLoad()) {
-                $this->oRow  = $oUser;
+            $oRow = ge($oConf->get('ENGINE_KEY'))->getRowByParam(array($v => $this->mIdentifyer));
+            if ($oRow->checkIsLoad()) {
+                $this->oRow  = $oRow;
                 $this->mData = $this->_getEntityData();
                 return true;
             }
@@ -151,7 +151,7 @@ class entity extends base
             } elseif ($sType == 'Getting') {
                 $aMap = null;
             } else {
-                $sErr  = 'Method for mapping User-data "' . get_class($oRow) . '::' . $sMethod . '()" isn\'t set.' . "\n";
+                $sErr  = 'Method for mapping User-data "' . get_class_alt($oRow) . '::' . $sMethod . '()" isn\'t set.' . "\n";
                 $sErr .= 'Keys: ("' . implode('", "', array_keys($aKeys)) . '").';
                 throw new fatalException($this->oFacade, $sErr);
             }
@@ -186,5 +186,5 @@ class entity extends base
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
 
-} // class \fan\core\service\user\config
+} // class \fan\core\service\user\entity
 ?>

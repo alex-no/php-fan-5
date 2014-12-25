@@ -3,9 +3,8 @@
  * application_submenu block for tools
  * @version 05.02.001 (10.03.2014)
  */
-class application_submenu extends \fan\project\block\base
+class application_submenu extends \fan\project\block\common\simple
 {
-
     /**
      * @var array Menu
      */
@@ -21,14 +20,14 @@ class application_submenu extends \fan\project\block\base
      */
     public function init()
     {
-        $oTab = $this->oTab;
-        $sMainKey = implode('/', $oTab->getMainRequest());
-        @list($this->sCurrent) = $oTab->getAddRequest();
+        $oReq = $this->getRequest();
+        $sMainKey = implode('/', $oReq->getAll('M'));
+        @list($this->sCurrent) = $oReq->getAll('A');
 
         $aConf = service('config')->get('application');
         foreach ($aConf['APPLICATIONS'] as $k => $v) {
             $this->aMenu[$k] = array(
-                'url'  => $this->oTab->getURI('/' . $sMainKey . '/' . $k . '.html', 'link', null, null),
+                'url'  => $this->oTab->getURI('~/' . $sMainKey . '/' . $k . '.html', 'link', null, null),
                 'name' => 'APP <b>' . $k . '</b>',
             );
         }

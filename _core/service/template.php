@@ -1,4 +1,5 @@
 <?php namespace fan\core\service;
+use fan\project\exception\service\fatal as fatalException;
 /**
  * Template manager service
  *
@@ -12,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class template extends \fan\core\base\service\single
 {
@@ -72,12 +73,15 @@ return $sReturnHtmlVal;}
     /**
      * Get object of block template
      * @param string $sTemplatePath
-     * @param \fan\core\block\base $mBlock
      * @param string $sParent
-     * @return template_base
+     * @param \fan\core\block\base $mBlock
+     * @return \fan\core\service\template\type\base
      */
     public function get($sTemplatePath, $sParent = null, $mBlock = null)
     {
+        if (!is_readable($sTemplatePath)) {
+            throw new fatalException($this, 'Template file "' . $sTemplatePath . '".');
+        }
         list ($sNameSpace, $sClassName, $sFileName) = $this->_getClassAttributes($sTemplatePath, $mBlock);
 
         $sCompilePath = \bootstrap::parsePath($this->getConfig('CACHE_DIR')) . $sFileName . '.php';

@@ -6,7 +6,7 @@
 return array(
     'header' => array(
         'embeddedBlocks' => array(
-            'addMenu' => 'design/menu_block/application_submenu',
+            'addMenu' => 'design/menu/application_submenu',
         ),
     ),
 );

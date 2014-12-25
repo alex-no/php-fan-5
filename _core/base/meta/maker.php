@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class maker implements \IteratorAggregate
 {
@@ -249,7 +249,7 @@ class maker implements \IteratorAggregate
         if (isset($this->aOrder[$sKey])) {
             return $this->aOrder[$sKey];
         }
-        trigger_error('Get Undefined Order of Meta-data "' . $sKey . '" in block "' . $this->sBlockName . '", class "' . get_class($this->oBlock) . '".', E_USER_NOTICE);
+        trigger_error('Get Undefined Order of Meta-data "' . $sKey . '" in block "' . $this->sBlockName . '", class "' . get_class_alt($this->oBlock) . '".', E_USER_NOTICE);
         return array();
     } // function getTabOrder
 

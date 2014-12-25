@@ -12,7 +12,7 @@ return array(
         ),
 
         'externalJS' => array(
-            'head' => array('//_javascript/js-wrapper.js', '//_javascript/form_validation.js', '/db_up.js'),
+            'head' => array('/js/js-wrapper.js', '/js/form_validation.js', '~/db_up.js'),
         ),
 
         'form' => array(

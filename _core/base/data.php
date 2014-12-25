@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializable
 {
@@ -138,7 +138,14 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
                     if (!isset($this->aData[$sKey]) || !$this->_isThisClass($this->aData[$sKey])) {
                         $this->aData[$sKey] = $this->_makeSubData($sKey, array());
                     }
-                    $this->aData[$sKey]->set($mKey, $mValue, $bRewriteExisting, $bConvArray);
+
+                    if (!is_object($this->aData[$sKey])) {
+                        trigger_error('Element of data with key "' . $sKey . '" has incorrect type "' . gettype($this->aData[$sKey]) . '" in class "' . get_class() . '".', E_USER_WARNING);
+                    } elseif (!method_exists($this->aData[$sKey], 'set')) {
+                        trigger_error('Element of data with key "' . $sKey . '" is instance of class "' . get_class($this->aData[$sKey]) . '" without method "set" in container class "' . get_class() . '".', E_USER_WARNING);
+                    } else {
+                        $this->aData[$sKey]->set($mKey, $mValue, $bRewriteExisting, $bConvArray);
+                    }
                 }
             } elseif (is_array($mKey)) {
                 $mData =& array_get_element($this->aData, $mKey, true);
@@ -162,7 +169,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
         }
         $aRet = array();
         foreach ($this->aData as $k => $v) {
-            $aRet[$k] = is_object($v) && $v instanceof self ? $v->toArray() : $v;
+            $aRet[$k] = $this->_isThisClass($v) ? $v->toArray() : $v;
         }
         return $aRet;
     }
@@ -275,7 +282,7 @@ abstract class data implements \ArrayAccess, \Iterator, \Countable, \Serializabl
      */
     protected function _isThisClass($oObject)
     {
-        return is_object($oObject) && get_class($oObject) == get_class($this);
+        return get_class_alt($oObject) == get_class($this);
     } // function _isThisClass
 
     /**

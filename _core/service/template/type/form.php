@@ -11,10 +11,14 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class form extends base
 {
+    /**
+     * Regexp for parse combi field name
+     */
+    const RE_NAME = '/^(\w+)((?:\[[^\]]+\])+)$/';
 
     /**
      * Form service
@@ -33,9 +37,10 @@ abstract class form extends base
     private $iCurNum;
 
     /**
-     * @var array Template variables
+     * Template variables
+     * @var \fan\core\base\meta\row
      */
-    protected $aFormVar;
+    protected $oFormMeta;
 
     /**
      * @var array Template variables
@@ -65,15 +70,15 @@ abstract class form extends base
     {
         parent::__construct($oBlock);
 
-        $this->oForm = $oBlock->getForm();
-        $this->aFormVar = $oBlock->getFormMeta();
+        $this->oForm     = $oBlock->getForm();
+        $this->oFormMeta = $oBlock->getFormMeta();
         foreach (array('input', 'checking', 'select', 'select_separated', 'select_multi', 'select_multi_separated') as $sType) {
             foreach ($this->_getFormMeta(array('design', $sType), array()) as $k => $v) {
                 $this->aFieldType[$k] = $sType;
             }
         }
 
-        for ($i = $this->aFormVar['formNumber']; $i < 500; $i++) {
+        for ($i = $this->oFormMeta['formNumber']; $i < 500; $i++) {
             if (!isset(self::$aFormNumber[$i])) {
                 self::$aFormNumber[$i] = $this->sBlockName;
                 $this->iCurNum = $i;
@@ -115,8 +120,8 @@ abstract class form extends base
      */
     public function getKeyField()
     {
-        $sKeyValue = $this->aFormVar['form_id'];
-        $nCsrfLen  = (integer)$this->aFormVar['csrf_protection'];
+        $sKeyValue = $this->oFormMeta['form_id'];
+        $nCsrfLen  = (integer)$this->oFormMeta['csrf_protection'];
         if ($nCsrfLen >= 4) {
             $sCsrfCode = substr(md5(microtime() . $sKeyValue), 0, min(32, $nCsrfLen));
             service('session', array($sKeyValue, 'form_key'))->set('csrf', $sCsrfCode);
@@ -170,7 +175,7 @@ abstract class form extends base
      */
     public function getLabel($aData)
     {
-        $aFieldMeta = $this->_getFormMeta(array('fields', $aData['name']));
+        $aFieldMeta = $this->_getFieldMeta($aData);
         if (empty($aFieldMeta['label'])) {
             return '#!Label isn\'t set!#';
         }
@@ -202,7 +207,10 @@ abstract class form extends base
     public function getErrorMsg($aData)
     {
         $mError = $this->oForm->getErrorMsg($aData['name']);
-        if(!$mError) {
+        if(empty($mError)) {
+            $mError = $this->oForm->getErrorMsg($this->_parseCombiName($aData));
+        }
+        if(empty($mError)) {
             return '';
         }
         $sPattern = $this->_getFormMeta(array(
@@ -225,8 +233,11 @@ abstract class form extends base
      */
     public function getNote($aData)
     {
-        $sText = array_val($aData, 'note', $this->_getFormMeta(array('fields', $aData['name'], 'note')));
-        if(!$sText) {
+        $sText = array_val($aData, 'note');
+        if(empty($sText)) {
+            $sText = $this->_getFieldMeta($aData, 'note');
+        }
+        if(empty($sText)) {
             return '';
         }
 
@@ -281,7 +292,7 @@ abstract class form extends base
     public function getField($aData)
     {
         if (empty($aData['type'])) {
-            $aData['type'] = $this->_getFormMeta(array('fields', $aData['name'], 'input_type'));
+            $aData['type'] = $this->_getFieldMeta($aData, 'input_type');
         }
 
         if (!isset($this->aFieldType[$aData['type']])) {
@@ -318,12 +329,12 @@ abstract class form extends base
                 '<input type="text" name="{NAME}" value="{VALUE}"{MAXLENGTH}{ATTRIBUTES}{TABINDEX} />'
         );
 
-        $sMaxLength = $this->_getFormMeta(array('fields', $aData['name'], 'maxlength'), '');
+        $sMaxLength = $this->_getFieldMeta($aData, 'maxlength');
         if (!empty($sMaxLength)) {
             $sMaxLength = ' maxlength="' . (int)$sMaxLength . '"';
             unset($aData['attributes']['maxlength']);
         }
-        $mVal = $this->oForm->getFieldValue($aData['name']);
+        $mVal = $this->_getFieldValue($aData);
         return str_replace(array(
             '{NAME}',
             '{ID}',
@@ -348,8 +359,8 @@ abstract class form extends base
                 array('design', 'checking', empty($aData['type']) ? 'checkbox' : $aData['type']),
                 '<input type="text" name="{NAME}" value="1"{CHECKED}{ATTRIBUTES}{TABINDEX} />'
         );
-        //$aFldMeta = $this->getFormMeta(array('fields', $aData['name']), array());
-        $mVal = $this->oForm->getFieldValue($aData['name']);
+        //$aFldMeta = $this->_getFieldMeta($aData);
+        $mVal = $this->_getFieldValue($aData);
         return str_replace(array(
             '{NAME}',
             '{ID}',
@@ -384,8 +395,8 @@ abstract class form extends base
             $sSubPattern = '';
         }
 
-        $mVal = $this->oForm->getFieldValue($aData['name']);
-        $mFdt = $this->oForm->getFieldData($aData['name']);
+        $mVal = $this->_getFieldValue($aData);
+        $mFdt = $this->_getFieldData($aData);
         return  str_replace(array(
             '{NAME}',
             '{ID}',
@@ -416,7 +427,7 @@ abstract class form extends base
                 '<input type="checkbox" name="{NAME}[]" id="{ID}" value="{VALUE}"{CHECKED}{ATTRIBUTES}{TABINDEX} />'
         );
 
-        $mFdt = $this->oForm->getFieldData($aData['name']);
+        $mFdt = $this->_getFieldData($aData);
         if (is_scalar($mFdt)) {
             return 'Incorrect data';
         }
@@ -429,7 +440,7 @@ abstract class form extends base
         $mCdt['value'] = array_val($mCdt, 'value');
         $mCdt['text']  = array_val($mCdt, 'text');
 
-        $mVal = $this->oForm->getFieldValue($aData['name'], array());
+        $mVal = $this->_getFieldValue($aData, array());
         if ($sFieldType == 'select_multi_separated' && !is_array($mVal)) {
             $mVal = array();
         }
@@ -515,7 +526,7 @@ abstract class form extends base
         }
         $sAttrRepl = '';
         if (!empty($aData['name'])) {
-            $aAttr = $this->_getFormMeta(array('fields', $aData['name'], 'attributes'), array_val($aData, 'attributes'));
+            $aAttr = $this->_getFieldMeta($aData, 'attributes', array_val($aData, 'attributes'));
             if ($aAttr) {
                 foreach ($aAttr as $k => $v) {
                     $sAttrRepl .= ' ' . $k . '="' . $v . '"';
@@ -564,10 +575,82 @@ abstract class form extends base
     protected function _getFormMeta($mKey, $mDefault = null)
     {
         if (is_array($mKey)) {
-            $aDest = array_get_element($this->aFormVar, $mKey, false);
+            $aDest = array_get_element($this->oFormMeta, $mKey, false);
             return is_null($aDest) ? $mDefault : $aDest;
         }
-        return array_val($this->aFormVar, $mKey, $mDefault);
+        return array_val($this->oFormMeta, $mKey, $mDefault);
     } // function _getFormMeta
+
+    /**
+     * Get Meta-data by combi Field-name
+     * @param array $aData
+     * @param string $sKey
+     * @param mixed $mDefault - default value
+     * @return mixed
+     */
+    protected function _getFieldMeta($aData, $sKey = null, $mDefault = null)
+    {
+        $sName = $aData['name'];
+        $aMatches = array();
+        for ($i = 0; $i < 2; $i++) {
+            $aKey = is_null($sKey) ? array('fields', $sName) : array('fields', $sName, $sKey);
+            $mVal = $this->_getFormMeta($aKey);
+            if (!is_null($mVal)) {
+                return $mVal;
+            }
+            if (!empty($i) || !preg_match(self::RE_NAME, $sName, $aMatches)) {
+                break;
+            }
+            $sName = $aMatches[1];
+        }
+        return $mDefault;
+    } // function _getFieldMeta
+
+    /**
+     * Get Value of field by combi Field-name
+     * @param array $aData
+     * @param mixed $mDefault - default value
+     * @return mixed
+     */
+    protected function _getFieldValue($aData, $mDefault = null)
+    {
+        $mVal = $this->oForm->getFieldValue($this->_parseCombiName($aData), false);
+        return is_null($mVal) ? $mDefault : $mVal;
+    } // function _getFieldValue
+
+    /**
+     * Get Data of field by combi Field-name
+     * @param array $aData
+     * @param mixed $mDefault - default value
+     * @return mixed
+     */
+    protected function _getFieldData($aData, $mDefault = null)
+    {
+        $mName = $aData['name'];
+        $aMatches = array();
+        for ($i = 0; $i < 2; $i++) {
+            $mVal = $this->oForm->getFieldData($mName);
+            if (!is_null($mVal)) {
+                return $mVal;
+            }
+            if (!empty($i) || !preg_match(self::RE_NAME, $mName, $aMatches)) {
+                break;
+            }
+            $mName = $aMatches[1];
+        }
+        return $mDefault;
+    } // function _getFieldData
+
+    protected function _parseCombiName($aData)
+    {
+        $mName = $aData['name'];
+        $aMatches = array();
+        if (preg_match(self::RE_NAME, $mName, $aMatches)) {
+            $mName = explode('][', substr($aMatches[2], 1, -1));
+            array_unshift($mName, $aMatches[1]);
+        }
+        return $mName;
+    } // function _getFieldValue
+
 } // class \fan\core\service\template\type\form
 ?>

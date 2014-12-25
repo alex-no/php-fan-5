@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class row extends \fan\core\base\model\row
 {
@@ -317,7 +317,7 @@ return ' . var_export($aRow, true) . ';
         $sData = $oCurl->exec();
         if (!$oCurl->getError() && $sData) {
             $this->deleteCurrentFile();
-            if ($oCurl->getHeaders('Content-Disposition') && preg_match('/filename\s*\=\s*"?([^"]+)"?\s*$/', $oCurl->getHeaders('Content-Disposition'), $aMatch)) {
+            if ($oCurl->getResponseHeaders('Content-Disposition') && preg_match('/filename\s*\=\s*"?([^"]+)"?\s*$/', $oCurl->getResponseHeaders('Content-Disposition'), $aMatch)) {
                 $sName = $aMatch[1];
             } else {
                 $aPI = pathinfo($sUrl);

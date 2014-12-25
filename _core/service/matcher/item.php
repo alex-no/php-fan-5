@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  *
  * @property-read \fan\core\service\matcher\item\source  $source
  * @property-read \fan\core\service\matcher\item\uri     $uri
@@ -221,9 +221,10 @@ class item implements \ArrayAccess
 
 
     /**
-     * Parse Request
+     * Get Parsed Sorce Request
+     * @return array
      */
-    public function parseRequest()
+    public function getParsedSrc()
     {
         $oParsed = $this->aData['parsed'];
         $aData   = explode('/', $oParsed['src_path']);
@@ -236,6 +237,17 @@ class item implements \ArrayAccess
         if (!empty($aData) && preg_match($sRegExp, end($aData), $aMatches)) {
             $aData[count($aData) - 1] = $aMatches[1];
         }
+        return $aData;
+    } // function getParsedSrc
+
+
+    /**
+     * Parse Request - define 'main_request' AND 'add_request'
+     */
+    public function parseRequest()
+    {
+        $oParsed = $this->aData['parsed'];
+        $aData   = $this->getParsedSrc();
 
         $sHandlerKey = ucfirst(strtolower($this->getHandler()->key));
         $sMethodName = empty($sHandlerKey) || !method_exists($this, '_parseRequestFor' . $sHandlerKey) ? null : '_parseRequestFor' . $sHandlerKey;
@@ -272,7 +284,7 @@ class item implements \ArrayAccess
             $sScheme   = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
             $sUserName = $sPassword = $sAnchor = null; // ToDo: Set start default values there
             if (empty($sHost)) {
-                $sHost = $_SERVER['HTTP_HOST'];
+                $sHost = array_val($_SERVER, 'HTTP_HOST');
             }
         } else {
             $aPrevUri  = $this->oFacade->getUri($this->iIndex - 1);
@@ -453,9 +465,13 @@ class item implements \ArrayAccess
             }
         }
 
-        if (empty($aData) && is_file($sPath . '/' . $this->_getConfig('directory_index', 'index.php'))) {
-            $oParsed['main_request'] = array_merge($aMainRequest, array('index'));
-            $oParsed['add_request']  = array();
+        // Set Index file if in URI it is not requested
+        if (empty($aData)) {
+            $sIndex = empty($aMainRequest) ? $this->_getConfig('directory_index', 'index') : end($aMainRequest);
+            if (is_file($sPath . '/' . $sIndex . '.php')) {
+                $oParsed['main_request'] = array_merge($aMainRequest, array($sIndex));
+                $oParsed['add_request']  = array();
+            }
         }
 
         return $this;

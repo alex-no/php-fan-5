@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class base implements \ArrayAccess
 {
@@ -49,7 +49,7 @@ abstract class base implements \ArrayAccess
      * Template block constructor
      * @param \fan\core\block\base $oBlock
      */
-    public function __construct(\fan\core\block\base $oBlock)
+    public function __construct($oBlock = null)
     {
         if (is_object($oBlock) && $oBlock instanceof \fan\core\block\base) {
             $this->oBlock = $oBlock;

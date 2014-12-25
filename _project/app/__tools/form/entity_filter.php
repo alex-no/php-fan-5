@@ -14,7 +14,7 @@
  * @author: Alexandr Nosov (alex@4n.com.ua)
  * @version of file: 05.02.001 (10.03.2014)
  */
-class entity_filter extends \fan\project\block\form\usual
+class entity_filter extends \fan\project\block\form\filter
 {
     /**
      * Init block

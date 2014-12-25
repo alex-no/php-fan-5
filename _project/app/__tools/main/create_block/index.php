@@ -5,9 +5,5 @@
  */
 class index extends \fan\project\block\common\simple
 {
-    public function init()
-    {
-        //d($this->oTab->getMainRequest());
-    }
 } // class \fan\app\__tools\main\index
 ?>
