@@ -3,7 +3,7 @@
  * create_entity block
  * @version 05.02.001 (10.03.2014)
  */
-class create_entity extends \fan\project\block\form\usual
+class create_entity extends \fan\project\block\form\injector
 {
 
     /**
@@ -77,7 +77,7 @@ class create_entity extends \fan\project\block\form\usual
     /**
      * On submit
      */
-    public function onSubmit()
+    protected function onSubmit()
     {
         $sNsPr = trim(service('request')->get('ns_pref', 'G'), '\\');
         $sSep  = \fan\core\bootstrap\loader::DEFAULT_DIR_SEPARATOR;

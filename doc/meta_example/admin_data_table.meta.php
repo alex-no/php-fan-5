@@ -47,6 +47,7 @@ return array(
         ),
 
         'elmPerPage' => 20, //  NR. Qtt elements per one page. Default value is set in base class
+        'useMainPage' => true OR false, // NR. Allow for additional content data to use Main pager
 
         'addParam' => array( // NR. Add parameters
             'select' =>array( // For tags: select, radio-group, checkbox-group
@@ -122,7 +123,7 @@ return array(
 
         'tagId' => 'id_name', // NR. Id for tag container. It will be with prefix 'cont_'. Usualy use for css-classes
 
-        'editId' => true OR false, // NR. Allow get and edit ID 
+        'editId' => true OR false, // NR. Allow get and edit ID
 
         'default_tpl' => substr(__FILE__, 0, -8) . 'tpl', // NR. Template for make table. Default template is set in base class
         'table_struct' => array(

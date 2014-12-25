@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 
 class db_file
@@ -118,6 +118,11 @@ class db_file
         return $this->_prepare()->_init()->_getContent();
     } // getFile
 
+    /**
+     * Set Config
+     * @param \fan\core\service\config\row $oConfig
+     * @return \fan\core\plain\db_file
+     */
     public function setConfig(\fan\core\service\config\row $oConfig)
     {
         if (empty($this->oConfig)) {
@@ -213,9 +218,12 @@ class db_file
         }
         $oCache = \fan\project\service\cache::instance('file_store');
         $aData  = $oCache->get($this->mId);
-        if (!empty($aData) && $aData['fileDate'] == filemtime($aData['filePath']) && $aData['headers']['length'] == filesize($aData['filePath'])) {
-            // ToDo: Check Access by Cache?
-            return $aData;
+        if (!empty($aData)) {
+            if (!is_readable($aData['filePath'])) {
+                $oCache->delete($this->mId);
+            } elseif (!empty($aData) && $aData['fileDate'] == filemtime($aData['filePath']) && $aData['headers']['length'] == filesize($aData['filePath'])) {
+                return $aData;
+            }
         }
 
         /* @var $oRow \fan\core\model\file_data\row */
@@ -227,6 +235,9 @@ class db_file
                 return null;
             } else {
                 $sFilePath = \bootstrap::parsePath($oRow->getFilePath());
+                if (!is_readable($sFilePath)) {
+                    return null;
+                }
                 $aData = array(
                     'filePath' => $sFilePath,
                     'fileDate' => filemtime($sFilePath),
@@ -270,5 +281,5 @@ class db_file
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
 
-} // class \fan\core\service\plain\file
+} // class \fan\core\plain\db_file
 ?>

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class session extends \fan\core\base\service\multi
 {
@@ -34,6 +34,12 @@ class session extends \fan\core\base\service\multi
      * @var boolean
      */
     private static $bIsExpired = false;
+
+    /**
+     * Buffer of Data for data communication beetween different parts of code
+     * @var array
+     */
+    private static $aBufferData = array();
 
     /**
      * Session name-space in the group
@@ -69,8 +75,13 @@ class session extends \fan\core\base\service\multi
                 self::$oEngine = $this->_getEngine($this->oConfig['ENGINE']);
 
                 // Compare Urer's system
-                if (!$this->_compareSystem()) {
-                    trigger_error('Session is not compared', E_USER_NOTICE);
+                $aMismatch = $this->_compareSystem();
+                if (!empty($aMismatch)) {
+                    $sErMsg  = '{key => ' . $aMismatch['key'] . ', ';
+                    $sErMsg .= 'old => '  . $aMismatch['old'] . ', ';
+                    $sErMsg .= 'new => '  . $aMismatch['new'] . ', ';
+                    $sErMsg .= 'ip => ' . @$_SERVER['REMOTE_ADDR'] . '}';
+                    l($sErMsg, 'Session is not compared');
                     $this->setSessionId(md5($this->getSessionId() . microtime()));
                     $this->_killAll();
                 }
@@ -190,7 +201,7 @@ class session extends \fan\core\base\service\multi
 
     /**
      * UnSet Session parameter
-     * @param string $sKey The Session key
+     * @param mixed $mKey The Session key
      * @return boolean True if parameter removed
      */
     public function remove($mKey)
@@ -205,11 +216,15 @@ class session extends \fan\core\base\service\multi
                 $aDest =& array_get_element($aData, $mKey, false);
                 if ($aDest) {
                     unset($aDest[$sKey]);
+                    return true;
                 }
             } else {
                 unset($aData[$mKey]);
+                return true;
             }
+            return false;
         }
+        return null;
     } // function remove
 
     /**
@@ -225,6 +240,29 @@ class session extends \fan\core\base\service\multi
         }
         return null;
     } // function removeAll
+
+    /**
+     * Set Data to Buffer for data communication beetween different parts of code
+     * @param string $sKey
+     * @param mixed $mVal
+     * @return \fan\core\service\session
+     */
+    public function setBufferData($sKey, $mVal)
+    {
+        self::$aBufferData[$sKey] = $mVal;
+        return $this;
+    } // function setBufferedData
+
+    /**
+     * Get Data from Buffer of data communication
+     * @param string $sKey
+     * @param mixed $mDefault
+     * @return mixed
+     */
+    public function getBufferData($sKey, $mDefault = null)
+    {
+        return array_val(self::$aBufferData, $sKey, $mDefault);
+    } // function getBufferedData
 
     /**
      * Get Session Id
@@ -317,6 +355,7 @@ class session extends \fan\core\base\service\multi
 
     /**
      * Destroy the session
+     * @return \fan\core\service\session
      */
     public function destroy()
     {
@@ -327,6 +366,7 @@ class session extends \fan\core\base\service\multi
             self::$oEngine    = null;
             self::$bByCookie  = null;
         }
+        return $this;
     } // function destroy
 
 
@@ -418,20 +458,24 @@ class session extends \fan\core\base\service\multi
 
     /**
      * Check and clear session data by timeout
-     * @return boolean True if session checked
+     * @return array Mismatched data
      */
     protected function _compareSystem()
     {
-        $bResult = true;
-        $aCheck = $this->oConfig['CHECK_SYSTEM'];
+        $aMismatch = null;
+        $aCheck    = $this->oConfig['CHECK_SYSTEM'];
         if ($aCheck) {
             $aServer = \fan\project\service\request::instance()->getAll('S', array());
             $oSes    = \fan\project\service\session::instance('data', 'session');
             $aParam  = &$oSes->getByLink('param');
             if ($oSes->get('is_fill', false)) {
                 foreach ($aCheck as $v) {
-                    if (isset($aServer[$v]) && (!isset($aParam[$v]) || $aParam[$v] != @$aServer[$v])) {
-                        $bResult = false;
+                    if (array_val($aParam, $v) != array_val($aServer, $v)) {
+                        $aMismatch = array(
+                            'key' => $v,
+                            'old' => array_val($aParam,  $v),
+                            'new' => array_val($aServer, $v),
+                        );
                         break;
                     }
                 }
@@ -444,7 +488,7 @@ class session extends \fan\core\base\service\multi
             }
             $oSes->set('is_fill', true);
         }
-        return $bResult;
+        return $aMismatch;
     } // function _compareSystem
 
     /**

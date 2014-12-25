@@ -13,7 +13,7 @@ use fan\project\exception\plain\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 class image extends db_file
@@ -166,7 +166,7 @@ class image extends db_file
      */
     protected function _getStubFileData()
     {
-        $sNailStub = \bootstrap::parsePath($this->oConfig->get('nail_stub', '{PROJECT}/data/image/empti_nail.gif'));
+        $sNailStub = \bootstrap::parsePath($this->oConfig->get('nail_stub', '{PROJECT}/data/image/empty_nail.gif'));
         if (!empty($sNailStub) && is_readable($sNailStub)) {
             $aImgData = getimagesize($sNailStub);
             if (!empty($aImgData)) {
@@ -185,6 +185,7 @@ class image extends db_file
                 );
             }
         }
+        trigger_error('Incorrect path to admin-stab file "' . $sNailStub . '"', E_USER_WARNING);
         return null;
     } // function _getStubFileData
 
@@ -250,7 +251,7 @@ class image extends db_file
      */
     protected function _getNailData($aMainData)
     {
-        $oImg = \fan\project\service\image::instance($aMainData['filePath']);
+        $oImg = \fan\project\service\image_modify::instance($aMainData['filePath']);
         $oImg->scal($this->nWidth, $this->nHeight);
         $aImgData = $oImg->getImageInfo(300, empty($this->sNailDir));
 

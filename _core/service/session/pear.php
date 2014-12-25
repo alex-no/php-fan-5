@@ -12,29 +12,29 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class pear
 {
     /**
      * Constructor
-     * @param array $aConfig Configuration data
+     * @param \fan\core\service\config\row $oConfig Configuration data
      */
-    public function __construct($aConfig)
+    public function __construct($oConfig)
     {
         app_set_include_path(\bootstrap::get_dir('LIBS') . '/PEAR');
         require_once @'HTTP/Session.php';
 
-        if (@$aConfig['IS_DATABASE']) {
+        if ($oConfig['IS_DATABASE']) {
             $aDbConfig = \fan\project\service\config::instance()->get('database');
-            $aDb = $aDbConfig['DATABASES'][$aConfig['CONNECTION']];
+            $aDb = $aDbConfig['DATABASES'][$oConfig['CONNECTION']];
             HTTP_Session::setContainer('DB', array(
                 'dsn'   => $aDb['DRIVER'] . '://' . $aDb['USER'] . ':' . $aDb['PASSWORD'] . '@' . $aDb['HOST'] . '/' . $aDb['DATABASE'],
-                'table' => $aConfig['TABLE']));
+                'table' => $oConfig['TABLE']));
         } // check database
 
         HTTP_Session::useCookies(true);
-        HTTP_Session::start($aConfig['SESSION_NAME'], \fan\project\service\request::instance()->get($aConfig['SESSION_NAME']));
+        HTTP_Session::start($oConfig['SESSION_NAME'], \fan\project\service\request::instance()->get($oConfig['SESSION_NAME']));
     } // function __construct
 
     /**

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class base extends \Exception
@@ -132,7 +132,7 @@ abstract class base extends \Exception
         if (!$sNote) {
             $sNote = \fan\project\service\request::instance()->getInfoString();
             if (!empty($_POST)) {
-                $sNote .= "\nPOST = " . print_r($_POST, true);
+                $sNote .= "\nPOST = " . var_export($_POST, true);
             }
         }
         \fan\project\service\error::instance()->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
@@ -140,14 +140,14 @@ abstract class base extends \Exception
     } // function _logByService
 
     /**
-     * Remove Embeded Object before "print_r" this object
+     * Remove Embeded Object before "var_export" this object
      * @param string $sProperty
      */
     protected function _removeEmbededObject($sProperty)
     {
         if (is_object($this->$sProperty)) {
             $this->$sProperty = 'Object ' . get_class($this->$sProperty);
-        } elseif (isset ($this->$sProperty)) {
+        } elseif (isset($this->$sProperty)) {
             $this->$sProperty = null;
         }
         return $this;

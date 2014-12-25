@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class debug extends \fan\core\base\service\single {
 
@@ -100,14 +100,14 @@ class debug extends \fan\core\base\service\single {
 <style type="text/css">
 <!--/*--><![CDATA[/*><!--*/
 @import url(/css/main.css);
-@import url(' . substr($this->getConfig('CSS_CONTROL', '/__debug_trace/css/debug_control.css'), 1) . ');
-@import url(' . substr($this->getConfig('CSS_DEBUG0',  '/__debug_trace/css/debug_common.css'), 1) . ');
-@import url(' . substr($this->getConfig('CSS_DEBUG2',  '/__debug_trace/css/debug_mode2.css'), 1) . ');
+@import url(' . $this->getConfig('CSS_CONTROL', '/__debug_trace/css/debug_control.css') . ');
+@import url(' . $this->getConfig('CSS_DEBUG0',  '/__debug_trace/css/debug_common.css') . ');
+@import url(' . $this->getConfig('CSS_DEBUG2',  '/__debug_trace/css/debug_mode2.css') . ');
 /*]]>*/-->
 </style>
 <script type="text/javascript" src="/js/debug.js"></script>
-<script type="text/javascript" src="' . substr($this->getConfig('JS_WRAPPER', '/js/js-wrapper.js'),  1) . '"></script>
-<script type="text/javascript" src="' . substr($this->getConfig('JS_FILE',    '/__debug_trace/js/debug_trace.js'), 1) . '"></script>
+<script type="text/javascript" src="' . $this->getConfig('JS_WRAPPER', '/js/js-wrapper.js') . '"></script>
+<script type="text/javascript" src="' . $this->getConfig('JS_FILE',    '/__debug_trace/js/debug_trace.js') . '"></script>
 <script type="text/javascript">
 <!--//--><![CDATA[//><!--
 basicBroadcaster.prototype.config.DebugMode = true;
@@ -300,7 +300,7 @@ debug_trace.init(2);
             } elseif (is_object($v)) {
                 $sRet .= '<span class="debug_array_instance">Instance of <b>' . get_class($v) . '</b> class</span>';
             } else {
-                $sRet .= print_r($v, true);
+                $sRet .= var_export($v, true);
             }
             $sRet .= '</li>';
         }

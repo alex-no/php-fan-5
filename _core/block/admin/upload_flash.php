@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class upload_flash extends base
 {
@@ -69,13 +69,13 @@ class upload_flash extends base
         }
         $aLink = $this->getMeta('link_table');
 
-        if (!$this->checkMainTableId($oMainEtt, $aData, $aMain, $aLink)) {
+        if (!$this->checkMainTableId($oMainRow, $aData, $aMain, $aLink)) {
             $this->setText('Incorrect main table ID');
             return;
         }
 
         if ($aLink) {
-            if (!$this->checkLinkTableId($oLinkEtt, $aData, $aMain, $aLink)) {
+            if (!$this->checkLinkTableId($oLinkRow, $aData, $aMain, $aLink)) {
                 $this->setText('Incorrect link table ID');
                 return;
             }
@@ -84,9 +84,11 @@ class upload_flash extends base
         if ($aData['op'] == 'dl' && @$aData['flashId']) {
             if ($oFlash->checkIsLoad()) {
                 if ($aLink) {
-                    $oLinkEtt->delete();
+                    $oLinkRow->delete();
+                    $oLinkRow->getEntity()->getConnection()->commit();
                 } else {
-                    $oMainEtt->setFields(array($aMain['flash_id'] => null), true);
+                    $oMainRow->setFields(array($aMain['flash_id'] => null), true);
+                    $oMainRow->getEntity()->getConnection()->commit();
                 }
                 $oFlash->delete('flash', $aData['flashId']);
             }
@@ -94,15 +96,16 @@ class upload_flash extends base
             $oReq = service('request');
             $oFlash->setFormFile('flash', array(), $oReq->get('description', 'P', ''), $oReq->get('width', 'P', 100), $oReq->get('height', 'P', 100), $oReq->get('bgcolor', 'P', ''));
             if ($oFlash->checkIsLoad() && !@$aData['flashId']) {
+                $oFlash->getEntity()->getConnection()->commit();
                 if ($aLink) {
-                    $oLinkEtt->setFields(array($aLink['main_id'] => $aData['mId'], $aLink['flash_id'] => $oFlash->getId()), true);
+                    $oLinkRow->setFields(array($aLink['main_id'] => $aData['mId'], $aLink['flash_id'] => $oFlash->getId()), true);
                 } else {
-                    $oMainEtt->setFields(array($aMain['flash_id'] => $oFlash->getId()), true);
+                    $oMainRow->setFields(array($aMain['flash_id'] => $oFlash->getId()), true);
                 }
             }
         }
 
-        $aJsonData = @$aData['line'] ? $this->getFlashLineData($aData, $aLink) : $this->getFlashOneData($oMainEtt, $aMain, $aLink);
+        $aJsonData = @$aData['line'] ? $this->getFlashLineData($aData, $aLink) : $this->getFlashOneData($oMainRow, $aMain, $aLink);
         if (!$oFlash->checkIsLoad() && $aJsonData['id']) {
             $oFlash->loadById($aJsonData['id']);
         }
@@ -116,27 +119,27 @@ class upload_flash extends base
     /**
      * Check Main Table Id
      */
-    public function checkMainTableId(&$oMainEtt, &$aData, $aMain, $aLink)
+    public function checkMainTableId(&$oMainRow, &$aData, $aMain, $aLink)
     {
-        $oMainEtt = gr($aMain['table_name'], @$aData['mId']);
+        $oMainRow = gr($aMain['table_name'], @$aData['mId']);
         if (@$aData['flashId'] && !$aLink) {
             $sMethod = 'get_' . $aMain['flash_id'];
-            return $oMainEtt->$sMethod(null, true) == $aData['flashId'];
+            return $oMainRow->$sMethod(null, true) == $aData['flashId'];
         }
-        return $oMainEtt->checkIsLoad();
+        return $oMainRow->checkIsLoad();
     } // function checkMainTableId
 
     /**
      * Check Link Table Id
      */
-    public function checkLinkTableId(&$oLinkEtt, &$aData, $aMain, $aLink)
+    public function checkLinkTableId(&$oLinkRow, &$aData, $aMain, $aLink)
     {
         if (!@$aData['flashId']) {
-            $oLinkEtt = gr($aLink['table_name']);
+            $oLinkRow = gr($aLink['table_name']);
             return true;
         } else {
-            $oLinkEtt = gr($aLink['table_name'], array($aLink['main_id'] => $aData['mId'], $aLink['flash_id'] => $aData['flashId']));
-            return $oLinkEtt->checkIsLoad();
+            $oLinkRow = gr($aLink['table_name'], array($aLink['main_id'] => $aData['mId'], $aLink['flash_id'] => $aData['flashId']));
+            return $oLinkRow->checkIsLoad();
         }
     } // function checkMainTableId
 
@@ -156,29 +159,29 @@ class upload_flash extends base
     /**
      * Get Flash Data
      */
-    public function getFlashOneData($oMainEtt, $aMain, $aLink)
+    public function getFlashOneData($oMainRow, $aMain, $aLink)
     {
         if ($aLink) {
             $aLstId = ge($aLink['table_name'])->getRowsetByParam($aLink['main_id'])->getColumn($aLink['flash_id']);
             return $this->getFlashData(@$aLstId[0]);
         } else {
             $sMethod = 'get_' . $aMain['flash_id'];
-            return $this->getFlashData($oMainEtt->$sMethod());
+            return $this->getFlashData($oMainRow->$sMethod());
         }
     } // function getFlashOneData
 
     /**
      * Get Flash Data
-     * @param mixed $fileId
+     * @param mixed $nFlashId
      * @return array
      */
-    public function getFlashData($flashId)
+    public function getFlashData($nFlashId)
     {
-        if (!$flashId) {
+        if (!$nFlashId) {
             return null;
         }
         // To Do: Get full info about flash
-        return array('id' => $flashId);
+        return array('id' => $nFlashId);
     } // function getFlashData
 } // class \fan\core\block\admin\upload_flash
 ?>

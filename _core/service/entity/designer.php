@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class designer
 {
@@ -140,7 +140,21 @@ abstract class designer
     public function makeWhere($mParam, $bMerge = true)
     {
         $aResult = array();
-        if(is_array($mParam)) {
+
+        $bIsIterator = false;
+        if (is_object($mParam)) {
+            if ($mParam instanceof \ArrayAccess && $mParam instanceof \Iterator) {
+                $bIsIterator = true;
+            } elseif (method_exists($mParam, 'toArray')) {
+                $mParam = $mParam->toArray();
+            } elseif (method_exists($mParam, '__toString')) {
+                $mParam = $mParam->__toString();
+            } else {
+                $mParam = null;
+            }
+        }
+
+        if(is_array($mParam) || $bIsIterator) {
             $aAdjustedParam = array();
             $i = 0;
             foreach($mParam as $k => $v) {
@@ -165,7 +179,7 @@ abstract class designer
             }
             $this->aAdjustedParam = array_merge((array)$this->aAdjustedParam, $aAdjustedParam);
         } elseif (!is_null($mParam)) {
-            $aResult[0] = preg_match('/\s*where\s/i', $mParam) ? $mParam : 'WHERE ' . $mParam;
+            $aResult[0] = preg_match('/(?:^|\s)where\s/i', $mParam) ? $mParam : 'WHERE ' . $mParam;
             $mParam = null;
         }
         return $bMerge ? $this->_mergeParts($aResult) : $aResult;
@@ -255,7 +269,7 @@ abstract class designer
                         $sPart = $v->__toString();
                     } else {
                         $sPart = '';
-                        trigger_error('Unknown object of SQL-part. Instance of "' . get_class($v) . '".', E_USER_WARNING);
+                        trigger_error('Unknown object of SQL-part. Instance of "' . get_class_alt($v) . '".', E_USER_WARNING);
                     }
                 } elseif (is_scalar($v)) {
                     $sPart = (string)$v;

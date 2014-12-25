@@ -13,29 +13,34 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class form extends \fan\core\base\service\multi
 {
+    /**
+     * Regexp for parse combi field name
+     */
+    const RE_COMBI = '/([^\[]+)?\[([^\]]+)\]/';
+
     /**
      * @var array Service's Instances
      */
     private static $aInstances = array();
 
     /**
-     * @var \fan\core\block\form\usual
+     * @var \fan\core\block\form\parser
      */
     protected $oBlock;
 
     /**
      * @var \fan\core\base\meta\row
      */
-    protected $aFormMeta;
+    protected $oFormMeta;
     /**
      * Field description from meta data
      * @var array
      */
-    protected $aFieldMeta = array();
+    protected $oFieldMeta = array();
     /**
      * Field types
      * @var array
@@ -90,19 +95,19 @@ class form extends \fan\core\base\service\multi
 
     /**
      * Service's constructor
-     * @param \fan\core\block\form\usual $oBlock
+     * @param \fan\core\block\form\parser $oBlock
      */
-    protected function __construct(\fan\core\block\form\usual $oBlock)
+    protected function __construct(\fan\core\block\form\parser $oBlock)
     {
         parent::__construct(empty(self::$aInstances));
 
         $this->oBlock     = $oBlock;
-        $this->aFormMeta  = $oBlock->getFormMeta();
-        if (empty($this->aFormMeta)) {
+        $this->oFormMeta  = $oBlock->getFormMeta();
+        if (empty($this->oFormMeta)) {
             throw new fatalException($this, 'Form meta isn\'t set for block "' . get_class($oBlock) . '".');;
         }
-        $this->aFieldMeta = $this->aFormMeta->get('fields');
-        if (empty($this->aFieldMeta)) {
+        $this->oFieldMeta = $this->oFormMeta->get('fields');
+        if (empty($this->oFieldMeta)) {
             throw new fatalException($this, 'Form fields meta aren\'t set for block "' . get_class($oBlock) . '".');;
         }
 
@@ -119,16 +124,18 @@ class form extends \fan\core\base\service\multi
             }
         }
 
+        $this->_presetFieldValue();
+
         self::$aInstances[$oBlock->getBlockName()] = $this;
     } // function __construct
 
     // ======== Static methods ======== \\
     /**
      * Get instance of form
-     * @param \fan\core\block\form\usual $oBlock
+     * @param \fan\core\block\form\parser $oBlock
      * @return \fan\core\service\form
      */
-    public static function instance(\fan\core\block\form\usual $oBlock)
+    public static function instance(\fan\core\block\form\parser $oBlock)
     {
         $sName = $oBlock->getBlockName();
         if (!isset(self::$aInstances[$sName])) {
@@ -137,8 +144,6 @@ class form extends \fan\core\base\service\multi
         return self::$aInstances[$sName];
     } // function instance
 
-    // ======== The magic methods ======== \\
-    // ======== Required Interface methods ======== \\
     // ======== Main Interface methods ======== \\
 
     /**
@@ -155,31 +160,31 @@ class form extends \fan\core\base\service\multi
      */
     public function parseForm($bParceEmpty = true, $bParsingCondition = null, $bAllowTransfer = null)
     {
-        if (empty($this->aFormMeta)) {
-            return null;
-        }
-
-        $bRet = null;
         // Check - is need to validate this form
-        if ($this->necessaryFormParsing($bParsingCondition, false)) {
-            // Get data for parsing
-            $this->getFieldValuesFromRequest();
-        }
         while ($this->necessaryFormParsing($bParsingCondition, true)) {
-            if (!$bParceEmpty && empty($this->aFieldValue)) {
-                break;
+            // Get data for parsing
+            $this->_defineFieldValue();
+
+            if (!$bParceEmpty) {
+                $bIsEmpty = true;
+                foreach ($this->aFieldValue as $v) {
+                    if (!empty($v)) {
+                        $bIsEmpty = false;
+                        break;
+                    }
+                }
+                if ($bIsEmpty) {
+                    break;
+                }
             }
             // Validate data
             if ($this->oBlock->checkBeforeValidation()) {
-                foreach ($this->aFieldMeta as $sFieldName => $aParameters) {
+                foreach ($this->oFieldMeta as $sFieldName => $aParameters) {
                     if (!empty($aParameters['not_check_by_data']) || $this->_autoCheckByData($sFieldName, isset($aParameters['label']) ? $aParameters['label'] : $sFieldName)) {
-                        if (!array_key_exists($sFieldName, $this->aFieldValue)) {
-                            $this->aFieldValue[$sFieldName] = null;
-                        }
                         if (!array_key_exists($sFieldName, $this->aErrorMsg)) {
                             $this->aErrorMsg[$sFieldName] = null;
                         }
-                        $this->_validateValueRecursive($this->aFieldValue[$sFieldName], $aParameters, $this->aErrorMsg[$sFieldName]);
+                        $this->_validateValueRecursive($sFieldName);
                     }
                 }
             }
@@ -188,47 +193,42 @@ class form extends \fan\core\base\service\multi
 
             // Processing after validation
             if ($this->oBlock->checkAfterValidation()) {
+                $sRoleName = $this->oBlock->getRoleName();
+
                 if ($this->bIsError) {
+                    service('role')->killSessionRoles($sRoleName);
+                    $this->_broadcastMessage('onError', $this->oBlock);
 
-                    $this->_broadcastMessage('onError', $this);
-
-                    $bRet = false;
                     break;
                 } else {
-                    $sRoleName = $this->oBlock->getRoleName();
-                    $oRole     = \fan\project\service\role::instance();
-                    /* @var $oRole \fan\core\service\role */
+                    // Set form roles
                     if (!$this->_getFormMeta('not_role')) {
-                        $oRole->setFixQttRoles($sRoleName);
+                        service('role')->setFixQttRoles($sRoleName);
+                    }
+                    // Remove CSRF-protection code from session
+                    if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
+                        service('session', array(
+                            $this->_getFormMeta('form_id'),
+                            'form_key'
+                        ))->remove('csrf');
                     }
 
                     //ToDo: Clear cache of some blocks there
                     //\fan\project\service\cache::instance()->clear($this->aFormMeta->get(array('cache', 'clear')));
 
-                    $this->_broadcastMessage('onSubmit', $this);
+                    $this->_broadcastMessage('onSubmit', $this->oBlock);
 
-                    $aForm = $this->aFormMeta;
-                    if (is_null($bAllowTransfer)) {
-                        $bAllowTransfer = !isset($aForm['redirect_required']) || $aForm['redirect_required'];
-                    }
-                    if ($bAllowTransfer && empty($aForm['redirect_uri'])) {
-                        \fan\project\service\request::instance()->remove('form_key_field', 'G');
-                    }
-                    if ($this->bIsError) {
-                        $oRole->killSessionRoles($sRoleName);
-                    } elseif ($bAllowTransfer) {
-                        if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
-                            \fan\project\service\session::instance($this->_getFormMeta('form_id'), 'form_key')->remove('csrf');
-                        }
-                        $this->_onSubmitTransfer('commit', strtoupper($aForm['action_method']) != 'GET');
-                    }
-                    $bRet = !$this->bIsError;
+                    $this->_onSubmitTransfer(
+                            $bAllowTransfer,
+                            'commit',
+                            strtoupper($this->_getFormMeta('action_method', 'POST')) != 'GET'
+                    );
                     break;
                 }
             }
             break;
         }
-        return $bRet;
+        return !$this->bIsError;
     } // function parseForm
 
     /**
@@ -253,10 +253,15 @@ class form extends \fan\core\base\service\multi
         $sSrcKeyVal = $this->_getFormMeta('form_id');
         if (!empty($sSrcKeyVal)) {
             if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
-                $sCsrfCode   = \fan\project\service\session::instance($sSrcKeyVal, 'form_key')->get('csrf');
+                $sCsrfCode   = service('session', array($sSrcKeyVal, 'form_key'))->get('csrf');
+                if (empty($sCsrfCode)) {
+                    $this->bIsError = true;
+                    // ToDo: error message for user
+                    return false;
+                }
                 $sSrcKeyVal .= '_' . $sCsrfCode;
             }
-            $sKeyField = $oRequest->get('form_key_field', 'GP');
+            $sKeyField = $oRequest->get('form_key_field', $sRequestType);
             if ($sSrcKeyVal != $sKeyField) {
                 return false;
             }
@@ -296,74 +301,6 @@ class form extends \fan\core\base\service\multi
     } // function necessaryFormParsing
 
     /**
-     * get the form elements' values from HTTP request
-     *
-     */
-    public function getFieldValuesFromRequest()
-    {
-        $oRequest     = \fan\project\service\request::instance();
-        $sRequestType = $this->_getFormMeta('request_type');
-
-        if (!$sRequestType) {
-            $aTmp = array('GET'=>'G', 'POST'=>'P', 'FILE'=>'PF');
-            $sRequestType = $aTmp[$this->_getFormMeta('action_method', 'POST')];
-            if (!$sRequestType) {
-                $sRequestType = 'GPF';
-            }
-        }
-
-        foreach ($this->aFieldMeta as $sFieldName => $aParameters) {
-            $nDepth = $aMatch = null;
-            if(preg_match_all('/([^\[]+)?\[([^\]]+)\]/', $sFieldName, $aMatch)){
-                // Complex field name, like: "foo[bar]", "foo[bar1][bar2]", etc
-                $mVal = $oRequest->get($aMatch[1][0], $sRequestType);
-                foreach($aMatch[2] as $v) {
-                    if (isset($mVal[$v])) {
-                        $mVal = $mVal[$v];
-                    } else {
-                        $mVal = null;
-                        break;
-                    }
-                }
-            } else {
-                // Simple field name, like "foo"
-                $mVal = $oRequest->get($sFieldName, $sRequestType);
-            }
-
-            // Check is file
-            $aUploads = $this->getConfig('UPLOAD_TYPES', array('file', 'file_multiple'));
-            if (in_array($aParameters['input_type'], adduceToArray($aUploads))) {
-                $mVal   = empty($mVal) || $mVal['error'] == UPLOAD_ERR_NO_FILE ? null : $mVal;
-                $nDepth = empty($aParameters['depth']) ? 1 : $aParameters['depth'] + 1;
-                $bIsFile = true;
-            } else {
-                $bIsFile = false;
-            }
-
-            $this->aFieldValue[$sFieldName] = $this->aErrorMsg[$sFieldName] = null;
-            if (!is_null($mVal)) {
-                if (is_null($nDepth)) {
-                    $nDepth = empty($aParameters['depth']) ? 0 : $aParameters['depth'];
-                    if ($this->_isMultiVal($aParameters['input_type'])) {
-                        $nDepth++;
-                    }
-                }
-
-                $this->aFieldValue[$sFieldName] = $this->aErrorMsg[$sFieldName] = null;
-                if ($this->checkDepth($mVal, $nDepth)) {
-                    $this->aFieldValue[$sFieldName] = $bIsFile ? $mVal : $this->_trimDataRecursive($mVal, $aParameters, $sFieldName);
-                } else {
-                    trigger_error(
-                            'Field "' . $aParameters['label'] . '" of form "' . get_class($this->oBlock) . '" has incorrect depth of value.',
-                            E_USER_WARNING
-                    );
-                    $this->aErrorMsg[$sFieldName] = $this->_getErrorMesage($aParameters['label'], 'ERROR_FIELD_HAS_INCORRECT_DEPTH', 'Field "{combi_part}" has incorrect depth of value');
-                }
-            }
-        }
-    } // function getFieldValuesFromRequest
-
-    /**
      * Preparing the string for javascript validation
      * @return string
      */
@@ -371,7 +308,7 @@ class form extends \fan\core\base\service\multi
     {
         $sStr = '';
         $sReqMsg = $this->_getFormMeta($this->isMultiLanguage() ? 'required_msg' : 'required_msg_alt');
-        foreach ($this->aFieldMeta as $sFieldName => $aParameters) {
+        foreach ($this->oFieldMeta as $sFieldName => $aParameters) {
             $sRules = '';
             if (@$aParameters['is_required']) {
                 $sRules .= '{rule_name:\'is_required\', ';
@@ -421,7 +358,7 @@ class form extends \fan\core\base\service\multi
 
         if ($sStr) {
             $aJsUrl = $this->_getFormMeta('js_url');
-            $oRoot  = $this->oTab->getTabBlock('root');
+            $oRoot  = service('tab')->getTabBlock('root');
             $oRoot->setExternalJs($aJsUrl['js-wrapper']);
             $oRoot->setExternalJs($aJsUrl['validator']);
 
@@ -472,18 +409,35 @@ class form extends \fan\core\base\service\multi
      * @param mixed $mFieldName
      * @return mixed
      */
-    public function getFieldValue($mFieldName = null)
+    public function getFieldValue($mFieldName = null, $bUseSubform = true)
     {
+        $aFieldValue = $this->aFieldValue;
+        if ($bUseSubform) {
+            foreach ($this->aPartFieldValue as $v) {
+                $aFieldValue = array_merge_recursive_alt($v, $aFieldValue);
+            }
+        }
         if (empty($mFieldName)) {
-            return $this->aFieldValue;
+            return $aFieldValue;
         }
         $bIsArray = is_array($mFieldName);
-        $sValue   = $bIsArray ? array_get_element($this->aFieldValue, $mFieldName, false) : array_val($this->aFieldValue, $mFieldName);
-        if (is_null($sValue)) {
-            $sValue = $this->aFormMeta->get(array('fields', $bIsArray ? $mFieldName[0] : $mFieldName, 'default_value'));
-        }
+        $sValue   = $bIsArray ? array_get_element($aFieldValue, $mFieldName, false) : array_val($aFieldValue, $mFieldName);
         return $sValue;
     } // function getFieldValue
+
+    /**
+     * Set field value
+     * @param mixed $mFieldName
+     * @param mixed $mValue
+     * @return \fan\core\service\form
+     */
+    public function setFieldValue($mFieldName, $mValue)
+    {
+        if ($this->_checkName($mFieldName)) {
+            $this->aFieldValue[$mFieldName] = $mValue;
+        }
+        return $this;
+    } // function setFieldValue
 
     /**
      * Get field data
@@ -497,7 +451,7 @@ class form extends \fan\core\base\service\multi
             return $this->aFieldData[$mKey];
         }
 
-        $oMeta = $this->aFormMeta->get(array('fields', $mKey));
+        $oMeta = $this->_getFormMeta(array('fields', $mKey));
         if (isset($oMeta->dataSource->method)) {
             $aCallback = array(
                 isset($oMeta->dataSource->class) ? $oMeta->dataSource->class : $this->oBlock,
@@ -626,16 +580,129 @@ class form extends \fan\core\base\service\multi
 
     // ======== Private/Protected methods ======== \\
 
+    protected function _presetFieldValue()
+    {
+        foreach ($this->oFieldMeta as $k => $v) {
+            if (preg_match_all(self::RE_COMBI, $k, $aMatch)) {
+                $mKey  = array_merge(array($aMatch[1][0]), $aMatch[2]);
+                $aDest =& array_get_element($this->aFieldValue, $mKey, true);
+                if (is_null($aDest)) {
+                    $aDest = $v->get('default_value', null);
+                }
+            } elseif (!isset($this->aFieldValue[$k])) {
+                $this->aFieldValue[$k] = $v->get('default_value', null);
+            }
+        }
+        return $this;
+    } // function _presetFieldValue
+
     /**
      * Get form's meta data
      * @param string|array $mKey
      * @param mixed $mDefault
      * @return \fan\core\base\meta\row
      */
-    protected function _getFormMeta($mKey, $mDefault = null)
+    protected function _getFormMeta($mKey, $mDefault = null, $bConvToArray = false)
     {
-        return $this->aFormMeta->get($mKey, $mDefault);
+        $oMeta = $this->oFormMeta->get($mKey, $mDefault);
+        return $bConvToArray && is_object($oMeta) && $oMeta instanceof \fan\core\base\meta\row ? $oMeta->toArray() : $oMeta;
     } // function _getFormMeta
+
+    /**
+     * get the form elements' values from HTTP request
+     *
+     */
+    protected function _defineFieldValue()
+    {
+        $oRequest     = \fan\project\service\request::instance();
+        $sRequestType = $this->_getFormMeta('request_type');
+
+        if (!$sRequestType) {
+            $aTmp = array('GET'=>'G', 'POST'=>'P', 'FILE'=>'PF');
+            $sRequestType = $aTmp[$this->_getFormMeta('action_method', 'POST')];
+            if (!$sRequestType) {
+                $sRequestType = 'GPF';
+            }
+        }
+
+        foreach ($this->oFieldMeta as $sFieldName => $aParameters) {
+            $nDepth = $aMatch = null;
+            $aComplex = array();
+            if (preg_match_all(self::RE_COMBI, $sFieldName, $aMatch)) {
+                // Complex field name, like: "foo[bar]", "foo[bar1][bar2]", etc
+                $sBaseName = $aMatch[1][0];
+                if (empty($sBaseName)) {
+                    throw new fatalException($this, 'Incorrect Field Name "' . $sFieldName . '" - empty base-name.');
+                }
+                $mVal      = $oRequest->get($sBaseName, $sRequestType);
+                $mCheckVal = array_val($this->aFieldValue, $aMatch[1][0]);
+                foreach($aMatch[2] as $v) {
+                    $aComplex[] = $v;
+                    $mCheckVal  = array_val($mCheckVal, $v);
+                    if (isset($mVal[$v])) {
+                        $mVal = $mVal[$v];
+                    } else {
+                        $mVal = null;
+                        break;
+                    }
+                }
+                if (!is_null($mVal) && $mVal == $mCheckVal) {
+                    continue;
+                }
+            } else {
+                // Simple field name, like "foo"
+                $sBaseName = $sFieldName;
+                $mVal = $oRequest->get($sBaseName, $sRequestType);
+            }
+
+            // Check is file
+            $aUploads = $this->getConfig('UPLOAD_TYPES', array('file', 'file_multiple'));
+            if (in_array($aParameters['input_type'], adduceToArray($aUploads))) {
+                $nDepth = empty($aParameters['depth']) ? 1 : $aParameters['depth'] + 1;
+                if ($nDepth > 1 && !empty($mVal)) {
+                    $aTmp = array();
+                    foreach ($mVal as $k => $v) {
+                        if (is_array($v)) {
+                            $this->_transformFileData($aTmp, $k, $v);
+                        }
+                    }
+                    $mVal = $aTmp;
+                } else {
+                    $mVal = empty($mVal) || $mVal['error'] == UPLOAD_ERR_NO_FILE ? null : $mVal;
+                }
+                $bIsFile = true;
+            } else {
+                $bIsFile = false;
+            }
+
+            $mKey  = empty($aComplex) ? $sBaseName : array_merge(array($sBaseName), $aComplex);
+            $aDest =& array_get_element($this->aFieldValue, $mKey, true);
+            $aDest = null;
+
+            $aErr  =& $this->aErrorMsg[$sFieldName];
+            $aErr  = null;
+
+            if (!is_null($mVal)) {
+                if (is_null($nDepth)) {
+                    $nDepth = empty($aParameters['depth']) ? 0 : $aParameters['depth'];
+                    if ($this->_isMultiVal($aParameters['input_type'])) {
+                        $nDepth++;
+                    }
+                }
+
+                if (($nDepth > 0 && count($aComplex) == $nDepth) || $this->checkDepth($mVal, $nDepth)) {
+                    $aDest = $bIsFile ? $mVal : $this->_trimDataRecursive($mVal, $sBaseName);
+                } else {
+                    trigger_error(
+                            'Field "' . $aParameters['label'] . '" of form "' . get_class_alt($this->oBlock) . '" has incorrect depth of value.',
+                            E_USER_WARNING
+                    );
+                    $aErr = $this->_getErrorMesage($aParameters['label'], 'ERROR_FIELD_HAS_INCORRECT_DEPTH', 'Field "{combi_part}" has incorrect depth of value');
+                }
+            }
+        }
+        return $this;
+    } // function _defineFieldValue
 
     /**
      * Delete whitespaces from the beginning and end of value
@@ -644,21 +711,22 @@ class form extends \fan\core\base\service\multi
      * @param array $aParam
      * @return string
      */
-    protected function _trimDataRecursive($mValue, $aParam, $sFieldName)
+    protected function _trimDataRecursive($mValue, $sFieldName, $aIndex = array())
     {
         if (!is_null($mValue)) {
             if (is_array($mValue)) {
-                foreach ($mValue as &$mSubValue) {
-                    $mSubValue = $this->_trimDataRecursive($mSubValue, $aParam, $sFieldName);
+                foreach ($mValue as $k => &$v) {
+                    $v = $this->_trimDataRecursive($v, $sFieldName, array_merge($aIndex, array($k)));
                 }
             } else {
+                $aParam  = $this->_getCombiParam($sFieldName, $aIndex);
                 $mValue  = empty($aParam['trim_data']) ? $mValue : trim($mValue);
 
                 $nMaxLen = empty($aParam['maxlength']) ? 0 : $aParam['maxlength'];
                 $nLen    = function_exists('mb_strlen') ? mb_strlen($mValue) : strlen($mValue);
                 if (!empty($nMaxLen) && $nLen > $nMaxLen) {
                     trigger_error(
-                            'Data has been truncated in the form "' . get_class($this->oBlock) . '" for field "' . $sFieldName . '". Length was ' . $nLen . '.',
+                            'Data has been truncated in the form "' . get_class_alt($this->oBlock) . '" for field "' . $sFieldName . '". Length was ' . $nLen . '.',
                             E_USER_WARNING
                     );
                     $mValue = function_exists('mb_substr') ? mb_substr($mValue, 0, $nMaxLen) : substr($mValue, 0, $nMaxLen);
@@ -700,7 +768,7 @@ class form extends \fan\core\base\service\multi
                 if (!$this->checkByData($mValue, $aData)) {
                     $this->bIsError = true;
                     trigger_error(
-                            'Error in the form "' . get_class($this->oBlock) . '". Value of "' . $sFieldName . '" doesn\'t correspond to source.',
+                            'Error in the form "' . get_class_alt($this->oBlock) . '". Value of "' . $sFieldName . '" doesn\'t correspond to source.',
                             E_USER_WARNING
                     );
                     $this->aErrorMsg[$sFieldName] = $this->_getErrorMesage($sLabel, 'ERROR_FIELD_HAS_INCORRECT_VALUE', 'Field "{combi_part}" has incorrect value');
@@ -727,51 +795,65 @@ class form extends \fan\core\base\service\multi
     } // function _isMultiVal
 
     /**
-     * functions which the element value check, if the element value is an array
-     *
-     * @param mixed $mValue
-     * @param array $aParameters
-     * @param array|string $mErrMesage
+     * Validate elements value recursively
+     * @param string $sFieldName
+     * @param array $aIndex
+     * @return \fan\core\service\form
      */
-    protected function _validateValueRecursive($mValue, $aParameters, &$mErrMesage, $nIndex = null)
+    protected function _validateValueRecursive($sFieldName, $aIndex = array())
     {
+        $aMatch = null;
+        if (preg_match_all(self::RE_COMBI, $sFieldName, $aMatch)) {
+            $mKey = array_merge(array($aMatch[1][0]), $aMatch[2]);
+        } else {
+            $mKey = empty($aIndex) ? $sFieldName : array($sFieldName);
+        }
+
+        $mValue = $this->getFieldValue(empty($aIndex) ? $mKey : array_merge($mKey, $aIndex), false);
+        $aParam = $this->_getCombiParam($sFieldName, $aIndex);
+
         $aUploads = $this->getConfig('UPLOAD_TYPES', array('file', 'file_multiple'));
-        if(in_array(array_val($aParameters, 'input_type'), adduceToArray($aUploads))) {
+        if(in_array(array_val($aParam, 'input_type'), adduceToArray($aUploads))) {
+            // ToDo: Value by index
             if (!empty($mValue['tmp_name']) && is_array($mValue['tmp_name'])) {
-                foreach ($mValue['tmp_name'] as $iKey => $dummy) {
-                    $aSubValue = array();
-                    foreach ($mValue as $k => $v) {
-                        $aSubValue[$k] = $v[$iKey];
-                    }
-                    $this->_validateValueRecursive($aSubValue, $aParameters, $mErrMesage[$iKey], $iKey);
+                foreach ($mValue['tmp_name'] as $k => $v) {
+                    $this->_validateValueRecursive($sFieldName, array_merge($aIndex, array($k)));
                 }
                 return;
             }
             $isEmpty = empty($mValue['tmp_name']);
         } else {
-            if (is_array($mValue) && !array_val($aParameters, 'group_rule', false)) {
-                foreach ($mValue as $iKey => $aSubValue) {
-                    $this->_validateValueRecursive($aSubValue, $aParameters, $mErrMesage[$iKey], $iKey);
+            if (is_array($mValue)) {
+                foreach ($mValue as $k => $v) {
+                    $this->_validateValueRecursive($sFieldName, array_merge($aIndex, array($k)));
                 }
                 return;
             }
             $isEmpty = is_array($mValue) ? empty($mValue) : $mValue == '';
         }
 
+        $mErrMesage =& $this->aErrorMsg[$sFieldName];
+        foreach ($aIndex as $i) {
+            if (!isset($mErrMesage[$i])) {
+                $mErrMesage[$i] = null;
+            }
+            $mErrMesage =& $mErrMesage[$i];
+        }
+
         // Check required value
-        if (!empty($aParameters['is_required']) && $isEmpty) {
-            $mErrMesage = $this->_getErrorMesage($aParameters['label'], $this->_getFormMeta('required_msg'));
+        if (!empty($aParam['is_required']) && $isEmpty) {
+            $mErrMesage = $this->_getErrorMesage($aParam['label'], $this->_getFormMeta('required_msg'));
             $this->bIsError = true;
         // Check value by specified rules
-        } elseif (isset($aParameters['validate_rules'])) {
-            foreach ($aParameters['validate_rules'] as $aRules) {
+        } elseif (isset($aParam['validate_rules'])) {
+            foreach ($aParam['validate_rules'] as $aRules) {
                 if(!$isEmpty || empty($aRules['not_empty'])) {
                     $sRule = $aRules['rule_name'];
                     $oValidator = $this->_getValidator($sRule);
                     if (!empty($oValidator)) {
-                        if(!$oValidator->$sRule($mValue, array_val($aRules, 'rule_data'), $nIndex)) {
+                        if(!$oValidator->$sRule($mValue, array_val($aRules, 'rule_data'), $aIndex)) {
                             $mErrMesage = isset($aRules['error_msg']) ?
-                                    $this->_getErrorMesage($aParameters['label'], $aRules['error_msg']) :
+                                    $this->_getErrorMesage($aParam['label'], $aRules['error_msg']) :
                                     '';
                             $this->bIsError = true;
                             break;
@@ -780,22 +862,37 @@ class form extends \fan\core\base\service\multi
                 }
             }
         }
+        return $this;
     } // function _validateValueRecursive
 
     /**
      * If the validation was successful the Transfer'll be performed on success url
+     * @param boolean $bAllowTransfer
      * @param string $sDbOper - DB operation: "commit" or "rollback"
+     * @param boolean $bAddQueryStr
      * @return \fan\core\service\form
      */
-    protected function _onSubmitTransfer($sDbOper = null, $bAddQueryStr = true)
+    protected function _onSubmitTransfer($bAllowTransfer, $sDbOper, $bAddQueryStr)
     {
-        $aForm = $this->aFormMeta;
-        if (!isset($aForm['redirect_required']) || $aForm['redirect_required']) {
-            $oTab = $this->oBlock->getTab();
-            if(empty($aForm['redirect_uri'])) {
+        $bRedirReq = $this->_getFormMeta('redirect_required');
+        $sRedirUri = $this->_getFormMeta('redirect_uri');
+
+        if (is_null($bAllowTransfer)) {
+            $bAllowTransfer = is_null($bRedirReq) ?
+                    strtoupper(service('request')->get('REQUEST_METHOD', 'S')) == 'POST' :
+                    !empty($bRedirReq);
+        } elseif ($bAllowTransfer) {
+            $bAllowTransfer = is_null($bRedirReq) || !empty($bRedirReq);
+        }
+
+
+        if ($bAllowTransfer) {
+            if(empty($sRedirUri)) {
+                service('request')->remove('form_key_field', 'G');
+                $oTab = $this->oBlock->getTab();
                 $sUri = $oTab->getCurrentURI($this->isMultiLanguage(), true, $bAddQueryStr, true);
             } else {
-                $sUri = $aForm['redirect_uri'];
+                $sUri = $sRedirUri;
             }
             transfer_out($sUri, null, $sDbOper);
         }
@@ -841,43 +938,40 @@ class form extends \fan\core\base\service\multi
         return $this->aValidators[$sValidatorName];
     } // function _getValidator
 
-    // ------------ Functions for main parts ------------ \\
-    /**
-     * Init Form Parts
-     * Method is called in "init" of main part block
-     * @param mixed $mData data for form parts
-     */
-    protected function _initFormParts($mData = NULL)
+    protected function _checkName($sFieldName, $bReportErr = true)
     {
-        $aParts = $this->_getFormMeta('form_parts', array());
-        foreach ($aParts as $v) {
-            if ($this->oTab->isSetBlock($v)) {
-                $this->getBlock($v)->partInit($mData);
-            }
+        if (isset($this->oFieldMeta[$sFieldName])) {
+            return true;
         }
-    } // function _initFormParts
+        if ($bReportErr) {
+            trigger_error('Call incorrect field name "' . $sFieldName . '" in the form "' . $this->oBlock->getBlockName() . '"');
+        }
+        return false;
+    } // function _getValidator
+
+    // ------------ Functions for main parts ------------ \\
 
     /**
-     * Init Form Parts
-     * Method is called in "init" of main part block
-     * @param mixed $bParceEmpty  allow parse if form is empty
+     * Parse Form Parts
+     * @param mixed $bParceEmpty allow parse if form is empty
      */
     protected function _parseFormParts($bParceEmpty)
     {
         $aParts = $this->_getFormMeta('form_parts', array());
         if (!empty($aParts)) {
             try {
-                $aFieldValue = array();
+                $oTab = service('tab');
+                /* @var $oTab \fan\core\service\tab */
                 foreach ($aParts as $v) {
-                    if ($this->oTab->isSetBlock($v)) {
-                        $this->aPartFieldValue[$v] = $this->getBlock($v)->getForm()->parseForm($bParceEmpty, true, false);
-                        $aFieldValue = array_merge_recursive_alt(
-                            $aFieldValue,
-                            $this->aPartFieldValue[$v]
-                        );
+                    if ($oTab->isSetBlock($v)) {
+                        $oSubForm = $oTab->getTabBlock($v)->getForm();
+                        if ($oSubForm->parseForm($bParceEmpty, true, false)) {
+                            $this->aPartFieldValue[$v] = $oSubForm->getFieldValue();
+                        } else {
+                            $this->bIsError = true;
+                        }
                     }
                 }
-                $this->aFieldValue = array_merge_recursive_alt($this->aFieldValue, $aFieldValue);
             } catch (exception_error_form_part $e) {
                 $this->bIsError = true;
                 foreach ($e->getErrorMessages() as $k => $v) {
@@ -895,6 +989,72 @@ class form extends \fan\core\base\service\multi
         }
     } // function _parseFormParts
 
+    /**
+     * Get Combi Parameters
+     * @param string $sFieldName
+     * @param array $aIndex
+     * @return array
+     */
+    protected function _getCombiParam($sFieldName, $aIndex)
+    {
+        $sCombiKey   = empty($aIndex) ? null : $sFieldName . '[' . implode('][', $aIndex) . ']';
+        $aMainParam  = isset($this->oFieldMeta[$sFieldName]) ? adduceToArray($this->oFieldMeta[$sFieldName]) : array();
+        $aExtraParam = isset($this->oFieldMeta[$sCombiKey])  ? adduceToArray($this->oFieldMeta[$sCombiKey])  : array();
+        return array_merge_recursive_alt($aMainParam, $aExtraParam);
+    } // function _getCombiParam
+
+    /**
+     * Transform Data from File-array
+     * @param array $aData
+     * @param string $sKey
+     * @param array $aSrc
+     * @return \fan\core\service\form
+     */
+    protected function _transformFileData(&$aData, $sKey, $aSrc)
+    {
+        foreach ($aSrc as $k => $v) {
+            if (is_array($v)) {
+                $aData[$k] = array();
+                $this->_transformFileData($aData[$k], $sKey, $v);
+            } else {
+                $aData[$k][$sKey] = $v;
+            }
+        }
+        return $this;
+    } // function _transformFileData
+
+    // ======== The magic methods ======== \\
+
+    /**
+     * Magic set method for data-array
+     * @param mixed $sKey
+     * @param mixed $mValue
+     */
+    public function __set($sKey, $mValue)
+    {
+        $this->setFieldValue($sKey, $mValue);
+    } // function __set
+
+    /**
+     * Magic get method for data-array
+     * @param mixed $sKey
+     * @return mixed
+     */
+    public function __get($sKey)
+    {
+        return $this->getFieldValue($sKey);
+    } // function __get
+
+    /**
+     * Magic isset method for data-array
+     * @param mixed $sKey
+     * @return boolean
+     */
+    public function __isset($sKey)
+    {
+        return isset($this->aFieldValue[$sKey]);
+    } // function __isset
+    // ======== Required Interface methods ======== \\
 
 } // class \fan\core\service\form
 ?>

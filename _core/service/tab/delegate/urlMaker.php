@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class urlMaker extends \fan\core\service\tab\delegate
 {
@@ -33,7 +33,7 @@ class urlMaker extends \fan\core\service\tab\delegate
      */
     public function isUseHttps()
     {
-        return !empty($this->aConfig['USE_HTTPS']);
+        return !empty($this->oConfig['USE_HTTPS']);
     } // function isUseHttps
 
     /**
@@ -124,19 +124,109 @@ class urlMaker extends \fan\core\service\tab\delegate
         return $sCurRequest;
     } // function getCurrentURI
 
+
+    /**
+     * Get Modified Current URI
+     * This method allow to change current URI - include or exclude elements to add-request or GET
+     *   Structure of $aModifier:
+     *   array(
+     *      'exclude' => array(
+     *          'A' => array(...), // Keys of "add request" for exclude
+     *          'G' => array(...), // Keys of "GET" for exclude
+     *      ),
+     *      'include' => array(
+     *          'A' => array(...), // Array of elements for add to "add request"
+     *          'G' => array(...), // Array of elements for add to "GET"
+     *      ),
+     *   )
+     * @param array $aModifier
+     * @param type $bAddExt
+     * @param type $bAddSid
+     * @param type $bProtocol
+     * @return type
+     */
+    public function getModifiedCurrentURI($aModifier, $bAddExt = true, $bAddSid = null, $bProtocol = null)
+    {
+        $oRequest = service('request');
+        /* @var $oRequest \fan\core\service\request */
+        $aMain  = $oRequest->getAll('M', array());
+        $aAdd   = $oRequest->getAll('A', array(), false);
+        $aGet   = $oRequest->getAll('G', array());
+        $sDelim = $oRequest->getAddDelimiter();
+
+        // --- Modifying Add-request --- \\
+        // Exclude data
+        if (!empty($aAdd) && !empty($aModifier['exclude']['A'])) {
+            foreach ($aModifier['exclude']['A'] as $k0) {
+                if (is_int($k0)) {
+                    unset($aAdd[$k0]);
+                } else {
+                    $k0 .= $sDelim;
+                    foreach ($aAdd as $k1 => $v) {
+                        if (substr($v, 0, strlen($k0)) == $k0) {
+                            unset($aAdd[$k1]);
+                        }
+                    }
+                }
+            }
+        }
+        // Include data
+        if (!empty($aModifier['include']['A'])) {
+            foreach ($aModifier['include']['A'] as $k => $v) {
+                if (is_int($k)) {
+                    $aAdd[$k] = $v;
+                }
+            }
+            $aAdd = array_merge($aAdd);
+            foreach ($aModifier['include']['A'] as $k => $v) {
+                if (!is_int($k)) {
+                    $aAdd[] = $k . $sDelim . urlencode($v);
+                }
+            }
+        }
+
+        // --- Modifying GET --- \\
+        // Exclude data
+        if (!empty($aGet) && !empty($aModifier['exclude']['G'])) {
+            foreach ($aModifier['exclude']['G'] as $k0) {
+                unset($aGet[$k0]);
+            }
+        }
+        // Include data
+        if (!empty($aModifier['include']['G'])) {
+            foreach ($aModifier['include']['G'] as $k => $v) {
+                $aGet[$k] = $v;
+            }
+        }
+
+        // --- Make URN --- \\
+        $sUrn = '~/' . implode('/', $aMain);
+        if (!empty($aAdd)) {
+            $sUrn .= '/' . implode('/', $aAdd);
+        }
+        if ($bAddExt) {
+            $sExt  = service('tab')->getDefaultExtension();
+            $sUrn .= empty($sExt) ? '' : '.' . $sExt;
+        }
+        if (!empty($aGet)) {
+            $sUrn .= '?' . http_build_query($aGet);
+        }
+
+        return $this->getURI($sUrn, 'link', $bAddSid, $bProtocol);
+    } // function getModifiedCurrentURI
+
     /**
      * Get full URL
-     *
      * @param string $sUrn
      * @param string $sType
-     * @param boolean $bUseSid - use SID in URL
+     * @param boolean $bAddSid - add SID to URL
      * @param boolean $bProtocol - consider PROTOCOL in transfer URL (null: use current protocol; false: use "http" only; true: use "https" only;)
      * @return string
      */
-    public function getURI($sUrn = '', $sType = 'link', $bUseSid = null, $bProtocol = null)
+    public function getURI($sUrn = '', $sType = 'link', $bAddSid = null, $bProtocol = null)
     {
-        if (is_null($bUseSid)) {
-            $bUseSid = ($sType == 'link') && $this->getConfig('ALLOW_GET_SID', true);
+        if (is_null($bAddSid)) {
+            $bAddSid = ($sType == 'link') && $this->getConfig('ALLOW_GET_SID', true);
         }
 
         if (!$sUrn) {
@@ -149,20 +239,22 @@ class urlMaker extends \fan\core\service\tab\delegate
             $sUrn = (empty($sAppPrefix) ? '' : '/' . $sAppPrefix) . $sUrnPrefix . substr($sUrn, 1);
         }
 
-        if ($bUseSid) {
+        if ($bAddSid) {
             $oSes = \fan\project\service\session::instance();
             if (!$oSes->isByCookies()) {
                 $sUrn = $this->addQuery($sUrn, $oSes->getSessionName(), $oSes->getSessionId());
             }
         }
 
-        $oLocale = \fan\project\service\locale::instance();
-        if ($sType == 'link' && $oLocale->isUrlParsing()) {
-            $oLocale->modifyUrl($sUrn);
-        }
+        if (!preg_match('/^https?\:\/\/\w/i', $sUrn)) {
+            $oLocale = \fan\project\service\locale::instance();
+            if ($sType == 'link' && $oLocale->isUriParsing()) {
+                $sUrn = $oLocale->modifyUrn($sUrn);
+            }
 
-        if ($this->isUseHttps() && !is_null($bProtocol) && $bProtocol != (@$_SERVER['HTTPS'] == 'on')) {
-            $sUrn = ($bProtocol ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $sUrn;
+            if ($this->isUseHttps() && !is_null($bProtocol) && $bProtocol != (@$_SERVER['HTTPS'] == 'on')) {
+                $sUrn = ($bProtocol ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $sUrn;
+            }
         }
         return $sUrn;
     } // function getURI

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class adodb extends base
 {
@@ -29,7 +29,7 @@ class adodb extends base
 
     /**
      * Constructor
-     * @param array $aConfig Configuration data
+     * @param array $oConfig Configuration data
      */
     public function __construct(\fan\core\base\service $oFacade, \fan\core\service\config\base $oConfig)
     {
@@ -90,9 +90,9 @@ class adodb extends base
     /**
      * Restore connection
      */
-    public function reconnect($aConfig)
+    public function reconnect($oConfig)
     {
-        $this->oConn->NConnect($aConfig['HOST'], $aConfig['USER'], $aConfig['PASSWORD'], $aConfig['DATABASE']);
+        $this->oConn->NConnect($oConfig['HOST'], $oConfig['USER'], $oConfig['PASSWORD'], $oConfig['DATABASE']);
     } // function reconnect
 
     /**

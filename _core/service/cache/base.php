@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 abstract class base
 {
@@ -27,7 +27,7 @@ abstract class base
      * service's configuration data
      * @var array
      */
-    protected $aConfig;
+    protected $oConfig;
 
     /**
      * Type of cached data
@@ -75,14 +75,14 @@ abstract class base
      * @param \fan\core\base\service $oFacade
      * @param string $sType
      * @param string $sKey
-     * @param array $aConfig
+     * @param array $oConfig
      */
-    public function __construct(\fan\core\service\cache $oFacade, $sType, $sKey, $aConfig)
+    public function __construct(\fan\core\service\cache $oFacade, $sType, $sKey, $oConfig)
     {
         $this->setFacade($oFacade);
         $this->sType   = $sType;
         $this->sKey    = $sKey;
-        $this->aConfig = $aConfig;
+        $this->oConfig = $oConfig;
     } // function __construct
 
    /**
@@ -326,7 +326,7 @@ abstract class base
         $this->aMetaData['data_type']   = strtolower(gettype($this->mData));
         $this->aMetaData['create_date'] = date('Y-m-d H:i:s');
         if (!isset($this->aMetaData['lifetime'])) {
-            $this->aMetaData['lifetime'] = isset($this->aConfig['LIFETIME']) ? (int)$this->aConfig['LIFETIME'] : 0;
+            $this->aMetaData['lifetime'] = isset($this->oConfig['LIFETIME']) ? (int)$this->oConfig['LIFETIME'] : 0;
         }
         return $this;
     } // function _checkDateFormat

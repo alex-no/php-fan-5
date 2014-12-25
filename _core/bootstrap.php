@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class bootstrap
 {
@@ -107,7 +107,7 @@ class bootstrap
 
         // Include additional functions
         require_once CORE_DIR . '/functions.php';
-        if (file_exists(PROJECT_DIR . '/functions.php')) {
+        if (is_readable(PROJECT_DIR . '/functions.php')) {
             require_once PROJECT_DIR . '/functions.php';
         }
 
@@ -254,13 +254,13 @@ class bootstrap
     /**
      * Error handler
      * @param numeric $nErrNo
-     * @param string $sErrStr
-     * @param string $sErrFile
-     * @param numeric $nErrLine
+     * @param string $sErrMsg
+     * @param string $sFileName
+     * @param numeric $nLineNum
      */
-    public static function handleError($nErrNo, $sErrStr, $sErrFile, $nErrLine, $aErrContext)
+    public static function handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrContext)
     {
-        self::logError('Error No ' . $nErrNo . ': ' . $sErrStr . ' in ' . $sErrFile . ' on line ' . $nErrLine . '. Context: ' . print_r($aErrContext, true));
+        self::logError('Error No ' . $nErrNo . ': ' . $sErrMsg . ' in ' . $sFileName . ' on line ' . $nLineNum . '. Context: ' . var_export($aErrContext, true));
     } // function handleError
 
     /**

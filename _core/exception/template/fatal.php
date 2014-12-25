@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class fatal extends  \fan\core\exception\base
 {
@@ -30,7 +30,7 @@ class fatal extends  \fan\core\exception\base
 
         parent::__construct($sLogMessage, $nCode);
 
-        $this->_logByService($sLogMessage, 'Template\'s exception (' . get_class($oTemplate) . ').');
+        $this->_logByService($sLogMessage, 'Template\'s exception (' . get_class_alt($oTemplate) . ').');
     }
 } // class \fan\core\exception\template\fatal
 ?>

@@ -70,7 +70,7 @@ var browserVer = (function(w)
     o.isDOM = Boolean(d.getElementById);
     o.isStrict = d.compatMode == 'CSS1Compat';
 
-    o.isOpera  = Boolean(w.opera && o.isDOM);
+    o.isOpera  = isDefined(w, 'opera') && o.isDOM;
     o.isOpera7 = Boolean(o.isOpera && d.readyState);
 
     o.isSafari = /webkit/i.test(o.uA);

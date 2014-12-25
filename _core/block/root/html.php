@@ -12,11 +12,17 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class html extends \fan\core\block\base
 {
+    /**
+     * Name of block
+     * @var string
+     */
+    protected $sModalWin = '';
+
     /**
      * Init block data
      */
@@ -108,7 +114,7 @@ abstract class html extends \fan\core\block\base
 
         $aMetaData = $this->view->get('meta', array());
         foreach ($aMetaData as $v) {
-            if($this->_compareArray($v, $aMeta, array('name', 'content', 'http_equiv', 'scheme', 'id'))) {
+            if($this->_compareArray($v, $aMeta, array('name', 'property', 'content', 'http_equiv', 'scheme', 'id'))) {
                 return;
             }
         }
@@ -131,6 +137,7 @@ abstract class html extends \fan\core\block\base
      * @param string $sType  type
      * @param string $sHref  href
      * @param string $sTitle title
+     * @return \fan\core\block\root\html
      */
     public function setLinkTag($sRel, $sType, $sHref, $sTitle = '')
     {
@@ -141,12 +148,14 @@ abstract class html extends \fan\core\block\base
         $aTagLink   = $this->view->get('tagLink', array());
         $aTagLink[] = $aLink;
         $this->view->set('tagLink', $aTagLink);
+        return $this;
     } // function setLinkTag
 
     /**
      * Set external css by includes
      * @param array $aCssFile array of files
      * @param mixed $sType type of css file (it is need set if first argument is not array)
+     * @return \fan\core\block\root\html
      */
     public function setExternalCss($aCssFile, $sType = 'new')
     {
@@ -170,11 +179,13 @@ abstract class html extends \fan\core\block\base
             }
         }
         $this->view->set('externalCss', $aExternalCss);
+        return $this;
     } // function setExternalCss
 
     /**
      * Set embed css
      * @param string $sCss - array of css code
+     * @return \fan\core\block\root\html
      */
     public function setEmbedCss($sCss)
     {
@@ -191,12 +202,14 @@ abstract class html extends \fan\core\block\base
             $sEmbedCss .= empty($sEmbedCss) ? $sCss : "\n" . $sCss;
         }
         $this->view->set('embedCss', $sEmbedCss);
+        return $this;
     } // function setEmbedCss
 
     /**
      * Set external JavaScript
      * @param mixed $aJsFile array of files
      * @param mixed $sPos position of JavaScript (it is need set if first argument is not array)
+     * @return \fan\core\block\root\html
      */
     public function setExternalJs($aJsFile, $sPos = 'head')
     {
@@ -228,6 +241,7 @@ abstract class html extends \fan\core\block\base
             }
         }
         $this->view->set('externalJS', $aExternalJS);
+        return $this;
     } // function setExternalJs
 
     /**
@@ -235,6 +249,7 @@ abstract class html extends \fan\core\block\base
      * @param mixed $mJs
      * @param string $sPos position of JavaScript (it is need set if first argument is not array)
      * @param numeric $nOrd order run (-1 - before all, 0 - as default, 1 - after all)
+     * @return \fan\core\block\root\html
      */
     public function setEmbedJs($mJs, $sPos = 'head', $nOrd = 0, $bAllowDebug = true)
     {
@@ -267,49 +282,81 @@ abstract class html extends \fan\core\block\base
         }
         $aEmbedJS[$sPos][$nOrd] .= $sJs;
         $this->view->set('embedJS', $aEmbedJS);
+        return $this;
     } // function setEmbedJs
 
     /**
      * Set head Before
      * @param string $sHtmlCode
+     * @return \fan\core\block\root\html
      */
     public function setHeadBefore($sHtmlCode)
     {
         $sCodeBefore = $this->view->get('headBefore', '');
         $this->view->set('headBefore', $sCodeBefore . $sHtmlCode);
+        return $this;
     } // function setHeadBefore
 
     /**
      * Set head After
      * @param string $sHtmlCode
+     * @return \fan\core\block\root\html
      */
     public function setHeadAfter($sHtmlCode)
     {
         $sCodeAfter = $this->view->get('headAfter', '');
         $this->view->set('headAfter', $sCodeAfter . $sHtmlCode);
+        return $this;
     } // function setHeadAfter
 
     /**
      * Set modal window
      * @param string $sFilePath
      * @param array $aTplVars
+     * @return \fan\core\block\root\html
      */
-    public function setModalWindow($sFilePath, $aTplVars = array())
+    public function setModalWindow($sFilePath, $aTplVars = array(), $sCssFile = '/css/modal_win.css', $sJsFile = null)
     {
-        if($sFilePath && is_file($sFilePath)) {
-            $oTemplate = \fan\project\service\template::instance()->get($sFilePath);
-
-            foreach ($aTplVars as $k => $v) {
-                $oTemplate->assign($k, $v);
+        if(!empty($sFilePath)) {
+            if (!\is_file($sFilePath)) {
+                $sFilePath = \bootstrap::parsePath($sFilePath);
             }
-            $oTemplate->assign('oBlock', $this);
+            if (\is_readable($sFilePath)) {
+                $oTemplate = \fan\project\service\template::instance()->get($sFilePath, null, $this);
+                /* @var $oTemplate \fan\core\service\template\type\base */
 
-            $this->addTemplateVar('modal_win', $oTemplate->fetch());
+                foreach ($aTplVars as $k => $v) {
+                    $oTemplate->assign($k, $v);
+                }
+
+                $this->sModalWin .= $oTemplate->fetch();
+
+                if (!empty($sCssFile)) {
+                    $this->setExternalCss($sCssFile);
+                }
+                if (!empty($sJsFile)) {
+                    $this->setExternalJs($sJsFile);
+                }
+            } else {
+                trigger_error('Unknown path to modal template "' . $sFilePath . '"', E_USER_WARNING);
+            }
         }
+        return $this;
     } // function setModalWindow
 
     // ==================== protected methods ==================== \\
 
+
+    /**
+     * Method for redefine in child class
+     * Method if run before output-view operation
+     */
+    protected function _preOutput()
+    {
+        if (!empty($this->sModalWin)) {
+            $this->view->set('modal_win', $this->sModalWin);
+        }
+    } // function _preOutput
     /**
      * Compare two array by keys
      * @param array $aArray1
@@ -323,7 +370,7 @@ abstract class html extends \fan\core\block\base
             if (!isset($aArray1[$k]) && !isset($aArray2[$k])) {
                 continue;
             }
-            if (@$aArray1[$k] != @$aArray2[$k]) {
+            if (!isset($aArray1[$k]) || !isset($aArray2[$k]) || $aArray1[$k] != $aArray2[$k]) {
                 return false;
             }
         }

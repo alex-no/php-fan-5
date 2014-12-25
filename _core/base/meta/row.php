@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class row extends \fan\core\base\data
 {
@@ -56,13 +56,32 @@ class row extends \fan\core\base\data
 
     // ======== Main Interface methods ======== \\
 
-    public function makeData($aData)
+    /**
+     * Make new row of Meta-data
+     * @param array $aData
+     * @return array
+     */
+    public function makeData(array $aData)
     {
         $aRet = array();
         foreach ($aData as $k => $v) {
             $aRet[$k] = is_array($v) ? new \fan\project\base\meta\row($this->oMaker, $v, $this, $k) : $v;
         }
         return $aRet;
+    }
+
+    /**
+     * Merge Meta-data with current
+     * @param array $aData
+     * @param type $bRewriteExisting
+     * @return \fan\core\base\meta\row
+     */
+    public function mergeData(array $aData, $bRewriteExisting = true)
+    {
+        foreach ($aData as $k => $v) {
+            $this->set($k, $v, $bRewriteExisting);
+        }
+        return $this;
     }
 
     // ======== Private/Protected methods ======== \\

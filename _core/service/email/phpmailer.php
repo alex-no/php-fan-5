@@ -13,13 +13,12 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class phpmailer extends \PHPMailer
 {
     /**
      * Constructor
-     * @param array $aConfig Configuration data
      */
     public function __construct()
     {
@@ -32,8 +31,8 @@ class phpmailer extends \PHPMailer
 
     /**
      * Set Facade
-     * @param \fan\core\base\service $oFacade
-     * @return \fan\core\service\database\base
+     * @param \fan\core\service\email $oFacade
+     * @return \fan\core\service\email\phpmailer
      */
     public function setFacade(\fan\core\base\service $oFacade)
     {
@@ -86,13 +85,13 @@ class phpmailer extends \PHPMailer
      * @param string $sEmailFrom FROM address
      * @param string $sNameFrom FROM name
      */
-    public function setFrom($sEmailFrom, $sNameFrom = '')
+    public function setFromEng($sEmailFrom, $sNameFrom = '')
     {
         $this->From = $sEmailFrom;
         if ($sNameFrom) {
             $this->FromName = $sNameFrom;
         }
-    } // function setFrom
+    } // function setFromEng
 
     /**
      * Send Email
@@ -103,7 +102,7 @@ class phpmailer extends \PHPMailer
      * @param bool $bIsHtml True if the email send as HTML
      * @return string Result of the operation, True if all ok
      */
-    public function send($sSubj, $sBody, $sEmailTo, $sNameTo = '', $bIsHtml = false)
+    public function sendEng($sSubj, $sBody, $sEmailTo, $sNameTo = '', $bIsHtml = false)
     {
         $this->AddAddress($sEmailTo, $sNameTo);
         $this->Subject  = trim($sSubj);
@@ -116,6 +115,6 @@ class phpmailer extends \PHPMailer
         $this->ClearAddresses();
         $this->ClearAttachments();
         return $bRet;
-    } // function send
+    } // function sendEng
 } // class \fan\core\service\email\phpmailer
 ?>

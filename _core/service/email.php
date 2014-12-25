@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class email extends \fan\core\base\service\multi
 {
@@ -48,7 +48,8 @@ class email extends \fan\core\base\service\multi
 
             if (!empty($oConfig->FROM_EMAIL)) {
                 $oLng = \fan\project\service\locale::instance();
-                $sKey = 'FROM_NAME' . ($oLng->isEnabled() ? '_' . $oLng->get() : '');
+                /* @var $oLng \fan\core\service\locale */
+                $sKey = 'FROM_NAME' . ($oLng->isEnabled() ? '_' . $oLng->getLanguage() : '');
                 if (empty($oConfig->$sKey)) {
                     $sKey = 'FROM_NAME';
                 }
@@ -66,8 +67,8 @@ class email extends \fan\core\base\service\multi
     {
         $sClassName = __CLASS__;
         if (is_null($sInstName)) {
-            $aConfig = service('config')->get($sClassName);
-            $sInstName = @$aConfig['DEFAULT_NAME'] ? $aConfig['DEFAULT_NAME'] : 'DEFAULT_EMAIL_NAME';
+            $oConfig = service('config')->get(get_class_name($sClassName));
+            $sInstName = empty($oConfig['DEFAULT_NAME']) ? 'DEFAULT_EMAIL_NAME' : $oConfig['DEFAULT_NAME'];
         }
         if (!isset(self::$aInstances[$sInstName])) {
             self::$aInstances[$sInstName] = new $sClassName($sInstName);
@@ -83,7 +84,7 @@ class email extends \fan\core\base\service\multi
     public function setFrom($sEmailFrom, $sNameFrom = '')
     {
         if ($this->isEnabled()) {
-            $this->oEngine->setFrom($sEmailFrom, $this->_recodingText($sNameFrom, 'NAME_RECODING'));
+            $this->oEngine->setFromEng($sEmailFrom, $this->_recodingText($sNameFrom, 'NAME_RECODING'));
         } // check enabling status
     } // function setFrom
 
@@ -169,7 +170,7 @@ class email extends \fan\core\base\service\multi
      */
     public function send($sSubj, $sBody, $sEmailTo, $sNameTo = '', $bIsHtml = false)
     {
-        return $this->isEnabled() ? $this->oEngine->send($this->_recodingText($sSubj, 'SUBJECT_RECODING'), $this->_recodingText($sBody, 'BODY_RECODING'), $sEmailTo, $this->_recodingText($sNameTo, 'NAME_RECODING'), $bIsHtml) : null;
+        return $this->isEnabled() ? $this->oEngine->sendEng($this->_recodingText($sSubj, 'SUBJECT_RECODING'), $this->_recodingText($sBody, 'BODY_RECODING'), $sEmailTo, $this->_recodingText($sNameTo, 'NAME_RECODING'), $bIsHtml) : null;
     } // function send
 
     /**
@@ -228,7 +229,7 @@ class email extends \fan\core\base\service\multi
         if (!$sFullPath) {
             return null;
         }
-        $sContent = @file_get_contents($sFullPath);
+        $sContent = is_readable($sFullPath) ? file_get_contents($sFullPath) : '';
         if (!$sContent) {
             return null;
         }
@@ -258,11 +259,11 @@ class email extends \fan\core\base\service\multi
     protected function _checkFilename(&$sTemplateName)
     {
         $aDir = array('');
-        if (@$this->aConfig['EMAIL_DIR']) {
-            $aDir[] = \bootstrap::parsePath($this->aConfig['EMAIL_DIR']);
+        if ($this->oConfig['EMAIL_DIR']) {
+            $aDir[] = \bootstrap::parsePath($this->oConfig['EMAIL_DIR']);
         }
 
-        $sEmailExt = $this->aConfig['EMAIL_TPL_EXT'];
+        $sEmailExt = $this->oConfig['EMAIL_TPL_EXT'];
         if(substr($sTemplateName, -strlen($sEmailExt)) == $sEmailExt) {
             $sTemplateName = substr($sTemplateName, 0, -strlen($sEmailExt));
         }

@@ -3,7 +3,7 @@
  * index block
  * @version 05.02.001 (10.03.2014)
  */
-class index extends \fan\project\block\form\usual
+class index extends \fan\project\block\form\injector
 {
     public function init()
     {

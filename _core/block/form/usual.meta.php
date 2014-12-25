@@ -15,7 +15,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 return array(
     /**
@@ -32,12 +32,7 @@ return array(
          * form parameters
          */
         'form' => array(
-            'action_method'     => 'POST',
-            'request_type'      => 'P',
-
-            'redirect_required' => true,
-
-            'csrf_protection' => 8,
+            'action_method' => 'POST',
 
             'js_url' => array(
                 'js-wrapper' => '/js/js-wrapper.js',
@@ -46,9 +41,6 @@ return array(
             ),
             'js_validator'  => 'form_validation',
             'js_err_format' => 'alert',
-
-            'required_msg'     => 'ERROR_FIELD_IS_REQUIRED',
-            'required_msg_alt' => 'Field "{combi_part}" is required to be filled!',
 
             'formNumber' => 10,
 

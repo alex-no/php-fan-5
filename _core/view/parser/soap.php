@@ -12,18 +12,18 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class soap extends \fan\core\view\parser
 {
     // ======== Static methods ======== \\
     /**
-     * Get View-type
+     * Get View-Format
      * @return string
      */
-    final static public function getType() {
+    final static public function getFormat() {
         return 'soap';
-    } // function getType
+    } // function getFormat
 
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\

@@ -12,26 +12,29 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @abstract
  */
 abstract class row extends \fan\core\base\model\spec_file\row
 {
 
     /**
-     * @var template_image Object of Image-template
+     * Object of Image-template
+     * @var \fan\core\service\template\type\image[]
      */
     private static $oTemplate = array();
 
     /**
      * Get template of image
-     * @return template_image
+     * @return \fan\core\service\template\type\image
      */
-    private static function getTemplate($sEntityName)
+    protected function getTemplate()
     {
+        $sEntityName = $this->getEntity()->getName();
         if (!isset(self::$oTemplate[$sEntityName])) {
-            $sTemplatePath = \bootstrap::parsePath(ge($sEntityName)->getConfig('TEMPLATE_PATH', '{PROJECT}/special_templates/show_image.tpl'));
-            self::$oTemplate[$sEntityName] = service('template')->get($sTemplatePath, 'template_image');
+            $sSrcPath      = $this->getConfig('TEMPLATE_PATH', '{PROJECT}/data/special_templates/show_image.tpl');
+            $sTemplatePath = \bootstrap::parsePath($sSrcPath);
+            self::$oTemplate[$sEntityName] = service('template')->get($sTemplatePath, '\fan\core\service\template\type\image');
         }
         return self::$oTemplate[$sEntityName];
     }// function getTemplate
@@ -108,7 +111,7 @@ abstract class row extends \fan\core\base\model\spec_file\row
      */
     public function rotateImage($nAngle, $nBgrColor = 0xFFFFFF, $nFix = 0)
     {
-        $oSI = service('image', $this->getEntityFile()->getFilePath());
+        $oSI = service('image_modify', $this->getEntityFile()->getFilePath());
         $oSI->rotate($nAngle, $nBgrColor, $nFix);
         $oSI->saveAndReplace(null);
         $this->saveImage();
@@ -237,7 +240,7 @@ abstract class row extends \fan\core\base\model\spec_file\row
      */
     protected function fetchHtml($sType, $aParam)
     {
-        $oTemplate = self::getTemplate(get_class($this));
+        $oTemplate = $this->getTemplate();
         $oTemplate->setBaseParam($aParam);
         $oTemplate->assign('img_type', $sType);
         return $oTemplate->fetch();
@@ -333,5 +336,5 @@ abstract class row extends \fan\core\base\model\spec_file\row
         $aParam['height'] = $nHeight;
     } // function resizeImage
 
-} // class \fan\core\base\model\spec_file\image\entity
+} // class \fan\core\base\model\spec_file\image\row
 ?>

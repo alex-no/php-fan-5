@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class number extends base
 {
@@ -70,8 +70,8 @@ class number extends base
     public function equalTo($mValue, $aData)
     {
         $mValue2 = null;
-        if (isset($aData['compare_field'])) {
-            $mValue2 = array_val($this->aFieldValue, $aData['compare_field']);
+        if (!empty($aData['compare_field'])) {
+            $mValue2 = $this->oFacade->getFieldValue($aData['compare_field']);
         }
         return $mValue == $mValue2;
     } // function equalTo

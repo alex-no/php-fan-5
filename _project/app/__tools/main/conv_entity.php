@@ -3,7 +3,7 @@
  * Covert entity from old to new format
  * @version 05.02.001 (10.03.2014)
  */
-class conv_entity extends \fan\project\block\form\usual
+class conv_entity extends \fan\project\block\form\injector
 {
 
     /**
@@ -39,7 +39,7 @@ class conv_entity extends \fan\project\block\form\usual
     /**
      *
      */
-    public function onSubmit()
+    protected function onSubmit()
     {
         $oForm = $this->getForm();
         $this->sDstDir = rtrim($oForm->getFieldValue('dest_dir'), '/\\') . '/';

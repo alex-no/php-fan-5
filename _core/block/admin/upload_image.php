@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class upload_image extends base
 {
@@ -64,7 +64,7 @@ class upload_image extends base
             $h = $this->getMeta(array('max_size', 'height'));
 
             $nColor = $this->getMeta('b_color', 0XFFFFFF);
-            $oImg = service('image', $this->aImage['tmp_name']);
+            $oImg = service('image_modify', $this->aImage['tmp_name']);
             if ($par[0] > $w || $par[1] > $h) {
                 $oImg->scal($w, $h, $this->getMeta('mode', 1), $nColor);
             } elseif ($this->getMeta('allow_relocate', false)) {
@@ -98,33 +98,33 @@ class upload_image extends base
         }
         $aLink = $this->getMeta('link_table');
 
-        $oMainEtt = null;
-        if (!$this->checkMainTableId($oMainEtt, $aData, $aMain, $aLink)) {
+        $oMainRow = null;
+        if (!$this->checkMainTableId($oMainRow, $aData, $aMain, $aLink)) {
             $this->setText('Incorrect main table ID');
             return;
         }
 
         if ($aLink) {
-            if (!$this->checkLinkTableId($oLinkEtt, $aData, $aMain, $aLink)) {
+            if (!$this->checkLinkTableId($oLinkRow, $aData, $aMain, $aLink)) {
                 $this->setText('Incorrect link table ID');
                 return;
             }
         } else {
-            $oLinkEtt = null;
+            $oLinkRow = null;
         }
 
         $oImg = $this->_getRow($this->_getEttImageName(), @$aData['imgId']);
         if ($aData['op'] == 'dl' && !empty($aData['imgId'])) { // Operation: Delete
-            $this->operationDeleteImage($aData, $oMainEtt, $oLinkEtt, $oImg, $aMain, $aLink);
+            $this->operationDeleteImage($aData, $oMainRow, $oLinkRow, $oImg, $aMain, $aLink);
         } elseif ($aData['op'] == 'ul' && $this->aImage) { // Operation: Upload
-            $this->operationUploadImage($aData, $oMainEtt, $oLinkEtt, $oImg, $aMain, $aLink);
+            $this->operationUploadImage($aData, $oMainRow, $oLinkRow, $oImg, $aMain, $aLink);
         } elseif ($aData['op'] == 'sa' && !empty($aData['imgId'])) { // Operation: Set attributes
             $this->operationSetAttributes($aData, $oImg);
         }
 
         $this->setJson(array(
             'data'    => empty($aData['line']) ?
-                    $this->getImageOneData($oMainEtt, $aMain, $aLink):
+                    $this->getImageOneData($oMainRow, $aMain, $aLink):
                     $this->getImageLineData($aData, $aLink),
             'refresh' => $aData['op'] != 'ad' && $aData['op'] != 'sa',
             'op'      => $aData['op'],
@@ -136,19 +136,21 @@ class upload_image extends base
     /**
      * Operation: Delete Image
      * @param array $aData
-     * @param entity_base $oMainEtt
-     * @param entity_base $oLinkEtt
-     * @param entity_image $oImg
+     * @param \fan\core\base\model\row $oMainRow
+     * @param \fan\core\base\model\row $oLinkRow
+     * @param \fan\core\base\model\spec_file\image\row $oImg
      * @param array $aMain
      * @param array $aLink
      */
-    public function operationDeleteImage(&$aData, $oMainEtt, $oLinkEtt, $oImg, $aMain, $aLink)
+    public function operationDeleteImage(&$aData, $oMainRow, $oLinkRow, $oImg, $aMain, $aLink)
     {
         if ($oImg->checkIsLoad()) {
             if ($aLink) {
-                $oLinkEtt->delete();
+                $oLinkRow->delete();
+                $oLinkRow->getEntity()->getConnection()->commit();
             } else {
-                $oMainEtt->setFields(array($aMain['img_id'] => null), true);
+                $oMainRow->setFields(array($aMain['img_id'] => null), true);
+                $oMainRow->getEntity()->getConnection()->commit();
             }
             $oImg->delete($this->_getEttImageName(), $aData['imgId']);
         }
@@ -157,21 +159,22 @@ class upload_image extends base
     /**
      * Operation: Upload Image
      * @param array $aData
-     * @param entity_base $oMainEtt
-     * @param entity_base $oLinkEtt
-     * @param entity_image $oImg
+     * @param \fan\core\base\model\row $oMainRow
+     * @param \fan\core\base\model\row $oLinkRow
+     * @param \fan\core\base\model\spec_file\image\row $oImg
      * @param array $aMain
      * @param array $aLink
      */
-    public function operationUploadImage(&$aData, $oMainEtt, $oLinkEtt, $oImg, $aMain, $aLink)
+    public function operationUploadImage(&$aData, $oMainRow, $oLinkRow, $oImg, $aMain, $aLink)
     {
         $oReq = service('request');
         $oImg->setFormFile('image', array(), $oReq->get('description', 'P', ''), $oReq->get('alt_txt', 'P', ''));
         if ($oImg->checkIsLoad() && !@$aData['imgId']) {
+            $oImg->getEntity()->getConnection()->commit();
             if ($aLink) {
-                $oLinkEtt->setFields(array($aLink['main_id'] => $aData['mId'], $aLink['img_id'] => $oImg->getId()), true);
+                $oLinkRow->setFields(array($aLink['main_id'] => $aData['mId'], $aLink['img_id'] => $oImg->getId()), true);
             } else {
-                $oMainEtt->setFields(array($aMain['img_id'] => $oImg->getId()), true);
+                $oMainRow->setFields(array($aMain['img_id'] => $oImg->getId()), true);
             }
         }
     } // function operationUploadImage
@@ -179,8 +182,8 @@ class upload_image extends base
     /**
      * Operation: Set Attributes
      * @param array $aData
-     * @param entity_base $oLinkEtt
-     * @param entity_image $oImg
+     * @param \fan\core\base\model\row $oLinkRow
+     * @param \fan\core\base\model\spec_file\image\row $oImg
      * @param array $aMain
      * @param array $aLink
      */
@@ -197,29 +200,29 @@ class upload_image extends base
     /**
      * Check Main Table Id
      */
-    public function checkMainTableId(&$oMainEtt, &$aData, $aMain, $aLink)
+    public function checkMainTableId(&$oMainRow, &$aData, $aMain, $aLink)
     {
-        $oMainEtt = $this->_getRow($aMain['entity'], @$aData['mId']);
+        $oMainRow = $this->_getRow($aMain['entity'], @$aData['mId']);
         if (@$aData['imgId'] && !$aLink) {
             $sMethod = 'get_' . $aMain['img_id'];
-            return $oMainEtt->$sMethod(null, true) == $aData['imgId'];
+            return $oMainRow->$sMethod(null, true) == $aData['imgId'];
         }
-        return $oMainEtt->checkIsLoad();
+        return $oMainRow->checkIsLoad();
     } // function checkMainTableId
 
     /**
      * Check Link Table Id
      */
-    public function checkLinkTableId(&$oLinkEtt, &$aData, $aMain, $aLink)
+    public function checkLinkTableId(&$oLinkRow, &$aData, $aMain, $aLink)
     {
         if (!@$aData['imgId']) {
-            $oLinkEtt = $this->_getRow($aLink['entity']);
+            $oLinkRow = $this->_getRow($aLink['entity']);
             return true;
         } else {
-            $oLinkEtt = $this->_getRow($aLink['entity'], array($aLink['main_id'] => $aData['mId'], $aLink['img_id'] => $aData['imgId']));
-            return $oLinkEtt->checkIsLoad();
+            $oLinkRow = $this->_getRow($aLink['entity'], array($aLink['main_id'] => $aData['mId'], $aLink['img_id'] => $aData['imgId']));
+            return $oLinkRow->checkIsLoad();
         }
-    } // function checkMainTableId
+    } // function checkLinkTableId
 
     /**
      * Get Image Line Data
@@ -242,14 +245,14 @@ class upload_image extends base
     /**
      * Get Image Data
      */
-    public function getImageOneData($oMainEtt, $aMain, $aLink)
+    public function getImageOneData($oMainRow, $aMain, $aLink)
     {
         if ($aLink) {
             $aLstId = $this->_getEntity($aLink['entity'])->getRowsetByParam($aLink['main_id'])->getColumn($aLink['img_id']);
             return $this->getImageData(@$aLstId[0]);
         } else {
             $sMethod = 'get_' . $aMain['img_id'];
-            return $this->getImageData($oMainEtt->$sMethod());
+            return $this->getImageData($oMainRow->$sMethod());
         }
     } // function getImageOneData
 

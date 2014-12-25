@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -331,7 +331,7 @@ class row implements \ArrayAccess, \Serializable
                 $aInfo = $this->_getFullFieldsInfo();
                 $mKeys = empty($aInfo) ? array() : array_keys($aInfo);
             }
-        } elseif (!is_array($mKeys) && (!is_object($mKeys) || !$mKeys instanceof \ArrayAccess)) {
+        } elseif (!is_array_alt($mKeys)) {
             if (!is_scalar($mKeys)) {
                 throw new fatalException($this->getEntity(), 'Incorrect Field Keys.');
             }
@@ -399,7 +399,7 @@ class row implements \ArrayAccess, \Serializable
             $oErr->logErrorMessage('Linked entity for field "' . $sByField . '" is not found', $sErrHeader);
             return null;
         }
-        return $oTopEtt->getRowByParam(array($v['field'] => $mVal));
+        return $oTopEtt->getRowByParam(array($v['ref_field'] => $mVal));
     } // function getTopRow
 
     /**
@@ -680,7 +680,7 @@ class row implements \ArrayAccess, \Serializable
 
             //ToDo: if ($this->bCacheIt) {}
         } elseif ($this->bShowError) {
-            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t inserted.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . print_r($aAdjParam, true));
+            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t inserted.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . var_export($aAdjParam, true));
         }
         return $this;
     } // function _insertRow
@@ -713,7 +713,7 @@ class row implements \ArrayAccess, \Serializable
         if (!$sErrMsg) {
             $this->aChanged = array();
         } elseif ($this->bShowError) {
-            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t updated.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . print_r($aAdjParam, true));
+            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t updated.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . var_export($aAdjParam, true));
         }
         return $this;
     } // function _updateRow
@@ -881,7 +881,7 @@ class row implements \ArrayAccess, \Serializable
             throw new fatalException($this->getEntity(), 'This instance has been created for UPDATE DB-row. You can\'t read "' . $sFieldName . '" because it contains wrong value now! ');
         }
         if (!array_key_exists($sFieldName, $this->aData)) {
-            throw new fatalException($this->getEntity(), 'Call for unset field "' . $sFieldName . '"! ' . "\n Exist fields:" . print_r($this->aData, true));
+            throw new fatalException($this->getEntity(), 'Call for unset field "' . $sFieldName . '"! ' . "\n Exist fields:" . var_export($this->aData, true));
         }
     } // function _checkGetWrongValue
 

@@ -33,6 +33,8 @@ return array(
             // ....
         ),
 
+        'useMainPage' => true OR false, // NR. Allow for additional content data to use Main pager
+
         'addParam' => array( // NR. Add parameters
             'mainConditionKey' => 'key_name', // NR. Now it is used for show image
             'select' =>array( // For tags: select, radio-group, checkbox-group

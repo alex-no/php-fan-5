@@ -14,7 +14,7 @@
  * @author: Alexandr Nosov (alex@4n.com.ua)
  * @version of file: 05.02.001 (10.03.2014)
  */
-class request_password extends \fan\project\block\form\usual
+class request_password extends \fan\project\block\form\injector
 {
     /**
      * Current User
@@ -46,7 +46,7 @@ class request_password extends \fan\project\block\form\usual
         return $this->oUser->isValid();
     }
 
-    public function onSubmit()
+    protected function onSubmit()
     {
         if (!empty($this->oUser)) {
             $this->oUser->setCurrent();

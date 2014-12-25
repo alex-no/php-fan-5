@@ -3,9 +3,8 @@
  * counter_submenu block for tools
  * @version 05.02.001 (10.03.2014)
  */
-class counter_submenu extends \fan\project\block\base
+class counter_submenu extends \fan\project\block\common\simple
 {
-
     /**
      * @var string Main key element
      */
@@ -17,9 +16,9 @@ class counter_submenu extends \fan\project\block\base
     {
         $oTab = $this->oTab;
 
-        $aMainRequest = $oTab->getMainRequest();
+        $aMainRequest = $this->getRequest()->getAll('M');;
         $this->sMainKey = $aMainRequest[0];
-        $sCurrent = @$aMainRequest[1];
+        $sCurrent = array_val($aMainRequest, 1);
 
         $this->view->sCurrent = $sCurrent;
     }
@@ -30,9 +29,9 @@ class counter_submenu extends \fan\project\block\base
      * @param string $sAddUrl
      * @return string
      */
-    public function getMenuUrl($sKey, $sAddUrl = "")
+    public function getMenuUrl($sKey, $sAddUrl = '')
     {
-        return $this->oTab->getURI("/" . $this->sMainKey . "/" . $sKey . $sAddUrl . ".html", "link", null, null);
+        return $this->oTab->getURI('~/' . $this->sMainKey . '/' . $sKey . $sAddUrl . '.html', 'link', null, null);
     }
 
 } // class \fan\app\__tools\design\counter_submenu

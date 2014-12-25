@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class log extends \fan\core\base\service\single
 {
@@ -148,9 +148,9 @@ class log extends \fan\core\base\service\single
      */
     protected function _setNewData($mData, $nDataDepth)
     {
-        $bIsEntity = is_object($mData) && is_subclass_of($mData, 'entity_base');
+        $bIsRow = is_object($mData) && is_subclass_of($mData, '\fan\core\base\model\row');
         $aDtEl = array(
-            'type'  => $bIsEntity ? get_class($mData) . ':' : (is_object($mData) ? 'object:' . get_class($mData) : gettype($mData)),
+            'type'  => $bIsRow ? get_class($mData) . ':' : (is_object($mData) ? 'object:' . get_class($mData) : gettype($mData)),
         );
 
         if (is_null($mData)) {
@@ -162,7 +162,7 @@ class log extends \fan\core\base\service\single
                 $aDtEl['singular'] = is_array($mData) ? 'array[' . count($mData) . ']' : 'object:' . get_class($mData);
             } else {
                 $aDtEl['multiple'] = array();
-                if ($bIsEntity) {
+                if ($bIsRow) {
                     foreach ($mData->getDebugInfo() as $k => $v) {
                         $aDtEl['multiple'][$k] = $this->_setNewData($v, $nDataDepth);
                     }
@@ -177,7 +177,7 @@ class log extends \fan\core\base\service\single
                 }
             }
         } else {
-            $aDtEl['singular'] = $this->_checkIncorrectSymbol(print_r($mData, true), 'any_var', 4096);
+            $aDtEl['singular'] = $this->_checkIncorrectSymbol(var_export($mData, true), 'any_var', 4096);
         }
 
         return $aDtEl;
@@ -235,7 +235,7 @@ class log extends \fan\core\base\service\single
                     } elseif (is_object($arg)) {
                         $s = 'Object:' . get_class($arg);
                     } else {
-                        $s = $this->_checkIncorrectSymbol(print_r($arg, true), 'argument', 128);
+                        $s = $this->_checkIncorrectSymbol(var_export($arg, true), 'argument', 128);
                     }
                     $aCall['arg'][] = array(gettype($arg), str_replace ('&', '&amp;',$s));
                 }

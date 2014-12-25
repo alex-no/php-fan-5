@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class role extends \fan\core\base\service\single
 {
@@ -293,7 +293,7 @@ class role extends \fan\core\base\service\single
             return true;
         }
         if (!is_string($sRolesRule)) {
-            \fan\project\service\error::instance()->error_message(print_r($sRolesRule, false), 'Role is not string');
+            \fan\project\service\error::instance()->error_message(var_export($sRolesRule, false), 'Role is not string');
             return false;
         }
         $bRet = false;

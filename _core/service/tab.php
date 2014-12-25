@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -42,7 +42,7 @@ class tab extends \fan\core\base\service\single
      * @var array
      */
     protected $aDelegateRule = array(
-        'urlMaker' => array('isUseHttps', 'getCurrentURI', 'getURI', 'addQuery', 'getDefaultExtension'),
+        'urlMaker' => array('isUseHttps', 'getCurrentURI', 'getModifiedCurrentURI', 'getURI', 'addQuery', 'getDefaultExtension'),
     );
 
     /**
@@ -395,6 +395,16 @@ class tab extends \fan\core\base\service\single
     } // function getTabBlock
 
     /**
+     * Check: Is Tab Block object
+     * @param sting $sBlockName - name of block
+     * @return boolean
+     */
+    public function isSetBlock($sBlockName)
+    {
+        return isset($this->aBlocks[$sBlockName]);
+    } // function isSetBlock
+
+    /**
      * Get Stage of Tab processing
      * @return string
      */
@@ -483,7 +493,8 @@ class tab extends \fan\core\base\service\single
         do {
             try {
                 // Preparing Tab-property. Parse error of request and set Main block
-                $this->_resetProperty()
+                $this->_checkAlias()
+                     ->_resetProperty()
                      ->_parseError();
 
                 if (empty($this->mContent)) {
@@ -521,7 +532,68 @@ class tab extends \fan\core\base\service\single
             $sTrList .= "\n" . $v['source'];
         }
         throw new fatalException($this, 'To many transfers: ' . $sTrList);
-    }
+    } // function _controlTabTransfer
+
+    /**
+     * Check Aliases before defime main_request and add_request
+     * @return \fan\core\service\tab
+     */
+    protected function _checkAlias()
+    {
+        if ($this->oMatcher->getCurrentIndex() == 0) {
+            $aReqData   = $this->oMatcher->getCurrentItem()->getParsedSrc();
+            $sAliasFile = \bootstrap::parsePath($this->getConfig('ALIAS_FILE_PATH', '{PROJECT}/data/url_alias.php'));
+            if (!empty($aReqData) && is_readable($sAliasFile)) {
+                $aAliasData = include $sAliasFile;
+                if (!empty($aAliasData)) {
+                    $sReqPath = '/' . implode('/', $aReqData);
+                    array_unshift($aReqData, $sReqPath);
+                    $sPrev = '';
+                    foreach ($aReqData as $k => $v) {
+                        // Define $sCheck
+                        if (empty($k)) {
+                            $sCheck = $v;
+                        } else {
+                            $sCheck = $sPrev . '/' . $v . '/*';
+                            $sPrev .= '/' . $v;
+                        }
+
+                        if (isset($aAliasData[$sCheck])) {
+                            // Define $sDestPath
+                            @list($Type, $sDestPath) = explode(':', $aAliasData[$sCheck], 2);
+                            if (!empty($Type) && empty($sDestPath)) {
+                                $sDestPath = $Type;
+                                $Type = 'sham';
+                            }
+                            if ($k) {
+                                if (substr($sDestPath, -1) != '/') {
+                                    $sDestPath .= '/';
+                                }
+                                $sDestPath .= substr($sReqPath, strlen($sCheck) - 1);
+                            }
+
+                            // Validate data
+                            if (empty($Type) || !in_array($Type, array('out', 'int', 'sham'))) {
+                                throw new fatalException($this, 'Alias transfer type has incorrect value "' . $Type . '" for request "' . $sReqPath . '".');
+                            }
+                            if (empty($sDestPath)) {
+                                throw new fatalException($this, 'Alias transfer doesn\'t have path for "' . $sReqPath . '".');
+                            }
+                            if (!is_string($sDestPath)) {
+                                throw new fatalException($this, 'Alias transfer has icorrect path for "' . $sReqPath . '".');
+                            }
+
+                            if (substr($sDestPath, -1) != '/') {
+                                $sDestPath = $this->_getPathWithExt($sDestPath);
+                            }
+                            call_user_func('transfer_' . $Type, $sDestPath);
+                        }
+                    }
+                }
+            }
+        }
+        return $this;
+    } // function _checkAlias
 
     /**
      * Reset Tab property for new content
@@ -554,6 +626,15 @@ class tab extends \fan\core\base\service\single
     {
         $aMainRequest = $this->aLastData['main_request'];
         if (empty($aMainRequest) && (empty(self::$aErrTransfer) || end(self::$aErrTransfer) == 404)) {
+            $aTransferor = $this->getConfig('transferor');
+            if (!empty($aTransferor)) {
+                if (!is_array_alt($aTransferor)) {
+                    throw new fatalException($this, 'Point transferor isn\'t array.');
+                }
+                foreach ($aTransferor as $sClass) {
+                    call_user_func(array($sClass, 'checkRequest'), $this->aLastData['src_path'], $this->aLastData['app_prefix']);
+                }
+            }
             $this->mContent = $this->_parseError404(false);
             return $this;
         }
@@ -695,7 +776,7 @@ class tab extends \fan\core\base\service\single
     {
         $nDebugMode = $this->_getDebugMode();
         if ($nDebugMode > 0) {
-            $sClass = '\fan\project\view\parser\\' . ($nDebugMode == 1 && $this->oMainBlock->getViewType() == 'html' ? 'debug1' : 'debug2');
+            $sClass = '\fan\project\view\parser\\' . ($nDebugMode == 1 && $this->oMainBlock->getViewFormat() == 'html' ? 'debug1' : 'debug2');
         } else {
             $sClass = $this->getViewClass();
             if ($this->isDebugAllowed()) {
@@ -764,6 +845,12 @@ class tab extends \fan\core\base\service\single
         if (!empty($aDefaultMeta) && is_object($aDefaultMeta)) {
             $aDefaultMeta = method_exists($aDefaultMeta, 'toArray') ? $aDefaultMeta->toArray() : array();
         }
+
+        $oLocale = service('locale');
+        if ($oLocale->isEnabled() && empty($aDefaultMeta['common']['tplVars']['sLng'])) {
+            $aDefaultMeta['common']['tplVars']['sLng'] = $oLocale->getLanguage();
+        }
+
         return array(
             'own'    => array_val($aDefaultMeta, 'root',   array()),
             'common' => array_val($aDefaultMeta, 'common', array()),
@@ -812,7 +899,7 @@ class tab extends \fan\core\base\service\single
         }
 
         $oFirstItem = $this->oMatcher->getItem(0);
-        trigger_error(print_r($oFirstItem->parsed->toArray(), true), E_USER_WARNING);
+        trigger_error(var_export($oFirstItem->parsed->toArray(), true), E_USER_WARNING);
 
         $oRunner = \bootstrap::getRunner();
         return $oRunner->showError(array('urn', $oFirstItem['source']['request']), 'error_404', false);
@@ -887,7 +974,7 @@ class tab extends \fan\core\base\service\single
      */
     protected function _setDefaultMeta()
     {
-        $this->aDefaultMeta = $this->getConfig(array('DEFAULT_META', $this->oMainBlock->getViewType()), array());
+        $this->aDefaultMeta = $this->getConfig(array('DEFAULT_META', $this->oMainBlock->getViewFormat()), array());
         return $this;
     } // function _setDefaultMeta
 
@@ -942,7 +1029,7 @@ class tab extends \fan\core\base\service\single
                 $v = sprintf(str_repeat(' ', $nLen - strlen($k)) . '%01.6f', $v);
             }
 
-            l('<pre style="font-family: Courier, monospace">' . htmlentities(print_r($this->aTimesStamp, true), ENT_NOQUOTES, 'UTF-8') . '</pre>', 'Estimate Performance by elements');
+            l('<pre style="font-family: Courier, monospace">' . htmlentities(var_export($this->aTimesStamp, true), ENT_NOQUOTES, 'UTF-8') . '</pre>', 'Estimate Performance by elements');
         }
     } // function _fixPerformance
 

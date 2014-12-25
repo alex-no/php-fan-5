@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class select extends base
 {
@@ -26,10 +26,10 @@ class select extends base
      */
     public function checkSelect($mValue, $aData)
     {
-        $sProp = $aData['prop_name'];
-        if (is_array($this->$sProp) && $this->$sProp) {
-            foreach ($this->$sProp as $e) {
-                if ($e->getId() == $mValue) {
+        $aFieldData = $this->oFacade->getFieldData($aData['prop_name']);
+        if (is_array($aFieldData)) {
+            foreach ($aFieldData as $v) {
+                if ($v['value'] == $mValue) {
                     return true;
                 }
             }
@@ -61,26 +61,6 @@ class select extends base
         }
         return false;
     } // function inArray
-
-    /**
-     * Check up a value from select and radio
-     *
-     * @param mixed $mValue
-     * @param array $aData
-     * @return bool
-     */
-    public function checkByData($mValue, $aData)
-    {
-        $aProp = $this->getMeta(array('form', 'fields', $aData['prop_name'], 'data'));
-        if (is_array($aProp) && $aProp) {
-            foreach ($aProp as $e) {
-                if ($e['value'] == $mValue) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    } // function checkSelectData
 
 } // class \fan\core\service\form\validator\common
 ?>

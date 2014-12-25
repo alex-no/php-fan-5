@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  *
  * @property-read string|array $primeryKey
  * @method \fan\core\service\entity\description setPrimeryKey() setPrimeryKey(array|string $mKey)
@@ -314,8 +314,10 @@ class description
     protected function _saveCacheFile()
     {
         if ($this->bCacheEnabled) {
-            $aSavedData = array('class' => get_class($this->getEntity()));
-            $aSavedData = array_merge($aSavedData, $this->aProperty);
+            $aSavedData = array_merge(
+                    array('class' => get_class_alt($this->getEntity())),
+                    $this->aProperty
+            );
             $sCacheFile = $this->_getCacheFileName();
             file_put_contents($sCacheFile, '<?php
 /*

@@ -18,7 +18,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
 class request
 {
     /**
-     * Saved data
+     * Used SQL-request
      * @var array
      */
     protected $aSQL = array();

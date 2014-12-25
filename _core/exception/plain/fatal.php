@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class fatal extends \fan\core\exception\base
 {
@@ -40,7 +40,7 @@ class fatal extends \fan\core\exception\base
 
         parent::__construct($sLogMessage, $nCode, $nCode, $oPrevious);
 
-        $this->_logByService('Plain controller fatal error (' . get_class($oController) . '). ' . $sLogMessage);
+        $this->_logByService('Plain controller fatal error (' . get_class_alt($oController) . '). ' . $sLogMessage);
     }
 
     /**
@@ -53,7 +53,7 @@ class fatal extends \fan\core\exception\base
     }
 
     /**
-     * Remove property "oBlock" before "print_r" this object
+     * Remove property "oBlock" before "var_export" this object
      */
     public function clearProperty()
     {

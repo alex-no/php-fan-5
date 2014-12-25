@@ -136,6 +136,10 @@ class upgrade_blocks extends \fan\project\block\common\simple
      */
     protected function _addNamespase($aData, $sNsPref)
     {
+        $aMatches = null;
+        if (preg_match('/^(fan\\\\app(?:\\\\[^\\\\]+){2})\\\\/', $sNsPref, $aMatches)) {
+            $sNsPref = $aMatches[1];
+        }
         $sNS = '<?php namespace ' . $sNsPref;
         foreach ($aData as $k => $v) {
             if (is_array($v)) {
@@ -241,11 +245,15 @@ class upgrade_blocks extends \fan\project\block\common\simple
                                 $sReplacement = 'gr(\'' . $sName . '\'' . (empty($p[4]) ? '' : ', ' . $p[4]) . ')' . (empty($p[5]) ? '' : $p[5]) . ';';
                             } else {
                                 $aMethods = null;
-                                if (preg_match('/^\-\>getAggr\(\)\-\>(getEntitiesSimple|getArrayHash|getArrayHashByKey|getArrayColumn|getCountByParam)\s*\(\s*(.*)\s*\)[\r\n\s]*$/s', $p[5], $aMethods)) {
+                                if (preg_match('/^\-\>getAggr\(\)\-\>(getEntitiesSimple|getOneEntityByKey|getArrayHash|getArrayHashByKey|getArrayColumn|getCountByParam)\s*\(\s*(.*)\s*\)[\r\n\s]*$/s', $p[5], $aMethods)) {
                                     $sArg = empty($aMethods[2]) ? '' : $aMethods[2];
                                     switch ($aMethods[1]) {
                                     case 'getEntitiesSimple':
                                         $sReplacement = 'ge(\'' . $sName . '\')->getRowsetByParam(' . $sArg . ');';
+                                        break;
+                                    case 'getOneEntityByKey':
+                                        $aTmp = explode(',', $sArg, 3);
+                                        $sReplacement = 'ge(\'' . $sName . '\')->getRowByKey(' . trim($aTmp[0]) . ', ' . $aTmp[1] . ', ' . ltrim($aTmp[2]) . ');';
                                         break;
                                     case 'getArrayHash':
                                         $aTmp = explode(',', $sArg, 3);
@@ -341,6 +349,10 @@ class upgrade_blocks extends \fan\project\block\common\simple
                         if (!empty($aMatches[1]) && strstr($aMatches[1], '\\')) {
                             $this->aFinalComent[1]++;
                         } else {
+                            $aMatches2 = null;
+                            if (preg_match('/^(\\\\fan\\\\app\\\\(?:[^\\\\]+\\\\){2}).+/', $sNsPref, $aMatches2)) {
+                                $sNsPref = $aMatches2[1];
+                            }
                             $sContent = str_replace($aMatches[0], '} // class ' . $sNsPref . substr($k, 0, -4) . "\n?>", $sContent);
                             $this->aContent['php'][$v] = $sContent;
                             $this->aChanged[$v] = 'php';

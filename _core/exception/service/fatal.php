@@ -47,7 +47,7 @@ class fatal extends \fan\core\exception\base
     } // function getService
 
     /**
-     * Remove property "oBlock" before "print_r" this object
+     * Remove property "oBlock" before "var_export" this object
      */
     public function clearProperty()
     {

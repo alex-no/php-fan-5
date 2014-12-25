@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class curl extends \fan\core\base\service\multi
 {
@@ -31,6 +31,11 @@ class curl extends \fan\core\base\service\multi
      * @var string URL
      */
     protected $sUrl = '';
+
+    /**
+     * @var index - for separate the same URL
+     */
+    protected $nIndex = 0;
 
     /**
      * @var array getted headers
@@ -57,15 +62,17 @@ class curl extends \fan\core\base\service\multi
     /**
      * Service's constructor
      */
-    protected function __construct($sUrl)
+    protected function __construct($sUrl, $nIndex)
     {
+        $this->nIndex = $nIndex;
+        $this->sUrl   = $sUrl;
         parent::__construct(true);
 
-        $this->sUrl  = $sUrl;
         $this->oCurl = curl_init($sUrl);
 
         $this->setOption(CURLOPT_RETURNTRANSFER, 1);
         $this->setOption(CURLOPT_HEADER, 1);
+        $this->setOption(CURLINFO_HEADER_OUT, 1);
 
         $oConf = $this->oConfig;
         if ($oConf['CURLOPT_PROXY']) {
@@ -87,53 +94,56 @@ class curl extends \fan\core\base\service\multi
 
     /**
      * Get Service's instance of current service
-     * @return service_curl
+     * @return \fan\core\service\curl
      */
-    public static function instance($sUrl = null)
+    public static function instance($sUrl, $nIndex = 0)
     {
-        if(!$sUrl) {
-            return null;
+        if (!isset(self::$aInstances[$nIndex][$sUrl])) {
+            new self($sUrl, $nIndex);
         }
-        if (!isset(self::$aInstances[$sUrl])) {
-            $sClassName = __CLASS__;
-            self::$aInstances[$sUrl] = new $sClassName($sUrl);
-        }
-        return self::$aInstances[$sUrl];
+        return self::$aInstances[$nIndex][$sUrl];
     } // function instance
 
     /**
      * Set CURL-option
      * @param integer $nKey
      * @param mixed $mVal
+     * @return \fan\core\service\curl
      */
     public function setOption($nKey, $mVal)
     {
         curl_setopt($this->oCurl, $nKey, $mVal);
+        return $this;
     } // function setOption
 
     /**
      * Set curl headers
      * @param array $aHeaders array of additional Headers
+     * @return \fan\core\service\curl
      */
     public function setHeaders($aHeaders = array())
     {
         if ($aHeaders) {
             $this->setOption(CURLOPT_HTTPHEADER, $aHeaders);
         }
+        return $this;
     } // function setHeaders
 
     /**
      * Set CURL-timeout
      * @param integer $nTimeout
+     * @return \fan\core\service\curl
      */
     public function setTimeout($nTimeout)
     {
         $this->setOption(CURLOPT_TIMEOUT, $nTimeout);
+        return $this;
     } // function setTimeout
 
     /**
      * Set CURL-Cookies
      * @param string $mCookies
+     * @return \fan\core\service\curl
      */
     public function setCookies($mCookies)
     {
@@ -149,10 +159,30 @@ class curl extends \fan\core\base\service\multi
             $sCookies = $mCookies;
         }
         $this->setOption(CURLOPT_COOKIE, $sCookies);
+        return $this;
     } // function setCookies
 
     /**
-     * Close
+     * Get CURL-Cookies
+     * @param string $mKey
+     * @return mixed
+     */
+    public function getCookies($mKey = null)
+    {
+        $aMatches = null;
+        if (preg_match_all('/(\w+)\=(.*?)\;\s*/', $this->getResponseHeaders('Set-Cookie'), $aMatches, PREG_SET_ORDER)) {
+            $aResult = array();
+            foreach($aMatches as $v){
+                $aResult[$v[1]] = $v[2];
+            }
+            return $mKey ? array_val($aResult, $mKey) : $aResult;
+        }
+        return null;
+    } // function getCookies
+
+    /**
+     * Close Curl
+     * @return \fan\core\service\curl
      */
     public function close()
     {
@@ -161,12 +191,22 @@ class curl extends \fan\core\base\service\multi
             $this->oCurl = null;
             self::$aInstances[$this->sUrl] = null;
         }
+        return $this;
     } // function close
+
+    /**
+     * Get Request-Headers
+     * @return string
+     */
+    public function getRequestHeaders()
+    {
+        return $this->getInfo(CURLINFO_HEADER_OUT);
+    } // function getRequestHeaders
 
     /**
      * Get curl information
      * @param number $nOption
-     * @return unknown
+     * @return mixed
      */
     public function getInfo($nOption = null)
     {
@@ -222,7 +262,13 @@ class curl extends \fan\core\base\service\multi
             foreach (explode($sSeparator, $sHeaders1 . $sHeaders) as $v0) {
                 if (strstr($v0, ':')) {
                     list($k, $v) = explode(':', $v0, 2);
-                    $this->aHeaders[trim($k)] = trim($v);
+                    $k = trim($k);
+                    if (!isset($this->aHeaders[$k])) {
+                        $this->aHeaders[$k] = '';
+                    } else {
+                        $this->aHeaders[$k] .= '; ';
+                    }
+                    $this->aHeaders[$k] .= trim($v);
                 } elseif (substr($v0, 0, 5) == 'HTTP/') {
                     $this->aHeaders['HTTP'] = trim($v0);
                 }
@@ -239,24 +285,24 @@ class curl extends \fan\core\base\service\multi
     } // function exec
 
     /**
-     * Set bSeparateResponse
-     * @return \service_curl
+     * Set Off flag bSeparateResponse
+     * @return \fan\core\service\curl
      */
-    public function setSeparateResponse()
+    public function setSeparateResponse($bSeparate = false)
     {
-        $this->bSeparateResponse = false;
+        $this->bSeparateResponse = $bSeparate;
         return $this;
     }
 
     /**
-     * Get Headers
+     * Get Response Headers
      * @param string $sKey - name of header
      * @return mixed array of headers or value of header
      */
-    public function getHeaders($sKey = null)
+    public function getResponseHeaders($sKey = null)
     {
-        return $sKey ? @$this->aHeaders[$sKey] : $this->aHeaders;
-    } // function getHeaders
+        return $sKey ? array_val($this->aHeaders, $sKey) : $this->aHeaders;
+    } // function getResponseHeaders
 
     /**
      * Get Content (result of CURL-request)
@@ -266,6 +312,18 @@ class curl extends \fan\core\base\service\multi
     {
         return $this->sContent;
     } // function getContent
+
+    // ======== Private/Protected methods ======== \\
+
+    /**
+     * Save service's Instance
+     * @return \fan\core\service\curl
+     */
+    protected function _saveInstance()
+    {
+        self::$aInstances[$this->nIndex][$this->sUrl] = $this;
+        return $this;
+    } // function _saveInstance
 
     /**
      * Get Separator
@@ -288,6 +346,7 @@ class curl extends \fan\core\base\service\multi
      * @param array $aOptData - Converted data
      * @param string $sKey - element key
      * @param mixed $mData - element value
+     * @return \fan\core\service\curl
      */
     protected function _convPostArray(&$aOptData, $sKey, $mData)
     {
@@ -298,6 +357,7 @@ class curl extends \fan\core\base\service\multi
                 $aOptData[$sKey . '[' . $k . ']'] = $v;
             }
         }
+        return $this;
     } // function _convPostArray
 
 } // class \fan\core\service\curl

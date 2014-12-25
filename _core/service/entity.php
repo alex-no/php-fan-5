@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class entity extends \fan\core\base\service\multi
 {
@@ -50,6 +50,21 @@ class entity extends \fan\core\base\service\multi
 
         $this->mCollection = $mCollection;
         self::$aInstances[$mCollection] = $this;
+
+        $aDelegate = $this->getConfig('delegate');
+        if (!empty($aDelegate)) {
+            if (!is_array_alt($aDelegate)) {
+                throw new fatalException($this, 'Delegate list must be as array.');
+            }
+            foreach ($aDelegate as $k => $v) {
+                if (!isset($this->aDelegateRule[$v])) {
+                    $this->aDelegateRule[$v] = array($k);
+                } else {
+                    $this->aDelegateRule[$v][] = $k;
+                }
+            }
+            $x = 1;
+        }
     } // function __construct
 
 
@@ -312,5 +327,15 @@ class entity extends \fan\core\base\service\multi
         return array_val($aData, array($sConnectionName, $sTableName));
     } // function _getNameByTable
 
+
+    /**
+     * Get delegate class
+     * @param string $sName
+     * @return \fan\core\base\model\entity
+     */
+    protected function _getDelegate($sName)
+    {
+        return $this->get($sName);
+    } // function _getDelegate
 } // class \fan\core\service\entity
 ?>

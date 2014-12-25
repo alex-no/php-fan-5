@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class date extends base
 {
@@ -29,10 +29,12 @@ class date extends base
         $mValue = str_replace(',', '.', $mValue);
 
         $oDate = \fan\project\service\date::instance($mValue);
+        /* @var $oDate \fan\core\service\date */
         if (!$oDate->isValid()) {
             return false;
         }
-        $sDate = $oDate->convertLocal2Mysql();
+
+        $sDate = $oDate->get('mysql');
         return (!isset($aData['min_value']) || $sDate >= $aData['min_value']) && (!isset($aData['max_value']) || $sDate <= $aData['max_value']);
     } // function isDate
 

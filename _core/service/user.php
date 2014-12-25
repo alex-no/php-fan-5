@@ -14,12 +14,13 @@ use \fan\project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  * @method mixed getId()
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFullName()
  * @method string getFirstName()
+ * @method string getPatronymic()
  * @method string getLastName()
  * @method string getTitle()
  * @method string getGender()
@@ -31,19 +32,20 @@ use \fan\project\exception\error500 as error500;
  * @method string getJoinDate()
  * @method string getVisitDate()
  * @method array|object getAllData()
- * @method \fan\core\service\user setLogin()     setLogin(string $sLogin)
- * @method \fan\core\service\user setNickName()  setNickName(string $sNickName)
- * @method \fan\core\service\user setFirstName() setFirstName(string $sFirstName)
- * @method \fan\core\service\user setLastName()  setLastName(string $sLastName)
- * @method \fan\core\service\user setTitle()     setTitle(string $sTitle)
- * @method \fan\core\service\user setGender()    setGender(string $sGender)
- * @method \fan\core\service\user setEmail()     setEmail(string $sEmail)
- * @method \fan\core\service\user setPhone()     setPhone(string $sPhone)
- * @method \fan\core\service\user setLocale()    setLocale(string $sLocale)
- * @method \fan\core\service\user setAddress()   setAddress(string|array $aAddress)
- * @method \fan\core\service\user setStatus()    setStatus(string $sStatus)
- * @method \fan\core\service\user setVisitDate() setVisitDate(string $sDate)
- * @method \fan\core\service\user setPassword()  setPassword(string $sPassword)
+ * @method \fan\core\service\user setLogin()      setLogin(string $sLogin)
+ * @method \fan\core\service\user setNickName()   setNickName(string $sNickName)
+ * @method \fan\core\service\user setFirstName()  setFirstName(string $sFirstName)
+ * @method \fan\core\service\user setPatronymic() setPatronymic(string $sPatronymic)
+ * @method \fan\core\service\user setLastName()   setLastName(string $sLastName)
+ * @method \fan\core\service\user setTitle()      setTitle(string $sTitle)
+ * @method \fan\core\service\user setGender()     setGender(string $sGender)
+ * @method \fan\core\service\user setEmail()      setEmail(string $sEmail)
+ * @method \fan\core\service\user setPhone()      setPhone(string $sPhone)
+ * @method \fan\core\service\user setLocale()     setLocale(string $sLocale)
+ * @method \fan\core\service\user setAddress()    setAddress(string|array $aAddress)
+ * @method \fan\core\service\user setStatus()     setStatus(string $sStatus)
+ * @method \fan\core\service\user setVisitDate()  setVisitDate(string $sDate)
+ * @method \fan\core\service\user setPassword()   setPassword(string $sPassword)
  * @method string getPassword()
  * @method boolean checkPassword(string $sPassword)
  * @method \fan\core\service\user load()
@@ -100,16 +102,16 @@ class user extends \fan\core\base\service\multi implements \Serializable
     protected $aDelegateRule = array(
         'userData' => array(
             // --- Getters method --- \\
-            'getId',                                                                     // Main identifier
-            'getLogin',    'getNickName',  'getFullName', 'getFirstName', 'getLastName', // Name data
-            'getTitle',    'getGender',                                                  // Personal data
-            'getEmail',    'getPhone',     'getLocale',   'getAddress',                  // Contact data
-            'getStatus',   /*getRoles*/                                                  // Status-role data
-            'getJoinDate', 'getVisitDate',                                               // Rating-visit data
-            'getAllData',                                                                // All above and another data
+            'getId',                                                     // Main identifier
+            'getLogin',    'getNickName',  'getFullName', 'getFirstName', 'getPatronymic', 'getLastName', // Name data
+            'getTitle',    'getGender',                                  // Personal data
+            'getEmail',    'getPhone',     'getLocale',   'getAddress',  // Contact data
+            'getStatus',   /*getRoles*/                                  // Status-role data
+            'getJoinDate', 'getVisitDate',                               // Rating-visit data
+            'getAllData',                                                // All above and another data
 
             // --- Setters method --- \\
-            'setLogin',     'setNickName', 'setFirstName', 'setLastName', // Name data
+            'setLogin',     'setNickName', 'setFirstName', 'setPatronymic', 'setLastName', // Name data
             'setTitle',     'setGender',                                  // Personal data
             'setEmail',     'setPhone',    'setLocale',    'setAddress',  // Contact data
             'setStatus',    /*setRoles*/   /*addRole*/     /*removeRole*/ // Status-role data
@@ -158,7 +160,7 @@ class user extends \fan\core\base\service\multi implements \Serializable
         }
 
         if (!isset(self::$aInstances[$sUserSpace][$mIdentifyer])) {
-            new self($mIdentifyer, $sUserSpace);
+            new \fan\project\service\user($mIdentifyer, $sUserSpace);
         }
         return self::$aInstances[$sUserSpace][$mIdentifyer];
     } // function instance
@@ -174,7 +176,7 @@ class user extends \fan\core\base\service\multi implements \Serializable
             $sField = $oUser->getConfig('LOGOUT_FIELD');
             if (!empty($sField)) {
                 $sOrder  = $oUser->getConfig('LOGOUT_ORDER', 'GP');
-                $bLogout = \fan\core\service\request::instance()->get($sField, $sOrder);
+                $bLogout = \fan\project\service\request::instance()->get($sField, $sOrder);
                 if (!empty($bLogout)) {
                     for($i = 0; $i < 100 && !empty($oUser); $i++) {
                         $oUser->logout();
@@ -431,7 +433,7 @@ class user extends \fan\core\base\service\multi implements \Serializable
 
     /**
      * Save service's Instance
-     * @return \fan\core\base\service
+     * @return \fan\core\service\user
      */
     protected function _saveInstance()
     {
@@ -491,6 +493,11 @@ class user extends \fan\core\base\service\multi implements \Serializable
         return self::$oSession;
     } // function _getSession
 
+    /**
+     * Get delegate class
+     * @param string $sClass
+     * @return object
+     */
     protected function _getDelegate($sClass)
     {
         if ($sClass == 'userData') {

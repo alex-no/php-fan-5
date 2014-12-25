@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class error extends \fan\core\base\service\single
 {
@@ -146,19 +146,19 @@ class error extends \fan\core\base\service\single
      * @param string $sErrMsg Error message
      * @param string $sFileName file name
      * @param number $nLineNum line number
-     * @param array $aErrConText An array that points to the active symbol table
+     * @param array $aErrContext An array that points to the active symbol table
      */
-    public function handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText)
+    public function handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrContext)
     {
         if (!error_reporting() || !($nErrNo & $this->nSysMask)) {
             return;
         }
 
-        $sFileName = str_replace('\\', '/', $sFileName);
+        $sLogFileName = str_replace('\\', '/', $sFileName);
         foreach ($this->aIgnorePath as $m => $v) {
             if ($nErrNo & $m) {
                 foreach ($v as $p) {
-                    if (substr($sFileName, 0, strlen($p)) == $p){
+                    if (substr($sLogFileName, 0, strlen($p)) == $p){
                         return;
                     }
                 }
@@ -173,7 +173,10 @@ class error extends \fan\core\base\service\single
             }
         }
 
-        $sMessage = in_array($nErrNo, $this->aSysErrWithoutFile) ? $sErrMsg : $sErrMsg . ' in ' . $sFileName . ' on line ' . $nLineNum;
+        //if (function_exists('mb_convert_encoding')) {
+        //    $sErrMsg  = mb_convert_encoding($sErrMsg, 'UTF-8', 'CP1251');
+        //}
+        $sMessage = in_array($nErrNo, $this->aSysErrWithoutFile) ? $sErrMsg : $sErrMsg . ' in ' . $sLogFileName . ' on line ' . $nLineNum;
         $sHeader  = isset($this->aSysErrorType[$nErrNo]) ? $this->aSysErrorType[$nErrNo] : 'Unknown system error ' . $nErrNo;
 
         if ($this->bIsSysError) {
@@ -186,9 +189,9 @@ class error extends \fan\core\base\service\single
             $this->aBufSysError[] = array(
                 'sys_err_no'          => $nErrNo,
                 'sys_err_message'     => $sErrMsg,
-                'sys_err_file_name'   => $sFileName,
+                'sys_err_file_name'   => $sLogFileName,
                 'sys_err_line_number' => $nLineNum,
-                'sys_err_context'     => $aErrConText,
+                'sys_err_context'     => $aErrContext,
                 'service_err_type'    => $sErrType,
                 'service_message'     => $sMessage,
                 'service_header'      => $sHeader
@@ -197,7 +200,7 @@ class error extends \fan\core\base\service\single
             $aNote = array();
             $t1 = '<i style="color:#999999; font-size:9px;">';
             $t2 = '</i>';
-            foreach ($aErrConText as $v) {
+            foreach ($aErrContext as $v) {
                 if (is_null($v)) {
                     $aNote[] = $t1 . 'NULL';
                 } elseif (is_bool($v)) {
@@ -356,7 +359,7 @@ class error extends \fan\core\base\service\single
             if (!empty($sNote)) {
                 $sNote .= '<br />';
             }
-            $sNote .= '$_SERVER = ' . print_r($_SERVER, true);
+            $sNote .= '$_SERVER = ' . var_export($_SERVER, true);
         }
 
         if (!$this->oServLog) {
@@ -377,9 +380,9 @@ class error extends \fan\core\base\service\single
      */
     public function makeErrorEmail($sType, $sSubject, $sMessage)
     {
-        $aConfig = $this->oConfig;
-        if (@$aConfig['MAIL_TO']) {
-            $sFile = @$aConfig['MAIL_FILE'];
+        $oConfig = $this->oConfig;
+        if ($oConfig['MAIL_TO']) {
+            $sFile = $oConfig['MAIL_FILE'];
             if (strstr($sSubject, 'fatal') === false && $sFile) {
                 $nCtime = time();
                 $sFile = \bootstrap::parsePath($sFile) . $sType . '.log.php';
@@ -397,12 +400,12 @@ class error extends \fan\core\base\service\single
                     );
                 }
 
-                if ($bFileExists && ($aData['start'] + $aConfig['SENT_TIME_LIMIT'] < $nCtime)) {
+                if ($bFileExists && ($aData['start'] + $oConfig['SENT_TIME_LIMIT'] < $nCtime)) {
                     @unlink($sFile);
                     $aData['start'] = date('d F Y H:i:s.', $aData['start']);
-                    $this->_sendErrorEmail('Packet email of ' . $sType, print_r($aData, true));
+                    $this->_sendErrorEmail('Packet email of ' . $sType, var_export($aData, true));
                 } else {
-                    file_put_contents($sFile, '<?php' . "\nreturn " . @var_export($aData, true) . ";\n" . '?>');
+                    file_put_contents($sFile, '<?php' . "\nreturn " . var_export($aData, true) . ";\n" . '?>');
                     if (!$bFileExists) {
                         @chmod($sFile, 0666);
                     }
@@ -419,12 +422,12 @@ class error extends \fan\core\base\service\single
      */
     public function sendPacketEmais()
     {
-        $aConfig = $this->oConfig;
-        if (@$aConfig['MAIL_TO'] && @$aConfig['MAIL_FILE']) {
+        $oConfig = $this->oConfig;
+        if ($oConfig['MAIL_TO'] && $oConfig['MAIL_FILE']) {
 
             $nCtime = time();
 
-            $sPath = \bootstrap::parsePath(@$aConfig['MAIL_FILE']);
+            $sPath = \bootstrap::parsePath($oConfig['MAIL_FILE']);
 
             $sDirName = dirname($sPath);
             $sPrefix = basename($sPath);
@@ -434,10 +437,10 @@ class error extends \fan\core\base\service\single
                 $sFile = $sDirName . '/' . $v;
                 if (substr($v, 0, $nLen) == $sPrefix && file_exists($sFile)) {
                     $aData = include($sFile);
-                    if ($aData['start'] + $aConfig['SENT_TIME_LIMIT'] < $nCtime) {
+                    if ($aData['start'] + $oConfig['SENT_TIME_LIMIT'] < $nCtime) {
                         @unlink($sFile);
                         $aData['start'] = date('d F Y H:i:s.', $aData['start']);
-                        $this->_sendErrorEmail('Packet email of ' . substr($v, $nLen, -8), print_r($aData, true));
+                        $this->_sendErrorEmail('Packet email of ' . substr($v, $nLen, -8), var_export($aData, true));
                     }
                 }
             }
@@ -451,13 +454,13 @@ class error extends \fan\core\base\service\single
      */
     protected function _sendErrorEmail($sSubject, $sMessage)
     {
-        $aConfig = $this->oConfig;
+        $oConfig = $this->oConfig;
         if (!$this->oServEmail) {
             $this->oServEmail = \fan\project\service\email::instance('err_message');
         }
         $this->oServEmail->clearAllRecipients();
-        if (isset($aConfig['MAIL_CC'])) {
-            foreach ($aConfig['MAIL_CC'] as $v) {
+        if (isset($oConfig['MAIL_CC'])) {
+            foreach ($oConfig['MAIL_CC'] as $v) {
                 $v = trim($v);
                 if ($v) {
                     if (strpos($v, '/') > 0) {
@@ -470,7 +473,7 @@ class error extends \fan\core\base\service\single
                 }
             }
         }
-        $this->oServEmail->send($sSubject, $sMessage, $aConfig['MAIL_TO'], @$aConfig['NAME_TO']);
+        $this->oServEmail->send($sSubject, $sMessage, $oConfig['MAIL_TO'], $oConfig['NAME_TO']);
     } // function _sendErrorEmail
 
 } // class \fan\core\service\error

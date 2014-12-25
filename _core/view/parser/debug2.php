@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.004 (25.12.2014)
  */
 class debug2 extends \fan\core\view\parser
 {
@@ -33,12 +33,12 @@ class debug2 extends \fan\core\view\parser
 
     // ======== Static methods ======== \\
     /**
-     * Get View-type
-     * @return string
+     * Get View-Format is disabled for this view
+     * @throws \fan\project\exception\error500
      */
-    final static public function getType() {
+    final static public function getFormat() {
         throw new \fan\project\exception\error500('Class "\fan\core\view\parser\debug2" can\'t be use for define View-type');
-    } // function getType
+    } // function getFormat
 
     // ======== The magic methods ======== \\
     // ======== Required Interface methods ======== \\
