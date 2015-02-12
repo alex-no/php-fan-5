@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class rest extends \fan\core\base\service\multi
 {
@@ -109,15 +109,20 @@ class rest extends \fan\core\base\service\multi
      * РЎall Post Request
      * @param string $sUrlSuffix
      * @param mixed $mData
+     * @param boolean $bFormat
      * @return mixed
      */
-    public function post($sUrlSuffix, $mData)
+    public function post($sUrlSuffix, $mData, $bFormat = 'json')
     {
         $oCurl = $this->_getCurl($sUrlSuffix);
 
-        $oCurl->setHeaders(array('Content-Type: application/json', 'charset=utf-8'));
+        if($bFormat == 'json'){
+            $oCurl->setHeaders(array('Content-Type: application/json', 'charset=utf-8'));
+            $sPost = service('json')->encode($mData);
+        } else {
+            $sPost = $mData;
+        }
         $oCurl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-        $sPost = service('json')->encode($mData);
         return $this->_getResponse($oCurl, $sPost);
     } // function _callPostRequest
 

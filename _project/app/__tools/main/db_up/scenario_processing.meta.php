@@ -1,7 +1,7 @@
 <?php
 /**
- * Index tools meta
- * @version 05.02.003 (16.04.2014)
+ * Scenario processing tools meta
+ * @version 05.02.005 (12.02.2015)
  */
 return array(
     'own' => array(
@@ -11,7 +11,7 @@ return array(
         'title' => 'Scenario processing',
 
         'externalCss' => array( // css files
-            'new'   => array('/db_up_processing.css'),
+            'style' => array('~/db_up_processing.css'),
         ),
     ),
 );

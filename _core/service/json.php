@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class json extends \fan\core\base\service\single
 {
@@ -61,7 +61,7 @@ class json extends \fan\core\base\service\single
      */
     public function encode($mSourse, $iOptions = null, $bLogError = true)
     {
-        $this->iErrorCode = null;
+        $this->iErrorCode = JSON_ERROR_NONE;
         if (is_null($iOptions)) {
             $iOptions = $this->getConfig('ENCODE_OPTIONS', 0);
         }
@@ -143,7 +143,7 @@ class json extends \fan\core\base\service\single
     } // function fromXml.
 
     /**
-     *
+     * Make string for Pretty Print JSON
      * @param type $sJson
      * @param type $sIndent
      * @return string
@@ -154,24 +154,25 @@ class json extends \fan\core\base\service\single
         $sResult  = '';
         $nIndSize = 0;
 
-        foreach($aTokens as $token) {
-            if($token == '') continue;
-
-            $prefix = str_repeat($sIndent, $nIndSize);
-            if($token == '{' || $token == '[') {
+        foreach($aTokens as $v) {
+            if ($v == '') {
+                continue;
+            }
+            $sPrefix = str_repeat($sIndent, $nIndSize);
+            if ($v == '{' || $v == '[') {
                 $nIndSize++;
                 if($sResult != '' && $sResult[strlen($sResult) - 1] == "\n") {
-                    $sResult .= $prefix;
+                    $sResult .= $sPrefix;
                 }
-                $sResult .= $token . "\n";
-            } else if($token == '}' || $token == ']') {
+                $sResult .= $v . "\n";
+            } else if($v == '}' || $v == ']') {
                 $nIndSize--;
-                $prefix = str_repeat($sIndent, $nIndSize);
-                $sResult .= "\n" . $prefix . $token;
-            } else if($token == ',') {
-                $sResult .= $token . "\n";
+                $sPrefix = str_repeat($sIndent, $nIndSize);
+                $sResult .= "\n" . $sPrefix . $v;
+            } else if($v == ',') {
+                $sResult .= $v . "\n";
             } else {
-                $sResult .= $prefix . $token;
+                $sResult .= $sPrefix . $v;
             }
         }
         return $sResult;

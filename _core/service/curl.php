@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class curl extends \fan\core\base\service\multi
 {
@@ -124,7 +124,7 @@ class curl extends \fan\core\base\service\multi
     public function setHeaders($aHeaders = array())
     {
         if ($aHeaders) {
-            $this->setOption(CURLOPT_HTTPHEADER, $aHeaders);
+            $this->setOption(CURLOPT_HTTPHEADER, adduceToArray($aHeaders));
         }
         return $this;
     } // function setHeaders

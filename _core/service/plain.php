@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class plain extends \fan\core\base\service\single
 {
@@ -91,20 +91,20 @@ class plain extends \fan\core\base\service\single
     }
 
     /**
-     * Set value of Header for current stack
+     * Add value of Header for current stack
      * @param string $sKey
      * @param string $mValue
      * @return \fan\core\service\plain
      * @throws fatalException
      */
-    public function setHeader($sKey, $mValue)
+    public function addHeader($sKey, $mValue)
     {
         if (!array_key_exists($sKey, $this->aHeaders)) {
             throw new fatalException($this, 'Unknown header key "' . $sKey . '"');
         }
         $this->aHeaders[$sKey] = $mValue;
         return $this;
-    } // function setHeader
+    } // function addHeader
 
     /**
      * Set Error Message
@@ -151,7 +151,7 @@ class plain extends \fan\core\base\service\single
         }
         $mResult = $this->oController->$sMethod();
         if ($this->isError()) {
-            $this->_defineErrorHeaders();
+            $this->_defineError404();
             $mResult = $this->sErrMsg;
         }
         $this->_assignHeaders();
@@ -187,7 +187,7 @@ class plain extends \fan\core\base\service\single
      * Set value of Headers by current stack
      * @return \fan\core\service\plain
      */
-    protected function _defineErrorHeaders()
+    protected function _defineError404()
     {
         $this->aHeaders = array(
             'response'    => 404,
@@ -201,7 +201,7 @@ class plain extends \fan\core\base\service\single
             'cacheLimit'  => 0,
         );
         return $this;
-    } // function _defineErrorHeaders
+    } // function _defineError404
 
     // ======== The magic methods ======== \\
 

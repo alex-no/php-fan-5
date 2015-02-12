@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  * @abstract
  */
 abstract class html extends \fan\core\block\base
@@ -22,6 +22,46 @@ abstract class html extends \fan\core\block\base
      * @var string
      */
     protected $sModalWin = '';
+
+    /**
+     * External CSS
+     * @var array
+     */
+    protected $aExternalCSS = array(
+        'link'  => array(
+            'all' => array(),
+        ),
+        'style' => array(
+            'all' => array(),
+        ),
+        'ie'    => array(
+            'all' => array(),
+        ),
+    );
+
+    /**
+     * Embeded CSS-data by media-type
+     * @var array
+     */
+    protected $aEmbedCSS = array('all' => '');
+
+    /**
+     * External JS
+     * @var array
+     */
+    protected $aExternalJS = array(
+        'head' => array(),
+        'body' => array(),
+    );
+
+    /**
+     * Embeded JS-data for head and body
+     * @var type
+     */
+    protected $aEmbedJS = array(
+        'head' => null,
+        'body' => null,
+    );
 
     /**
      * Init block data
@@ -152,33 +192,47 @@ abstract class html extends \fan\core\block\base
     } // function setLinkTag
 
     /**
-     * Set external css by includes
-     * @param array $aCssFile array of files
-     * @param mixed $sType type of css file (it is need set if first argument is not array)
+     * Set external css by includes.
+     * Possible value of type:
+     *   - style|style_all|style_braille|style_handheld|style_print|style_screen|style_speech|style_projection|style_tty|style_tv
+     *   - link |link_all |link_braille |link_handheld |link_print |link_screen |link_speech |link_projection |link_tty |link_tv
+     * @param mixed $aCssFile array of files
+     * @param string $sType type of css file (it is need set if first argument is not array)
      * @return \fan\core\block\root\html
      */
-    public function setExternalCss($aCssFile, $sType = 'new')
+    public function setExternalCss($aCssFile, $sType = 'style')
     {
         if (is_object($aCssFile) && method_exists($aCssFile, 'toArray')) {
             $aCssFile = $aCssFile->toArray();
         } elseif (!is_array($aCssFile)) {
             $aCssFile = array($sType => array($aCssFile));
         }
-        $aExternalCss = $this->view->get('externalCss', array());
+
+        $aCSS =& $this->aExternalCSS;
         foreach ($aCssFile as $k => $v1) {
-            if (!isset($aExternalCss[$k])) {
-                $aExternalCss[$k] = array();
+
+            $tmp = explode('_', $k, 2);
+            if (empty($tmp[1])) {
+                $tmp[1] = 'all';
+            } elseif (!in_array($tmp[1], array('all', 'braille', 'handheld', 'print', 'screen', 'speech', 'projection', 'tty', 'tv'))) {
+                trigger_error('Unknown media "' . $tmp[1] .'" for External CSS "' . $sType .'".', E_USER_WARNING);
+                continue;
             }
+            list($k0, $k1) = $tmp;
+            if (!isset($aCSS[$k0][$k1])) {
+                $aCSS[$k0][$k1] = array();
+            }
+
             foreach ($v1 as $v2) {
-                if($v2) {
-                    $v2 = $this->oTab->getURI($v2, 'css', false);
-                    if(!in_array($v2, $aExternalCss[$k])) {
-                        $aExternalCss[$k][] = $v2;
-                    }
+                if(empty($v2)) {
+                    continue;
+                }
+                $v2 = $this->oTab->getURI($v2, 'css', false);
+                if(!in_array($v2, $aCSS[$k0][$k1])) {
+                    $aCSS[$k0][$k1][] = $v2;
                 }
             }
         }
-        $this->view->set('externalCss', $aExternalCss);
         return $this;
     } // function setExternalCss
 
@@ -187,7 +241,7 @@ abstract class html extends \fan\core\block\base
      * @param string $sCss - array of css code
      * @return \fan\core\block\root\html
      */
-    public function setEmbedCss($sCss)
+    public function setEmbedCss($sCss, $sMedia = 'all')
     {
         if (is_object($sCss)) {
             if (!method_exists($sCss, '__toString')) {
@@ -196,19 +250,21 @@ abstract class html extends \fan\core\block\base
             }
             $aCssFile = $aCssFile->__toString();
         }
+        if (isset($this->aEmbedCSS[$sMedia])) {
+            $this->aEmbedCSS[$sMedia] = '';
+        }
 
-        $sEmbedCss = $this->view->get('embedCss', '');
+        $sEmbedCss =& $this->aEmbedCSS[$sMedia];
         if (!strstr($sEmbedCss, $sCss)) {
             $sEmbedCss .= empty($sEmbedCss) ? $sCss : "\n" . $sCss;
         }
-        $this->view->set('embedCss', $sEmbedCss);
         return $this;
     } // function setEmbedCss
 
     /**
      * Set external JavaScript
      * @param mixed $aJsFile array of files
-     * @param mixed $sPos position of JavaScript (it is need set if first argument is not array)
+     * @param string $sPos position of JavaScript (it is need set if first argument is not array)
      * @return \fan\core\block\root\html
      */
     public function setExternalJs($aJsFile, $sPos = 'head')
@@ -219,28 +275,19 @@ abstract class html extends \fan\core\block\base
             $aJsFile = array($sPos => array($aJsFile));
         }
 
-        $aExternalJS = $this->view->get('externalJS', array());
         foreach ($aJsFile as $k => $v1) {
-            if (!isset($aExternalJS[$k])) {
-                $aExternalJS[$k] = array();
+            if (!isset($this->aExternalJS[$k])) {
+                trigger_error('Unknown position key "' . $k .'" for External JS.', E_USER_WARNING);
+                continue;
             }
             foreach ($v1 as $v2) {
-                if($v2) {
-                    $v2 = $this->oTab->getURI($v2, 'js', false);
-                    if(!in_array($v2, $aExternalJS[$k])) {
-                        if (is_readable(BASE_DIR . $v2) && preg_match('/\/\*\*include\s*(.+?)\s*\*\//is', file_get_contents(BASE_DIR . $v2), $aMatches)) {
-                            $aScripts = explode("\n", $aMatches[1]);
-                            foreach ($aScripts as $sScr) {
-                                list($sScrFile) = explode(';', $sScr, 2);
-                                $this->setExternalJs(array($k => array($sScrFile)));
-                            }
-                        }
-                        $aExternalJS[$k][] = $v2;
-                    }
+                if(empty($v2)) {
+                    continue;
                 }
+                $v2 = $this->oTab->getURI($v2, 'js', false);
+                $this->_addJsFile($v2, $k);
             }
         }
-        $this->view->set('externalJS', $aExternalJS);
         return $this;
     } // function setExternalJs
 
@@ -253,9 +300,18 @@ abstract class html extends \fan\core\block\base
      */
     public function setEmbedJs($mJs, $sPos = 'head', $nOrd = 0, $bAllowDebug = true)
     {
+        if (!array_key_exists($sPos, $this->aEmbedJS)) {
+            trigger_error('Unknown position key "' . $sPos .'" for Embeded JS.', E_USER_WARNING);
+            return $this;
+        }
+        if (empty($this->aEmbedJS[$sPos])) {
+            $this->aEmbedJS[$sPos] = array('', '', '');
+        }
+
         if (is_object($mJs) && method_exists($mJs, 'toArray')) {
             $mJs = $mJs->toArray();
         }
+
         if(is_array($mJs)) {
             $sJs = array_shift($mJs) . '(';
             $oJson = \fan\project\service\json::instance();
@@ -266,22 +322,15 @@ abstract class html extends \fan\core\block\base
         } else {
             $sJs = $mJs;
         }
-        if(!$nOrd) {
-            $nOrd = $nOrd < 0 ? -1 : 1;
-        }
-        $nOrd++;
 
-        $aEmbedJS = $this->view->get('embedJS', array());
-        if (!isset($aEmbedJS[$sPos])) {
-            $aEmbedJS[$sPos] = array('', '', '');
-        } elseif ($aEmbedJS[$sPos][$nOrd]) {
-            $aEmbedJS[$sPos][$nOrd] .= "\n";
+        $sEmbedJS =& $this->aEmbedJS[$sPos][$nOrd < 0 ? 0 : ($nOrd > 0 ? 2 : 1)];
+        if (!empty($sEmbedJS)) {
+            $sEmbedJS .= "\n";
         }
         if (!preg_match('/^\s*try\s*\{.+?\}\s*catch\s*\(.*?\)\s*\{.*?\}\s*$/is', $sJs)) {
             $sJs = 'try{' . $sJs . '}catch(e){' . ($this->tab->isDebugAllowed() && $bAllowDebug ? 'alert((e.fileName ? "Error in " + e.fileName : "") + (e.lineNumber ? " line " + e.lineNumber : "")+ (e.fileName || e.lineNumber ? "\n" : "") + (e.name ? e.name + ": " : "") + e.message);' : '') . '}';
         }
-        $aEmbedJS[$sPos][$nOrd] .= $sJs;
-        $this->view->set('embedJS', $aEmbedJS);
+        $sEmbedJS .= $sJs;
         return $this;
     } // function setEmbedJs
 
@@ -344,8 +393,52 @@ abstract class html extends \fan\core\block\base
         return $this;
     } // function setModalWindow
 
+    /**
+     * Check is available CSS-files for this type of css
+     * @param string $sKey
+     * @return boolean
+     */
+    public function isExtCSS($sKey)
+    {
+        $aCSS = $this->view->get('externalCSS', array());
+        if (!isset($aCSS[$sKey])) {
+            return false;
+        } elseif (!is_array($aCSS[$sKey])) {
+            trigger_error('Values of CSS for key "' . $sKey . '" must be as array.', E_USER_WARNING);
+            return false;
+        }
+        foreach ($aCSS[$sKey] as $v) {
+            if (!empty($v)) {
+                return true;
+            }
+        }
+        return false;
+    } // function isExtCSS
     // ==================== protected methods ==================== \\
 
+    /**
+     * Add new JS-file path
+     * @param string $sUri
+     * @param string $sType
+     * @return \fan\core\block\root\html
+     */
+    protected function _addJsFile($sUri, $sType)
+    {
+        $aJS =& $this->aExternalJS[$sType];
+        if(!in_array($sUri, $aJS)) {
+            if (is_readable(BASE_DIR . $sUri) && preg_match('/\/\*\*include\s*(.+?)\s*\*\//is', file_get_contents(BASE_DIR . $sUri), $aMatches)) {
+                $aScripts = explode("\n", $aMatches[1]);
+                foreach ($aScripts as $sScr) {
+                    list($sScrFile) = explode(';', $sScr, 2);
+                    $this->_addJsFile($sScrFile, $sType);
+                }
+            }
+            if(!in_array($sUri, $aJS)) {
+                $aJS[] = $sUri;
+            }
+        }
+        return $this;
+    } // function _addJsFile
 
     /**
      * Method for redefine in child class
@@ -356,6 +449,10 @@ abstract class html extends \fan\core\block\base
         if (!empty($this->sModalWin)) {
             $this->view->set('modal_win', $this->sModalWin);
         }
+        $this->view->set('externalCSS', $this->aExternalCSS);
+        $this->view->set('embedCSS',    $this->aEmbedCSS);
+        $this->view->set('externalJS',  $this->aExternalJS);
+        $this->view->set('embedJS',     $this->aEmbedJS);
     } // function _preOutput
     /**
      * Compare two array by keys

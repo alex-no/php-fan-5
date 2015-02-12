@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 
 class captcha
@@ -94,7 +94,7 @@ class captcha
         //$this->oHandler->setErrorMessage(msg('ERROR_REQUESTED_FILE_IS_NOT_FOUND'));
         $aHeaders = $this->oCaptcha->getHeaders();
         foreach ($aHeaders as $k => $v) {
-            $this->oHandler->setHeader($k, $v);
+            $this->oHandler->addHeader($k, $v);
         }
         return $this;
     } // function _init

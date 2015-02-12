@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.002 (31.03.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class request_password extends \fan\project\block\form\injector
 {
@@ -39,11 +39,7 @@ class request_password extends \fan\project\block\form\injector
     public function checkPassword($mValue, $aData)
     {
         $this->oUser = getUser($this->getForm()->getFieldValue($aData['login']));
-        if (empty($this->oUser)) {
-            return false;
-        }
-        $this->oUser->checkPassword($mValue);
-        return $this->oUser->isValid();
+        return empty($this->oUser) ? false : $this->oUser->checkPassword($mValue);
     } // function checkPassword
 
     /**

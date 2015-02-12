@@ -1,7 +1,7 @@
 <?php
 /**
- * Db_connection submenu meta
- * @version 05.01.002 (01.05.2013)
+ * Application subnav meta
+ * @version 05.02.005 (12.02.2015)
  */
 return array(
     'own' => array(

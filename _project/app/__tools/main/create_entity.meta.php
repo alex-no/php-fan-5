@@ -1,14 +1,14 @@
 <?php
 /**
  * Create entity tools meta
- * @version 05.02.003 (16.04.2014)
+ * @version 05.02.005 (12.02.2015)
  */
 return array(
     'own' => array(
         'title' => 'Create entity',
 
         'externalCss' => array( // css files
-            'new' => array('~/entity.css'),
+            'style' => array('~/entity.css'),
         ),
 
         'embeddedBlocks' => array(

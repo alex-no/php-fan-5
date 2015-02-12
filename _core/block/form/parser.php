@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  * @abstract
  */
 abstract class parser extends \fan\core\block\base
@@ -34,6 +34,13 @@ abstract class parser extends \fan\core\block\base
      * @var string
      */
     protected $sRoleName = '';
+
+    /**
+     * Init Parts of current form (usually auto - before main parsing)
+     * Flag protect from double init if it was runned early
+     * @var boolean
+     */
+    protected $bPartsInit = false;
 
     /**
      * Finish Construction of block
@@ -243,27 +250,34 @@ abstract class parser extends \fan\core\block\base
      */
     protected function _parseForm($bParceEmpty = true, $bParsingCondition = null, $bAllowTransfer = null)
     {
+        if ($this->getMeta('auto_init_parts', true) && !$this->bPartsInit) {
+            $this->_initFormParts($this);
+        }
         return $this->getForm()->parseForm($bParceEmpty, $bParsingCondition, $bAllowTransfer);
     } // function _parseForm
     /**
      * Init Form Parts
      * Method is called in "init" of main part block
-     * @param mixed $mData data for form parts
+     * @param \fan\core\block\form\parser $oMainFormBlock Main form part block
      */
-    protected function _initFormParts($mData = NULL)
+    protected function _initFormParts($oMainFormBlock = NULL)
     {
+        $this->bPartsInit = true;
         $aParts = $this->getFormMeta('form_parts', array());
         foreach ($aParts as $v) {
             $oBlock = $this->getTab()->getTabBlock($v, false);
-            if (!empty($oBlock) && method_exists($oBlock, 'partInit')) {
-                $oBlock->partInit($mData);
+            if (empty($oBlock)) {
+                trigger_error('Block "' . $v . '" (part of form) is not found', E_USER_WARNING);
+            } elseif (method_exists($oBlock, 'partInit')) {
+                $oBlock->partInit($oMainFormBlock);
                 if (method_exists($oBlock, '_initFormParts') && is_callable(array($oBlock, '_initFormParts'))) {
-                    $oBlock->_initFormParts($mData);
+                    $oBlock->_initFormParts($oMainFormBlock);
 
                 }
             }
         }
+        return $this;
     } // function _initFormParts
 
-} // class \fan\core\block\form\usual
+} // class \fan\core\block\form\parser
 ?>

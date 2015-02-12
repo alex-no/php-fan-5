@@ -14,7 +14,7 @@ use \fan\project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  * @method mixed getId()
  * @method string getLogin()
  * @method string getNickName()
@@ -149,12 +149,12 @@ class user extends \fan\core\base\service\multi implements \Serializable
     /**
      * Get instance of service of user
      * @param mixed $mIdentifyer Identifyer of user
-     * @param string $sUserSpace
+     * @param string $sReqSpace RequestedUser-space
      * @return \fan\core\service\user
      */
-    public static function instance($mIdentifyer, $sUserSpace = null)
+    public static function instance($mIdentifyer, $sReqSpace = null)
     {
-        $sUserSpace = self::_verifySpace($sUserSpace);
+        $sUserSpace = self::_verifySpace($sReqSpace);
         if (is_null(self::$aCurrentUsers)) {
             self::_getCurrentUsers(); // If first call - pull users from session
         }
@@ -194,19 +194,14 @@ class user extends \fan\core\base\service\multi implements \Serializable
 
     /**
      * Get instance of service of Current user
-     * @param string $sReqUserSpace
-     * @return \fan\core\service\user
+     * @param string $sReqSpace Requested User-space
+     * @return \fan\core\service\user|null
      */
-    public static function getCurrent($sReqUserSpace = null)
+    public static function getCurrent($sReqSpace = null)
     {
-        $sUserSpace = self::_verifySpace($sReqUserSpace);
+        $sUserSpace = self::_verifySpace($sReqSpace);
         $aCurUsers  = self::_getCurrentUsers();
-
-        if (isset($aCurUsers[$sUserSpace])) {
-            $oUser = $aCurUsers[$sUserSpace];
-            return $oUser;
-        }
-        return null;
+        return isset($aCurUsers[$sUserSpace]) ? $aCurUsers[$sUserSpace] : null;
     } // function getCurrent
 
     /**

@@ -15,7 +15,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.019
+ * @version of file: 05.02.005 (12.02.2015)
  */
 return array(
     /**
@@ -47,9 +47,9 @@ return array(
             'element_id_prefix' => 'id prefix', // (NR) Prefix for Id of elements
 
             'js_url' => array( // URLs for JS-validators
-                'js-wrapper' => '/javascript/js-wrapper.js',
-                'js-loader'  => '/javascript/load-wrapper.js',
-                'validator'  => '/javascript/form_validation.js'
+                'js-wrapper' => '/js/js-wrapper.js',
+                'js-loader'  => '/js/load-wrapper.js',
+                'validator'  => '/js/form_validation.js'
             ),
             'js_validator'  => 'form_validation', // Name of JS-class for form validation
             'js_err_format' => 'alert', // Format of show of error messages. Available format for now: 'alert', 'div'. 'alert' - show error by alert, 'div' - show error by div near each input field

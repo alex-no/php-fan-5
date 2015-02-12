@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class session extends \fan\core\base\service\multi
 {
@@ -21,9 +21,13 @@ class session extends \fan\core\base\service\multi
      */
     private static $aInstances = array();
     /**
-     * @var stdclass Session engine
+     * @var object Session engine
      */
     private static $oEngine = null;
+    /**
+     * @var \fan\core\service\request Session engine
+     */
+    protected static $oSR = null;
     /**
      * Flag: Session is got by cookie
      * @var boolean
@@ -68,11 +72,13 @@ class session extends \fan\core\base\service\multi
             $this->sGroup     = $sGroup;
 
             if (is_null(self::$oEngine)) {
-
-                $this->_prepareParameters();
+                self::$oSR = \fan\project\service\request::instance();
+                $sSid = $this->_prepareParameters();
 
                 // ========= {START session engine} ========= \\
-                self::$oEngine = $this->_getEngine($this->oConfig['ENGINE']);
+                $sClass = $this->_getEngine($this->oConfig['ENGINE'], false);
+                self::$oEngine = new $sClass($sSid);
+                self::$oEngine->setFacade($this);
 
                 // Compare Urer's system
                 $aMismatch = $this->_compareSystem();
@@ -88,11 +94,10 @@ class session extends \fan\core\base\service\multi
 
                 // Check Last visit time
                 $this->_checkSessionTimeout();
-
-                // Broadcast Message about start session
-                $this->_broadcastMessage('sesson_start', array($sNameSpace, $sGroup));
             }
 
+            // Broadcast Message about start session
+            $this->_broadcastMessage('sesson_start', array($sNameSpace, $sGroup));
         } // check enabling status
     } // function __construct
 
@@ -376,44 +381,44 @@ class session extends \fan\core\base\service\multi
      */
     protected function _prepareParameters()
     {
-        $oConfig = $this->oConfig;
-        $oSR     = \fan\project\service\request::instance();
-
-        $sSesName   = $oConfig->get('SESSION_NAME', 'SID');
-        $sCookieSid = $oSR->get($sSesName, 'C');
-        self::$bByCookie = !empty($sCookieSid);
-
-        // Check session ID by GET/POST
-        $sSid = $oSR->get(strtoupper($sSesName), 'GP', $oSR->get(strtolower($sSesName), 'GP'));
-        if ($this->_checkSessionId($sSid, $sSesName) && $oConfig->get('IS_GET_PRIORITY', false)) {
-            self::$bByCookie = self::$bByCookie && $sCookieSid == $sSid;
-            $this->_setCookie($sSesName, $sSid);
-        } elseif (self::$bByCookie && !$this->_checkSessionId($sCookieSid)) {
-            self::$bByCookie = false;
-            $this->_setCookie($sSesName, md5($sCookieSid . microtime()));
-        }
-
+        $aConfig = $this->oConfig->toArray();
         // Check conf - Session MAXLIFETIME
-        if ($oConfig['MAXLIFETIME']){
-            ini_set('session.gc_maxlifetime', $oConfig['MAXLIFETIME']);
+        if ($aConfig['MAXLIFETIME']){
+            ini_set('session.gc_maxlifetime', $aConfig['MAXLIFETIME']);
         }
 
         // Check conf - Session COOKIE_SECURE
-        ini_set('session.cookie_secure', !empty($oConfig['COOKIE_SECURE']));
+        ini_set('session.cookie_secure', !empty($aConfig['COOKIE_SECURE']));
 
         // Check conf - Session COOKIE_HTTPONLY
-        ini_set('session.cookie_httponly', !isset($oConfig['COOKIE_HTTPONLY']) || !empty($oConfig['COOKIE_HTTPONLY']));
+        ini_set('session.cookie_httponly', !isset($aConfig['COOKIE_HTTPONLY']) || !empty($aConfig['COOKIE_HTTPONLY']));
 
         // Set main session parameters
-        if ($oConfig['COOKIE_DOMAIN']) {
-            session_set_cookie_params (0, '/', $oConfig['COOKIE_DOMAIN']);
-        } else {
+        if (empty($aConfig['COOKIE_DOMAIN'])) {
             session_set_cookie_params (0, '/');
+        } else {
+            session_set_cookie_params (0, '/', $aConfig['COOKIE_DOMAIN']);
         }
-        session_cache_limiter($oConfig['CACHE_LIMITER']);
+        session_cache_limiter($aConfig['CACHE_LIMITER']);
+
+        // ---- Define sessin by Cookie/GET/POST ---- \\
+        $sSesName   = $this->oConfig->get('SESSION_NAME', 'SID');
+        $sCookieSid = self::$oSR->get($sSesName, 'C');
+        self::$bByCookie = !empty($sCookieSid);
+
+        // Check session ID by GET/POST
+        $sSid = self::$oSR->get(strtoupper($sSesName), 'GP', self::$oSR->get(strtolower($sSesName), 'GP'));
+        if ($this->_checkSessionId($sSid, $sSesName) && (!self::$bByCookie || $this->oConfig->get('IS_GET_PRIORITY', false))) {
+            self::$bByCookie = self::$bByCookie && $sCookieSid == $sSid;
+            $this->_setCookie($sSesName, $sSid);
+        } elseif (self::$bByCookie && !$this->_checkSessionId($sCookieSid)) {
+            $sSid = md5($sCookieSid . microtime());
+            self::$bByCookie = false;
+            $this->_setCookie($sSesName, $sSid);
+        }
         session_name($sSesName);
 
-        return $this;
+        return self::$bByCookie ? $sCookieSid : $sSid;
     } // function _prepareParameters
 
     /**
@@ -448,9 +453,7 @@ class session extends \fan\core\base\service\multi
             return true;
         }
         if ($sSesName) { // ToDo: Make this by service request
-            unset($_GET[$sSesName]);
-            unset($_POST[$sSesName]);
-            unset($_REQUEST[$sSesName]);
+            self::$oSR->remove($sSesName, 'GPR', true);
         }
         $sSid = null;
         return false;
@@ -465,7 +468,7 @@ class session extends \fan\core\base\service\multi
         $aMismatch = null;
         $aCheck    = $this->oConfig['CHECK_SYSTEM'];
         if ($aCheck) {
-            $aServer = \fan\project\service\request::instance()->getAll('S', array());
+            $aServer = self::$oSR->getAll('S', array());
             $oSes    = \fan\project\service\session::instance('data', 'session');
             $aParam  = &$oSes->getByLink('param');
             if ($oSes->get('is_fill', false)) {

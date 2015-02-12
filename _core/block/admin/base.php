@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  * @abstract
  */
 abstract class base extends \fan\core\block\loader\base
@@ -213,7 +213,7 @@ abstract class base extends \fan\core\block\loader\base
                 }
             }
 
-            $oTemplate = service('template')->get($sTemplate, @$this->aMeta['tpl_parent_class'], $this);
+            $oTemplate = service('template')->get($sTemplate, $this->getMeta('tpl_parent_class'), $this);
             foreach ($aTplVars as $k => $v) {
                 $oTemplate->assign($k, $v);
             }

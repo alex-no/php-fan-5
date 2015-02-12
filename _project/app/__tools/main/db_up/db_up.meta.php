@@ -1,6 +1,6 @@
 <?php
 /**
- * Index tools meta
+ * DB up tools meta
  * @version 05.01.002 (01.05.2013)
  */
 return array(
@@ -8,7 +8,7 @@ return array(
         'title' => 'Update database',
 
         'externalCss' => array(
-            'new'   => array('/db_up_index.css'),
+            'style' => array('~/db_up_index.css'),
         ),
 
         'externalJS' => array(

@@ -235,8 +235,8 @@ function adduceToArray($mSrc)
  */
 function increaseNum($nNumber, $nQtt = 2, $bRoundIt = true)
 {
-    $nNumber = $nNumber * pow(10, $nQtt);
-    return $bRoundIt ? round($nNumber) : $nNumber;
+    $nTmp = $nNumber * pow(10, $nQtt);
+    return $bRoundIt ? round($nTmp) : $nTmp;
 } // function increaseNum
 
 /**

@@ -16,13 +16,13 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version:  03.03.09
- * @modified: 2013-10-10 23:00:00
+ * @version:  03.03.10
+ * @modified: 2015-01-08 18:51:00
  */
 // ===== Additional functions and classes ===== \\
 function isDefined(obj, prop)
 {
-    return obj != null && !checkType(obj, "undefined") && (checkType(prop, "undefined") || (checkType(obj, "object") ? (prop in obj) : (typeof(obj[prop]) + "").toLowerCase() != "undefined"));
+    return obj != null && !checkType(obj, "undefined") && (checkType(prop, "undefined") || (checkType(obj, "object") && (typeof(obj[prop]) + "").toLowerCase() != "undefined"));
 }
 function isObject(obj)
 {
@@ -454,6 +454,10 @@ elmWrapper.prototype = {
             return true;
         }
         return false;
+    },
+    data : function(key)
+    {
+        return this.elm.getAttribute("data-" + key);
     },
 
     // .... Get parameters .... \\
@@ -1200,7 +1204,7 @@ winWrapper.prototype = {
             r = getElmWrapper(sel, this);
             if (!one) r = [r];
         } else {
-            this._errMsg("incorSel");
+            this._errMsg("incorSel", [sel]);
         }
         return r;
     },
@@ -1235,7 +1239,7 @@ winWrapper.prototype = {
         r = [];
         a = this._findRE.exec(sel); // 1 - tag, 2 - id, 3 - class, 4 - attribute, 5 - attribute value, 6 - sequence
         if (!a) {
-            this._errMsg("incorSel");
+            this._errMsg("incorSel", [sel]);
             return r;
         }
         if (a[2] && !/\*/.test(a[2]) && n == 0 && src === this.doc) {
@@ -1675,7 +1679,7 @@ elmWrapper.prototype.config = winWrapper.prototype.config = implement({
         "incorObj"  : 'Incorrect object type in {$0}!',
         "incorEvt"  : 'Incorrect event type!',
         "noSel"     : 'No selector!',
-        "incorSel"  : 'Incorrect selector!',
+        "incorSel"  : 'Incorrect selector "{$0}"!',
         "elmNotSet" : 'Element for event "{$0}" is not set!',
         "elmNotFnd" : 'Element with ID "{$0}" is not found!',
         "frmNotFnd" : 'Form [{$0}] is not found!',
@@ -1688,7 +1692,7 @@ elmWrapper.prototype.config = winWrapper.prototype.config = implement({
         "incorObj"  : 'Некорректный тип объекта в {$0}!',
         "incorEvt"  : 'Некорректный тип события!',
         "noSel"     : 'Не указан селектор!',
-        "incorSel"  : 'Некорректный селектор!',
+        "incorSel"  : 'Некорректный селектор "{$0}"!',
         "elmNotSet" : 'Элемент для события "{$0}" не задан!',
         "elmNotFnd" : 'Элемент c ID "{$0}" не найден!',
         "frmNotFnd" : 'Форма [{$0}] не найдена!',

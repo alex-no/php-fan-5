@@ -1,6 +1,6 @@
 <?php namespace fan\app\__tools\main;
 /**
- * index block
+ * Index block
  *
  * This file is part PHP-FAN (php-framework from Alexandr Nosov)
  * Copyright (C) 2005-2007 Alexandr Nosov, http://www.alex.4n.com.ua/
