@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class pager extends \fan\core\base\service\multi
 {
@@ -169,9 +169,14 @@ class pager extends \fan\core\base\service\multi
         return is_null($this->nItemPerPage) ? $this->getConfig('DEFAULT_ITEM_PER_PAGE', 10) : $this->nItemPerPage;
     } // function getItemPerPage
 
-    public function setItemQtt($nItemQtt)
+    public function setItemQtt($nItemQtt, $bDefinePageNum = true)
     {
         $this->nItemQtt = round($nItemQtt);
+        if ($bDefinePageNum) {
+            $this->_definePageNum()
+                    ->_defineItemPerPage()
+                    ->_definePageQtt();
+        }
         return $this;
     } // function setItemQtt
     /**
@@ -184,6 +189,15 @@ class pager extends \fan\core\base\service\multi
     } // function getItemQtt
 
     /**
+     * Get offset value
+     * @return numeric
+     */
+    public function getOffset()
+    {
+        return ($this->getPageNum() - 1) * $this->getItemPerPage();
+    } // function getOffset
+
+    /**
      * Get Items By Parameters (entity_key and sql_key geg from meta-data)
      * @param mixed $mParam
      * @param string $sOrderBy
@@ -193,7 +207,7 @@ class pager extends \fan\core\base\service\multi
     public function getItemsByParam($mParam = array(), $sOrderBy = '')
     {
         $oMeta = $this->oBlock->getMeta('pager');
-        if (!is_object($oMeta) || empty($oMeta['entity_key'])) {
+        if (!is_object($oMeta) || $oMeta['entity_key'] == '') {
             throw new fatalException($this, 'Entity key is not set.');
         }
         $oEtt    = ge($oMeta['entity_key']);
@@ -219,7 +233,7 @@ class pager extends \fan\core\base\service\multi
                 ->_definePageQtt();
 
         $nQtt    = $this->getItemPerPage();
-        $nOffset = ($this->getPageNum() - 1) * $nQtt;
+        $nOffset = $this->getOffset();
         $oItems  = empty($sSqlKey) ?
                 $oEtt->getRowsetByParam($mParam, $nQtt, $nOffset, $sOrderBy) :
                 $oEtt->getRowsetByKey($sSqlKey, $mParam, $nQtt, $nOffset, $sOrderBy);
@@ -303,7 +317,7 @@ class pager extends \fan\core\base\service\multi
             $this->setPageQtt($nPageQtt);
         }
         return $this;
-    } // function _defineItemPerPage
+    } // function _definePageQtt
 
     // ======== The magic methods ======== \\
 

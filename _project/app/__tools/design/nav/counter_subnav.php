@@ -1,9 +1,9 @@
 <?php namespace fan\app\__tools\design;
 /**
- * counter_submenu block for tools
- * @version 05.02.001 (10.03.2014)
+ * counter_subnav block for tools
+ * @version 05.02.005 (12.02.2015)
  */
-class counter_submenu extends \fan\project\block\common\simple
+class counter_subnav extends \fan\project\block\common\simple
 {
     /**
      * @var string Main key element
@@ -24,15 +24,15 @@ class counter_submenu extends \fan\project\block\common\simple
     }
 
     /**
-     * Get Menu Url
+     * Get Nav Url
      * @param string $sKey
      * @param string $sAddUrl
      * @return string
      */
-    public function getMenuUrl($sKey, $sAddUrl = '')
+    public function getNavUrl($sKey, $sAddUrl = '')
     {
         return $this->oTab->getURI('~/' . $this->sMainKey . '/' . $sKey . $sAddUrl . '.html', 'link', null, null);
     }
 
-} // class \fan\app\__tools\design\counter_submenu
+} // class \fan\app\__tools\design\counter_subnav
 ?>

@@ -1,4 +1,4 @@
-{$menu}<form action="#" method="get" id="select_param">
+{$nav}<form action="#" method="get" id="select_param">
 {if $isDelete}
     <button type="button" id="delete_rec">Delete selected</button><button type="button" id="inv_select">Inv select</button>
 {/if}

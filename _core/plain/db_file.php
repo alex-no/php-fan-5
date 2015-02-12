@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 
 class db_file
@@ -166,8 +166,8 @@ class db_file
             $this->sApp      = $oSR->get('app',  'GPA');
             $this->sFileType = $oSR->get('type', 'GPA');
 
-            $this->oHandler->setHeader('disposition', $oSR->get('pos', 'GPA', true));
-            $this->oHandler->setHeader('response', 200);
+            $this->oHandler->addHeader('disposition', $oSR->get('pos', 'GPA', true));
+            $this->oHandler->addHeader('response', 200);
         }
         return $this;
     } // function _prepare
@@ -187,7 +187,7 @@ class db_file
             $this->sFilePath = $aData['filePath'];
             foreach (array('contentType', 'filename', 'modified', 'length', 'legthRange', 'cacheLimit') as $k) {
                 if (!empty($aData['headers'][$k])) {
-                    $this->oHandler->setHeader($k, $aData['headers'][$k]);
+                    $this->oHandler->addHeader($k, $aData['headers'][$k]);
                 }
             }
         }

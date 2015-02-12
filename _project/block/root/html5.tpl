@@ -10,7 +10,7 @@
 {nostrip}
 <!--[if lt IE 9]><script type="text/javascript">
 (function(){
-var e='abbr,article,aside,audio,canvas,details,figure,footer,header,hgroup,mark,meter,nav,output,section,time,video'.split(',');
+var e='abbr,article,aside,audio,canvas,details,figure,footer,header,hgroup,main,mark,meter,nav,output,section,time,video'.split(',');
 for(var i=0; i<e.length; i++) document.createElement(e[i]);
 })();
 </script><![endif]-->
@@ -20,7 +20,7 @@ for(var i=0; i<e.length; i++) document.createElement(e[i]);
 
 ====== meta-tags ====== *}
 {if @$meta}{foreach item=meta_item from=$meta}
-<meta{=$this->makeTagAttr('name', $meta_item)} content="{$meta_item['content']}"{=$this->makeTagAttr('http-equiv', $meta_item, 'http_equiv')}{=$this->makeTagAttr('scheme', $meta_item)}{=$this->makeTagAttr('id', $meta_item)} />
+<meta{=$this->makeTagAttr('name', $meta_item)}{=$this->makeTagAttr('property', $meta_item)} content="{$meta_item['content']}"{=$this->makeTagAttr('http-equiv', $meta_item, 'http_equiv')}{=$this->makeTagAttr('scheme', $meta_item)}{=$this->makeTagAttr('id', $meta_item)} />
 {/foreach}{/if}
 {*
 
@@ -30,54 +30,49 @@ for(var i=0; i<e.length; i++) document.createElement(e[i]);
 {/foreach}{/if}
 {*
 
-====== CSS (old format) - block ====== *}
-{if @$externalCss['old']}{foreach item=CssOld from=$externalCss['old']}
-<link rel="stylesheet" type="text/css" href="{$CssOld}"></link>
-{/foreach}{/if}
+====== CSS (by tag link) - block ====== *}
+{if $oBlock->isExtCSS('link')}{foreach item=CssFile key=Media from=$externalCSS['link']}{foreach item=uri from=$CssFile}
+<link rel="stylesheet" type="text/css" href="{$uri}"{if $Media!='all'} media="{$Media}"{/if}></link>
+{/foreach}{/foreach}{/if}
 {*
 
-====== CSS - block ====== *}
-{if @$externalCss['new'] or @$embedCss}{nostrip}
+====== CSS (by tag style) - block ====== *}
+{if $oBlock->isExtCSS('style') or !empty($embedCSS['all'])}{nostrip}
 <style type="text/css">
 <!--
-{if @$externalCss['new']}{foreach item=cssFile from=$externalCss['new']}
-@import url({$cssFile});
-{/foreach}{/if}
-{@$embedCss}
+{if $oBlock->isExtCSS('style')}{foreach item=CssFile key=Media from=$externalCSS['style']}{foreach item=uri from=$CssFile}
+@import url({$uri}){if $Media!='all'} {$Media}{/if};
+{/foreach}{/foreach}{/if}
+{@$embedCSS['all']}
 -->
 </style>
 {/nostrip}{/if}
+{foreach item=CssBlock key=Media from=$embedCSS}{if $Media != 'all'}{nostrip}
+<style type="text/css" media="{$Media}">
+<!--
+{$CssBlock}
+-->
+</style>
+{/nostrip}{/if}{/foreach}
 {*
 
 ====== CSS (IE) - block ====== *}
-{if @$externalCss['ie']}{nostrip}
+{if $oBlock->isExtCSS('ie')}{nostrip}
 <!--[if IE]><style type="text/css">
-{foreach item=cssFile from=$externalCss['ie']}
-@import url({$cssFile});
-{/foreach}
+{foreach item=CssFile key=Media from=$externalCSS['ie']}{foreach item=uri from=$CssFile}
+@import url({$uri}){if $Media!='all'} {$Media}{/if};
+{/foreach}{/foreach}
 </style><![endif]-->
 {/nostrip}{/if}
 {*
 
-====== CSS (IE<7) - block ====== *}
-{if @$externalCss['ie6']}{nostrip}
-<!--[if lt IE 7]><style type="text/css">
-{foreach item=cssFile from=$externalCss['ie6']}
-@import url({$cssFile});
-{/foreach}
+====== CSS (IE<9) - block ====== *}
+{if $oBlock->isExtCSS('ie8')}{nostrip}
+<!--[if lt IE 9]><style type="text/css">
+{foreach item=CssFile key=Media from=$externalCSS['ie8']}{foreach item=uri from=$CssFile}
+@import url({$uri}){if $Media!='all'} {$Media}{/if};
+{/foreach}{/foreach}
 </style><![endif]-->
-{/nostrip}{/if}
-{*
-
-====== CSS - block for print ====== *}
-{if @$externalCss['print']}{nostrip}
-<style type="text/css">
-<!--
-{foreach item=cssFile from=$externalCss['print']}
-@import url({$cssFile}) print;
-{/foreach}
--->
-</style>
 {/nostrip}{/if}
 {*
 
@@ -88,10 +83,10 @@ for(var i=0; i<e.length; i++) document.createElement(e[i]);
 {*
 
 ====== Embeded head JavaScript ====== *}
-{if @$embedJS['head']}{nostrip}
+{if $embedJS['head']}{nostrip}
 <script type="text/javascript">
 <!--
-{@$embedJS['head'][0]}{@$embedJS['head'][1]}{@$embedJS['head'][2]}
+{$embedJS['head'][0]}{$embedJS['head'][1]}{$embedJS['head'][2]}
 //-->
 </script>
 {/nostrip}{/if}
@@ -107,10 +102,10 @@ for(var i=0; i<e.length; i++) document.createElement(e[i]);
 {*
 
 ====== Embeded body JavaScript (is not advisable) ====== *}
-{if @$embedJS['body']}{nostrip}
+{if $embedJS['body']}{nostrip}
 <script type="text/javascript">
 <!--
-{@$embedJS['body'][0]}{@$embedJS['body'][1]}{@$embedJS['body'][2]}
+{$embedJS['body'][0]}{$embedJS['body'][1]}{$embedJS['body'][2]}
 //-->
 </script>
 {/nostrip}{/if}

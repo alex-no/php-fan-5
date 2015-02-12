@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -178,16 +178,19 @@ class row implements \ArrayAccess, \Serializable
      */
     public function loadByParam($mParam, $nOffset = 0, $sOrderBy = null)
     {
-        if ($this->bIsDataLoad) {
-            trigger_error('Load new data for loaded row.', E_USER_NOTICE);
-        } elseif (!empty($this->aChanged)) {
-            trigger_error('Load new data for changed row.', E_USER_NOTICE);
+        $oEtt = $this->getEntity();
+        if (!empty($this->aChanged)) {
+            $sName = $oEtt->getName();
+            trigger_error('Load new data for changed row. Entity "' . $sName . '". Id=' . $this->getId(false), E_USER_NOTICE);
+        } elseif ($this->bIsDataLoad) {
+            $sName = $oEtt->getName();
+            trigger_error('Load new data for loaded row. Entity "' . $sName . '". Id=' . $this->getId(false), E_USER_NOTICE);
         }
 
         if (is_null($mParam)) {
             $aData = array();
         } else {
-            $aData =& $this->getEntity()->getDataByParam($mParam, 1, $nOffset, $sOrderBy, true);
+            $aData =& $oEtt->getDataByParam($mParam, 1, $nOffset, $sOrderBy, true);
         }
         $this->_fixLoadedData($aData);
         return $this;
@@ -367,16 +370,19 @@ class row implements \ArrayAccess, \Serializable
     /**
      * Get Row from Top linked table
      * @param string $sByField
+     * @param boolean $bLogEmptyVal
      * @return \fan\core\base\model\row
      */
-    public function getTopRow($sByField)
+    public function getTopRow($sByField, $bLogEmptyVal = false)
     {
         $oErr = \fan\project\service\error::instance();
         /* @var $oErr \fan\core\service\error */
         $sErrHeader = 'Error while get Top Row';
         $mVal = $this->get($sByField, null, false);
         if (empty($mVal)) {
-            $oErr->logErrorMessage('Value for field "' . $sByField . '" is empty', $sErrHeader);
+            if ($bLogEmptyVal) {
+                $oErr->logErrorMessage('Value for field "' . $sByField . '" is empty', $sErrHeader);
+            }
             return null;
         }
 

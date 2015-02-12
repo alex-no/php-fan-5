@@ -1,4 +1,4 @@
-<div id="main_menu">{$menu}</div>
-{if @$addMenu}
-    <div id="add_menu">{$addMenu}</div>
+<div id="main_nav">{$nav}</div>
+{if @$addNav}
+    <div id="add_nav">{$addNav}</div>
 {/if}

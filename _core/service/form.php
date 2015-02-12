@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class form extends \fan\core\base\service\multi
 {
@@ -480,24 +480,24 @@ class form extends \fan\core\base\service\multi
     } // function setFieldData
 
     /**
-     * Make field data for select, radio, checkbox e.g.
-     * @param \fan\core\base\model\rowset $aRowset
-     * @param string $sFormField
+     * Set field data for select, radio, checkbox e.g.
+     * @param string $mFieldName
+     * @param \fan\core\base\model\rowset $oRowset
      * @param string $sTextKey
      * @param string $sValueKey
      */
-    public function makeSelectTagData($aRowset, $sFormField, $sTextKey, $sValueKey = null)
+    public function setFieldDataByRowset($mFieldName, $oRowset, $sTextKey, $sValueKey = null)
     {
-        if (empty($aRowset)) {
+        if (empty($oRowset)) {
             return;
         }
-        foreach ($aRowset as $oRow) {
-            $this->aFieldData[$sFormField][] = array(
-                'value' => $sValueKey ? $oRow->getOneField($sValueKey) : $oRow->getId(),
-                'text'  => $oRow->getOneField($sTextKey),
+        foreach ($oRowset as $oRow) {
+            $this->aFieldData[$mFieldName][] = array(
+                'value' => $sValueKey ? $oRow->get($sValueKey) : $oRow->getId(),
+                'text'  => $oRow->get($sTextKey),
             );
         }
-    } // function makeFieldData
+    } // function setFieldDataByRowset
 
     /**
      * Check Depth of data
@@ -677,6 +677,9 @@ class form extends \fan\core\base\service\multi
 
             $mKey  = empty($aComplex) ? $sBaseName : array_merge(array($sBaseName), $aComplex);
             $aDest =& array_get_element($this->aFieldValue, $mKey, true);
+            if (is_null($mVal) && !is_null($aDest)) {
+                continue;
+            }
             $aDest = null;
 
             $aErr  =& $this->aErrorMsg[$sFieldName];

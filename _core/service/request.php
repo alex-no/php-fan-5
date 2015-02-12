@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class request extends \fan\core\base\service\single
 {
@@ -217,10 +217,17 @@ class request extends \fan\core\base\service\single
      * @param string $sKey The Request key
      * @param string $sType Type of data (like $sOrder in get, but one symbol only)
      */
-    public function remove($sKey, $sType = 'G')
+    public function remove($sKey, $sType = 'G', $bFullUnset = false)
     {
-        if ($this->_isAllowToSet($sType)) {
-            unset($this->aData[$sType][$sKey]);
+        $aGlob = adduceToArray($this->getConfig('ALLOW_SET', array('G' => '_GET', 'P' => '_POST', 'R' => '_REQUEST')));
+        for ($i = 0; $i < strlen($sType); $i++) {
+            $k = $sType{$i};
+            if ($this->_isAllowToSet($k)) {
+                unset($this->aData[$k][$sKey]);
+                if ($bFullUnset && isset($GLOBALS[$aGlob[$k]][$sKey])) {
+                    unset($GLOBALS[$aGlob[$k]][$sKey]);
+                }
+            }
         }
     } // function remove
 
@@ -456,7 +463,8 @@ class request extends \fan\core\base\service\single
         if (strlen($sType) != 1 || !array_key_exists($sType, $this->aData)) {
             throw new fatalException($this, 'Incorrect type for set "' . $sType . '". Possible one of symbols "' . implode('', array_keys($this->aData)) . '".');
         }
-        return !empty($this->oConfig['ALLOW_SET'][$sType]);
+        $aAllowSet = adduceToArray($this->getConfig('ALLOW_SET', array('G' => '_GET', 'P' => '_POST', 'R' => '_REQUEST')));
+        return !empty($aAllowSet[$sType]);
     } // function _isAllowToSet
 
     /**

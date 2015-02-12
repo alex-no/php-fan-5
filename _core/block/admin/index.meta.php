@@ -12,12 +12,12 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.01.002 (01.05.2013)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 return array(
     'own' => array(
         'externalCss' => array(
-            'new' => array(
+            'style' => array(
                 'c00' => '~/main.css',
                 'c01' => '~/layout.css',
                 'c02' => '~/data.css',

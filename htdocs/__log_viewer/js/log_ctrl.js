@@ -3,7 +3,7 @@ var logCtrl = newObject({
     traceLoader : null,
     dateList    : null,
 
-    menuObj    : {},
+    navObj    : {},
     headTitle  : {},
     pattern    : {},
     subscrElm  : {},
@@ -51,12 +51,12 @@ var logCtrl = newObject({
         var conf, lnk, selDt, vr, ptrn, k, i;
         conf = this.config;
 
-        // Init menu elements
+        // Init nav elements
         for (vr in this.dateList) {
             lnk = this.$("#" + vr + '_mn');
-            lnk.addListener(this, "onclick", "onMenuClick", vr);
+            lnk.addListener(this, "onclick", "onNavClick", vr);
             this.headTitle[vr] = lnk.elm.innerHTML;
-            this.menuObj[vr] = lnk.getParent();
+            this.navObj[vr] = lnk;
             if (!this.curVariety) {
                 this.curVariety = vr;
             }
@@ -99,14 +99,14 @@ var logCtrl = newObject({
 
     },
 
-    onMenuClick : function (evtWr, vr)
+    onNavClick : function (evtWr, vr)
     {
         var sel, opt, key, dt, i;
         evtWr.eventDrop();
         evtWr.elmWr.elm.blur();
         if (vr != this.curVariety) {
-            this.menuObj[this.curVariety].removeClass("current");
-            this.menuObj[vr].addClass("current");
+            this.navObj[this.curVariety].removeClass("current");
+            this.navObj[vr].addClass("current");
             this.curVariety = vr;
 
             sel = this.form.elm.elements.date;

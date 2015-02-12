@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.004
+ * @version of file: 05.02.005 (12.02.2015)
  */
 return array(
     /**
@@ -20,7 +20,7 @@ return array(
      */
     'own' => array(
         'externalCss' => array(
-            'new' => array('/css/pager.css'),
+            'style' => array('/css/pager.css'),
         ),
 
         'elmPerPage'    => 8,

@@ -1,9 +1,9 @@
 <?php namespace fan\app\__tools\main;
 /**
- * index block
+ * db_up block
  * @version 05.02.001 (10.03.2014)
  */
-class index extends \fan\project\block\form\injector
+class db_up extends \fan\project\block\form\injector
 {
     public function init()
     {
@@ -38,5 +38,5 @@ class index extends \fan\project\block\form\injector
             $this->view->sDirPath = $sRealDirPath ? $sRealDirPath : $this->getMeta("scenario_dir");
         }
     }
-} // class \fan\app\__tools\main\index
+} // class \fan\app\__tools\main\db_up
 ?>

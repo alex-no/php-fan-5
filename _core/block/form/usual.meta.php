@@ -15,7 +15,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 return array(
     /**
@@ -23,7 +23,7 @@ return array(
      */
     'own' => array(
         'externalCss' => array(
-            'new' => array('frm' => '/css/form.css'),
+            'style' => array('frm' => '/css/form.css'),
         ),
 
         'tpl_parent_class' => '\fan\project\service\template\type\form',

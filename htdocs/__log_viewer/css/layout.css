@@ -51,19 +51,15 @@ body {
    border-bottom: 2px solid #3D598B;
 	overflow: auto;
 }
-#main_menu {
+#main_nav {
 	max-height: 38px;
 	float: left;
 	overflow: hidden;
 }
-#main_menu li{
-	/*padding: 3px 8px 0px;*/
-	margin: 0px 2px;
-	list-style: none;
-	float: left;
-}
-#main_menu a{
+#main_nav a{
 	display: block;
+	float: left;
+	margin: 0px 2px;
 	padding: 2px 8px;
 	border: 1px solid #898989;
 	border-bottom: none;
@@ -73,12 +69,12 @@ body {
 	text-decoration: none;
 	white-space: nowrap;
 }
-#main_menu .current a{
+#main_nav a.current{
 	background-color: #FFFFCC;
 	color: #000066;
 	font-weight: bold;
 }
-#main_menu a:hover{
+#main_nav a:hover{
 	color: #000066;
 }
 #header select{

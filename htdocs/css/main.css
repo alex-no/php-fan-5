@@ -12,6 +12,9 @@ body {
 	border: 0px;
 	color: #000000;
 }
+header, main, section, footer, nav, article, aside {
+	display: block;
+}
 
 a {text-decoration: underline; color: #00008B;}
 a:visited {color: #4B0082;}
@@ -71,6 +74,10 @@ li {margin-left: 21px;}
 	margin: 20px 10px 20px 20px;
 }
 
+.txt_center {
+	text-align: center;
+}
+
 .center_block { margin: 0px auto; }
 .w50 {width: 50px;}
 .w100 {width: 100px;}
@@ -86,4 +93,11 @@ li {margin-left: 21px;}
 #messBefore, #messAfter  {
 	margin: 5px 20px;
 	text-align: center;
+}
+
+.unfolded:after {
+	content:"";
+	display: block;
+	clear: both;
+	height: 0px;
 }

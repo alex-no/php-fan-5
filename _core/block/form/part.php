@@ -12,18 +12,18 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  * @abstract
  */
 abstract class part extends usual
 {
     // ------------ Functions for other parts ------------ \\
     /**
-     * Init Current Form Part
+     * Init Current Form Part - usually set data and default value there
      * Method for redefine
-     * @param mixed $mData data from main part
+     * @param \fan\core\block\form\parser $oMainFormBlock Main form part block
      */
-    protected function partInit($mData = NULL)
+    protected function partInit($oMainFormBlock = NULL)
     {
     } // function partInit
 
@@ -32,17 +32,17 @@ abstract class part extends usual
      * @param boolean $bParceEmpty allow parse if form is empty
      * @param boolean $bParsingCondition (null - parse by Meta-condition, true - always parse, false - don't parse )
      * @param boolean $bAllowTransfer allow Transfer after submit
+     * @param boolean $bShowWarning allow warning about parse part of form
      * @return array
      */
-    protected function _parseForm($bParceEmpty = true, $bParsingCondition = true, $bAllowTransfer = false)
+    protected function _parseForm($bParceEmpty = true, $bParsingCondition = false, $bAllowTransfer = false, $bShowWarning = true)
     {
-        if (parent::_parseForm($bParceEmpty, $bParsingCondition, $bAllowTransfer)) {
-            return $this->getForm()->getFieldValue();
+        if ($bShowWarning) {
+            trigger_error('Do not run method "_parseForm" in part of form. It was runned in block "' . $this->blockName . '".', E_USER_WARNING);
+        } else {
+            parent::_parseForm($bParceEmpty, $bParsingCondition, $bAllowTransfer);
         }
-        if ($this->bIsError) {
-            throw new \fan\project\exception\block\form_part($this, $this->aErrorMsg);
-        }
-        return array();
+        return $this->getForm()->isError();
     } // function _parseForm
 } // class \fan\core\block\form\part
 ?>

@@ -1,12 +1,12 @@
 <?php
 /**
  * Create entity tools meta
- * @version 05.01.002 (01.05.2013)
+ * @version 05.02.005 (12.02.2015)
  */
 return array(
     'own' => array(
         'externalCss' => array(
-            'new' => array('frm' => '~/form.css'),
+            'style' => array('frm' => '~/form.css'),
         ),
 
         'form' => array(

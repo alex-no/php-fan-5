@@ -15,7 +15,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 02.014
+ * @version of file: 05.02.005 (12.02.2015)
  */
 return array(
     /**
@@ -32,8 +32,8 @@ return array(
          * "embeddedBlocks","carcass","root" can be set in "own"-part only!!!
          */
         'embeddedBlocks' => array( // Key - template var; Value - path to block
-            'menuTop'  => '{CAPP}/menu/main',
-            'menuLeft' => '{CAPP}/menu/left',
+            'menuTop'     => 'menu/main',
+            'menuLeft'    => 'menu/left',
             'main'     => '{MAIN}',
         ),
         /**
@@ -60,12 +60,13 @@ return array(
         ),
 
         'externalCss' => array( // css files
-            'link'         => array('file1.css', 'file2.css', 'etc'), // files are attached by <link media="all">-tag
-            'import'       => array('file1.css', 'file2.css', 'etc'), // files are attached by @import-directive
-            'link-print'   => array('file1.css', 'file2.css', 'etc'), // files are attached by <link media="print">-tag
-            'import-print' => array('file1.css', 'file2.css', 'etc'), // files are attached by @import-directive for media-print
+            'link'        => array('file1.css', 'file2.css', 'etc'), // files are attached by <link media="all">-tag
+            'style'       => array('file1.css', 'file2.css', 'etc'), // files are attached by @import-directive
+            'link-print'  => array('file1.css', 'file2.css', 'etc'), // files are attached by <link media="print">-tag
+            'style-print' => array('file1.css', 'file2.css', 'etc'), // files are attached by @import-directive for media-print
+            'ie'          => array('file1.css', 'file2.css', 'etc'), // files for IE-browser
             // Allow combine. For example:
-            'import-print,projection' => array('file1.css', 'file2.css', 'etc'), // files are attached by @import-directive for media-print,projection
+            'style-print,projection' => array('file1.css', 'file2.css', 'etc'), // files are attached by @import-directive for media-print,projection
         ),
         'embedCss' => array(
             'all'        => 'css-text for all media',

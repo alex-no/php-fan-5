@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class inbuilt
 {
@@ -24,9 +24,13 @@ class inbuilt
 
     /**
      * Constructor
+     * @param string $sSid
      */
-    public function __construct()
+    public function __construct($sSid)
     {
+        if (!empty($sSid)) {
+            $this->setSessionId($sSid);
+        }
         session_start();
     } // function __construct
 

@@ -1,14 +1,14 @@
 <?php namespace fan\app\__tools\design;
 /**
- * application_submenu block for tools
- * @version 05.02.001 (10.03.2014)
+ * application_subnav block for tools
+ * @version 05.02.005 (12.02.2015)
  */
-class application_submenu extends \fan\project\block\common\simple
+class application_subnav extends \fan\project\block\common\simple
 {
     /**
-     * @var array Menu
+     * @var array Nav
      */
-    protected $aMenu = array();
+    protected $aNav = array();
 
     /**
      * @var string Current element
@@ -26,13 +26,13 @@ class application_submenu extends \fan\project\block\common\simple
 
         $aConf = service('config')->get('application');
         foreach ($aConf['APPLICATIONS'] as $k => $v) {
-            $this->aMenu[$k] = array(
+            $this->aNav[$k] = array(
                 'url'  => $this->oTab->getURI('~/' . $sMainKey . '/' . $k . '.html', 'link', null, null),
                 'name' => 'APP <b>' . $k . '</b>',
             );
         }
 
-        $this->view->aMenu    = $this->aMenu;
+        $this->view->aNav    = $this->aNav;
         $this->view->sCurrent = $this->sCurrent;
     }
 
@@ -42,8 +42,8 @@ class application_submenu extends \fan\project\block\common\simple
      */
     public function getCurrentName()
     {
-        return @$this->aMenu[$this->sCurrent]['name'];
+        return @$this->aNav[$this->sCurrent]['name'];
     }
 
-} // class \fan\app\__tools\design\application_submenu
+} // class \fan\app\__tools\design\application_subnav
 ?>

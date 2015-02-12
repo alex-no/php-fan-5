@@ -12,13 +12,13 @@
 {*
 
 ====== CSS - block ====== *}
-{if @$externalCss['new'] or @$embedCss}{nostrip}
+{if $oBlock->isExtCSS('style') or @$embedCss['all']}{nostrip}
 <style type="text/css">
 <!--/*--><![CDATA[/*><!--*/
-{if @$externalCss['new']}{foreach item=cssFile from=$externalCss['new']}
-@import url({$cssFile});
-{/foreach}{/if}
-{@$embedCss}
+{if $oBlock->isExtCSS('style')}{foreach item=CssFile key=Media from=$externalCSS['style']}{foreach item=uri from=$CssFile}
+@import url({$uri}){if $Media != 'all'} {$Media}{/if};
+{/foreach}{/foreach}{/if}
+{@$embedCss['all']}
 /*]]>*/-->
 </style>
 {/nostrip}{/if}

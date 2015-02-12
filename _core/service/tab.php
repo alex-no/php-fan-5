@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -932,7 +932,13 @@ class tab extends \fan\core\base\service\single
     protected function _getPathWithExt($sUrn, $sDefaultExt = 'html')
     {
         $sExt = $this->getConfig('default_extension', $sDefaultExt);
-        return empty($sExt) ? $sUrn : $sUrn . '.' . $sExt;
+        if (empty($sExt)) {
+            return $sUrn;
+        }
+        $sExt = '.' . $sExt;
+        return substr($sUrn, -strlen($sExt)) == $sExt ?
+                $sUrn :
+                $sUrn . $sExt;
     } // function _getPathWithExt
 
     /**

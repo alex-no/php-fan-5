@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.005 (12.02.2015)
  */
 class json extends \fan\core\view\parser
 {
@@ -34,7 +34,7 @@ class json extends \fan\core\view\parser
      */
     public function getFinalContent()
     {
-        $sResult = json_encode($this->aResult);
+        $sResult = service('json')->encode($this->aResult);
         $this->_setHeaders($sResult, 'application/json');
         return $sResult;
     } // function getFinalContent
