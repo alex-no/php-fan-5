@@ -124,7 +124,7 @@ var calendar = newClass({
         cYear = (new Date()).getFullYear();
         this.currentDate = new Date(cYear < this.startYear ? cYear : this.startYear, 0, 1);
         this.sourseDate  = new Date();
- 
+
         this.errMsg = this.$('div.cldr_error', this.clndr);
     },
 

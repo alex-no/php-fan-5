@@ -1,7 +1,7 @@
 <?php
 /**
  * Meta of empty carcass with bottom
- * @version 05.02.001 (10.03.2014)
+ * @version 05.02.005 (12.02.2015)
  */
 return array(
     'own' => array(
@@ -10,7 +10,7 @@ return array(
             'footer' => 'design/footer',
         ),
         'externalCss' => array(
-            'new' => array('/css/main.css', '/css/layout.css'),
+            'style' => array('/css/main.css', '/css/layout.css'),
         ),
     ),
 );
