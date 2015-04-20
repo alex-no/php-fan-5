@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  * @abstract
  */
 abstract class entity extends \fan\core\base\model\spec_file\entity
@@ -82,7 +82,7 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
                 'num'   => 2,
                 'class' => 3,
             );
-            $aEtt = $this->prepareImgEtt($aRepl, $aMatches, $aPos, $aLinkTbl, $sKeyField, false);
+            $aEtt = $this->_prepareImgEtt($aRepl, $aMatches, $aPos, $aLinkTbl, $sKeyField, false);
 
             // Replace image code
             foreach ($aEtt as $e) {
@@ -116,7 +116,7 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
                 'height' => 5,
                 'class'  => 6,
             );
-            $aEtt = $this->prepareImgEtt($aRepl, $aMatches, $aLinkTbl, $sKeyField, true);
+            $aEtt = $this->_prepareImgEtt($aRepl, $aMatches, $aPos, $aLinkTbl, $sKeyField, true);
 
             // Replace image code
             foreach ($aEtt as $e) {
@@ -150,7 +150,7 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
      * @param boolean $bAdv
      * @return \fan\core\base\model\rowset
      */
-    private function prepareImgEtt(&$aRepl, $aMatches, $aPos, $aLinkTbl, $sKeyField, $bAdv)
+    private function _prepareImgEtt(&$aRepl, $aMatches, $aPos, $aLinkTbl, $sKeyField, $bAdv)
     {
         // Define by ID
         foreach ($aMatches[$aPos['id']] as $k => $id) {
@@ -186,7 +186,7 @@ abstract class entity extends \fan\core\base\model\spec_file\entity
 
         // Get entity image list
         return $this->getRowsetByParam($sKeyField . ' IN(' . implode(',', array_keys($aRepl)) . ')');
-    }// function prepareImgEtt
+    }// function _prepareImgEtt
 
 } // class \fan\core\base\model\spec_file\image\entity
 ?>

@@ -13,20 +13,33 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
-class phpmailer extends \PHPMailer
+class phpmailer
 {
+    /**
+     * Path to PHPMailer diectory
+     * @var string
+     */
+    protected $sDir;
+    /**
+     * Main PHPMailer class
+     * @var \PHPMailer
+     */
+    protected $oMail;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct();
-        $sDir = \bootstrap::parsePath('{CORE_DIR}/../libraries/PHPMailer');
+        $this->sDir = \bootstrap::parsePath('{CORE_DIR}/../libraries/PHPMailer/');
+        \bootstrap::getLoader()->registerAutoload(array($this, 'autholoadMailer'), true);
 
-        $this->PluginDir = $sDir . '/';
-        $this->SetLanguage('en', $sDir . '/language/');
+        $this->oMail = new \PHPMailer(false); //ToDo: Use Mailer Exception there
+
+        $this->oMail->Debugoutput = 'error_log';
+        $this->oMail->SetLanguage('ru', $this->sDir . 'language/'); //ToDo: Get Language from config
     } // function __construct
 
     /**
@@ -34,7 +47,7 @@ class phpmailer extends \PHPMailer
      * @param \fan\core\service\email $oFacade
      * @return \fan\core\service\email\phpmailer
      */
-    public function setFacade(\fan\core\base\service $oFacade)
+    public function setFacade(\fan\core\service\email $oFacade)
     {
         if (empty($this->oFacade)) {
             $this->oFacade = $oFacade;
@@ -42,54 +55,63 @@ class phpmailer extends \PHPMailer
             $oConfig = $oFacade->getConfig();
             switch ($oConfig->MAILER) {
                 case 'SMTP':
-                    $this->IsSMTP();
+                    $this->oMail->IsSMTP();
                     break;
                 case 'MAIL':
-                    $this->IsMail();
+                    $this->oMail->IsMail();
                     break;
                 default:
-                    $this->IsSendmail();
-            }
-
-            if ($oConfig->SMTP_HOST) {
-                $this->Host = $oConfig->SMTP_HOST;
-            }
-
-            if ($oConfig->PORT) {
-                $this->Port = $oConfig->PORT;
-            }
-
-            if ($oConfig->CHARSET) {
-                $this->CharSet = $oConfig->CHARSET;
+                    $this->oMail->IsSendmail();
             }
 
             $sUser = $oConfig->SMTP_USER;
-            if ($sUser) {
-                $this->SMTPAuth = true;
-                $this->Username = $sUser;
-                $this->Password = $oConfig->SMTP_PASSWORD;
+            if (!empty($sUser)) {
+                $this->oMail->SMTPAuth = true;
+                $this->oMail->Username = $sUser;
+                $this->oMail->Password = $oConfig->SMTP_PASSWORD;
             } // check SMTP_USER
 
-            if ($oConfig->AUTH_TYPE) {
-                $this->AuthType = $oConfig->AUTH_TYPE;
+            foreach (array(
+                'Host'     => 'SMTP_HOST',
+                'Port'     => 'PORT',
+                'CharSet'  => 'CHARSET',
+                'AuthType' => 'AUTH_TYPE',
+            ) as $k => $v) {
+                if ($oConfig->$v != '') {
+                    $this->oMail->$k = $oConfig->$v;
+                }
             }
 
-            $this->SMTPDebug = $oConfig->get('DEBUG', false);
+            $this->oMail->SMTPDebug = $oConfig->get('DEBUG', false);
         }
 
         return $this;
     } // function setFacade
 
     /**
+     * Autholoader for PHPMailer Classes
+     * @param string $sClassName
+     */
+    public function autholoadMailer($sClassName)
+    {
+        if (in_array($sClassName, array('PHPMailer', 'POP3', 'SMTP'))) {
+            $sFileName = $this->sDir . 'class.' . strtolower($sClassName) . '.php';
+            if (is_readable($sFileName)) {
+                require_once $sFileName;
+            }
+        }
+    } // function autholoadMailer
+
+    /**
      * Set From-parameters
      * @param string $sEmailFrom FROM address
      * @param string $sNameFrom FROM name
      */
-    public function setFromEng($sEmailFrom, $sNameFrom = '')
+    public function setFrom($sEmailFrom, $sNameFrom = '')
     {
-        $this->From = $sEmailFrom;
+        $this->oMail->From = $sEmailFrom;
         if ($sNameFrom) {
-            $this->FromName = $sNameFrom;
+            $this->oMail->FromName = $sNameFrom;
         }
     } // function setFromEng
 
@@ -102,19 +124,42 @@ class phpmailer extends \PHPMailer
      * @param bool $bIsHtml True if the email send as HTML
      * @return string Result of the operation, True if all ok
      */
-    public function sendEng($sSubj, $sBody, $sEmailTo, $sNameTo = '', $bIsHtml = false)
+    public function send($sSubj, $sBody, $sEmailTo, $sNameTo = '', $bIsHtml = false)
     {
-        $this->AddAddress($sEmailTo, $sNameTo);
-        $this->Subject  = trim($sSubj);
-        $this->Body     = $sBody;
-        $this->IsHTML($bIsHtml);
-        $bRet = parent::Send();
-        if (!empty($this->ErrorInfo)) {
-            trigger_error('<b>EMAIL error:</b> ' . $this->ErrorInfo . '<br/>' . $sNameTo . ' &lt;' . $sEmailTo . '&gt;', E_USER_WARNING);
+        $this->oMail->AddAddress($sEmailTo, $sNameTo);
+        $this->oMail->Subject  = trim($sSubj);
+        $this->oMail->Body     = $sBody;
+        $this->oMail->IsHTML($bIsHtml);
+        $bRet = $this->oMail->send();
+        if (!empty($this->oMail->ErrorInfo)) {
+            $bRet = false;
         }
-        $this->ClearAddresses();
-        $this->ClearAttachments();
+        if (!$bRet) {
+            service('error')->logErrorMessage(
+                    empty($this->oMail->ErrorInfo) ? 'Unknown error' : $this->oMail->ErrorInfo,
+                    'EMAIL error',
+                    $sNameTo . ' &lt;' . $sEmailTo . '&gt;',
+                    true,
+                    false
+            );
+        }
+        $this->oMail->ClearAddresses();
+        $this->oMail->ClearAttachments();
         return $bRet;
     } // function sendEng
+
+    /**
+     * Magic method call
+     * @param method $sMethod
+     * @param array $aArgs
+     * @return mixed
+     */
+    public function __call($sMethod, $aArgs)
+    {
+        if (method_exists($this->oMail, $sMethod)) {
+            return call_user_func_array(array($this->oMail, $sMethod), empty($aArgs) ? array() : $aArgs);
+        }
+        return null;
+    } // function __call
 } // class \fan\core\service\email\phpmailer
 ?>

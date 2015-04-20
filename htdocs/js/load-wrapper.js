@@ -981,7 +981,7 @@ implement(loadWrapper.prototype.config, {
     'dataKey'        : 'dl_data',
     'controlKey'     : 'dl_ctrl',
     'waiterStyle'    : 'opacity: 0.85; background-color: #FFFFFF; position: absolute; top: 0px; left: 0px; z-index:100; width: 100%; height: 100%;',
-    'waiterGif'      : '/_images/loader/ajax-loader.gif',
+    'waiterGif'      : '/image/loader/ajax-loader.gif',
     alertMessages_en  : {
         'JSbroken'    : 'JavaScript code is broken.',
         'HTMLbroken'  : 'HTML-code is broken.',

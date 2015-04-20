@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class urlMaker extends \fan\core\service\tab\delegate
 {
@@ -74,6 +74,15 @@ class urlMaker extends \fan\core\service\tab\delegate
 
         // Set Request path
         $aRequest = $oReq->getAll('B');
+        if (empty($aRequest) && $oParsed->src_path != '') {
+            // If sham transter from fake URN (for example by alias)
+            $aRequest = explode('/', trim($oParsed->src_path, '/'));
+            $sLast    =& $aRequest[count($aRequest) - 1];
+            $aMatche  = null;
+            if (preg_match('/^(.+)\.\w{1,5}$/', $sLast, $aMatche)) {
+                $sLast = $aMatche[1];
+            }
+        }
         foreach ($aRequest as &$v) {
             $v = urlencode($v);
         }

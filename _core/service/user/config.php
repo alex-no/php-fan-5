@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class config extends base
 {
@@ -43,7 +43,7 @@ class config extends base
      */
     public function makePasswordHash($sPassword)
     {
-        $sLogin = array_val($this->mData, 'login', $this->mIdentifyer);
+        $sLogin = array_val($this->aData, 'login', $this->mIdentifyer);
         return $sLogin ? md5($sLogin . $sPassword . $this->oConfig->get('ENGINE_KEY')) : '';
     } // function makePasswordHash
 
@@ -55,7 +55,7 @@ class config extends base
      */
     protected function _loadData()
     {
-        $this->mData = array();
+        $this->aData = array();
 
         $sFile = $this->oConfig->get('ENGINE_SOURCE', 'auth');
         $sKey  = $this->oConfig->get('ENGINE_KEY');
@@ -77,12 +77,12 @@ class config extends base
 
         if ($this->mIdentifyer == 'anonymous') {
             if (!empty($oRule['is_anonymous'])) {
-                $this->mData = $this->_getAnonymousData($oRule);
+                $this->aData = $this->_getAnonymousData($oRule);
             }
         } else {
-            $this->mData = $this->_getAuthorizedData($oRule);
+            $this->aData = $this->_getAuthorizedData($oRule);
         }
-        return !empty($this->mData);
+        return !empty($this->aData);
     } // function _loadData
 
     /**

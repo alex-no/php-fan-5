@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class upload extends base
 {
@@ -31,7 +31,7 @@ class upload extends base
      * @param array $aData
      * @return bool
      */
-    protected function uploadName($mValue, $aData)
+    public function uploadName($mValue, $aData)
     {
         $aParts = explode('.', $mValue['name']);
         if ((!isset($aData['double_ext']) || !empty($aData['double_ext'])) && count($aParts) > 3) {
@@ -52,7 +52,7 @@ class upload extends base
      * @param array $aData
      * @return bool
      */
-    protected function uploadMime($mValue, $aData)
+    public function uploadMime($mValue, $aData)
     {
         $bResult = true;
         if (isset($aData['allowed_mime'])) {

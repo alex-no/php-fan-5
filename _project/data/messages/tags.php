@@ -3,31 +3,35 @@
  * Tags array
  */
 return array (
-  '/a' => 
+  '/a' =>
   array (
     'tag' => '</a>',
   ),
-  '/b' => 
+  'br' =>
+  array (
+    'tag' => '<br/>',
+  ),
+  '/b' =>
   array (
     'tag' => '</b>',
   ),
-  'a-contact' => 
+  'a-contact' =>
   array (
-    'tag' => '<a href="{\fan\project\service\tab:getStaticUrl:/contact_us.html}">',
+    'tag' => '<a href="{service|tab:getURI:/contact_us.html}">',
     'link' => '/a',
     'isFunc' => true,
   ),
-  'b' => 
+  'b' =>
   array (
     'tag' => '<b>',
     'link' => '/b',
   ),
-  'combi_part' => 
+  'combi_part' =>
   array (
-    'tag' => '{\fan\project\service\translation:getCombiPart:}',
+    'tag' => '{service|translation:getCombiPart:}',
     'isFunc' => true,
   ),
-  'fc-size' => 
+  'fc-size' =>
   array (
     'tag' => '{\fan\app\frontend\main\contact_us:getMaxFileSize:}',
     'isFunc' => true,

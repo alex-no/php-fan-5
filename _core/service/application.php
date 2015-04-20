@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class application extends \fan\core\base\service\single
 {
@@ -106,7 +106,7 @@ class application extends \fan\core\base\service\single
      */
     public function getCoreVersion()
     {
-        return 'PHP-FAN 05.02.005 (2015-02-12)';
+        return 'PHP-FAN 05.02.006 (2015-04-20)';
     } // function getCoreVersion
 } // class \fan\core\service\application
 ?>

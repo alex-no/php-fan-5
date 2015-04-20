@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class entity extends base
 {
@@ -38,7 +38,7 @@ class entity extends base
      */
     public function makePasswordHash($sPassword)
     {
-        $sLogin = array_val($this->mData, 'login', $this->mIdentifyer);
+        $sLogin = array_val($this->aData, 'login', $this->mIdentifyer);
         return $sLogin ? md5($sLogin . $sPassword . $this->oConfig->get('ENGINE_KEY')) : '';
     } // function makePasswordHash
 
@@ -56,7 +56,7 @@ class entity extends base
             $oRow = ge($oConf->get('ENGINE_KEY'))->getRowByParam(array($v => $this->mIdentifyer));
             if ($oRow->checkIsLoad()) {
                 $this->oRow  = $oRow;
-                $this->mData = $this->_getEntityData();
+                $this->aData = $this->_getEntityData();
                 return true;
             }
         }
@@ -114,7 +114,7 @@ class entity extends base
         $oRow  = $this->_getRow();
         if (empty($aMethods)) {
             foreach ($this->_getKeyList() as $k) {
-                $v = 'get_' . $v;
+                $v = 'get_' . $k;
                 $aData[$k] = $oRow->$v(null, false);
             }
         } else {
@@ -172,8 +172,8 @@ class entity extends base
             $sEttKey = $this->oConfig->get('ENGINE_KEY');
             if ($this->bIsNew) {
                 $this->oRow = gr($sEttKey);
-            } elseif (!empty($this->mData['id'])) {
-                $this->oRow = gr($sEttKey, $this->mData['id']);
+            } elseif (!empty($this->aData['id'])) {
+                $this->oRow = gr($sEttKey, $this->aData['id']);
             } else {
                 return null;
             }
