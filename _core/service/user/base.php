@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  * @method string getLogin()
  * @method string getNickName()
  * @method string getFirstName()
@@ -75,9 +75,9 @@ abstract class base implements \Serializable
      *   'join_date'  => string
      *   'visit_date' => string
      *  "!" - required parameter
-     * @var array|object
+     * @var array
      */
-    protected $mData;
+    protected $aData = array();
 
     /**
      * @var mixed
@@ -145,10 +145,10 @@ abstract class base implements \Serializable
             }
             $this->oConfig = $oConfig;
 /*
-            if (empty($this->mData)) {
+            if (empty($this->aData)) {
                 $aIdent = adduceToArray($this->oConfig['IDENTIFYERS']);
                 if (count($aIdent) == 1) {
-                    $this->mData[$aIdent[0]] = $this->mIdentifyer;
+                    $this->aData[$aIdent[0]] = $this->mIdentifyer;
                 }
             }
  */
@@ -164,7 +164,7 @@ abstract class base implements \Serializable
      */
     public function getId()
     {
-        return array_val($this->mData, 'id', $this->mIdentifyer);
+        return array_val($this->aData, 'id', $this->mIdentifyer);
     } // function getId
 
     /**
@@ -189,7 +189,7 @@ abstract class base implements \Serializable
      */
     public function getRoles($bForce = false)
     {
-        return ($this->bIsValid || $bForce) && isset($this->mData['roles']) ? $this->mData['roles'] : array();
+        return ($this->bIsValid || $bForce) && isset($this->aData['roles']) ? $this->aData['roles'] : array();
     } // function getRoles
 
     /**
@@ -198,7 +198,13 @@ abstract class base implements \Serializable
      */
     public function getAllData()
     {
-        return $this->mData;
+        $aResult = $this->aData;
+        foreach ($this->_getKeyList() as $k) {
+            if (!array_key_exists($k, $aResult)) {
+                $aResult[$k] = null;
+            }
+        }
+        return $aResult;
     } // function getAllData
 
     // --- Setters method --- \\
@@ -212,8 +218,8 @@ abstract class base implements \Serializable
         if (is_null($sDate)) {
             $sDate = date('Y-m-d');
         }
-        if (!isset($this->mData['visit_date']) || $this->mData['visit_date'] != $sDate) {
-            $this->mData['visit_date'] = $this->aChanged['visit_date'] = $sDate;
+        if (!isset($this->aData['visit_date']) || $this->aData['visit_date'] != $sDate) {
+            $this->aData['visit_date'] = $this->aChanged['visit_date'] = $sDate;
         }
         return $this->oFacade;
     } // function setVisitDate
@@ -227,8 +233,8 @@ abstract class base implements \Serializable
     public function setPassword($sPassword)
     {
         $sHash = $this->makePasswordHash($sPassword);
-        if (!isset($this->mData['password']) || $this->mData['password'] != $sHash) {
-            $this->mData['password'] = $this->aChanged['password'] = $sHash;
+        if (!isset($this->aData['password']) || $this->aData['password'] != $sHash) {
+            $this->aData['password'] = $this->aChanged['password'] = $sHash;
         }
         $this->bIsValid = true;
         return $this->oFacade;
@@ -242,11 +248,11 @@ abstract class base implements \Serializable
     public function checkPassword($sPassword)
     {
         $sHash = $this->makePasswordHash($sPassword);
-        $this->bIsValid = !empty($this->mData['password']) && $this->mData['password'] == $sHash;
+        $this->bIsValid = !empty($this->aData['password']) && $this->aData['password'] == $sHash;
 
         // Log Error Authentication if it is allowed
         if (!$this->bIsValid && $this->oConfig['LOG_ERR_AUTH']) {
-            if (empty($this->mData)) {
+            if (empty($this->aData)) {
                 $sErrMsg = 'Data for "' . $this->mIdentifyer . '" isn\'t present.';
                 $sNote   = '';
             } else {
@@ -289,7 +295,7 @@ abstract class base implements \Serializable
     public function save()
     {
         if ($this->bIsNew) {
-            $this->mData['join_date'] = date('Y-m-d');
+            $this->aData['join_date'] = $this->aChanged['join_date'] = date('Y-m-d H:i:s');
         }
 
         if ($this->isChanged() && $this->_validateForSave() && $this->_saveData()) {
@@ -328,7 +334,7 @@ abstract class base implements \Serializable
 
     /**
      * Save User Data and return TRUE if success
-     * Method must set property $this->mData
+     * Method must set property $this->aData
      * @return boolean
      */
     abstract protected function _loadData();
@@ -378,10 +384,10 @@ abstract class base implements \Serializable
      */
     protected function _set($sKey, $mVal)
     {
-        if (!isset($this->mData[$sKey]) && !is_null($mVal) || $this->mData[$sKey] != $mVal) {
+        if (!isset($this->aData[$sKey]) && !is_null($mVal) || array_val($this->aData, $sKey) != $mVal) {
             $this->aChanged[$sKey] = $mVal;
         }
-        $this->mData[$sKey] = $mVal;
+        $this->aData[$sKey] = $mVal;
         return $this->oFacade;
     } // function _set
     /**
@@ -391,7 +397,7 @@ abstract class base implements \Serializable
      */
     protected function _get($sKey)
     {
-        return isset($this->mData[$sKey]) ? $this->mData[$sKey] : null;
+        return isset($this->aData[$sKey]) ? $this->aData[$sKey] : null;
     } // function _get
 
     /**
@@ -435,7 +441,7 @@ abstract class base implements \Serializable
                 'changed' => $this->aChanged,
             ),
             'identifyer' => $this->mIdentifyer,
-            'main'       => serialize($this->mData),
+            'main'       => serialize($this->aData),
         ));
     }
 
@@ -448,7 +454,7 @@ abstract class base implements \Serializable
         $this->aChanged = $aData['flags']['changed'];
 
         $this->mIdentifyer = $aData['identifyer'];
-        $this->mData       = unserialize($aData['main']);
+        $this->aData       = unserialize($aData['main']);
     }
 
 } // class \fan\core\service\user\base

@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class email extends \fan\core\base\service\multi
 {
@@ -80,84 +80,90 @@ class email extends \fan\core\base\service\multi
      * Set From-parameters
      * @param string $sEmailFrom FROM address
      * @param string $sNameFrom FROM name
+     * @return \fan\core\service\email
      */
     public function setFrom($sEmailFrom, $sNameFrom = '')
     {
         if ($this->isEnabled()) {
-            $this->oEngine->setFromEng($sEmailFrom, $this->_recodingText($sNameFrom, 'NAME_RECODING'));
-        } // check enabling status
+            $this->oEngine->setFrom($sEmailFrom, $this->_recodingText($sNameFrom, 'NAME_RECODING'));
+        }
+        return $this;
     } // function setFrom
 
     /**
-     * Clears all recipients assigned in the TO, CC and BCC
-     * array.  Returns void.
-     * @return void
+     * Clears all recipients assigned in the TO, CC and BCC array.
+     * @return \fan\core\service\email
      */
     public function clearAllRecipients()
     {
         if ($this->isEnabled()) {
             $this->oEngine->ClearAllRecipients();
-        } // check enabling status
-    }
+        }
+        return $this;
+    } // function clearAllRecipients
 
     /**
-     * Adds a "Cc" address. Note: this function works
+     * Adds a "CC" address. Note: this function works
      * with the SMTP mailer on win32, not with the "mail"
      * mailer.
-     * @param string $address
-     * @param string $name
-     * @return void
-    */
-    function addCc($address, $name = '')
+     * @param string $sAddress
+     * @param string $sName
+     * @return \fan\core\service\email
+     */
+    function addCc($sAddress, $sName = '')
     {
         if ($this->isEnabled()) {
-            $this->oEngine->AddCC($address, $name);
-        } // check enabling status
-    }
+            $this->oEngine->AddCC($sAddress, $sName);
+        }
+        return $this;
+    } // function addCc
 
     /**
      * Adds a "Bcc" address. Note: this function works
      * with the SMTP mailer on win32, not with the "mail"
      * mailer.
-     * @param string $address
-     * @param string $name
-     * @return void
+     * @param string $sAddress
+     * @param string $sName
+     * @return \fan\core\service\email
      */
-    function addBcc($address, $name = '')
+    function addBcc($sAddress, $sName = '')
     {
          if ($this->isEnabled()) {
-            $this->oEngine->AddBCC($address, $name);
-        } // check enabling status
-    }
+            $this->oEngine->addBCC($sAddress, $sName);
+        }
+        return $this;
+    } // function addBcc
 
     /**
      * Adds a "Reply-to" address.
-     * @param string $address
-     * @param string $name
-     * @return void
+     * @param string $sAddress
+     * @param string $sName
+     * @return \fan\core\service\email
      */
-    function addReplyTo($address, $name = '')
+    function addReplyTo($sAddress, $sName = '')
     {
         if ($this->isEnabled()) {
-            $this->oEngine->AddReplyTo($address, $name);
-        } // check enabling status
-    }
+            $this->oEngine->AddReplyTo($sAddress, $sName);
+        }
+        return $this;
+    } // function addReplyTo
 
     /**
      * Adds an attachment from a path on the filesystem.
      * Returns false if the file could not be found
      * or accessed.
      * @param string $path Path to the attachment.
-     * @param string $name Overrides the attachment name.
+     * @param string $sName Overrides the attachment name.
      * @param string $encoding File encoding ("8bit", "7bit", "binary", "base64", and "quoted-printable").
      * @param string $type File extension (MIME) type.
-     * @return bool
+     * @return \fan\core\service\email
      */
-    function addAttachment($path, $name = '', $encoding = 'base64', $type = 'application/octet-stream')
+    function addAttachment($path, $sName = '', $encoding = 'base64', $type = 'application/octet-stream')
     {
         if ($this->isEnabled()) {
-            $this->oEngine->AddAttachment($path, $name, $encoding, $type);
+            $this->oEngine->AddAttachment($path, $sName, $encoding, $type);
         }
+        return $this;
     }
 
     /**
@@ -170,7 +176,7 @@ class email extends \fan\core\base\service\multi
      */
     public function send($sSubj, $sBody, $sEmailTo, $sNameTo = '', $bIsHtml = false)
     {
-        return $this->isEnabled() ? $this->oEngine->sendEng($this->_recodingText($sSubj, 'SUBJECT_RECODING'), $this->_recodingText($sBody, 'BODY_RECODING'), $sEmailTo, $this->_recodingText($sNameTo, 'NAME_RECODING'), $bIsHtml) : null;
+        return $this->isEnabled() ? $this->oEngine->send($this->_recodingText($sSubj, 'SUBJECT_RECODING'), $this->_recodingText($sBody, 'BODY_RECODING'), $sEmailTo, $this->_recodingText($sNameTo, 'NAME_RECODING'), $bIsHtml) : null;
     } // function send
 
     /**

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 03.003
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class html_pager_quantifier extends \fan\core\block\common\html_pager_quantifier
 {
@@ -41,23 +41,24 @@ class html_pager_quantifier extends \fan\core\block\common\html_pager_quantifier
     {
         parent::getFieldValuesFromRequest();
 
-        if (!$this->aFieldValue['pager_quantifier']) {
-            $this->aFieldValue['pager_quantifier'] = $this->_getQuantifier();
+        $oForm = $this->getForm();
+        if (!$oForm->getFieldValue('pager_quantifier')) {
+            $oForm->setFieldValue('pager_quantifier', $this->_getQuantifier());
         }
     } // function getFieldValuesFromRequest
 
-    public function onsubmit()
+    public function onSubmit()
     {
         $sKey = $this->getMeta('sessionKey');
 
         if ($sKey) {
-            $this->aFieldValue['pager_quantifier'] = $this->_getQuantifier(true);
+            $sPagerQuantifier = $this->_getQuantifier(true);
 
-            if ($this->aFieldValue['pager_quantifier']) {
-                $this->_getPagerSession()->set($sKey, $this->aFieldValue['pager_quantifier']);
+            if ($sPagerQuantifier) {
+                $this->_getPagerSession()->set($sKey, $sPagerQuantifier);
             }
         }
-    }
+    } // function onSubmit
 
     /**
      * Returns session object
@@ -72,7 +73,7 @@ class html_pager_quantifier extends \fan\core\block\common\html_pager_quantifier
         }
 
         return $session;
-    }
+    } // function _getPagerSession
 
     /**
      * Returns quantifier value from session or default value
@@ -101,7 +102,7 @@ class html_pager_quantifier extends \fan\core\block\common\html_pager_quantifier
         }
 
         return $iQuantifier ? $iQuantifier : $defaultValue;
-    }
+    } // function _getQuantifier
 
 } // class \fan\project\block\common\html_pager_quantifier
 ?>

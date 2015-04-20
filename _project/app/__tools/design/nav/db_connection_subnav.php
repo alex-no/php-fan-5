@@ -1,7 +1,7 @@
 <?php namespace fan\app\__tools\design;
 /**
  * db_connection_subnav block for tools
- * @version 05.02.005 (12.02.2015)
+ * @version 05.02.006 (20.04.2015)
  */
 class db_connection_subnav extends \fan\project\block\common\simple
 {
@@ -22,7 +22,7 @@ class db_connection_subnav extends \fan\project\block\common\simple
     {
         $oReq = $this->getRequest();
         $sMainKey = implode('/', $oReq->getAll('M'));
-        @list($this->sCurrent) = $oReq->getAll('A');
+        $this->sCurrent = $oReq->get(0, 'A');
 
         $aConf = service('config')->get('database');
         foreach ($aConf['DATABASE'] as $k => $v) {

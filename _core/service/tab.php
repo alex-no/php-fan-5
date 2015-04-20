@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.006 (20.04.2015)
  *
  * @method boolean isUseHttps() isUseHttps(array|string $mKey)
  * @method string getCurrentURI() getCurrentURI(boolean $bCorLng, boolean $bAddExt, boolean $bAddQueryStr, boolean $bAddFirstSlash)
@@ -541,7 +541,7 @@ class tab extends \fan\core\base\service\single
     protected function _checkAlias()
     {
         if ($this->oMatcher->getCurrentIndex() == 0) {
-            $aReqData   = $this->oMatcher->getCurrentItem()->getParsedSrc();
+            $aReqData   = $this->oMatcher->getLastItem()->getParsedSrc();
             $sAliasFile = \bootstrap::parsePath($this->getConfig('ALIAS_FILE_PATH', '{PROJECT}/data/url_alias.php'));
             if (!empty($aReqData) && is_readable($sAliasFile)) {
                 $aAliasData = include $sAliasFile;
@@ -560,10 +560,10 @@ class tab extends \fan\core\base\service\single
 
                         if (isset($aAliasData[$sCheck])) {
                             // Define $sDestPath
-                            @list($Type, $sDestPath) = explode(':', $aAliasData[$sCheck], 2);
-                            if (!empty($Type) && empty($sDestPath)) {
-                                $sDestPath = $Type;
-                                $Type = 'sham';
+                            @list($sType, $sDestPath) = explode(':', $aAliasData[$sCheck], 2);
+                            if (!empty($sType) && empty($sDestPath)) {
+                                $sDestPath = $sType;
+                                $sType = 'sham';
                             }
                             if ($k) {
                                 if (substr($sDestPath, -1) != '/') {
@@ -573,8 +573,8 @@ class tab extends \fan\core\base\service\single
                             }
 
                             // Validate data
-                            if (empty($Type) || !in_array($Type, array('out', 'int', 'sham'))) {
-                                throw new fatalException($this, 'Alias transfer type has incorrect value "' . $Type . '" for request "' . $sReqPath . '".');
+                            if (empty($sType) || !in_array($sType, array('out', 'int', 'sham'))) {
+                                throw new fatalException($this, 'Alias transfer type has incorrect value "' . $sType . '" for request "' . $sReqPath . '".');
                             }
                             if (empty($sDestPath)) {
                                 throw new fatalException($this, 'Alias transfer doesn\'t have path for "' . $sReqPath . '".');
@@ -586,7 +586,7 @@ class tab extends \fan\core\base\service\single
                             if (substr($sDestPath, -1) != '/') {
                                 $sDestPath = $this->_getPathWithExt($sDestPath);
                             }
-                            call_user_func('transfer_' . $Type, $sDestPath);
+                            call_user_func('transfer_' . $sType, $sDestPath);
                         }
                     }
                 }

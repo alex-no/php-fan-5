@@ -272,5 +272,5 @@ class image extends db_file
         );
     } // function _getNailData
 
-} // class \fan\core\service\plain\nail
+} // class \fan\core\plain\image
 ?>

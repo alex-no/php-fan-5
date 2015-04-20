@@ -14,7 +14,7 @@ use \fan\project\exception\error500 as error500;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.006 (20.04.2015)
  * @method mixed getId()
  * @method string getLogin()
  * @method string getNickName()
@@ -354,7 +354,9 @@ class user extends \fan\core\base\service\multi implements \Serializable
     public function removeRole($mRole)
     {
         $aCurRoles = $this->getRoles(true);
-        unset($aCurRoles[$mRole]);
+        if (array_key_exists($mRole, $aCurRoles)) {
+            unset($aCurRoles[$mRole]);
+        }
         return $this->setRoles($aCurRoles);
     } // function removeRole
 
@@ -404,13 +406,44 @@ class user extends \fan\core\base\service\multi implements \Serializable
     } // function makePasswordHash
 
     /**
+     * Set Data
+     * @param array $aData
+     * @return \fan\core\service\user
+     */
+    public function setData($aData)
+    {
+        foreach ($aData as $k => $v) {
+            $this->set($k, $v);
+        }
+        return $this;
+    } // function setData
+
+    /**
      * Get Data
-     * @return \fan\core\service\user\base
+     * @return array
      */
     public function getData()
     {
-        return $this->oUserData;
+        return $this->toArray();
     } // function getData
+
+    /**
+     * Conver Data to array
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->oUserData->getAllData();
+    } // function toArray
+
+    /**
+     * Get Data
+     * @return \fan\core\service\user\base
+     */
+    public function getEngine()
+    {
+        return $this->oUserData;
+    } // function getEngine
 
     /**
      * On event - Set Application Name
@@ -423,6 +456,31 @@ class user extends \fan\core\base\service\multi implements \Serializable
             self::getCurrent();
         }
     } // function onSetAppName
+
+    /**
+     * Set any parameter
+     * @param string $sKey
+     * @param mixed $mValue
+     * @return \fan\core\service\user
+     */
+    public function set($sKey, $mValue)
+    {
+        list($oObject, $sMethod) = $this->_checkKey('set', $sKey);
+        if (!empty($oObject)) {
+            $oObject->$sMethod($mValue);
+        }
+        return $this;
+    } // function set
+    /**
+     * Get any parameter
+     * @param string $sKey
+     * @return mixed
+     */
+    public function get($sKey)
+    {
+        list($oObject, $sMethod) = $this->_checkKey('get', $sKey);
+        return empty($oObject) ? null : $oObject->$sMethod();
+    } // function get
 
     // ======== Private/Protected methods ======== \\
 
@@ -543,7 +601,39 @@ class user extends \fan\core\base\service\multi implements \Serializable
         throw new fatalException($this, 'Incorrect data format "' . gettype($mData) . '"');
     } // function _convertToArray
 
+    protected function _checkKey($sType, $sKey)
+    {
+        $aData = $this->oUserData->getAllData();
+        if (!array_key_exists($sKey, $aData)) {
+            return array(null, null);
+        }
+
+        $aTmp    = array_map('ucfirst', explode('_', $sKey));
+        $sMethod = $sType . implode('', $aTmp);
+
+        $oObject = method_exists($this, $sMethod) ? $this : $this->oUserData;
+        return array($oObject, $sMethod);
+    } // function _checkKey
+
     // ======== The magic methods ======== \\
+    /**
+     * Magic method for set property
+     * @param string $sKey
+     * @param mixed $mValue
+     */
+    public function __set($sKey, $mValue)
+    {
+        $this->set($sKey, $mValue);
+    } // function __set
+    /**
+     * Magic method for set property
+     * @param string $sKey
+     * @return mixed
+     */
+    public function __get($sKey)
+    {
+        return $this->get($sKey, $sValue);
+    } // function __get
 
     // ======== Required Interface methods ======== \\
 

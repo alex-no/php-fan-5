@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  * @abstract
  */
 abstract class service
@@ -274,6 +274,17 @@ abstract class service
     } // function _getDelegate
 
     /**
+     * Extension of method Call
+     * @param string $sMethod
+     * @param array $aArgs
+     * @return boolean
+     */
+    protected function _extensionCall($sMethod, $aArgs)
+    {
+        return false;
+    } // function _extensionCall
+
+    /**
      * Make Exception of Service
      * @param sting $sLogErrMsg
      * @param sting $sExceptionDbOper
@@ -335,10 +346,12 @@ abstract class service
         foreach ($this->aDelegateRule as $sClass => $aMethods) {
             if (in_array($sMethod, $aMethods)) {
                 $aCallBack = array($this->_getDelegate($sClass), $sMethod);
-                return is_null($aCallBack) ? null : call_user_func_array($aCallBack, empty($aArgs) ? array() : $aArgs);
+                return is_null($aCallBack[0]) ? null : call_user_func_array($aCallBack, empty($aArgs) ? array() : $aArgs);
             }
         }
-        throw new fatalException($this, 'Incorrect call of service - unknown method "' . $sMethod . '"!');
+        if (!$this->_extensionCall($sMethod, $aArgs)) {
+            throw new fatalException($this, 'Incorrect call of service - unknown method "' . $sMethod . '"!');
+        }
     } // function __call
 
     // ======== Required Interface methods ======== \\

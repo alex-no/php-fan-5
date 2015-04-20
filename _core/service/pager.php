@@ -1,7 +1,7 @@
 <?php namespace fan\core\service;
 use fan\project\exception\service\fatal as fatalException;
 /**
- * Captcha manager service
+ * Pager service
  *
  * This file is part PHP-FAN (php-framework of Alexandr Nosov)
  * Copyright (C) 2005-2007 Alexandr Nosov, http://www.alex.4n.com.ua/
@@ -238,7 +238,7 @@ class pager extends \fan\core\base\service\multi
                 $oEtt->getRowsetByParam($mParam, $nQtt, $nOffset, $sOrderBy) :
                 $oEtt->getRowsetByKey($sSqlKey, $mParam, $nQtt, $nOffset, $sOrderBy);
         return $oItems;
-    } // function getItemsByParam
+    } // function getItemsByKey
 
     /**
      * Get page url

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  * @abstract
  */
 abstract class usual extends parser
@@ -34,15 +34,13 @@ abstract class usual extends parser
     {
         parent::finishConstruct($oContainer, $aContainerMeta, $bAllowSetEmbedded);
         if ($this->bIsForm && !$this->getRoleCondition()) {
-/*
             // Create JS validation rule
             if (!$this->sRoleName || !role($this->sRoleName)) {
-                $sValidateJS = $this->strForJsValidation();
+                $sValidateJS = $this->getForm()->strForJsValidation();
                 if ($sValidateJS) {
-                    $this->getBlock('root')->setEmbedJs($sValidateJS);
+                    $this->_getBlock('root')->setEmbedJs($sValidateJS);
                 }
             }
- */
         }
     } // function finishConstruct
 

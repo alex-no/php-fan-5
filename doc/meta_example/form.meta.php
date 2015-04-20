@@ -15,7 +15,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 return array(
     /**
@@ -61,12 +61,13 @@ return array(
             'useMultiLanguage' => true OR false, //NR. Set form vessages as multy- OR one-language. By default: true or false depending on service locale is allowed or not
             'required_msg' => 'Field "{FIELD_LABEL}" is required for fill!', //NR. By default: has value as show in this example
 
-            'startTabIndex' => 1, //Start TabIndex number. NR. By default: 1
+            'startTabIndex' => 1, //NR. Start TabIndex number. By default: 1
 
             'notUseHtmlMaker' => true OR false, // NR. Do not create object HTML-maker in the template. By default: notUseHtmlMaker = false
             'not_role' => true OR false, // NR. Do not create temporary role for disable form show after submit. By default: not_role = false
 
             'form_parts' => array(), // NR. Set it for multi-part form in the main part. Contain list of form-parts and order of parsing them.
+            'auto_init_parts' => true, // NR. Init all parts of  form (set data and default values for form elements) as soon as main parsing is runned.
 
             'fields' => array(
                 'field_name1' => array(

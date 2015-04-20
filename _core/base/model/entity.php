@@ -15,7 +15,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * @property-read \fan\core\service\entity\description $description
  * @property-read \fan\core\base\model\request $request
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 abstract class entity
 {
@@ -152,6 +152,15 @@ abstract class entity
     // ======== Main Interface methods ======== \\
     // --===-- Get Row --===-- \\
     /**
+     * Get new row-object
+     * @return \fan\core\base\model\row
+     */
+    public function getNewRow()
+    {
+        return $this->_getRowByData();
+    } // function getNewRow
+
+    /**
      * Get Row By Id (array, scalar value OR object with convert to string)
      * @param mixed $mRowId
      * @param boolean $bIdIsEncrypt
@@ -160,8 +169,7 @@ abstract class entity
     public function getRowById($mRowId, $bIdIsEncrypt = false)
     {
         if (is_null($mRowId)) {
-            $sClass = $this->getRowClassName();
-            return new $sClass($this);
+            return $this->_getRowByData();
         }
         $mParam = $this->getParamById($mRowId, $bIdIsEncrypt);
         return $this->getRowByParam($mParam, 0, null);
@@ -176,9 +184,8 @@ abstract class entity
      */
     public function getRowByParam($mParam = null, $nOffset = 0, $sOrderBy = null)
     {
-        $sClass = $this->getRowClassName();
         $aData =& $this->getDataByParam($mParam, 1, $nOffset, $sOrderBy, true);
-        return new $sClass($this, $aData);
+        return $this->_getRowByData($aData);
     } // function getRowByParam
 
     /**
@@ -220,9 +227,8 @@ abstract class entity
      */
     public function getRowByQuery($mQuery, $mParam = null, $nOffset = 0)
     {
-        $sClass =  $this->getRowClassName();
         $aData  =& $this->getDataByQuery($mQuery, $mParam, 1, $nOffset, true);
-        return new $sClass($this, $aData);
+        return $this->_getRowByData($aData);
     } // function getRowByQuery
 
     // --===-- Get Rowset --===-- \\
@@ -793,5 +799,16 @@ abstract class entity
         }
         throw new fatalException($this, 'Incorrect format of SQL-request.');
     } // function _getSqlAsString
+
+    /**
+     * Create new row-object
+     * @param array $aData
+     * @return \fan\core\base\model\row
+     */
+    protected function _getRowByData(&$aData = null)
+    {
+        $sClass = $this->getRowClassName();
+        return empty($aData) ? new $sClass($this) : new $sClass($this, $aData);
+    } // function _getRowByData
 } // class \fan\core\base\model\entity
 ?>

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  * @abstract
  */
 abstract class row extends \fan\core\base\model\spec_file\row
@@ -158,7 +158,7 @@ abstract class row extends \fan\core\base\model\spec_file\row
         if ($sType == 'img') {
             $this->setMainImgParam($aParam);
         } else {
-            $this->setUrl($aParam['img'], 'nail', '/nail.php?id=', '&anp;w={width}&anp;h={height}');
+            $this->setUrl($aParam['img'], 'nail', '/nail.php?id=', '&amp;w={width}&amp;h={height}');
             $this->resizeImage($aParam['img']);
             $this->setMainImgParam($aParam, false);
         }

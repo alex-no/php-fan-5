@@ -106,7 +106,7 @@ var form_validation_main = {
 
     err_array        : null,
     errorMsgMethod   : '',
-    
+
     vbl_loader   : null,
     vbl_fields   : null,
     vbl_errDivs : null,
@@ -144,7 +144,7 @@ var form_validation_main = {
         }
 
         this.errorMsgMethod = 'errorMsg_' + (ini_keys.err_format ? ini_keys.err_format : this.config.errorFormatDef);
-        
+
         if (winWr) {
             this.$w0 = this.winWr = winWr;
         }
@@ -519,7 +519,7 @@ var form_validation_main = {
 
 
 // ---------- Validate rules -----------
-    rule_is_required : function(val) {
+    rule_isRequired : function(val) {
         if (val && val instanceof Array) {
             if (val.length == 1) val = val[0];
             else return val.length > 1 ? true : false;
@@ -532,22 +532,22 @@ var form_validation_main = {
         if (isDefined(data, "min_value") && len < data.min_value) return false;
         return true;
     },
-    rule_is_alphalogin : function(val) {
+    rule_isAlphalogin : function(val) {
         return this._regexp(val, /^[A-Z0-9][\w\-@\.]*$/i);
     },
-    rule_is_alphanumeric : function(val) {
+    rule_isAlphanumeric : function(val) {
         return this._regexp(val, /^[A-Z0-9][\w\-]*$/i);
     },
-    rule_is_int : function(val, data) {
+    rule_isInt : function(val, data) {
         return this._regexp_min_max(val, /^\-?\d+$/, data, "int");
     },
-    rule_is_float : function(val, data) {
+    rule_isFloat : function(val, data) {
         return this._regexp_min_max(val, /^\-?\d+(\.\d*)?$/, data, "float");
     },
-    rule_is_email : function(val) {
+    rule_isEmail : function(val) {
         return this._regexp(val, /^[a-z_0-9!#*=.-]+@([a-z0-9-]+\.)+[a-z]{2,4}$/i);
     },
-    rule_is_date : function(val, data) {
+    rule_isDate : function(val, data) {
         if (!data.date_format) {
             data.date_format = /(\d{2,4})[-\/.](\d{2})[-\/.](\d{2,4})/
         }
@@ -556,34 +556,34 @@ var form_validation_main = {
         }
         return this._regexp_min_max(val, data.date_format, data, "date");
     },
-    rule_match_regexp : function(val, data) {
+    rule_matchRegexp : function(val, data) {
         return this._regexp(val, data.regexp);
     },
-    rule_equal_to : function(val, data) {
+    rule_equalTo : function(val, data) {
         var cmp = this._conv4compare(val, data);
         return cmp[0] == cmp[1];
     },
-    rule_not_equal_to : function(val, data) {
+    rule_notEqualTo : function(val, data) {
         var cmp = this._conv4compare(val, data);
         return cmp[0] != cmp[1];
     },
-    rule_greater_than : function(val, data) {
+    rule_greaterThan : function(val, data) {
         var cmp = this._conv4compare(val, data);
         return cmp[0] > cmp[1];
     },
-    rule_lesser_than : function(val, data) {
+    rule_lesserThan : function(val, data) {
         var cmp = this._conv4compare(val, data);
         return cmp[0] < cmp[1];
     },
-    rule_greater_or_equal_to : function(val, data) {
+    rule_greaterOrEqualTo : function(val, data) {
         var cmp = this._conv4compare(val, data);
         return cmp[0] >= cmp[1];
     },
-    rule_lesser_or_equal_to : function(val, data) {
+    rule_lesserOrEqualTo : function(val, data) {
         var cmp = this._conv4compare(val, data);
         return cmp[0] <= cmp[1];
     },
-    rule_date_interval : function(val, data) {
+    rule_dateInterval : function(val, data) {
         var cval = this._date2string(val, data);
         if (typeof(cval) == "null") return false;
         if (isDefined(data, "max_value") && (cval > this._date2string(data.max_value, data))) return false;
@@ -598,11 +598,11 @@ var form_validation_main = {
 Validate init example:
 var validation_loginForm = new form_validation({form:"loginForm"}, {
     login:[
-        {rule_name:"is_required", error_msg:"Field \"Login\" is required for fill!"},
-        {rule_name:"is_alphalogin", error_msg:"Field \"Login\" must contain only Numbers, Letters, _, @, - and point.",not_empty:1}
+        {rule_name:"isRequired", error_msg:"Field \"Login\" is required for fill!"},
+        {rule_name:"isAlphalogin", error_msg:"Field \"Login\" must contain only Numbers, Letters, _, @, - and point.",not_empty:1}
     ],
     password:[
-        {rule_name:"is_required", error_msg:"Field \"Password\" is required for fill!"}
+        {rule_name:"isRequired", error_msg:"Field \"Password\" is required for fill!"}
     ]
 }, _wrapper);
 */

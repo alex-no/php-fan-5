@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class html_pager_quantifier extends \fan\core\block\form\usual
 {
@@ -30,13 +30,13 @@ class html_pager_quantifier extends \fan\core\block\form\usual
         }
         $this->_setViewVar('aGurrentGet', $aGurrentGet);
 
-        $this->parseForm(true, !empty($aGet['pager_quantifier']));
+        $this->_parseForm(true, !empty($aGet['pager_quantifier']));
     } // function init
 
-    public function onsubmit()
+    protected function onSubmit()
     {
         $this->oContainer->setElmPerPage($this->aFieldValue['pager_quantifier']);
-    } // function onsubmit
+    } // function onSubmit
 
     /**
      * Get Dynamic Meta-data

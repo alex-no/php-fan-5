@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 
 /**
@@ -77,6 +77,20 @@ function is_array_alt($aArr)
 {
     return is_array($aArr) || is_object($aArr) && $aArr instanceof \ArrayAccess;
 } // function is_array_alt
+
+/**
+ * Explode string and return array with fixed size
+ * @param string $sDelimiter
+ * @param string $sString
+ * @param integer $iSize
+ * @return array
+ */
+function explode_alt($sDelimiter, $sString, $iSize)
+{
+    $aResult = explode($sDelimiter, $sString, $iSize);
+    $iCnt    = count($aResult);
+    return $iCnt < $iSize ? array_merge($aResult, array_fill($iCnt, $iSize - $iCnt, null)) : $aResult;
+} // function explode_alt
 
 /**
  * Alternative merge recursive function
@@ -214,7 +228,7 @@ function adduceToArray($mSrc)
     if (!empty($mSrc)) {
         switch (gettype($mSrc)) {
         case 'object':
-            return method_exists($mSrc, 'toArray') ? $mSrc->toArray() : array($mSrc);
+            return method_exists($mSrc, 'toArray') ? $mSrc->toArray() : (array)$mSrc;
         case 'array':
             return $mSrc;
         case 'integer':
@@ -256,24 +270,23 @@ function decreaseNum($nNumber, $nQtt = 2)
  */
 function getCurBlockInfo()
 {
-    $oTab = class_exists('\fan\project\service\tab', false) ? \fan\project\service\tab::instance() : null;
-
-    if ($oTab) {
-        $oBlock = $oTab->getCurrentBlock();
-        if ($oBlock) {
-            $oLoader     = bootstrap::getLoader();
-            $oReflection = new \ReflectionClass($oBlock);
-            $sPath       = $oReflection->getFileName();
-            $sRealPath   = $oLoader->getRealPath($sPath);
-            if ($sRealPath) {
-                $sPath = str_replace($oLoader->project, '{PROJECT}', $sRealPath);
-            }
-        } else {
-            $sPath = NULL;
-        }
-        return array($oTab->getTabStage(), $sPath);
+    if (!class_exists('\fan\project\service\tab', false)) {
+        return array(NULL, NULL);
     }
-    return array(NULL, NULL);
+    $oTab   = service('tab');
+    $oBlock = $oTab->getCurrentBlock();
+    if ($oBlock) {
+        $oLoader     = bootstrap::getLoader();
+        $oReflection = new \ReflectionClass($oBlock);
+        $sPath       = $oReflection->getFileName();
+        $sRealPath   = $oLoader->getRealPath($sPath);
+        if ($sRealPath) {
+            $sPath = str_replace($oLoader->project, '{PROJECT}', $sRealPath);
+        }
+    } else {
+        $sPath = NULL;
+    }
+    return array($oTab->getTabStage(), $sPath);
 } // function getCurBlockInfo
 
 /**
@@ -307,7 +320,7 @@ function handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText)
         return;
     }
     if (class_exists('\fan\project\service\error', false) || !\bootstrap::getLoader()->isLoading()) {
-        \fan\project\service\error::instance()->handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText);
+        service('error')->handleError($nErrNo, $sErrMsg, $sFileName, $nLineNum, $aErrConText);
     } else {
         \bootstrap::handleError($nErrNo, $sFileName, $sErrMsg, $nErrLine, $aErrContext);
     }
@@ -335,7 +348,7 @@ function getUser($mIdentifyer = null, $sUserSpace = null)
  */
 function ge($sEntityName, $mCollection = 0, $aParam = array())
 {
-    return \fan\project\service\entity::instance($mCollection)->get($sEntityName, $aParam);
+    return service('entity', $mCollection)->get($sEntityName, $aParam);
 } // function ge
 /**
  * Load row of entity by name and id.
@@ -347,7 +360,7 @@ function ge($sEntityName, $mCollection = 0, $aParam = array())
  */
 function gr($sEntityName, $mRowId = null, $bIdIsEncrypt = false, $aParam = array())
 {
-    return \fan\project\service\entity::instance()->get($sEntityName, $aParam)->getRowById($mRowId, $bIdIsEncrypt);
+    return service('entity')->get($sEntityName, $aParam)->getRowById($mRowId, $bIdIsEncrypt);
 } // function gr
 /**
  * Get instance of specific entity.
@@ -404,7 +417,7 @@ function dma($sKey, $mDefaultValue = array())
  */
 function role($sRoleCondition)
 {
-    return \fan\project\service\role::instance()->check($sRoleCondition);
+    return service('role')->check($sRoleCondition);
 } // function role
 
 /**
@@ -449,7 +462,7 @@ function transfer_sham($sNewUrl, $sNewQueryString = null, $sDbOper = null)
  */
 function dateL2M($sDate, $sFormat = 'euro', $bFullValidate = false)
 {
-    return \fan\project\service\date::instance($sDate, $sFormat)->get('mysql', $bFullValidate);
+    return service('date', array($sDate, $sFormat))->get('mysql', $bFullValidate);
 } // function dateL2M
 
 /**
@@ -461,7 +474,7 @@ function dateL2M($sDate, $sFormat = 'euro', $bFullValidate = false)
  */
 function dateM2L($sDate, $sFormat = 'euro', $bFullValidate = false)
 {
-    return \fan\project\service\date::instance($sDate, 'mysql')->get($sFormat, $bFullValidate);
+    return service('date', array($sDate, 'mysql'))->get($sFormat, $bFullValidate);
 } // function dateM2L
 
 /**
@@ -479,11 +492,11 @@ function msg()
     }
 
     if (count($aArg) > 1) {
-        return \fan\project\service\translation::getCombiMessage($aArg);
+        return service('translation')->getCombiMessage($aArg);
     }
 
-    $oSL = \fan\project\service\locale::instance();
-    $oST = \fan\project\service\translation::instance();
+    $oSL = service('locale');
+    $oST = service('translation');
     if ($oSL->getLanguage() == $sLng && isset($aMsg[$aArg[0]])) {
         return $aMsg[$aArg[0]];
     }
@@ -506,7 +519,7 @@ function msg()
 function msgAlt()
 {
     $aArg = func_get_args();
-    return count($aArg) > 1 ? \fan\project\service\translation::getCombiMessageAlt($aArg) : $aArg[0];
+    return count($aArg) > 1 ? service('translation')->getCombiMessageAlt($aArg) : $aArg[0];
 } // function msg
 
 /**
@@ -519,7 +532,7 @@ function msgAlt()
  */
 function d($mData, $sTitle = 'Custom dump', $sNote = '', $nDataDepth = null, $bIsTrace = true)
 {
-    \fan\project\service\log::instance()->logData('dump', $mData, $sTitle, $sNote, $nDataDepth, $bIsTrace);
+    service('log')->logData('dump', $mData, $sTitle, $sNote, $nDataDepth, $bIsTrace);
 } // function d
 
 /**
@@ -531,7 +544,7 @@ function d($mData, $sTitle = 'Custom dump', $sNote = '', $nDataDepth = null, $bI
  */
 function l($sMessage, $sTitle = 'Custom message', $sNote = '', $sType = 'custom')
 {
-    \fan\project\service\log::instance()->logMessage($sType, $sMessage, $sTitle, $sNote);
+    service('log')->logMessage($sType, $sMessage, $sTitle, $sNote);
 } // function l
 
 ?>

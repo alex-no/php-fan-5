@@ -13,7 +13,7 @@ use project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class translation extends \fan\core\base\service\single
 {
@@ -21,12 +21,12 @@ class translation extends \fan\core\base\service\single
      * Combi-message buffer
      * @var array
      */
-    private static $aCombiArr = array();
+    private $aCombiArr = array();
     /**
      * Combi-message language
      * @var string
      */
-    private static $sCombiLng = null;
+    private $sCombiLng = null;
 
     /**
      * @var \fan\core\service\locale
@@ -67,7 +67,7 @@ class translation extends \fan\core\base\service\single
     protected function __construct($bAllowIni = true)
     {
         parent::__construct($bAllowIni);
-        $this->oLocale      = \fan\project\service\locale::instance();
+        $this->oLocale      = service('locale');
         $this->aEditableLng = array_keys($this->oLocale->getAvailableLanguages());
     } // function __construct
 
@@ -83,17 +83,19 @@ class translation extends \fan\core\base\service\single
 
     // ======== Static methods ======== \\
 
+    // ======== Main Interface methods ======== \\
+
     /**
      * Get current language key
      * @return string
      */
-    public static function getCombiPart()
+    public function getCombiPart()
     {
-        if (!self::$aCombiArr) {
+        if (!$this->aCombiArr) {
             return null;
         }
-        $sKey = array_shift(self::$aCombiArr);
-        return \fan\project\service\translation::instance()->getMessage($sKey, self::$sCombiLng);
+        $sKey = array_shift($this->aCombiArr);
+        return $this->getMessage($sKey, $this->sCombiLng);
     } // function getCombiPart
 
     /**
@@ -102,15 +104,15 @@ class translation extends \fan\core\base\service\single
      * @param string $sLng The Language Code
      * @return string
      */
-    public static function getCombiMessage($aKeyList, $sLng = null)
+    public function getCombiMessage($aKeyList, $sLng = null)
     {
         if (empty($sLng)) {
-            $sLng = \fan\project\service\locale::instance()->getLanguage();
+            $sLng = $this->oLocale->getLanguage();
         }
-        self::$sCombiLng = $sLng;
+        $this->sCombiLng = $sLng;
         $sKey = array_shift($aKeyList);
-        self::$aCombiArr = empty($aKeyList) ? array() : $aKeyList;
-        return self::instance()->getMessage($sKey, $sLng);
+        $this->aCombiArr = empty($aKeyList) ? array() : $aKeyList;
+        return $this->getMessage($sKey, $sLng);
     } // function getCombiMessage
 
     /**
@@ -118,16 +120,14 @@ class translation extends \fan\core\base\service\single
      * @param string $aPhrases
      * @return string
      */
-    public static function getCombiMessageAlt($aPhrases)
+    public function getCombiMessageAlt($aPhrases)
     {
         $sResult = array_shift($aPhrases);
         while (strstr($sResult, '{combi_part}') && !empty($aPhrases)) {
             $sResult = preg_replace('/\{combi_part\}/i', array_shift($aPhrases), $sResult, 1);
         }
         return $sResult;
-    } // function getCombiMessage
-
-    // ======== Main Interface methods ======== \\
+    } // function getCombiMessageAlt
 
     /**
      * Set Editable Languageges (for admin-sys)
@@ -182,17 +182,17 @@ class translation extends \fan\core\base\service\single
 
         if ($isTag) {
             $aTags = $this->getTagArr();
+            $aMatches = null;
             if (preg_match_all('/\{([^\}]+)\}/', $sRet, $aMatches)) {
                 foreach ($aMatches[1] as $k => $v) {
                     if (isset($aTags[$v])) {
-                        //$sRet = str_replace($aMatches[0][$k], $this->getTag($v), $sRet);
                         $sRet = substr_replace($sRet, $this->_getTag($v), strpos($sRet, $aMatches[0][$k]), strlen($aMatches[0][$k]));
                     }
                 }
             }
         }
 
-        if ($bEnableML && class_exists('\fan\core\service\tab', false) && \fan\project\service\tab::instance()->isDebugAllowed()) {
+        if ($bEnableML && class_exists('\fan\core\service\tab', false) && service('tab')->isDebugAllowed()) {
             $this->_setReferer($sKeyF);
             $nLen = strpos($sKeyF, '_');
             if ($nLen > 0) {
@@ -450,11 +450,19 @@ class translation extends \fan\core\base\service\single
     protected function _getTag($sKey)
     {
         $sRet = $this->aTags[$sKey]['tag'];
-        if (@$this->aTags[$sKey]['isFunc'] && preg_match_all('/\{([^\}]+)\}/', $sRet, $aMatches)) {
-            foreach ($aMatches[1] as $k => $v) {
+        $aMatches1 = $aMatches2 = null;
+        if (!empty($this->aTags[$sKey]['isFunc']) && preg_match_all('/\{([^\}]+)\}/', $sRet, $aMatches1)) {
+            foreach ($aMatches1[1] as $k => $v) {
                 list($sClass, $sMethod, $sArg) = explode(':', $v, 3);
-                if (class_exists($sClass) && is_callable(array($sClass, $sMethod))) {
-                    $sRet = str_replace($aMatches[0][$k], call_user_func(array($sClass, $sMethod), $sArg), $sRet);
+                if (preg_match('/^service\|(\w+)$/', $sClass, $aMatches2) && class_exists('\fan\project\service\\' . $aMatches2[1])) {
+                    $mCallback = array(service($aMatches2[1]), $sMethod);
+                } elseif (class_exists($sClass)) {
+                    $mCallback = array($sClass, $sMethod);
+                }
+                if (!empty($mCallback) && is_callable($mCallback)) {
+                    $sRet = str_replace($aMatches1[0][$k], call_user_func($mCallback, $sArg), $sRet);
+                } else {
+                    service('error')->logErrorMessage('Message tag "' . $sKey . '" is not callable.', 'Incorect message tag', '', true, false);
                 }
             }
         }
@@ -474,7 +482,7 @@ class translation extends \fan\core\base\service\single
             $sPath = 'Unknown!';
         }
         if (!isset($this->aReferers[$sKey][$sPath][$sStage])) {
-            $oSource = \fan\project\service\matcher::instance()->getItem(0)->source;
+            $oSource = service('matcher')->getItem(0)->source;
             $this->aReferers[$sKey][$sPath][$sStage] = $_SERVER['REQUEST_METHOD'] . ': ' . $oSource;
             $this->aForCall['_saveRefererArr'] = 1;
         }
@@ -482,8 +490,8 @@ class translation extends \fan\core\base\service\single
 
     /**
      * Set new short message
-     * @param string $sKey The Key
-     * @param array $aData
+     * @param string $sKeyF The Key
+     * @param string $sKey
      */
     protected function _setNewMessage($sKeyF, $sKey)
     {

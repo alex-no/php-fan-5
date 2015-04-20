@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 class form extends \fan\core\base\service\multi
 {
@@ -308,21 +308,21 @@ class form extends \fan\core\base\service\multi
     {
         $sStr = '';
         $sReqMsg = $this->_getFormMeta($this->isMultiLanguage() ? 'required_msg' : 'required_msg_alt');
-        foreach ($this->oFieldMeta as $sFieldName => $aParameters) {
+        foreach ($this->oFieldMeta->toArray() as $sFieldName => $aParameters) {
             $sRules = '';
-            if (@$aParameters['is_required']) {
-                $sRules .= '{rule_name:\'is_required\', ';
+            if (!empty($aParameters['is_required'])) {
+                $sRules .= '{rule_name:\'isRequired\', ';
                 $sRules .= 'error_msg:\'' . $this->reduceMessage($sReqMsg, $aParameters['label']) . '\'}';
             }
 
             if(isset($aParameters['validate_rules'])) {
                 foreach ($aParameters['validate_rules'] as $aRule) {
-                    if (!@$aRule['not_js']) {
+                    if (empty($aRule['not_js'])) {
                         $sRules .= $sRules ? ',' : '';
 
                         $sRules .= '{rule_name:\'' . $aRule['rule_name'] . '\', ';
                         $sRules .= 'error_msg:\'' . $this->reduceMessage($aRule['error_msg'], $aParameters['label']) . '\'';
-                        if (@$aRule['not_empty']) {
+                        if (!empty($aRule['not_empty'])) {
                             $sRules .= ',not_empty:1';
                         }
                         $sRuleData = '';
@@ -334,7 +334,7 @@ class form extends \fan\core\base\service\multi
                                     $sRuleData .= $sValue ? 1 : 0;
                                 } elseif(preg_match ('/^(\/.+\/)([a-z]*)$/i', $sValue, $aMatches)) {
                                     $sRuleData .= $aMatches[1];
-                                    if (@$aMatches[2]) {
+                                    if (!empty($aMatches[2])) {
                                         for ($i = 0; $i < strlen($aMatches[2]); $i++) {
                                             if (in_array($aMatches[2]{$i}, array('i', 'g', 'm'))) {
                                                 $sRuleData .= $aMatches[2]{$i};
@@ -354,23 +354,23 @@ class form extends \fan\core\base\service\multi
                 $sStr .= $sStr ? ',' : '';
                 $sStr .= '\'' . $sFieldName . ($this->_isMultiVal($aParameters['input_type']) ? '[]' : '') . '\':[' . $sRules . ']';
             }
-        } //foreach ($this->aFieldMeta as $sFieldName => $aParameters)
+        }
 
         if ($sStr) {
-            $aJsUrl = $this->_getFormMeta('js_url');
+            $aJsUrl = $this->_getFormMeta('js_url', array(), true);
             $oRoot  = service('tab')->getTabBlock('root');
             $oRoot->setExternalJs($aJsUrl['js-wrapper']);
             $oRoot->setExternalJs($aJsUrl['validator']);
 
-            $aLoaderData = $this->_getFormMeta('js_loader');
-            if ($aLoaderData && $aLoaderData['fields']) {
+            $aLoaderData = $this->_getFormMeta('js_loader', array(), true);
+            if (isset($aLoaderData['fields']) && isset($aLoaderData['url'])) {
                 $sJsLoader = ',loader:{url:"' . $aLoaderData['url'] . '",fields:["' . implode('","', $aLoaderData['fields']) . '"]}';
                 $oRoot->setExternalJs($aJsUrl['js-loader']);
             } else {
                 $sJsLoader = '';
             }
 
-            $sStr = 'var validation_' . $this->sBlockName . '=new ' . $this->_getFormMeta('js_validator') .
+            $sStr = 'var validation_' . $this->oBlock->getBlockName() . '=new ' . $this->_getFormMeta('js_validator') .
                 '({form:"' . $this->_getFormMeta('form_id') . '"' .
                 ',err_format:"' . $this->_getFormMeta('js_err_format') . '"' .
                 ($this->_getFormMeta('form_submit_name') ? ',field:"' . $this->_getFormMeta('form_submit_name') . '"' : '') .
@@ -388,7 +388,7 @@ class form extends \fan\core\base\service\multi
      */
     public function isMultiLanguage()
     {
-        $bRet = $this->_getFormMeta('useMultiLanguage', null);
+        $bRet = $this->oBlock->getMeta('useMultiLanguage', null);
         return is_null($bRet) ? \fan\project\service\locale::instance()->isEnabled() : $bRet;
     } // function isMultiLanguage
 
@@ -438,6 +438,21 @@ class form extends \fan\core\base\service\multi
         }
         return $this;
     } // function setFieldValue
+
+    /*
+     * Set several field values by Array
+     * @param array $aValues
+     * @return \fan\core\service\form
+     */
+    public function setMassFieldValues($aValues)
+    {
+        foreach ($aValues as $k => $v) {
+            if ($this->_checkName($k)) {
+                $this->aFieldValue[$k] = $v;
+            }
+        }
+        return $this;
+    } // function setMassFieldValues
 
     /**
      * Get field data

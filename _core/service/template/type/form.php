@@ -11,7 +11,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.006 (20.04.2015)
  */
 abstract class form extends base
 {
@@ -218,11 +218,20 @@ abstract class form extends base
             'error',
             empty($aData['type']) ? $this->_getFormMeta(array('default_type', 'error')) : $aData['type'],
         ), '<div>{TEXT}</div>');
-        $sText    = is_array($mError) ?
-            (isset($aData['index']) ?
-                array_val($mError, $aData['index'], '') :
-                implode('<br />', $mError)) :
-            $mError;
+
+        if (!is_array($mError)) {
+            $sText = $mError;
+        } elseif (isset($aData['index'])) {
+            $sText = array_val($mError, $aData['index'], '');
+        } else {
+            $sText = '';
+            foreach ($mError as $v) {
+                if (!empty($sText) && !empty($v)) {
+                    $sText .= '<br />';
+                }
+                $sText .= $v;
+            }
+        }
         return str_replace('{TEXT}', $sText, $sPattern);
     } // function getErrorMsg
 
