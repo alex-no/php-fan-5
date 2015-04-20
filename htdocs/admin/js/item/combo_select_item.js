@@ -147,9 +147,16 @@ var comboSelect = newClass({
 
     parse_select_simple : function(html, name, cdt)
     {
-        var val, a, opdt;
+        var val, a, opdt, cdt_;
         this._getSelectArr("select", name);
         val = cdt && isDefined(this.srcArr, cdt) ? this.srcArr[cdt] : "\xA0";
+        
+        // FX21 fix: ID -> _ID
+        cdt_ = '_' + cdt;
+        if (cdt_ && isDefined(this.srcArr, cdt_)) {
+            val = this.srcArr[cdt_];
+        }
+        
         a  = this.reg.simple.exec(html);
         if (a) {
             if (a[2]) {
@@ -360,14 +367,16 @@ var comboSelect = newClass({
     },
     _makeOptList : function(sArr, ptrn, cdt)
     {
-        var ret, si, ht, k, i;
+        var ret, si, ht, k, i, k_id;
         si = -1;
         ret = "";
         i = 0;
         for (k in sArr) {
-            ht = ptrn.replace("{VALUE}", k);
+            // FX21 fix: ID -> _ID
+            k_id = k.substr(0, 1) == '_' ? k.substr(1) : k;
+            ht = ptrn.replace("{VALUE}", k_id);
             ht = ht.replace("{TEXT}", sArr[k]);
-            if (cdt instanceof Array ? cdt.indexOf(k) != -1 : cdt == k) {
+            if (cdt instanceof Array ? cdt.indexOf(k_id) != -1 : cdt == k_id) {
                 ht = ht.replace("{SELECTED}", ' selected="selected"');
                 si = i;
             } else {
@@ -398,7 +407,7 @@ var comboSelect = newClass({
     {
         var ap = this.arg.ap;
         if (ap && ap[mk] && ap[mk][name]) {
-            this.srcArr = ap[mk][name]
+            this.srcArr = ap[mk][name];
             return true;
         } else {
             this.srcArr = {};

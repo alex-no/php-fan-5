@@ -12,7 +12,7 @@ class custom1 extends \fan\core\view\parser
      * Get View-type
      * @return string
      */
-    final static public function getType() {
+    final static public function getFormat() {
         return 'custom-1';
     } // function getType
 

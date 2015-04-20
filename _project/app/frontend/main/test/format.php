@@ -12,7 +12,7 @@ class format extends \fan\project\block\common\simple
     {
         $this->view['sUserAgent'] = $this->request->get('User-Agent', 'H');
 
-        if ($this->getViewType() == 'loader') {
+        if ($this->getViewFormat() == 'loader') {
             $this->view->setJson(array('zzz', 'val_1'), 111);
             $this->view->setText('Test loader');
         }

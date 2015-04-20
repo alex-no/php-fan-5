@@ -190,20 +190,22 @@ var patternCtrl = newObject({
 
     parse_inp_gr : function(html, name)
     {
-        var a, dd, ht, htd, k, n, d, i;
+        var a, dd, ht, htd, k, n, d, i, k_id;
         a = this.reg.inpGroup.exec(html);
         n = 0;
         dd = "";
         for (k in this.arg.ap.select[name]) {
-            ht = a[2].replace("{VALUE}", k);
-            ht = ht.replace("{CHECKED}", this._getData(name, 0) == k ? ' checked="checked"' : '');
+            // FX21 fix: ID -> _ID
+            k_id = k.substr(0, 1) == '_' ? k.substr(1) : k;
+            ht = a[2].replace("{VALUE}", k_id);
+            ht = ht.replace("{CHECKED}", this._getData(name, 0) == k_id ? ' checked="checked"' : '');
             ht = ht.replace(/\{ID\}/g, 'el_id' + (this.id_ind++));
             ht = ht.replace("{TEXT}", this.arg.ap.select[name][k]);
             ht = ht.replace("{NUM}", "{" + n + "}");
             ht = ht.replace("{NAME}", name + (isDefined(this.arg, "key") && this.arg.key != null ? "{" + this.arg.ei + this.arg.key + "}" : ""));
 
             htd = [ht, "EVENT_id"];
-            ht = this._prepareEvents(htd, this.arg.obj, "onclick", "onInputClick", this._setEvtParam({val : [null, k]}, name));
+            ht = this._prepareEvents(htd, this.arg.obj, "onclick", "onInputClick", this._setEvtParam({val : [null, k_id]}, name));
             ht = ht.replace("{EVENT_id}", htd[2]);
 
             dd += ht;

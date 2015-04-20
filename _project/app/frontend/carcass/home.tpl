@@ -6,7 +6,7 @@
         {@$messBefore}
         {$main}
         {@$messAfter}
-    </div>
+    </main>
 
     <div id="clear">&nbsp;</div>
 </div>

@@ -1,6 +1,6 @@
 <table class="multiRowDataTable newsSort">
     <tbody>
-    {if $isHead}
+    {if @$isHead}
     <tr>
         {foreach from=$columns item=col}
             <th>{if isset($hdOrder[$col['field']])}{ldelim}tbl_order-{$col['field']}{rdelim}{else}{$col['head']}{/if}</th>

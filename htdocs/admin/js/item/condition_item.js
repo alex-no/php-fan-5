@@ -63,7 +63,7 @@ var condition = newClass({
     },
     setTitle : function()
     {
-        var re, tit, res, v;
+        var re, tit, res, v, v_;
         re = /\{condition_(.+?)\}/ig;
         tit = this.title[1];
         while ((res = re.exec(tit))) {
@@ -71,6 +71,11 @@ var condition = newClass({
                 v = this.cond[res[1]];
                 if (isDefined(this.param.select, res[1]) && isDefined(this.param.select[res[1]], v)) {
                     v = this.param.select[res[1]][v];
+                }
+                // FX21 fix: ID -> _ID
+                v_ = '_' + this.cond[res[1]];
+                if (isDefined(this.param.select, res[1]) && isDefined(this.param.select[res[1]], v_)) {
+                    v = this.param.select[res[1]][v_];
                 }
                 tit = tit.replace(res[0], v);
             }
