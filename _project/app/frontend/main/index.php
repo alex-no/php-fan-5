@@ -1,7 +1,7 @@
 <?php namespace fan\app\frontend\main;
 /**
  * Block class index
- * @version 05.02.001 (10.03.2014)
+ * @version 05.02.007 (31.08.2015)
  */
 class index extends \fan\project\block\common\simple
 {
