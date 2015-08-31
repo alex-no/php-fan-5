@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  * @abstract
  */
 abstract class parser extends \fan\core\block\base
@@ -63,7 +63,7 @@ abstract class parser extends \fan\core\block\base
      */
     public function checkFormRole()
     {
-        return $this->oForm->checkFormRole();
+        return $this->getForm()->checkFormRole();
     } // function checkFormRole
 
     /**
@@ -121,7 +121,12 @@ abstract class parser extends \fan\core\block\base
     {
         if ($oBlock === $this) {
             $this->onSubmit();
-            $this->_broadcastEvent('onSubmit', $this->getForm()->getFieldValue());
+            $oForm = $this->getForm();
+            if ($oForm->isError()) {
+                $this->_broadcastEvent('onError',  $oForm->getErrorMsg());
+            } else {
+                $this->_broadcastEvent('onSubmit', $oForm->getFieldValue());
+            }
         }
     } // function onSubmitEvent
 

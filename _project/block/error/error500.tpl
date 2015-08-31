@@ -4,7 +4,7 @@
         Access is temporarily impossible. Try again after some time.
     </p>
     <p>
-        Please use navigation for further action. Or click <a href="{uri '/'}">here</a>
+        Please use navigation for further action. Or click <a href="{$sHomeUri}">here</a>
         to go to the home page.
     </p>
 {elseif $sLng=='ru'}
@@ -13,7 +13,7 @@
         Доступ временно невозможен. Попробуйте еще раз через некоторое время.
     </p>
     <p>
-        Воспользуйтесь навигацией для совершения дальнейших действий. Или кликните <a href="{uri '/'}">здесь</a>
+        Воспользуйтесь навигацией для совершения дальнейших действий. Или кликните <a href="{$sHomeUri}">здесь</a>
         чтобы перейти на главную страницу.
     </p>
 {elseif $sLng=='ua'}
@@ -22,7 +22,7 @@
         Доступ тимчасово неможливий. Спробуйте ще раз через деякий час.
     </p>
     <p>
-        Скористуйтесь навігацією для учинення подальший дій. Або клікніть <a href="{uri '/'}">тут </a>
+        Скористуйтесь навігацією для учинення подальший дій. Або клікніть <a href="{$sHomeUri}">тут </a>
         щоб перейти на головну сторінку.
     </p>
 {/if}

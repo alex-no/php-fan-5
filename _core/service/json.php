@@ -12,17 +12,54 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  */
-class json extends \fan\core\base\service\single
+class json extends \fan\core\base\service\multi
 {
     const DECODE_OPT_PHP_VERSION = '5.4.0';
+    /**
+     * Service's Instances
+     * @var \fan\core\service\json[]
+     */
+    private static $aInstances = array();
 
     /**
      * Error Code
      * @var integer
      */
     protected $iErrorCode;
+
+    /**
+     * Use Base64
+     * @var boolean
+     */
+    protected $bUseBase64 = false;
+
+    /**
+     * Service's constructor
+     * @param boolean $bUseBase64
+     */
+    protected function __construct($bUseBase64)
+    {
+        parent::__construct(true);
+        $this->bUseBase64 = $bUseBase64;
+    } // function __construct
+
+    // ======== Static methods ======== \\
+    /**
+     * Get instance of JSON
+     * @param boolean $bUseBase64
+     * @return \fan\core\service\json
+     */
+    public static function instance($bUseBase64 = false)
+    {
+        $nKey = empty($bUseBase64) ? 0 : 1;
+        if (!isset(self::$aInstances[$nKey])) {
+            self::$aInstances[$nKey] = new self((bool)$nKey);
+        }
+        return self::$aInstances[$nKey];
+    } // function instance
+    // ======== Main Interface methods ======== \\
 
     /**
      * Decode JSON-string to object/array
@@ -46,6 +83,9 @@ class json extends \fan\core\base\service\single
                     json_decode($sJson, $bArray, $iDepth) :
                     json_decode($sJson, $bArray, $iDepth, $iOptions);
             $this->iErrorCode = json_last_error();
+            if ($this->bUseBase64 && is_array($mResult)) {
+                array_walk_recursive($mResult, array($this, '_code64'), 'decode');
+            }
             return $mResult;
         }
         // ToDo: make special procedures for JSON-decode
@@ -66,6 +106,10 @@ class json extends \fan\core\base\service\single
             $iOptions = $this->getConfig('ENCODE_OPTIONS', 0);
         }
         if ($this->getConfig('ALLOW_INTERNAL', true)) {
+            if ($this->bUseBase64 && is_array($mSourse)) {
+                array_walk_recursive($mSourse, array($this, '_code64'), 'encode');
+                // ToDo: This method doesn't work with object
+            }
             $sResult = @json_encode($mSourse, $iOptions);
             $this->iErrorCode = json_last_error();
             if ($this->iErrorCode != JSON_ERROR_NONE && $bLogError) {
@@ -92,7 +136,7 @@ class json extends \fan\core\base\service\single
     public function fromXml($sXml, $bIgnoreXmlAttributes = true)
     {
         // ToDo: make procedures for encode XML to JSON
-    } // function fromXml.
+    } // function fromXml
 
     /**
      * Encode YAML-file to JSON-string
@@ -101,7 +145,7 @@ class json extends \fan\core\base\service\single
     public function fromYaml($sYaml)
     {
         // ToDo: make procedures for encode YAML to JSON
-    } // function fromXml.
+    } // function fromYaml
 
     /**
      * Is Error
@@ -119,7 +163,7 @@ class json extends \fan\core\base\service\single
     public function getError()
     {
         return $this->iErrorCode;
-    } // function fromXml.
+    } // function getError
 
     /**
      * Get Error-text
@@ -140,7 +184,7 @@ class json extends \fan\core\base\service\single
             return 'Malformed UTF-8 characters, possibly incorrectly encoded';
         }
         return 'No error has occurred';
-    } // function fromXml.
+    } // function getErrorText
 
     /**
      * Make string for Pretty Print JSON
@@ -177,5 +221,19 @@ class json extends \fan\core\base\service\single
         }
         return $sResult;
    } // function prettyPrint
+
+    // ======== Private/Protected methods ======== \\
+   /**
+    * Code/decode by "base64" elements of array
+    * @param mixed $v
+    * @param mixed $k
+    * @param string $sOp
+    */
+    protected function _code64(&$v, $k, $sOp)
+    {
+        if (is_scalar($v)) {
+            $v = $sOp == 'encode' ? base64_encode($v) : base64_decode($v);
+        }
+    } // function _code64
 } // class \fan\core\service\json
 ?>

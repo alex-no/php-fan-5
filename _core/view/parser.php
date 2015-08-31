@@ -48,11 +48,12 @@ abstract class parser
      * @return string
      */
     static public function getFormat() {
-     throw new \fan\project\exception\error500('Class "' . get_called_class() . '" can\'t be use for define View-type');
+        throw new \fan\project\exception\error500('Class "' . get_called_class() . '" can\'t be use for define View-type');
     } // function getFormat
 
     /**
      * Get View-Router for block
+     * This method is called from service tab for define router of view
      * @param \fan\core\block\base $oBlock
      * @return \fan\core\view\router\simple
      */

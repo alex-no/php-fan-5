@@ -210,7 +210,7 @@ final class config extends \fan\core\base\service\multi
     } // function getConfigType
 
     /**
-     * Get Service Config by Instace of Service
+     * Get Service Config by Instance of Service
      * @param \fan\core\base\service $oService
      * @return \fan\core\service\config\row
      */
@@ -252,7 +252,7 @@ final class config extends \fan\core\base\service\multi
         return $this->oConfData[$sName];
     } // function getControllerConfig
     /**
-     * Get Entity Config by Instace of Entity
+     * Get Entity Config by Instance of Entity
      * @param \fan\core\base\model\entity $oEntity
      * @return \fan\core\service\config\row
      */

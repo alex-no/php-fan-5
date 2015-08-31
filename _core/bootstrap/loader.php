@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  * @property-read string $core
  * @property-read string $project
  * @property-read string $app
@@ -82,6 +82,12 @@ class loader implements \ArrayAccess
     protected $bLoading = false;
 
     /**
+     * Count of arguments for function "class_alias"
+     * @var boolean
+     */
+    protected $iCntAliasArg = 0;
+
+    /**
      * Construct of class
      * @param array $aConfig
      */
@@ -96,6 +102,10 @@ class loader implements \ArrayAccess
 
         $this->aNsKeys['core']    = $this->getRealPath(CORE_DIR, false);
         $this->aNsKeys['project'] = $this->getRealPath(PROJECT_DIR, false);
+
+        if (function_exists('class_alias')) {
+            $this->iCntAliasArg = array_val($aConfig, 'cnt_alias_arg', 3);
+        }
 
         $this->_setAppDir()           // Set Applications Directory by path from bootstrap-config
              ->_setModelDir()         // Set Model Directory by path from bootstrap-config
@@ -219,7 +229,14 @@ class loader implements \ArrayAccess
                 trigger_error('Class "' . $sOriginal . '" isn\'t found in the file "' . $sSecondPath . '"', E_USER_WARNING);
                 return false;
             }
-            class_alias($sOriginal, $sClass, false);
+            if ($this->iCntAliasArg > 2) {
+                class_alias($sOriginal, $sClass, false);
+            } elseif ($this->iCntAliasArg > 0) {
+                class_alias($sOriginal, $sClass);
+            } else {
+                $f = create_function('', 'class ' . $sClass . ' extends ' . $sOriginal . ' {}');
+                $f();
+            }
             return true;
         }
 

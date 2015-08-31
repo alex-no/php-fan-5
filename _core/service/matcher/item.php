@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  *
  * @property-read \fan\core\service\matcher\item\source  $source
  * @property-read \fan\core\service\matcher\item\uri     $uri
@@ -94,7 +94,7 @@ class item implements \ArrayAccess
 
     /**
      * Set Facade
-     * @param fan\core\service\matcher $oFacade
+     * @param \fan\core\service\matcher $oFacade
      */
     public function setFacade(\fan\core\service\matcher $oFacade)
     {
@@ -107,7 +107,7 @@ class item implements \ArrayAccess
 
     /**
      * Get Facade
-     * @return fan\core\service\matcher
+     * @return \fan\core\service\matcher
      */
     public function getFacade()
     {
@@ -125,12 +125,13 @@ class item implements \ArrayAccess
 
     /**
      * Get handler
-     * @return item/handler
+     * @param boolean $bForceDefine
+     * @return \fan\core\service\matcher\item\handler
      */
-    public function getHandler()
+    public function getHandler($bForceDefine = false)
     {
         if (empty($this->aData['handler']['method'])){
-            foreach ($this->_defineHandler() as $k => $v) {
+            foreach ($this->_defineHandler($bForceDefine) as $k => $v) {
                 $this->aData['handler'][$k] = $v;
             }
         }
@@ -356,13 +357,14 @@ class item implements \ArrayAccess
 
     /**
      * Define Handler of request
+     * @param boolean $bForceDefine
      * @return array
      */
-    protected function _defineHandler()
+    protected function _defineHandler($bForceDefine)
     {
         if (\bootstrap::isCli()) {
             return $this->_handlerDefinerSapiName();
-        } elseif (empty($this->iIndex)) {
+        } elseif (empty($this->iIndex) || $bForceDefine) {
             // Find handler by RegExp
             foreach ($this->oFacade->getConfig('plain', array()) as $k => $v) {
                 $sMethod = '_handlerDefiner' . ucfirst($v['definer']);
@@ -413,8 +415,8 @@ class item implements \ArrayAccess
 
     /**
      * Definer of handler for Request
-     * @param array $aData
      * @param string $sKey
+     * @param array $aData
      */
     protected function _handlerDefinerRequest($sKey, $aData)
     {

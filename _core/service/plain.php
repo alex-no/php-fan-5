@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class plain extends \fan\core\base\service\single
 {
@@ -84,11 +84,29 @@ class plain extends \fan\core\base\service\single
     // ======== Main Interface methods ======== \\
 
     /**
+     * Get Current Handle Data
+     * @return array
      */
     public function getHandleData()
     {
         return $this->oMatcher->getCurrentItem()->handler->toArray();
-    }
+    } // function getHandleData
+
+    /**
+     * Transfer to another URI and get content there
+     * ATTENTION!!!
+     *    This method do not control the same URI. So there is possible an infinite recursion.
+     * @param string $sRequest
+     * @param string $sHost
+     * @param string $bShiftCurrent
+     * @return string
+     */
+    public function transfer($sRequest, $sHost = null, $bShiftCurrent = true)
+    {
+        $this->oMatcher->setUri($sRequest, $sHost, $bShiftCurrent);
+        $aHandler = $this->oMatcher->getCurrentHandler(true)->toArray();
+        return call_user_func_array($aHandler['method'], empty($aHandler['param']) ? array() : $aHandler['param']);
+    } // function transfer
 
     /**
      * Add value of Header for current stack

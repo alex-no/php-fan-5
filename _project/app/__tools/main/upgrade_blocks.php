@@ -1,7 +1,7 @@
 <?php namespace fan\app\__tools\main;
 /**
  * Upgrade blocks
- * @version 05.02.001 (10.03.2014)
+ * @version 05.02.007 (31.08.2015)
  */
 class upgrade_blocks extends \fan\project\block\common\simple
 {
@@ -252,7 +252,7 @@ class upgrade_blocks extends \fan\project\block\common\simple
                                         $sReplacement = 'ge(\'' . $sName . '\')->getRowsetByParam(' . $sArg . ');';
                                         break;
                                     case 'getOneEntityByKey':
-                                        $aTmp = explode(',', $sArg, 3);
+                                        $aTmp = explode_alt(',', $sArg, 3);
                                         $sReplacement = 'ge(\'' . $sName . '\')->getRowByKey(' . trim($aTmp[0]) . ', ' . $aTmp[1] . ', ' . ltrim($aTmp[2]) . ');';
                                         break;
                                     case 'getArrayHash':

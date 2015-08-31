@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class request extends \fan\core\base\service\single
 {
@@ -137,6 +137,7 @@ class request extends \fan\core\base\service\single
      *   - G - Get data
      *   - H - Headers
      *   - M - Main request
+     *   - O - Option list in CLI-mode
      *   - P - Post data
      *   - R - Request data
      *   - S - Server data
@@ -177,14 +178,14 @@ class request extends \fan\core\base\service\single
      * @param string $sConvFormat
      * @return mixed
      */
-    public function getRawPost($sConvFormat = 'json')
+    public function getRawPost($sConvFormat = 'json', $bUseBase64 = false)
     {
         if (is_null($this->sRawPost)) {
             $this->sRawPost = file_get_contents('php://input'); // ToDo: Define different source there
         }
         switch (strtolower($sConvFormat)) {
         case 'json':
-            return service('json')->decode($this->sRawPost);
+            return service('json', $bUseBase64)->decode($this->sRawPost);
         case 'xml':
             function conv($mItem)
             {

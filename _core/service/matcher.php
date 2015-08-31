@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class matcher extends \fan\core\base\service\single
 {
@@ -154,21 +154,23 @@ class matcher extends \fan\core\base\service\single
     /**
      * Get Handler by number
      * @param integer $nNumber
+     * @param boolean $bForceDefine
      * @return \fan\core\service\matcher\item\handler
      */
-    public function getHandler($nNumber)
+    public function getHandler($nNumber, $bForceDefine = false)
     {
         $oItem = $this->getItem($nNumber);
-        return $oItem['handler'];
+        return $oItem->getHandler($bForceDefine);
     } // function getHandler
 
     /**
      * Get Current Handler
+     * @param boolean $bForceDefine
      * @return \fan\core\service\matcher\item\handler
      */
-    public function getCurrentHandler()
+    public function getCurrentHandler($bForceDefine = false)
     {
-        return $this->getHandler($this->getCurrentIndex());
+        return $this->getHandler($this->getCurrentIndex(), $bForceDefine);
     } // function getCurrentHandler
 
     // ============= Get Parsed data ============= \\

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.006 (20.04.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class urlMaker extends \fan\core\service\tab\delegate
 {
@@ -73,7 +73,7 @@ class urlMaker extends \fan\core\service\tab\delegate
         /* @var $oParsed \fan\core\service\matcher\item\parsed */
 
         // Set Request path
-        $aRequest = $oReq->getAll('B');
+        $aRequest = $oReq->getAll('B'); // ToDo: Do non receive empty elemenents there.
         if (empty($aRequest) && $oParsed->src_path != '') {
             // If sham transter from fake URN (for example by alias)
             $aRequest = explode('/', trim($oParsed->src_path, '/'));
@@ -105,7 +105,7 @@ class urlMaker extends \fan\core\service\tab\delegate
         $sCurRequest = '/' . implode('/', $aRequest);
 
         // Add extension
-        if ($bAddExt) {
+        if ($bAddExt && substr($sCurRequest, -1) != '/') {
             $sCurRequest .= '.' . $this->getDefaultExtension();
         }
 

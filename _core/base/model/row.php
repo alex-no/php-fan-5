@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -492,7 +492,11 @@ class row implements \ArrayAccess, \Serializable
                 /* @var $oDesigner \fan\core\service\entity\designer\delete */
                 $sQuery    = $oDesigner->setDeleteByParam($this->getId(false, true, true))->assemble();
                 $aAdjParam = $oDesigner->getAdjustedParam();
-                $oEtt->getConnection()->execute($sQuery, $aAdjParam);
+                $oConnect = $oEtt->getConnection();
+                $oConnect->execute($sQuery, $aAdjParam);
+                if ($oConnect->isError()) {
+                    return false;
+                }
 
                 $this->_resetProperty(false);
                 $this->_runAfterDelete($mDelId);
@@ -543,7 +547,7 @@ class row implements \ArrayAccess, \Serializable
     } // function setId
 
     /**
-     * Get instace of Entity
+     * Get instance of Entity
      * @return \fan\core\base\model\entity
      */
     public function getEntity()
@@ -551,7 +555,7 @@ class row implements \ArrayAccess, \Serializable
         return $this->oEntity;
     } // function getEntity
     /**
-     * Get instace of Rowset
+     * Get instance of Rowset
      * @return \fan\core\base\model\rowset
      */
     public function getRowset()
@@ -807,9 +811,18 @@ class row implements \ArrayAccess, \Serializable
             if (is_null($mValue) && (!$aFieldInfo['null'] && !$aFieldInfo['auto_increment'])) {
                 $mValue = $bIsNumber ? 0 : ($bIsString ? '' : null);
             } elseif ($bIsString) {
-                $mValue = (string)$mValue;
+                if (is_array($mValue)) {
+                    service('error')->logErrorMessage('Value of field "' . $sFieldName . '" can\'t be set as Array', 'Error set value of row', '', true, false);
+                    $mValue = '';
+                } else {
+                    $mValue = (string)$mValue;
+                }
                 if (isset($aFieldInfo['length'])) {
-                    $mValue = substr($mValue, 0, $aFieldInfo['length']);
+                    $bIsUtf8 = $aFieldInfo['charset'] == 'utf8';
+                    if (call_user_func($bIsUtf8 ? 'mb_strlen' : 'strlen', $mValue) > $aFieldInfo['length']) {
+                        $mValue = call_user_func($bIsUtf8 ? 'mb_substr' : 'substr', $mValue, 0, $aFieldInfo['length']);
+                        //ToDo: Notify about truncated data, by Config parameter
+                    }
                 }
             }
 

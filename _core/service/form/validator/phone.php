@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class phone extends base
 {
@@ -20,7 +20,7 @@ class phone extends base
      * Rule phone is correct
      * @return bool
      */
-    public function isUkrainian($mValue)
+    public function isUkrainianPhone($mValue)
     {
         $sPhone = preg_replace('/\D+/', '', $mValue);
         if (strlen($sPhone) == 9) {
