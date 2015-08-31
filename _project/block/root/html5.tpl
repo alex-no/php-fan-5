@@ -26,7 +26,7 @@ for(var i=0; i<e.length; i++) document.createElement(e[i]);
 
 ====== Link - arbitrary value ====== *}
 {if @$tagLink}{foreach item=tLnk from=$tagLink}
-<link rel="{$tLnk['rel']}" type="{$tLnk['type']}" href="{$tLnk['href']}"{if $tLnk['title']} title="{$tLnk['title']}"{/if}></link>
+<link rel="{$tLnk['rel']}" type="{$tLnk['type']}" href="{$tLnk['href']}"{if !empty($tLnk['title'])} title="{$tLnk['title']}"{/if}></link>
 {/foreach}{/if}
 {*
 

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.006 (20.04.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 
 /**
@@ -164,45 +164,51 @@ function array_val($aArr, $mKey, $mDefault = null)
  */
 function &array_get_element(&$mSource, $mKey, $bMake = null)
 {
-    if (is_object($mSource)) {
-        $mSrc  = $mSource;
-        $bMake = false;
-    } else {
-        $mSrc =& $mSource;
-    }
-    //Anonimouse function for check data
-    $fChecker = function(&$aDestination, $mKey, $bMake, $bSave)
+    /**
+     * Anonymous function for check data
+     * @param mixed $mDestination - array | instance of \ArrayAccess
+     * @param mixed $mKey - array | scalar
+     * @param boolean $bMake - Make new element of array if it isn't exists
+     * @param boolean $bSave - save source value (into new array) if it isn't array
+     * @return boolean
+     */
+    $fChecker = function(&$mDestination, $mKey, $bMake, $bSave)
     {
-        $bIsArray = is_array_alt($aDestination);
-        if ((!$bIsArray || !isset($aDestination[$mKey])) && empty($bMake)) {
+        $bIsArray = is_array_alt($mDestination);
+        if ((!$bIsArray || !isset($mDestination[$mKey])) && empty($bMake)) {
             return false; // Element not found and can't be made
         }
 
         if (!$bIsArray) { // Conv to array
-            $aDestination = !$bSave || is_null($aDestination) ? array() : array($aDestination);
+            $mDestination = !$bSave || is_null($mDestination) ? array() : array($mDestination);
         }
 
-        if (!isset($aDestination[$mKey]) && $bMake) { // Make element if it is not set
-            $aDestination[$mKey] = null;
+        if (!isset($mDestination[$mKey])) { // Make element if it is not set
+            $mDestination[$mKey] = null;
         }
         return true;
     };
 
     $mNull = null; // Return if element not found
 
+    if (is_object($mSource) && is_null($bMake)) {
+        $bMake = false;
+    }
+
     // If key as array
     if(is_array($mKey)) {
         $bMakeInArray = is_null($bMake) || !empty($bMake);
-        if ($bMakeInArray) {
-            $aDestination =& $mSrc;
+        $bUseLink     = !is_object($mSource) || $bMakeInArray; // Do not use link for object, because "Magic methods" conflict there
+        if ($bUseLink) {
+            $aDestination =& $mSource;
         } else {
-            $aDestination = $mSrc;
+            $aDestination = $mSource;
         }
         for ($i = 0; isset($mKey[$i]); $i++) {
             if (!$fChecker($aDestination, $mKey[$i], $bMakeInArray, is_null($bMake))) {
                 return $mNull;
             }
-            if ($bMakeInArray) {
+            if ($bUseLink) {
                 $aDestination =& $aDestination[$mKey[$i]];
             } else {
                 $aDestination = $aDestination[$mKey[$i]];
@@ -211,11 +217,11 @@ function &array_get_element(&$mSource, $mKey, $bMake = null)
         return $aDestination;
     }
 
-    // If key as string
-    if (!$fChecker($mSrc, $mKey, $bMake, true)) {
+    // Else If key as string
+    if (!$fChecker($mSource, $mKey, $bMake, true)) {
         return $mNull;
     }
-    return $mSrc[$mKey];
+    return $mSource[$mKey];
 } // function array_get_element
 
 /**

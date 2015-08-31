@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.006 (20.04.2015)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class form extends \fan\core\base\service\multi
 {
@@ -201,28 +201,30 @@ class form extends \fan\core\base\service\multi
 
                     break;
                 } else {
-                    // Set form roles
-                    if (!$this->_getFormMeta('not_role')) {
-                        service('role')->setFixQttRoles($sRoleName);
-                    }
-                    // Remove CSRF-protection code from session
-                    if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
-                        service('session', array(
-                            $this->_getFormMeta('form_id'),
-                            'form_key'
-                        ))->remove('csrf');
-                    }
-
-                    //ToDo: Clear cache of some blocks there
-                    //\fan\project\service\cache::instance()->clear($this->aFormMeta->get(array('cache', 'clear')));
-
                     $this->_broadcastMessage('onSubmit', $this->oBlock);
 
-                    $this->_onSubmitTransfer(
-                            $bAllowTransfer,
-                            'commit',
-                            strtoupper($this->_getFormMeta('action_method', 'POST')) != 'GET'
-                    );
+                    if (!$this->bIsError) {
+                        // Set form roles
+                        if (!$this->_getFormMeta('not_role')) {
+                            service('role')->setFixQttRoles($sRoleName);
+                        }
+                        // Remove CSRF-protection code from session
+                        if ((integer)$this->_getFormMeta('csrf_protection') >= 4) {
+                            service('session', array(
+                                $this->_getFormMeta('form_id'),
+                                'form_key'
+                            ))->remove('csrf');
+                        }
+
+                        //ToDo: Clear cache of some blocks there
+                        //\fan\project\service\cache::instance()->clear($this->aFormMeta->get(array('cache', 'clear')));
+
+                        $this->_onSubmitTransfer(
+                                $bAllowTransfer,
+                                'commit',
+                                strtoupper($this->_getFormMeta('action_method', 'POST')) != 'GET'
+                        );
+                    }
                     break;
                 }
             }

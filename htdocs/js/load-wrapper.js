@@ -279,7 +279,7 @@ implement(loadWrapper_frm.prototype, [{
             if (isDefined(elm, k)) {
                elm[k].value = cd[k];
             } else {
-                 if (loadWr.bv.isIE) {
+                 if (loadWr.bv.isOldIE) {
                     fdiv.innerHTML += '<input type="hidden" name="' + k + '" value="' + cd[k] + '" />';
                 } else {
                     inp = doc.createElement("input");

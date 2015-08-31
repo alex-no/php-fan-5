@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class soap extends \fan\core\base\service\multi
 {
@@ -202,6 +202,7 @@ class soap extends \fan\core\base\service\multi
     {
         $bIsURL = preg_match('/^https?:\/\//', $sWsdlFile);
         $sWsdlFile_Full = $bIsURL ? $sWsdlFile : \bootstrap::parsePath($this->oConfig['WSDL_DIR']) . $sWsdlFile;
+
         if (isset($this->oConfig['PARAM'])) {
             if (!is_array($aParam)) {
                 $aParam = array();
@@ -212,6 +213,19 @@ class soap extends \fan\core\base\service\multi
                 }
             }
         }
+
+        if ($this->getConfig('BLOCK_SSL_VERIFY', false)) {
+            if (!is_array($aParam)) {
+                $aParam = array();
+            }
+            $aParam['stream_context'] = stream_context_create(array(
+                'ssl' => array(
+                    'verify_peer'      => false,
+                    'verify_peer_name' => false,
+                ))
+            );
+        }
+
         if ($bIsURL || file_exists($sWsdlFile_Full)) {
             try {
                 if (isset($aParam['soap_version'])) {
@@ -273,7 +287,8 @@ class soap extends \fan\core\base\service\multi
         if ($sXml == '') {
             return '';
         }
-        $oXml = \DOMDocument::loadXML($sXml);
+        $oXml = new \DOMDocument();
+        $oXml->loadXML($sXml);
         $oXml->formatOutput = true;
         return htmlspecialchars($oXml->saveXML());
     } // function _format4log

@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class bootstrap
 {
@@ -75,6 +75,8 @@ class bootstrap
 
     /**
      * Init bootstrap
+     * @param string $sIniPath
+     * @return bool
      */
     public static function init($sIniPath = null)
     {
@@ -95,7 +97,7 @@ class bootstrap
         if (!defined('BASE_DIR')) {
             $sDocRoot = getenv('DOCUMENT_ROOT');
             if (empty($sDocRoot)) {
-                $sDocRoot = dirname($_SERVER['SCRIPT_FILENAME']);
+                $sDocRoot = isset($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : dirname($_SERVER['SCRIPT_FILENAME']);
             }
             define('BASE_DIR', $sDocRoot);
         }

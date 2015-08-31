@@ -6,12 +6,14 @@ RewriteRule  ^((.*\.(html?|php))|((.+\/)?[^\.\/]*))$ index.php?%{QUERY_STRING} [
 
 #ErrorDocument 404 /error404.php
 
-<Files init_load_runner.php>
-    Deny from all
-</Files>
+# php/fcgid
+<IfModule fcgid_module>
+    Options +ExecCGI
+</IfModule>
 
-php_value mbstring.func_overload 0
-php_value mbstring.internal_encoding UTF-8
 
-php_value upload_max_filesize 3M
-php_value post_max_size 3M
+#  php/mod
+<IfModule php5_module>
+    php_value upload_max_filesize 3M
+    php_value post_max_size 3M
+</IfModule>

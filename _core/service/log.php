@@ -144,7 +144,7 @@ class log extends \fan\core\base\service\single
     /**
      * Set Data Element
      * @param number $nDataDepth
-     * @return DOMElement
+     * @return array
      */
     protected function _setNewData($mData, $nDataDepth)
     {

@@ -16,8 +16,8 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version:  03.03.10
- * @modified: 2015-01-08 18:51:00
+ * @version:  03.03.11
+ * @modified: 2015-04-23 21:51:00
  */
 // ===== Additional functions and classes ===== \\
 function isDefined(obj, prop)
@@ -59,7 +59,7 @@ function implement(destObj, srcObj, notReplace, isNext)
 // --- Check type of browser --- \\
 var browserVer = (function(w)
 {
-    var d, o, m, re, k;
+    var d, o, ie, m, re, k;
     d = w.document;
     o = {};
 
@@ -67,34 +67,49 @@ var browserVer = (function(w)
     o.aV = w.navigator.appVersion;
     o.uA = w.navigator.userAgent;
 
-    o.isDOM = Boolean(d.getElementById);
-    o.isStrict = d.compatMode == 'CSS1Compat';
+    o.isDOM      = Boolean(d.getElementById);
+    o.isStrict   = d.compatMode == 'CSS1Compat';
+    o.isNetscape = o.aN == "Netscape";
+    o.isMozilla  = o.isNetscape && o.isDOM && !o.isSafari;
 
     o.isOpera  = isDefined(w, 'opera') && o.isDOM;
-    o.isOpera7 = Boolean(o.isOpera && d.readyState);
+    o.isOperaN = o.isOpera && Boolean(d.readyState);
 
-    o.isSafari = /webkit/i.test(o.uA);
-    o.isIE = Boolean(d.all && d.all.item && !o.isOpera && !o.isSafari);
+    o.isChrome = /chrome/i.test(o.uA);
+    o.isSafari = !o.isChrome && /webkit/i.test(o.uA);
 
-    o.isNN = o.aN == "Netscape";
-    o.isMozilla = o.isNN && o.isDOM && !o.isSafari;
+    o.isIE    = isDefined(d, 'all') && Boolean(d.all.item) && !o.isOpera && !o.isSafari || /\Wtrident\W/i.test(o.uA);
+    o.isNewIE = o.isIE && o.isNetscape;
+    o.isOldIE = o.isIE && !o.isNewIE;
+
     o.isFF = o.isMozilla && /\Wfirefox\W/i.test(o.uA);
 
-    o.identifyBrowser = o.isIE || o.isMozilla || o.isOpera || o.isSafari || o.isNN;
+    o.identifyBrowser = o.isIE || o.isOpera || o.isChrome || o.isSafari || o.isNetscape || o.isMozilla;
 
     o.ver = null;
     re = {
-        isIE     : /msie\s*([\d\.]+)/i,
-        isOpera  : /opera\W*([\d\.]+)/i,
-        isSafari : /\D([\d\.]+)\s+safari/i,
-        isFF     : /firefox\W*([\d\.]+)/i,
-        isNN     : /[a-z]+\/([\d\.]+)\s*\D*\s*$/i
+        isOldIE    : /msie\s*([\d\.]+)/i,
+        isNewIE    : /\Wrv\:\s*([\d\.]+)/i,
+        isOpera    : /opera\W*([\d\.]+)/i,
+        isChrome   : /\Wchrome([\d\.]+)/i,
+        isSafari   : /\D([\d\.]+)\s+safari/i,
+        isFF       : /firefox\W*([\d\.]+)/i,
+        isNetscape : /[a-z]+\/([\d\.]+)\s*\D*\s*$/i
     };
     for (k in re) {
         if (o[k]) {
             m = re[k].exec(o.uA);
             o.ver = m ? m[1] : null;
             break;
+        }
+    }
+
+    o.isIE10 = o.isTooOldIE = false;
+    if (o.isIE) {
+        if (o.ver == 10) {
+            o.isIE10 = true;
+        } else if (o.ver < 7) {
+            o.isTooOldIE = true;
         }
     }
     return o;
@@ -159,6 +174,7 @@ basicBroadcaster.prototype = {
             win = isDefined(this, "win") ? this.win : (isDefined(this, "winWr") && isDefined(this.winWr, "win") ? this.winWr.win : window);
         }
         win.alert(srting);
+        return this;
     },
 
     /**
@@ -169,6 +185,7 @@ basicBroadcaster.prototype = {
         if(srting && this.config.DebugMode) {
             this.alert(srting, data, win);
         }
+        return this;
     },
     _getListeners : function(eType, mName)
     {
@@ -239,7 +256,7 @@ var htmlBroadcaster = {
         if (!elm) return null;
         if (!this._listenersFunc[eType]) {
             this._listenersFunc[eType] = (function(BCobj){return function(e){return BCobj.broadcastMessage.call(BCobj, e);};})(this);
-            if (this.bv.isIE) elm.attachEvent(eType, this._listenersFunc[eType]);
+            if (this.bv.isOldIE) elm.attachEvent(eType, this._listenersFunc[eType]);
             else if (this.addEventListener) elm.addEventListener(eType.substr(2), this._listenersFunc[eType], useCapture ? true : false);
             else elm[eType] = this._listenersFunc[eType];
         }
@@ -253,7 +270,7 @@ var htmlBroadcaster = {
         var elm = this._bcElement(eType);
         if (!elm) return;
         if (!this._BBC.removeListener(obj, eType, mName) && this._listenersFunc[eType]) {
-            if (this.bv.isIE) elm.detachEvent(eType, this._listenersFunc[eType]);
+            if (this.bv.isOldIE) elm.detachEvent(eType, this._listenersFunc[eType]);
             else if (this.removeEventListener) elm.removeEventListener(eType.substr(2), this._listenersFunc[eType], useCapture ? true : false);
             else elm[eType] = undefined;
             this._listenersFunc[eType] = null;
@@ -290,37 +307,39 @@ evtWrapper.prototype = {
     eventDrop : function(doNot)
     {
         if (!doNot && this.evt) {
-            if (this.bv.isIE) this.evt.returnValue = false;
+            if (this.bv.isOldIE) this.evt.returnValue = false;
             else if (this.evt.preventDefault) this.evt.preventDefault();
             this.eventStatus = false;
         }
+        return this;
     },
     stopBubbling : function(doNot)
     {
         if (!doNot && this.evt) {
-            if (this.bv.isIE) this.evt.cancelBubble = true;
+            if (this.bv.isOldIE) this.evt.cancelBubble = true;
             else if (this.evt.stopPropagation) this.evt.stopPropagation();
             this.bubbleStatus = false;
         }
+        return this;
     },
     setElement : function(elmWr)
     {
         if (elmWr) this.elmWr = elmWr;
         else {
-            if(!this.evt) return;
-            var elm = this.bv.isIE ? this.evt.srcElement : this.evt.target;
-            if (!elm) return;
+            if(!this.evt) return this;
+            var elm = this.bv.isOldIE ? this.evt.srcElement : this.evt.target;
+            if (!elm) return this;
             this.elmWr = new elmWrapper(elm);
         }
         var winWr = this.winWr = elmWr.win && elmWr.doc ? elmWr : elmWr.winWr;
         if (winWr && this.evt) {
-            if (this.bv.isIE || this.bv.isOpera7) {
+            if (this.bv.isOldIE || this.bv.isOperaN) {
                 this.absX=this.evt.clientX + winWr.getScrollX();
                 this.absY=this.evt.clientY + winWr.getScrollY();
             } else if (this.bv.isOpera) {
                 this.absX=this.evt.clientX;
                 this.absY=this.evt.clientY;
-            } else if (this.bv.isNN) {
+            } else if (this.bv.isNetscape) {
                 this.absX=this.evt.pageX;
                 this.absY=this.evt.pageY;
             }
@@ -328,15 +347,22 @@ evtWrapper.prototype = {
             this.relX = this.absX - os[0];
             this.relY = this.absY - os[1];
         } else this.absX=this.absY=this.relX=this.relY=0;
-        if (isDefined(this.evt, "keyCode")) {
-            if (!isDefined(this.evt, "charCode")) {
-                this.keyCode  = this.evt.keyCode < 32 ? this.evt.keyCode : 0;
-                this.charCode = this.evt.keyCode < 32 ? 0 : this.evt.keyCode;
+
+        if (isDefined(this.evt, 'keyCode')) {
+            if (this.evt.which == null) { //IE
+                if (this.evt.keyCode < 32) {
+                    this.charCode = null;
+                } else {
+                    this.charCode = this.evt.keyCode;
+                }
+            } else if (this.evt.which != 0 && this.evt.charCode != 0) { //Not-IE
+                this.charCode = this.evt.which < 32 ? null : this.evt.which;
             } else {
-                this.keyCode  = this.evt.keyCode;
-                this.charCode = this.evt.charCode;
+                this.charCode = isDefined(this.evt, 'charCode') ? this.evt.charCode : null;
             }
+            this.keyCode = (this.charCode) ? null : this.evt.keyCode;
         }
+        return this;
     },
     bv : browserVer
 };
@@ -481,7 +507,7 @@ elmWrapper.prototype = {
             return false;
         };
 
-        if (bv.isIE || bv.isOpera || bv.isMozilla || bv.isSafari) {
+        if (bv.isOldIE || bv.isOpera || bv.isMozilla || bv.isSafari) {
 
             telm = elm;
             while (this._checkTag(telm)) {
@@ -501,7 +527,7 @@ elmWrapper.prototype = {
                     parN = parN.parentNode;
                 }
             }
-        } else if (bv.isNN) {
+        } else if (bv.isNetscape) {
             ret.cor(elm.offsetLeft, elm.offsetTop);
         }
 
@@ -523,7 +549,7 @@ elmWrapper.prototype = {
         var left = 0;
         var top  = 0;
         var elm = this.elm;
-        if (bv.isIE || (bv.isOpera && parseFloat(bv.ver) < 8)) {
+        if (bv.isOldIE || (bv.isOpera && parseFloat(bv.ver) < 8)) {
             left = elm.offsetLeft;
             top  = elm.offsetTop;
         } else if (bv.isMozilla || bv.isOpera) {
@@ -545,7 +571,7 @@ elmWrapper.prototype = {
     getWidth : function()
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isMozilla || bv.isOpera7 || bv.isSafari) return this.elm.offsetWidth;
+        if (bv.isOldIE || bv.isMozilla || bv.isOperaN || bv.isSafari) return this.elm.offsetWidth;
         if (bv.isOpera) return this.css.pixelWidth;
         return null;
     },
@@ -553,7 +579,7 @@ elmWrapper.prototype = {
     getHeight : function()
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isMozilla || bv.isOpera7 || bv.isSafari) return this.elm.offsetHeight;
+        if (bv.isOldIE || bv.isMozilla || bv.isOperaN || bv.isSafari) return this.elm.offsetHeight;
         if (bv.isOpera) return this.css.pixelHeight;
         return null;
     },
@@ -601,7 +627,7 @@ elmWrapper.prototype = {
             tmpElm.innerHTML = code;
         } catch(e) {
             this.errMsg(e.message + "\n\n" + code);
-            return;
+            return this;
         }
 
         lst = tmpElm.childNodes;
@@ -617,12 +643,14 @@ elmWrapper.prototype = {
                 this.elm.insertBefore(lst[i], this.elm.firstChild);
             }
         }
+        return this;
     },
     setAbsLeft : function(x)
     {
         var bv = this.bv;
         if (bv.isOpera) this.style.pixelLeft=x;
         else this.style.left=x + "px";
+        return this;
     },
 
     setAbsTop : function(y)
@@ -630,58 +658,68 @@ elmWrapper.prototype = {
         var bv = this.bv;
         if (bv.isOpera) this.style.pixelTop=y;
         else this.style.top = y + "px";
+        return this;
     },
 
     moveAbs : function(x,y)
     {
         this.setAbsLeft(x);
         this.setAbsTop(y);
+        return this;
     },
 
     moveRel : function(x,y)
     {
         this.moveAbs(this.getRelLeft()+x, this.getRelTop()+y);
+        return this;
     },
 
     setZIndex : function(z) //deprecated
     {
         this.style.zIndex=z;
+        return this;
     },
 
 
     setVisibility : function(v)
     {
         this.style.visibility = v ? "visible" : "hidden";
+        return this;
     },
 
     setDisplay : function(v)
     {
         if (!v) v = "none";
         else if (v.toString() == "true") v="block";
-        else if (this.bv.isIE && this.config.ReplaceDisplay4IE && v != "none" && v != "inline") v = "block";
+        else if (this.bv.isOldIE && this.config.ReplaceDisplay4IE && v != "none" && v != "inline") v = "block";
         this.style.display = v;
+        return this;
     },
 
     invVisibility : function()
     {
         this.setVisibility(!this.isVisible());
+        return this;
     },
 
     invDisplay : function(v)
     {
         this.setDisplay(this.isDisplay() ? "none" : (v ? v : "block"));
+        return this;
     },
 
     show : function(display)
     {
         if (display || !isDefined(display)) this.setDisplay(!isDefined(display) || display == "none" ? true : display);
         else this.setVisibility(true);
+        return this;
     },
 
     hide : function(display)
     {
         if (display || !isDefined(display)) this.setDisplay(false);
         else this.setVisibility(false);
+        return this;
     },
 
     write : function(text, pos, noDOM)
@@ -695,35 +733,72 @@ elmWrapper.prototype = {
         } else {
             this.elm.innerHTML = pos ? (pos>0 ? this.elm.innerHTML + text : text + this.elm.innerHTML) : text;
         }
+        return this;
     },
 
     setBgColor : function(c)
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isMozilla || bv.isOpera7) this.style.backgroundColor=c;
+        if (bv.isOldIE || bv.isMozilla || bv.isOperaN) this.style.backgroundColor=c;
         else if (bv.isOpera) this.style.background=c;
+        return this;
     },
 
     setBgImage : function(url)
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isMozilla || bv.isOpera) this.style.backgroundImage="url("+url+")";
+        if (bv.isOldIE || bv.isMozilla || bv.isOpera) this.style.backgroundImage="url("+url+")";
+        return this;
     },
 
     setClip : function(top,right,bottom,left)
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isMozilla || bv.isOpera7) this.style.clip="rect("+this._setPt(top)+" "+this._setPt(right)+" "+this._setPt(bottom)+" "+this._setPt(left)+")";
+        if (bv.isOldIE || bv.isMozilla || bv.isOperaN) this.style.clip="rect("+this._setPt(top)+" "+this._setPt(right)+" "+this._setPt(bottom)+" "+this._setPt(left)+")";
+        return this;
+    },
+
+    getCursorPos : function()
+    {
+        var elm = this.elm;
+        if (isDefined(elm, 'selectionStart')) {
+            return elm.selectionStart;
+        }
+        var doc = this.winWr.doc;
+        if (this.bv.isOldIE && isDefined(doc, 'selection') && isDefined(elm, 'value')) {
+            elm.focus();
+            var sel = doc.selection.createRange();
+            sel.moveStart ('character', -elm.value.length);
+            return sel.text.length;
+        }
+        return 0;
+    },
+    setCursorPos : function(pos)
+    {
+        var elm = this.elm;
+        if(isDefined(elm, 'setSelectionRange')) {
+            elm.focus();
+            elm.setSelectionRange(pos, pos);
+        } else if (isDefined(elm, 'createTextRange')) {
+            var range = elm.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+        }
+        return this;
     },
 
     setClass : function(className)
     {
         this.elm.className = className;
+        return this;
     },
     addClass : function(className)
     {
         this.removeClass(className);
         this.setClass((this.elm.className ? this.elm.className + " " : "") + className);
+        return this;
     },
     removeClass : function(className)
     {
@@ -734,6 +809,7 @@ elmWrapper.prototype = {
             curClass = curClass.replace(new RegExp("\\s+" + className + "(?!\\S)", "i"), "");
         }
         this.elm.className = curClass;
+        return this;
     },
     hasClass : function(className)
     {
@@ -750,7 +826,7 @@ elmWrapper.prototype = {
     _getCSS : function(elm)
     {
         var doc = this.winWr.doc;
-        if (this.bv.isIE) return elm.currentStyle ? elm.currentStyle : elm.style;
+        if (this.bv.isOldIE) return elm.currentStyle ? elm.currentStyle : elm.style;
         else if (this.bv.isDOM && doc.defaultView && doc.defaultView.getComputedStyle) return doc.defaultView.getComputedStyle(elm, null);
         else if (this.bv.isSafari) return elm.style;
         return elm.style;
@@ -763,7 +839,7 @@ elmWrapper.prototype = {
     {
         var ver, css, cX, cY;
         ver = parseFloat(bv.ver);
-        if (elm && (css = this._getCSS(tag)) && (!bv.isOpera || ver < 9) && !bv.isIE) { // ToDo: Add condition for border
+        if (elm && (css = this._getCSS(tag)) && (!bv.isOpera || ver < 9) && !bv.isOldIE) { // ToDo: Add condition for border
             cX = parseInt("0" + css.borderLeftWidth, 10);
             cY = parseInt("0" + css.borderTopWidth, 10);
             if (bv.isMozilla && css.overflow != "visible" && (ver < 3 || !bv.isFF || this._getCSS(elm).position == "absolute")) { // ToDo: Add condition for border
@@ -773,6 +849,7 @@ elmWrapper.prototype = {
             ret.cor(cX, cY); // Border
         }
         ret.cor(-tag.scrollLeft, -tag.scrollTop); // Scroller
+        return this;
     },
     _setPt : function(v)
     {
@@ -891,6 +968,7 @@ winWrapper.prototype = {
             }
             this._removeListener(obj, EventType, mName);
         }
+        return this;
     },
 
 // .... Event subscribing .... \\
@@ -905,6 +983,7 @@ winWrapper.prototype = {
     delOnload : function(obj, mName, param)
     {
         this.removeListener(obj, this._getPrefix() + "load", mName, param);
+        return this;
     },
     setOnUnload : function(obj, mName, param)
     {
@@ -913,6 +992,7 @@ winWrapper.prototype = {
     delOnUnload : function(obj, mName, param)
     {
         this.removeListener(obj, this._getPrefix() + "unload", mName, param);
+        return this;
     },
 // .... Get elements .... \\
     makeElement : function(name, attr, child, wrap)
@@ -979,39 +1059,39 @@ winWrapper.prototype = {
     getWindowLeft : function()
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isOpera7) return this.win.screenLeft;
-        if (bv.isNN || bv.isOpera) return this.win.screenX;
+        if (bv.isOldIE || bv.isOperaN) return this.win.screenLeft;
+        if (bv.isNetscape || bv.isOpera) return this.win.screenX;
         return null;
     },
     getWindowTop : function()
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isOpera7) return this.win.screenTop;
-        if (bv.isNN || bv.isOpera) return this.win.screenY;
+        if (bv.isOldIE || bv.isOperaN) return this.win.screenTop;
+        if (bv.isNetscape || bv.isOpera) return this.win.screenY;
         return null;
     },
     getWindowWidth : function()
     {
         var bv = this.bv;
-        if (bv.isIE) return this.getDocFrame().clientWidth;
-        if (bv.isNN || bv.isOpera) return this.win.innerWidth;
+        if (bv.isOldIE) return this.getDocFrame().clientWidth;
+        if (bv.isNetscape || bv.isOpera) return this.win.innerWidth;
         if (bv.isMozilla || bv.isFF) return this.doc.body.clientWidth;
-         return null;
+        return null;
     },
     getWindowHeight : function()
     {
         var bv = this.bv;
-        if (bv.isIE) return this.getDocFrame().clientHeight;
-        if (bv.isNN || bv.isOpera) return this.win.innerHeight;
+        if (bv.isOldIE) return this.getDocFrame().clientHeight;
+        if (bv.isNetscape || bv.isOpera) return this.win.innerHeight;
         if (bv.isMozilla || bv.isFF) return this.doc.body.clientHeight;
         return null;
     },
     getDocumentWidth : function()
     {
         var bv = this.bv;
-        if (bv.isIE || bv.isOpera7) return this.getDocFrame().scrollWidth;
+        if (bv.isOldIE || bv.isOperaN) return this.getDocFrame().scrollWidth;
         if (bv.isMozilla || bv.isFF) return this.doc.body.clientWidth;
-        if (bv.isNN) return this.doc.width;
+        if (bv.isNetscape) return this.doc.width;
         if (bv.isOpera) return this.doc.body.style.pixelWidth;
         return null;
     },
@@ -1019,9 +1099,9 @@ winWrapper.prototype = {
     {
         var bv = this.bv;
         if (bv.isMozilla || bv.isFF) return this.doc.body.scrollHeight;
-        if (bv.isIE || bv.isOpera7) return this.getDocFrame().scrollHeight;
+        if (bv.isOldIE || bv.isOperaN) return this.getDocFrame().scrollHeight;
         if (bv.isSafari) return this.doc.documentElement.scrollHeight;
-        if (bv.isNN) return this.doc.height;
+        if (bv.isNetscape) return this.doc.height;
         if (bv.isOpera) return this.doc.body.style.pixelHeight;
         return null;
     },
@@ -1029,8 +1109,8 @@ winWrapper.prototype = {
     {
         var bv = this.bv;
         try {
-            if (bv.isIE || bv.isOpera7) return this.getDocFrame().scrollLeft;
-            if (bv.isNN || bv.isOpera) return this.win.pageXOffset;
+            if (bv.isOldIE || bv.isOperaN) return this.getDocFrame().scrollLeft;
+            if (bv.isNetscape || bv.isOpera) return this.win.pageXOffset;
         } catch(e) {}
         return null;
     },
@@ -1038,8 +1118,8 @@ winWrapper.prototype = {
     {
         var bv = this.bv;
         try {
-            if (bv.isIE || bv.isOpera7) return this.getDocFrame().scrollTop;
-            if (bv.isNN || bv.isOpera) return this.win.pageYOffset;
+            if (bv.isOldIE || bv.isOperaN) return this.getDocFrame().scrollTop;
+            if (bv.isNetscape || bv.isOpera) return this.win.pageYOffset;
         } catch(e) {}
         return null;
     },
@@ -1052,7 +1132,7 @@ winWrapper.prototype = {
                 this.doc.getElementsByTagName('head')[0].appendChild(this.doc.createElement('style'));
                 indx = ss.length - 1;
             } else indx = Number(indx);
-            if (this.bv.isIE) ss[indx].addRule(selector, style, ss[indx].rules.length);
+            if (this.bv.isOldIE) ss[indx].addRule(selector, style, ss[indx].rules.length);
             else {
                 for (var i = indx; i >= 0; i--) {
                     try {
@@ -1066,6 +1146,7 @@ winWrapper.prototype = {
                 }
             }
         }
+        return this;
     },
     loadStyle : function(url)
     {
@@ -1074,6 +1155,7 @@ winWrapper.prototype = {
         style.type = 'text/css';
         style.href = url;
         this.doc.getElementsByTagName('head')[0].appendChild(style);
+        return this;
     },
     getSelection : function()
     {
@@ -1111,6 +1193,7 @@ winWrapper.prototype = {
             this.doc.cookie = curCookie;
             this.cookieVal[name] = val;
         }
+        return this;
     },
     deleteCookie : function(name, path)
     {
@@ -1118,6 +1201,7 @@ winWrapper.prototype = {
             this.setCookie(name, '', new Date(1970,1,1,0,0,1), path);
             delete this.cookieVal[name];
         }
+        return this;
     },
     getSid : function()
     {
@@ -1165,6 +1249,7 @@ winWrapper.prototype = {
             }
             break;
         }
+        return this;
     },
     setWW : function(wn)
     {
@@ -1173,6 +1258,7 @@ winWrapper.prototype = {
         if (nm) {
             this.$w(nm).iniWrapper(wn);
         }
+        return this;
     },
 
     _$$ : function(sel, src, one)
@@ -1355,7 +1441,7 @@ winWrapper.prototype = {
             return;
         }
         // IE
-        if (this.bv.isIE && (this.win === top || this.win.opener)) {
+        if (this.bv.isOldIE && (this.win === top || this.win.opener)) {
             follower.ie();
             return;
         }
@@ -1518,6 +1604,14 @@ function newObject(obj, init)
             var f = this._event_func;
             f.prototype = ew;
             return new f(this, true);
+        },
+        subscribe : function(sel, EventType, mName, param, useCapture)
+        {
+            var obj = this.$(sel);
+            if (obj) {
+                return obj.addListener(this, EventType, mName, param, useCapture);
+            }
+            return null;
         },
         openPopUp : function(obj, met, uri, name, prop)
         {

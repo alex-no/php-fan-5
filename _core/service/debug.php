@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class debug extends \fan\core\base\service\single {
 
@@ -335,8 +335,9 @@ debug_trace.init(2);
      */
     protected function _correctPath($sPath)
     {
+        $sSysSeparator = defined('DIR_SEPARATOR') ? DIR_SEPARATOR : '/';
         $sPath = dirname($sPath) . DIRECTORY_SEPARATOR;
-        return str_replace('/', DIRECTORY_SEPARATOR, $sPath);
+        return str_replace($sSysSeparator, DIRECTORY_SEPARATOR, $sPath);
     } // function _correctPath
 
 } // class \fan\core\service\debug

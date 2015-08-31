@@ -13,7 +13,7 @@ use fan\project\exception\block\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  *
  * @abstract
  *
@@ -696,8 +696,14 @@ abstract class base
             }
         }
         if(isset($this->aMeta['embedJS'])) {
-            foreach ($this->aMeta['embedJS'] as $k => $v) {
-                $oRoot->setEmbedJs($v, $k);
+            foreach ($this->aMeta['embedJS'] as $sPos => $v1) {
+                if (is_array($v1) || is_object($v1) && $v1 instanceof \fan\core\base\meta\row) {
+                    foreach ($v1 as $v2) {
+                        $oRoot->setEmbedJs($v2, $sPos);
+                    }
+                } elseif (is_string($v1)) {
+                    $oRoot->setEmbedJs($v1, $sPos);
+                }
             }
         }
         return $this;

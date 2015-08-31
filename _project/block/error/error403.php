@@ -12,9 +12,16 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  */
 class error403 extends \fan\core\block\error\error403
 {
+    /**
+     * Init block
+     */
+    public function init()
+    {
+        $this->view->sHomeUri = $this->oTab->getURI('~/');
+    } // function init
 } // class \fan\project\block\error\error403
 ?>

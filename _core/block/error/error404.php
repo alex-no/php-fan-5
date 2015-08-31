@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.007 (31.08.2015)
  * @abstract
  */
 abstract class error404 extends \fan\core\block\base
@@ -25,8 +25,9 @@ abstract class error404 extends \fan\core\block\base
      */
     public function setViewVars($sError, $sMessage, $sCombiMessage)
     {
-        $this->view->error   = $sError;
-        $this->view->message = $sMessage;
+        $this->view->error    = $sError;
+        $this->view->message  = $sMessage;
+        $this->view->sHomeUri = $this->oTab->getURI('~/');
         if ($this->getViewFormat() == 'loader') {
             $this->view->setJson('error',   $sError);
             $this->view->setJson('message', $sMessage);

@@ -121,7 +121,7 @@ class request
     } // function toArray
 
     /**
-     * Get instace of Entity
+     * Get instance of Entity
      * @return \fan\core\base\model\entity
      */
     public function getEntity()

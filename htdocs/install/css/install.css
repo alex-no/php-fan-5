@@ -1,0 +1,106 @@
+/* Structure and design elements */
+body,html {
+	background-color: #FFF;
+}
+h1 {
+    margin: 0px;
+    padding: 35px 240px 0px 0px;
+}
+h2 {
+    text-align: center;
+    color: #000000;
+}
+#content {
+	width: 990px;
+    min-height: 100%;
+	background-color: #FFF;
+	margin: 0 auto;
+}
+#logo {
+	float: left;
+	margin: 13px 0 0 14px;
+}
+#logo img {
+	width: 102px;
+	height: 64px;
+}
+#header_bgr {
+	height: 130px;
+	margin-bottom: -130px;
+}
+#txt_logo {
+	float: left;
+	margin: 15px 0 0 30px;
+	font-family: Tahoma, Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: #4444B4;
+}
+header {
+	height: 130px;
+}
+main {
+	padding-top: 20px;
+}
+footer {
+	background-color: #000066;
+	color: #FFF;
+	text-align: center;
+	padding: 10px 0;
+	height: 20px;
+	margin-top: -40px;
+}
+#clear {
+	height: 50px;
+}
+
+.t_line {
+	height: 10px;
+	background-color: #000066;
+}
+.mdl_line {
+	height: 90px;
+}
+.btm_line {
+	height: 30px;
+	background-color: #4444b4;
+}
+section.test {
+    border: #ff4500 solid 1px;
+    padding: 7px;
+    margin: 15px 0px;
+}
+section.test h3{
+    color: #ff4500;
+    background-color: #ffffff;
+    margin-top: -16px;
+    padding: 2px 5px 0px;
+    float: left;
+}
+section.test h3+* {
+    clear: left;
+}
+.module_list li {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    width: 194px;
+    float: left;
+}
+.module_list+* {
+    clear: both;
+}
+code {
+	font-family: "Courier New", Courier, monospace;
+	color: #333333;
+	font-size: 1.2em;
+}
+code.important {
+	font-weight: bold;
+	color: #000066;
+}
+.log_dir_list li, .cache_dir_list li {
+	list-style: none;
+	margin: 0px 0px 0px 5px;
+}
+#tmp_dir {
+	margin: 10px 0px;
+}

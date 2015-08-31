@@ -53,7 +53,7 @@ class pager extends \fan\core\base\service\multi
 
     /**
      * Service's constructor
-     * @param type $oBlock
+     * @param \fan\core\block\base $oBlock
      */
     protected function __construct(\fan\core\block\base $oBlock)
     {
@@ -63,7 +63,7 @@ class pager extends \fan\core\base\service\multi
 
     // ======== Static methods ======== \\
     /**
-     *
+     * Get instance of pager
      * @param string|\fan\core\block\base $mBlock
      * @return \fan\core\service\pager
      */

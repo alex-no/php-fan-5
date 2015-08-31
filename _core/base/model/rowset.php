@@ -158,7 +158,7 @@ class rowset extends \fan\core\base\data
     } // function getArrayHash
 
     /**
-     * Get instace of Entity
+     * Get instance of Entity
      * @return type
      */
     public function getEntity()

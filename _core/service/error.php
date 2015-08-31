@@ -374,9 +374,9 @@ class error extends \fan\core\base\service\single
 
     /**
      * Send message about error by email
+     * @param string $sType
      * @param string $sSubject
      * @param string $sMessage
-     * @param boolean $bDirectMail - send email directly
      */
     public function makeErrorEmail($sType, $sSubject, $sMessage)
     {
