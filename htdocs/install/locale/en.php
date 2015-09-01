@@ -37,7 +37,8 @@ return array(
     'TEMP_DIR_IS_NOT_EXISTS' => 'directory doesn\'st exist',
     'TEMP_DIR_IS_NOT_WRITABLE' => 'directory is not writable',
     'RESULT_INFO' => 'The resulting information',
-    'YOUR_FAN_VER' => 'Version of your PHP-FAN',
+    'YOUR_PHP_FAN' => 'Your PHP-FAN',
+    'SEE_LOG_VIEWER' => 'If while your project works occur errors - they all will be stored in the logs. To view the logs use a special program "viewer"',
     'DO_NOT_FORGET_REMOVE_INSTALL' => 'Do not forget to delete the directory "install" after set the Project',
 );
 ?>
