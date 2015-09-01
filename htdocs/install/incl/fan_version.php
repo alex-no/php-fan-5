@@ -31,8 +31,9 @@ class fan_version extends base
      */
     protected function _showFanVersion()
     {
-        $sFanVer = 'Unknown';
+        $sFanVer  = 'Unknown';
         $sServApp = FAN_CORE_DIR . '/service/application.php';
+        $aMatches = null;
         if (file_exists($sServApp)) {
             $sApp = file_get_contents($sServApp);
             if (preg_match('/^\s*return\s*\'([^\']+)\'\;\s*$/m', $sApp, $aMatches)) {
@@ -40,6 +41,11 @@ class fan_version extends base
             }
         }
         $this->aView['sFanVer'] = $sFanVer;
+
+        if (preg_match('/^(\/.*?)install\//', $_SERVER['REQUEST_URI'], $aMatches)) {
+            $this->aView['sLogViewer'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $aMatches[1] . '__log_viewer/';
+        }
+
         $this->_parseTemplate('fan_version');
         return true;
     } // function _showFanVersion
