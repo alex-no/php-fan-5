@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.007 (31.08.2015)
+ * @version of file: 05.02.008 (15.09.2015)
  */
 class plain extends \fan\core\base\service\single
 {
@@ -125,6 +125,19 @@ class plain extends \fan\core\base\service\single
     } // function addHeader
 
     /**
+     * Set several Headers by array-hash
+     * @param $aHeaders
+     * @return \fan\core\service\plain
+     */
+    public function setHeaders($aHeaders)
+    {
+        foreach ($aHeaders as $k => $v) {
+            $this->addHeader($k, $v);
+        }
+        return $this;
+    } // function setHeaders
+
+    /**
      * Set Error Message
      * @param string $sErrMsg
      * @param numeric $nErrCode
@@ -197,7 +210,7 @@ class plain extends \fan\core\base\service\single
 
     protected function _assignHeaders()
     {
-        \fan\project\service\header::instance()->setHeaders($this->aHeaders);
+        service('header')->setHeaders($this->aHeaders);
         return $this;
     } // function _assignHeaders
 

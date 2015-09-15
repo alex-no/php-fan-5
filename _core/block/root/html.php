@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.008 (15.09.2015)
  * @abstract
  */
 abstract class html extends \fan\core\block\base
@@ -84,7 +84,7 @@ abstract class html extends \fan\core\block\base
             }
         }
         $this->_setViewVar('bodyClass', $sBrowserClass);
-        $this->_setViewVar('poweredBy', $this->getMeta('show_power', true) ? \fan\project\service\application::instance()->getCoreVersion() : null);
+        $this->_setViewVar('poweredBy', $this->getMeta('show_power', true) ? service('application')->getCoreVersion() : null);
     } // function init
 
     /**
@@ -248,7 +248,7 @@ abstract class html extends \fan\core\block\base
                 error_log('Incorrect value for Embed Css.', E_USER_NOTICE);
                 return;
             }
-            $aCssFile = $aCssFile->__toString();
+            $sCss = $sCss->__toString();
         }
         if (isset($this->aEmbedCSS[$sMedia])) {
             $this->aEmbedCSS[$sMedia] = '';
@@ -295,7 +295,7 @@ abstract class html extends \fan\core\block\base
      * Set embed JavaScript
      * @param mixed $mJs
      * @param string $sPos position of JavaScript (it is need set if first argument is not array)
-     * @param numeric $nOrd order run (-1 - before all, 0 - as default, 1 - after all)
+     * @param integer $nOrd order run (-1 - before all, 0 - as default, 1 - after all)
      * @return \fan\core\block\root\html
      */
     public function setEmbedJs($mJs, $sPos = 'head', $nOrd = 0, $bAllowDebug = true)
@@ -314,7 +314,7 @@ abstract class html extends \fan\core\block\base
 
         if(is_array($mJs)) {
             $sJs = array_shift($mJs) . '(';
-            $oJson = \fan\project\service\json::instance();
+            $oJson = service('json');
             foreach ($mJs as $v) {
                 $sJs .= $oJson->encode($v) . ', ';
             }
@@ -371,7 +371,7 @@ abstract class html extends \fan\core\block\base
                 $sFilePath = \bootstrap::parsePath($sFilePath);
             }
             if (\is_readable($sFilePath)) {
-                $oTemplate = \fan\project\service\template::instance()->get($sFilePath, null, $this);
+                $oTemplate = service('template')->get($sFilePath, null, $this);
                 /* @var $oTemplate \fan\core\service\template\type\base */
 
                 foreach ($aTplVars as $k => $v) {
@@ -449,9 +449,13 @@ abstract class html extends \fan\core\block\base
         if (!empty($this->sModalWin)) {
             $this->view->set('modal_win', $this->sModalWin);
         }
-        $this->view->set('externalCSS', $this->aExternalCSS);
+
+        $aExternalCSS = service('obfuscator', 'css')->getNewList($this->aExternalCSS);
+        $this->view->set('externalCSS', $aExternalCSS);
         $this->view->set('embedCSS',    $this->aEmbedCSS);
-        $this->view->set('externalJS',  $this->aExternalJS);
+
+        $aExternalJS = service('obfuscator', 'js')->getNewList($this->aExternalJS);
+        $this->view->set('externalJS',  $aExternalJS);
         $this->view->set('embedJS',     $this->aEmbedJS);
     } // function _preOutput
     /**

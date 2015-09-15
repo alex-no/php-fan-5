@@ -13,7 +13,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.005 (12.02.2015)
+ * @version of file: 05.02.008 (15.09.2015)
  */
 
 class db_file
@@ -157,7 +157,7 @@ class db_file
      */
     protected function _prepare()
     {
-        $oSR  = \fan\project\service\request::instance();
+        $oSR  = service('request');
         $this->mId = $oSR->get('id', 'AGP');
         if (empty($this->mId)) {
             $this->mId = $oSR->get(0, 'A');
@@ -226,7 +226,7 @@ class db_file
             }
         }
 
-        /* @var $oRow \fan\core\model\file_data\row */
+        /* @var $oRow \fan\core\base\model\file_data\row */
         $oRow = $this->_getRow($bIdIsEncrypt);
 
         if ($oRow) {
@@ -260,7 +260,7 @@ class db_file
     /**
      * Get Entity entity_file_data
      * Return NULL if the file is not valid
-     * @return \fan\core\model\file_data\row|null
+     * @return \fan\core\base\model\file_data\row|null
      */
     protected function _getRow($bIdIsEncrypt = null)
     {

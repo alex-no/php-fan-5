@@ -13,7 +13,7 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.008 (15.09.2015)
  */
 class template extends \fan\core\base\service\single
 {
@@ -76,6 +76,7 @@ return $sReturnHtmlVal;}
      * @param string $sParent
      * @param \fan\core\block\base $mBlock
      * @return \fan\core\service\template\type\base
+     * @throws fatalException
      */
     public function get($sTemplatePath, $sParent = null, $mBlock = null)
     {
@@ -193,7 +194,7 @@ return $sReturnHtmlVal;}
             }
         }
         foreach (call_user_func(array($sType, 'getAutoParseTag')) as $sTagName => $aAutoData) {
-            if (!isset($this->aTags[$sTagName]) && $oEngine->setAutoTag($sTagName, $aAutoData)) {
+            if (!isset($this->aTags[$sTagName]) && isset($oEngine) && $oEngine->setAutoTag($sTagName, $aAutoData)) { // ToDo: Explore "setAutoTag" there
                 $this->aTags[$sTagName] = $oEngine;
             }
         }

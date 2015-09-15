@@ -19,11 +19,13 @@ var form_property = {
                 for (i=0; i<elm.length; i++) {
                     rArr = re.exec(elm[i].name);
                     if (rArr && rArr[1]) {
-                        ret.values[rArr[1]] = this.getFieldValue(rArr[1]); //toDo: Multidata with checkbox-list
+                        //toDo: Multidata with checkbox-list
+                        ret.values[rArr[1]] = this.getFieldValue(rArr[1]);
                         ret.__multidata++;
                     }
                 }
-                return ret.__multidata > 0 ? ret : null; // Return as simple object
+                // Return as simple object
+                return ret.__multidata > 0 ? ret : null;
             }
         }
 
@@ -42,7 +44,8 @@ var form_property = {
             for (i=0; i<field.length; i++) {
                 if (field.options[i].selected) ret.push(field.options[i].value);
             }
-            return ret;  // Return as Array
+            // Return as Array
+            return ret;
         case "radio":
             if (isDefined(field, "length")) {
                 for (i=0;i<field.length; i++) {
@@ -57,7 +60,8 @@ var form_property = {
             for (i=0; i<this._checkboxNameList.length; i++) {
                 if (elm[this._checkboxNameList[i]].checked) ret.push(elm[this._checkboxNameList[i]].value);
             }
-            return ret; // Return as Array
+            // Return as Array
+            return ret;
         case "checkbox":
             return field.checked ? field.value : "";
         default:
@@ -138,7 +142,8 @@ var form_validation_main = {
                 if (isObject(rule)) {
                     if (!isDefined(rule, "isEnabled")) rule.isEnabled = true;
                     if (!isDefined(rule, "ruleData"))  rule.ruleData = {};
-                    if (isDefined(rule, "ini_rule") && typeof(this[rule.ini_rule]) == "function") this[rule.ini_rule](rule); // ToDo: check it
+                    // ToDo: check it
+                    if (isDefined(rule, "ini_rule") && typeof(this[rule.ini_rule]) == "function") this[rule.ini_rule](rule);
                 }
             }
         }
@@ -167,7 +172,8 @@ var form_validation_main = {
             if (this.field_name) {
                 if (isObject(this.field_name.constructor)) {
                     for (fld in this.field_name) {
-                        this._set_subscribe(fld, (this.field_name[fld] ? this.field_name[fld] : this.ini_event), "runValidate"); // ToDo: check it
+                        // ToDo: check it
+                        this._set_subscribe(fld, (this.field_name[fld] ? this.field_name[fld] : this.ini_event), "runValidate");
                     }
                 } else {
                     this._set_subscribe(this.field_name, this.ini_event, "runValidate");
@@ -177,7 +183,8 @@ var form_validation_main = {
             }
             if (this.exception) {
                 for (fld in this.exception) {
-                    this._set_subscribe(fld, (this.exception[fld] ? this.exception[fld] : this.ini_event), "setException"); // ToDo: check it
+                    // ToDo: check it
+                    this._set_subscribe(fld, (this.exception[fld] ? this.exception[fld] : this.ini_event), "setException");
                 }
             }
             if (this.vbl_fields) {
@@ -408,7 +415,8 @@ var form_validation_main = {
             this._debugAlert("Need set date format for check interval!");
             return null;
         }
-        var order = data.date_order; // Order of date elements in regexp. Example: {y:3,m:2,d:1,h:4,i:5,s:6}
+        // Order of date elements in regexp. Example: {y:3,m:2,d:1,h:4,i:5,s:6}
+        var order = data.date_order;
         if (!isObject(order)) {
             this._debugAlert("Need set order date element!");
             return null;
@@ -416,7 +424,8 @@ var form_validation_main = {
         var da = data.date_format.exec(val);
         if (!da) return null;
 
-        if (da[order.y].length == 2) { // year has 2 digits
+        if (da[order.y].length == 2) {
+            // year has 2 digits
             var threshold = parseInt(data.year2digits_threshold);
             if (threshold == "NaN" || threshold == 0) threshold = 60;
             da[order.y] = parseInt(da[order.y]) < threshold ? "19" + da[order.y] : "20" + da[order.y];
@@ -619,11 +628,13 @@ var form_validation = newClass({
         this.subscribeForm();
     },
     config : {
-        errorFormatDef : "alert", //Now possible values: "errorMsg_div", "errorMsg_alert"
+        //Now possible values: "errorMsg_div", "errorMsg_alert"
+        errorFormatDef : "alert",
         errorClass     : "error_element",
         errorDivClass  : "errorForm",
         errorFocus     : true,
         formRowClasses : ["formRow"],
-        personalEvent : ["onchange", "onkeyup"] //, "onclick"
+        //, "onclick" ?
+        personalEvent : ["onchange", "onkeyup"]
     }
 });

@@ -55,7 +55,8 @@ implement(loadWrapper_xml.prototype, [{
         if (isRetry) {
             this._getXmlReq();
             if (!this.xmlReq) {
-                loadWr._errMsg("ingorRec",[loadWr.url]); //ToDo: other message!
+                //ToDo: other message!
+                loadWr._errMsg("ingorRec",[loadWr.url]);
             }
         } else {
             this.dataStr = loadWr._urlEncodeData();

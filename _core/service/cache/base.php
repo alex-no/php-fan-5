@@ -13,19 +13,19 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.008 (15.09.2015)
  */
 abstract class base
 {
     /**
      * Facade of service
-     * @var fan\core\base\service
+     * @var \fan\core\service\cache
      */
     protected $oFacade;
 
     /**
      * service's configuration data
-     * @var array
+     * @var \fan\core\service\config\row
      */
     protected $oConfig;
 
@@ -53,7 +53,7 @@ abstract class base
     protected $aMetaData = array();
 
     /**
-     * Extra Path for cahce directory
+     * Extra Path for cache directory
      * @var string
      */
     protected $sExtraPath = null;
@@ -72,10 +72,10 @@ abstract class base
 
     /**
      * Constructor of cache-engine
-     * @param \fan\core\base\service $oFacade
+     * @param \fan\core\service\cache $oFacade
      * @param string $sType
      * @param string $sKey
-     * @param array $oConfig
+     * @param \fan\core\service\config\row $oConfig
      */
     public function __construct(\fan\core\service\cache $oFacade, $sType, $sKey, $oConfig)
     {
@@ -135,8 +135,9 @@ abstract class base
 
     /**
      * Add Meta-data
-     * @param array $mMetaData
+     * @param mixed $mMetaData
      * @return \fan\core\service\cache\base
+     * @throws \fan\core\exception\service\fatal
      */
     public function addMeta($mMetaData)
     {
@@ -151,6 +152,7 @@ abstract class base
 
     /**
      * Get Meta-data
+     * @param boolean $bLoadMetaOnly
      * @return array
      */
     public function getMeta($bLoadMetaOnly)
@@ -230,7 +232,7 @@ abstract class base
     } // function isActual
 
     /**
-     * Save cahe-data
+     * Save cache-data
      * @return \fan\core\service\cache\base
      */
     public function save()
@@ -243,7 +245,7 @@ abstract class base
     } // function save
 
     /**
-     * Delete cahe-data
+     * Delete cache-data
      * @return \fan\core\service\cache\base
      */
     public function delete()
@@ -256,7 +258,7 @@ abstract class base
 
     /**
      * Set Extra Path for cahce directory
-     * @param type $sExtraPath
+     * @param string $sExtraPath
      * @return \fan\core\service\cache\base
      */
     public function setExtraPath($sExtraPath)
@@ -313,14 +315,19 @@ abstract class base
 
     /**
      * Delete cached data
+     * @return \fan\core\service\database\base
      */
     protected function _deleteData()
     {
         $this->mData     = null;
         $this->aMetaData = array();
         return $this;
-    }
+    } // function _deleteData
 
+    /**
+     * Make New Meta
+     * @return \fan\core\service\database\base
+     */
     protected function _makeNewMeta()
     {
         $this->aMetaData['data_type']   = strtolower(gettype($this->mData));
@@ -329,7 +336,7 @@ abstract class base
             $this->aMetaData['lifetime'] = isset($this->oConfig['LIFETIME']) ? (int)$this->oConfig['LIFETIME'] : 0;
         }
         return $this;
-    } // function _checkDateFormat
+    } // function _makeNewMeta
 
     /**
      * Unserialize string
@@ -342,6 +349,11 @@ abstract class base
         return $mResult === false && $sData != serialize(false) ? null : $mResult;
     } // function _unserialize
 
+    /**
+     * @param array $aMeta
+     * @param boolean $bDeleteExired
+     * @return boolean
+     */
     protected function _checkActual($aMeta, $bDeleteExired = true)
     {
         if (!isset($aMeta['create_date']) || (!empty($aMeta['lifetime']) && $aMeta['create_date'] < date('Y-m-d H:i:s', time() - $aMeta['lifetime']))) {
@@ -357,7 +369,7 @@ abstract class base
      * Check Date Format
      * @param string $sDateTime
      * @return \fan\core\service\cache\base
-     * @throws fatalException
+     * @throws \fan\core\exception\service\fatal
      */
     protected function _checkDateFormat($sDateTime)
     {

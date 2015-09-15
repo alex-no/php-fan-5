@@ -87,7 +87,7 @@ class captcha
 
     /**
      * Init data
-     * @return \fan\core\plain\db_file
+     * @return \fan\core\plain\captcha
      */
     protected function _init()
     {
