@@ -349,13 +349,15 @@ evtWrapper.prototype = {
         } else this.absX=this.absY=this.relX=this.relY=0;
 
         if (isDefined(this.evt, 'keyCode')) {
-            if (this.evt.which == null) { //IE
+            if (this.evt.which == null) {
+                //IE
                 if (this.evt.keyCode < 32) {
                     this.charCode = null;
                 } else {
                     this.charCode = this.evt.keyCode;
                 }
-            } else if (this.evt.which != 0 && this.evt.charCode != 0) { //Not-IE
+            } else if (this.evt.which != 0 && this.evt.charCode != 0) {
+                //Not-IE
                 this.charCode = this.evt.which < 32 ? null : this.evt.which;
             } else {
                 this.charCode = isDefined(this.evt, 'charCode') ? this.evt.charCode : null;
@@ -516,13 +518,13 @@ elmWrapper.prototype = {
                     nl.push(parN);
                     this._corPosition(parN, ret, bv, elm);
                 }
-                ret.cor(telm.offsetLeft, telm.offsetTop); // Offset
+                ret.cor(telm.offsetLeft, telm.offsetTop);
                 telm = parN;
             }
 
             if (this._getCSS(elm).position != "absolute") {
                 parN = elm.parentNode;
-                while (this._checkTag(parN)) { // &&
+                while (this._checkTag(parN)) {
                     if (!nl.fnd(parN)) this._corPosition(parN, ret, bv, null);
                     parN = parN.parentNode;
                 }
@@ -584,7 +586,8 @@ elmWrapper.prototype = {
         return null;
     },
 
-    getZIndex : function() //deprecated
+    //deprecated
+    getZIndex : function()
     {
         return this.css.zIndex;
     },
@@ -674,7 +677,8 @@ elmWrapper.prototype = {
         return this;
     },
 
-    setZIndex : function(z) //deprecated
+    //deprecated
+    setZIndex : function(z)
     {
         this.style.zIndex=z;
         return this;
@@ -839,16 +843,20 @@ elmWrapper.prototype = {
     {
         var ver, css, cX, cY;
         ver = parseFloat(bv.ver);
-        if (elm && (css = this._getCSS(tag)) && (!bv.isOpera || ver < 9) && !bv.isOldIE) { // ToDo: Add condition for border
+        if (elm && (css = this._getCSS(tag)) && (!bv.isOpera || ver < 9) && !bv.isOldIE) {
+            // ToDo: Add condition for border
             cX = parseInt("0" + css.borderLeftWidth, 10);
             cY = parseInt("0" + css.borderTopWidth, 10);
-            if (bv.isMozilla && css.overflow != "visible" && (ver < 3 || !bv.isFF || this._getCSS(elm).position == "absolute")) { // ToDo: Add condition for border
+            if (bv.isMozilla && css.overflow != "visible" && (ver < 3 || !bv.isFF || this._getCSS(elm).position == "absolute")) {
+                // ToDo: Add condition for border
                 cX = cX * 2;
                 cY = cY * 2;
             }
-            ret.cor(cX, cY); // Border
+            // Border
+            ret.cor(cX, cY);
         }
-        ret.cor(-tag.scrollLeft, -tag.scrollTop); // Scroller
+        // Scroller
+        ret.cor(-tag.scrollLeft, -tag.scrollTop);
         return this;
     },
     _setPt : function(v)
@@ -1323,7 +1331,8 @@ winWrapper.prototype = {
     {
         var r, a, el, i;
         r = [];
-        a = this._findRE.exec(sel); // 1 - tag, 2 - id, 3 - class, 4 - attribute, 5 - attribute value, 6 - sequence
+        // 1 - tag, 2 - id, 3 - class, 4 - attribute, 5 - attribute value, 6 - sequence
+        a = this._findRE.exec(sel);
         if (!a) {
             this._errMsg("incorSel", [sel]);
             return r;
@@ -1334,14 +1343,16 @@ winWrapper.prototype = {
                 r = [el];
             }
         } else {
-            if (a[1]) { // By tag name (?and id/class)
+            if (a[1]) {
+                // By tag name (?and id/class)
                 el = src.getElementsByTagName(a[1]);
                 for (i = 0; i < el.length; i++) {
                     if (this._checkIdClass(el[i], a)) {
                         r.push(el[i]);
                     }
                 }
-            } else if (a[2] || a[3] || a[4]) { // By id/class/attributes
+            } else if (a[2] || a[3] || a[4]) {
+                // By id/class/attributes
                 this._getElements(src, a, r);
             }
         }
@@ -1354,17 +1365,20 @@ winWrapper.prototype = {
     _checkIdClass : function(e, dt)
     {
         var re, a, i;
-        if (dt[2]) { // Check by ID
+        if (dt[2]) {
+            // Check by ID
             re = new RegExp("^" + dt[2].replace(/\*/g, "\\w+?") + "$", "i");
             return re.test(e.getAttribute("id"));
-        } else if (dt[3]){ // Check by Class name
+        } else if (dt[3]) {
+            // Check by Class name
             re = new RegExp("^" + dt[3].replace(/\*/g, "\\w+?") + "$", "i");
             a = e.className.split(" ");
             for (i in a) {
                 if (re.test(a[i])) return true;
             }
             return false;
-        } else if (dt[4]){ // Check by Attribute
+        } else if (dt[4]) {
+            // Check by Attribute
             return dt[5] ? e.getAttribute(dt[4]) == dt[5] : e.getAttribute(dt[4]) != "";
         }
         return true;
@@ -1631,14 +1645,22 @@ function newObject(obj, init)
                 }
             };
             f.prototype = {
-                obj     : null, // Object. Method will be called from this object
-                m_s     : null, // Start method
-                m_b     : null, // Break method
-                m_d     : null, // Delayed method
-                time    : 0,    // Value of delay
-                isBreak : true, // Allow to break on Start-event
-                timer   : null, // Array of timers
-                param   : null, // Global parameters - will be merged with event-parameters
+                // Object. Method will be called from this object
+                obj     : null,
+                // Start method
+                m_s     : null,
+                // Break method
+                m_b     : null,
+                // Delayed method
+                m_d     : null,
+                // Value of delay
+                time    : 0,
+                // Allow to break on Start-event
+                isBreak : true,
+                // Array of timers
+                timer   : null,
+                // Global parameters - will be merged with event-parameters
+                param   : null,
                 // ---- Interface methods ---- \\
                 setTime : function(time, startBreak)
                 {
@@ -1749,8 +1771,10 @@ function newObject(obj, init)
 
 
 basicBroadcaster.prototype.config = {
-    curLanguage : "ru", // Current language
-    DebugMode   : true, // Show or not error messages
+    // Current language
+    curLanguage : "ru",
+    // Show or not error messages
+    DebugMode   : true,
     errMessages_en : {
         "BC_cant_run" : "Can't run method \"{$0}\"!\n\n{$1}",
         "BC_err_in"   : "Error in ",
@@ -1763,12 +1787,18 @@ basicBroadcaster.prototype.config = {
     }
 };
 elmWrapper.prototype.config = winWrapper.prototype.config = implement({
-    SubscriberUse_on   : true,  // Use or not prefix "on" at the event name
-    ReplaceDisplay4IE  : true,  // Replace "table", "table-row", etc. on "block" on Display for IE
-    DefaultEventReturn : true,  // Return this value after event
-    DefaultCookiePath  : "/",   // Default Cookie Path
-    SubdomainCookie    : true,  // Enable read set cookie in subdomain too
-    SessionIdKey       : "SID", // Session ID key
+    // Use or not prefix "on" at the event name
+    SubscriberUse_on   : true,
+    // Replace "table", "table-row", etc. on "block" on Display for IE
+    ReplaceDisplay4IE  : true,
+    // Return this value after event
+    DefaultEventReturn : true,
+    // Default Cookie Path
+    DefaultCookiePath  : "/",
+    // Enable read set cookie in subdomain too
+    SubdomainCookie    : true,
+    // Session ID key
+    SessionIdKey       : "SID",
     errMessages_en : {
         "incorObj"  : 'Incorrect object type in {$0}!',
         "incorEvt"  : 'Incorrect event type!',
