@@ -30,16 +30,21 @@ class simple extends base
     public function obfuscate($sText)
     {
         if ($this->bDropComments) {
-            $sText = preg_replace('/\/\*.+?\*\//s', ' ', $sText);
+            $sText = preg_replace('/\/\*.+?\*\//s', '', $sText);
         }
         if ($this->bDropComments || $this->bDropEndRow) {
-            $sText = preg_replace('/^\s*\/\/.*$/m', ' ', $sText);
+            $sText = preg_replace('/^\s*\/\/.*$/m', '', $sText);
         }
         if ($this->bDropEndRow) {
-            $sText = preg_replace('/[\t\n\r]+/', ' ', $sText);
+            $sText = preg_replace('/\v+/', ' ', $sText);
         }
         if ($this->bSpacesToOne) {
-            $sText = preg_replace('/\s{2,}/', ' ', $sText);
+            $sText = preg_replace('/^\h+/m', '', $sText);
+            $sText = preg_replace('/\h+$/m', '', $sText);
+            if (!$this->bDropEndRow) {
+                $sText = preg_replace('/\v{2,}/', "\n", $sText);
+            }
+            $sText = preg_replace('/\h{2,}/', ' ', $sText);
         }
         return $sText;
     } // function obfuscate
