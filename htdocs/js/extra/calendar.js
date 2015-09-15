@@ -8,31 +8,52 @@
  * @modified: 2009-05-22 03:40:00
  */
 var calendar = newClass({
-    clndr    : null,  // html-element (caledar)
-    butClndr : null,  // html-element (caledar-button)
-    formEl   : null,  // html-element (input of date)
-    errMsg   : null,  // html-element (error Message)
+    // html-element (caledar)
+    clndr    : null,
+    // html-element (caledar-button)
+    butClndr : null,
+    // html-element (input of date)
+    formEl   : null,
+    // html-element (error Message)
+    errMsg   : null,
 
-    evtDt       : null, // Event-object at A-element of Grid (JS-object)
-    days        : null, // A - day in Grid (HTML-element)
-    currentCell : null, // A - current day in Grid (HTML-element)
-    lastRow     : null, // TR - last Row in Grid (HTML-element)
+    // Event-object at A-element of Grid (JS-object)
+    evtDt       : null,
+    // A - day in Grid (HTML-element)
+    days        : null,
+    // A - current day in Grid (HTML-element)
+    currentCell : null,
+    // TR - last Row in Grid (HTML-element)
+    lastRow     : null,
 
-    sourseDate  : null, // sourse Date (date object)
-    currentDate : null, // current Date (date object)
+    // sourse Date (date object)
+    sourseDate  : null,
+    // current Date (date object)
+    currentDate : null,
 
-    inputYearT  : null, // Year Input (HTML-element)
-    yearList    : null, // Div - year list (HTML-element)
-    monthList   : null, // Div - month list (HTML-element)
 
-    bShow4input : null, // Show calendad on focus in the input element
-    startYear   : null, // Start year for year list
-    lng         : null, // Current language
+    // Year Input (HTML-element)
+    inputYearT  : null,
+    // Div - year list (HTML-element)
+    yearList    : null,
+    // Div - month list (HTML-element)
+    monthList   : null,
 
-    timerHideList : null, // Timer of hide lists of year and month (Timer-element)
-    ieSelects     : null, // List of Selects in IE6
 
-    common : {}, // JS-object common for All calendar
+    // Show calendad on focus in the input element
+    bShow4input : null,
+    // Start year for year list
+    startYear   : null,
+    // Current language
+    lng         : null,
+
+    // Timer of hide lists of year and month (Timer-element)
+    timerHideList : null,
+    // List of Selects in IE6
+    ieSelects     : null,
+
+    // JS-object common for All calendar
+    common : {},
 
     init : function (formElId, calendarId, param)
     {
@@ -60,7 +81,7 @@ var calendar = newClass({
 
         this.days  = [[],[],[],[],[],[]];
         this.evtDt = [[],[],[],[],[],[]];
-        conf.selectHide = conf.selectHide && this.$w0.bv.isIE && (this.$w0.bv.ver < 7);
+        conf.selectHide = conf.selectHide && this.$w0.bv.isTooOldIE;
     },
     onready : function ()
     {
@@ -399,7 +420,7 @@ var calendar = newClass({
         curDate = this.currentDate;
 
         this.currentCell.removeClass("currday");
-        if (this.$w0.bv.isIE) this.currentCell.removeClass("cur_cell_ie");
+        if (this.$w0.bv.isOldIE) this.currentCell.removeClass("cur_cell_ie");
 
         tmpDt = new Date(curDate.getFullYear(), curDate.getMonth()+1, 0);
         dayQtt = tmpDt.getDate();
