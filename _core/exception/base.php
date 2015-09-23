@@ -110,6 +110,7 @@ abstract class base extends \Exception
      * Log error by php
      * @param string $sErrMsg Logged error message
      * @param string $bExceptPos Fix or not exceptin position
+     * @return \fan\core\exception\base
      */
     protected function _logByPhp($sErrMsg, $bExceptPos = true)
     {
@@ -142,6 +143,7 @@ abstract class base extends \Exception
     /**
      * Remove Embeded Object before "var_export" this object
      * @param string $sProperty
+     * @return \fan\core\exception\base
      */
     protected function _removeEmbededObject($sProperty)
     {

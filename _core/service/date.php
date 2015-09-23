@@ -1,5 +1,6 @@
 <?php namespace fan\core\service;
 use fan\project\exception\service\fatal as fatalException;
+use fan\project\exception\service\date as dateException;
 /**
  * Timer manager service
  *
@@ -13,36 +14,16 @@ use fan\project\exception\service\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.001 (10.03.2014)
+ * @version of file: 05.02.009 (23.09.2015)
  */
 // ToDo: redesign this class
 class date extends \fan\core\base\service\multi
 {
     /**
      * @var boolean Is Global init
+     * @var \fan\core\service\config\row
      */
-    private static $bIsInit = false;
-    /**
-     * @var array
-     */
-    private static $aMapping = array(
-        'y' => 'y',
-        'Y' => 'y',
-        'm' => 'm',
-        'n' => 'm',
-        'd' => 'd',
-        'j' => 'd',
-
-        'a' => 'a',
-        'A' => 'a',
-        'g' => 'h',
-        'h' => 'h',
-
-        'G' => 'H',
-        'H' => 'H',
-        'i' => 'i',
-        's' => 's',
-    );
+    private static $oGlobalConfig = null;
 
     /**
      * @var array Service's Instances
@@ -50,96 +31,47 @@ class date extends \fan\core\base\service\multi
     private static $aInstances = array();
 
     /**
-     * @var string Sourse Date
+     * @var string Source Date
      */
-    private $sDate;
+    protected $oDate;
 
     /**
      * @var string Date Format
      */
-    private $sFormat;
-
-    /**
-     * @var string Timezone
-     */
-    private $sTimezone;
-
-    /**
-     * @var array Date as array
-     */
-    private $aDate = array();
-    /**
-     * @var number Date as timestamp
-     */
-    private $nTimeStamp = null;
+    protected $sFormat;
 
     /**
      * @var boolean is Used time
      */
-    private $bIsTime = true;
+    protected $bIsTime = true;
+
+    /**
+     * @var string Timezone
+     */
+    protected $sTimezone;
 
     /**
      * @var boolean This is Valid Date
      */
-    private $bIsValid = true;
+    protected $bSave = true;
 
     /**
      * Service's constructor
-     * @param string $sDate date
+     * @param \DateTime $oDate date
      * @param string $sFormat date format
+     * @param boolean $bIsTime Timezone
+     * @param string $sTimezone Timezone
+     * @param boolean $bSave Flag - allows to save this instance
      */
-    protected function __construct($sDate, $sFormat, $sTimezone) {
+    protected function __construct(\DateTime $oDate, $sFormat, $bIsTime, $sTimezone, $bSave)
+    {
+        $this->oDate     = $oDate;
+        $this->sFormat   = $sFormat;
+        $this->bIsTime   = $bIsTime;
+        $this->sTimezone = $sTimezone;
+        $this->bSave     = $bSave;
         parent::__construct();
 
-        if (!self::$bIsInit) {
-            self::$bIsInit = $this->_globalInit();
-        }
-
-        $this->sDate     = $sDate;
-        $this->sTimezone = $sTimezone;
-
-        $aResult = $aTmp = null;
-        if ($sFormat) {
-            $this->setFormat($sFormat);
-            if(preg_match($this->oConfig['FORMAT'][$sFormat]['regexp'], $sDate, $aTmp)) {
-                $aResult = $this->_extract($aTmp, $sFormat);
-            }
-        } else {
-            $aMatched = array();
-            foreach ($this->oConfig['FORMAT'] as $k => $v) {
-                if (preg_match($v['regexp'], $sDate, $aTmp)) {
-                    $aMatched[$k] = $this->_extract($aTmp, $k);
-                }
-            }
-
-            $sFormat = $this->oConfig['DEFAULT_FORMAT'];
-            if (count($aMatched) == 1) {
-                $aResult       = reset($aMatched);
-                $this->sFormat = key($aMatched);
-            } elseif (count($aMatched) > 1) {
-                if (isset($aMatched[$sFormat])) {
-                    $aResult       = $aMatched[$sFormat];
-                    $this->sFormat = $sFormat;
-                } else {
-                    // ToDo: If one of variants has time, but another don't have it - use this variant
-                    $aResult       = reset($aMatched);
-                    $this->sFormat = key($aMatched);
-                }
-            }
-        }
-
-        if (empty($aResult)) {
-            $this->bIsValid = false;
-        } else {
-            $this->bIsValid   = true;
-            $this->bIsTime    = $aResult[0];
-            $this->aDate      = $aResult[1];
-            $this->nTimeStamp = $this->bIsTime ?
-                mktime($aResult[1]['H'], $aResult[1]['i'], $aResult[1]['s'], $aResult[1]['m'], $aResult[1]['d'], $aResult[1]['y']) :
-                mktime(0, 0, 0, $aResult[1]['m'], $aResult[1]['d'], $aResult[1]['y']);
-        }
-
-        self::$aInstances[$sDate] = $this; //ToDo: Use "FORMAT" there?
     } // function __construct
 
     // ======== Static methods ======== \\
@@ -148,52 +80,120 @@ class date extends \fan\core\base\service\multi
      * Get Service's instance of specific date
      * @param string $sDate date
      * @param string $sFormat date format
+     * @param string $sTimezone Timezone
+     * @param boolean $bSave Save instance there
      * @return \fan\core\service\date
+     * @throws \fan\core\exception\service\date
      */
-    public static function instance($sDate = null, $sFormat = null, $sTimezone = null)
+    public static function instance($sDate = null, $sFormat = null, $sTimezone = null, $bSave = true)
     {
-        if (is_null($sTimezone)) {
-            $sTimezone = \fan\project\service\config::instance()->get('date')->get('TIMEZONE', 'Europe/Kiev');
-        }
+        $oConfig = self::_getGlobalConfig();
+        $sTimezoneDefault = $oConfig->get('TIMEZONE', 'Europe/Kiev');
         if (empty(self::$aInstances)) {
-            date_default_timezone_set($sTimezone);
+            date_default_timezone_set($sTimezoneDefault);
         }
-        if (is_null($sDate)) {
-            $sDate = date('Y-m-d');
+        if (is_null($sTimezone)) {
+            $sTimezone = $sTimezoneDefault;
         }
-        if (!isset(self::$aInstances[$sDate])) {
-            new self($sDate, $sFormat, $sTimezone);
-        }
-        return self::$aInstances[$sDate];
-    } // function instance
 
-    /**
-     * get days quantity (in the month)
-     * @param string $nMonth
-     * @param string $nYear
-     * @return string
-     */
-    public static function getDaysQtt($nMonth, $nYear = null) {
-        if (!$nYear) {
-            $nYear = date('Y');
+        if (is_null($sFormat)) {
+            $oDate = null;
+            foreach ($oConfig->get('DEFAULT_FORMAT', array()) as $v) {
+                list($bIsTime, $oDate) = self::_getDate($oConfig, $sDate, $v, $sTimezone);
+                if (!is_null($oDate)) {
+                    $sFormat = $v;
+                    break;
+                }
+            }
+        } else {
+            list($bIsTime, $oDate) = self::_getDate($oConfig, $sDate, $sFormat, $sTimezone);
         }
-        return date('d', mktime(0, 0, 0, $nMonth + 1, 0, $nYear));
-    } // function getDaysQtt
+
+        if (is_null($oDate)) {
+            throw new dateException('Can\'t get date by "' . $sDate . '" format "' . $sFormat . '".');
+        }
+
+        $sKey0 = $bIsTime ? 1 : 0;
+        $sKey3 = $oDate->format('YmdHisu');
+        if (!$bSave || !isset(self::$aInstances[$sKey0][$sTimezone][$sFormat][$sKey3])) {
+            return new self($oDate, $sFormat, $bIsTime, $sTimezone, $bSave);
+        }
+        return self::$aInstances[$sKey0][$sTimezone][$sFormat][$sKey3];
+    } // function instance
+    /**
+     * Get Global Config
+     * @return \fan\core\service\config\row
+     */
+    protected static function _getGlobalConfig()
+    {
+        if (empty(self::$oGlobalConfig)) {
+            self::$oGlobalConfig = service('config')->get('date');
+        }
+        return self::$oGlobalConfig;
+    } // function _getGlobalConfig
+    /**
+     * Get Date object
+     * @param \fan\core\service\config\row $oConfig Config
+     * @param string $sDate date
+     * @param string $sFormat date format
+     * @param string $sTimezone Timezone
+     * @return \DateTime
+     * @throws \fan\core\exception\service\date
+     */
+    protected static function _getDate($oConfig, $sDate, $sFormat, $sTimezone)
+    {
+        $oConfFormat = $oConfig->get(array('FORMAT', $sFormat));
+        if (is_null($oConfFormat)) {
+            throw new dateException('Requested format "' . $sFormat . '" isn\'t found.');
+        }
+
+        $oTimezone = new \DateTimeZone($sTimezone);
+
+        $sFullFormat = $oConfFormat->get('full_pattern');
+        $oDate = \DateTime::createFromFormat($sFullFormat, $sDate, $oTimezone);
+        if (!is_bool($oDate)) {
+            return array(true, $oDate);
+        }
+
+        $sShortFormat = $oConfFormat->get('short_pattern') . ' H:i:s';
+        $oDate = \DateTime::createFromFormat($sShortFormat, $sDate . ' 00:00:00', $oTimezone);
+        return is_bool($oDate) ? array(null, null) : array(false, $oDate);
+    } // function _getDate
 
     // ======== Main Interface methods ======== \\
 
     /**
-     * get Validate of date
-     * @return boolean
+     * Conver Date from MySQL-format to local-format
+     * @param string $sFormat
+     * @return string
+     * @throws \fan\core\exception\service\fatal
      */
-    public function isValid($bFullValidate = false) {
-        return $bFullValidate ? $this->bIsValid && $this->_validate($this->aDate, $this->bIsTime) : $this->bIsValid;
-    } // function isValid
+    public function get($sFormat = null)
+    {
+        return $this->oDate->format($this->_getPattern($sFormat));
+    } // function get
+
+    /**
+     * Get string of date by Custom (arbitrary) pattern
+     * @param string $sPattern
+     * @return string
+     */
+    public function getCustom($sPattern)
+    {
+        return $this->oDate->format($sPattern);
+    } // function getCustom
 
     /**
      * Set base format of date
+     * @param string $sFormat
+     * @return \fan\core\service\date
+     * @throws \fan\core\exception\service\fatal
      */
-    public function setFormat($sFormat) {
+    public function setFormat($sFormat)
+    {
+        if ($this->bSave) {
+            throw new fatalException($this, 'You can change format only for not saved date.');
+        }
         if (!isset($this->oConfig['FORMAT'][$sFormat])) {
             throw new fatalException($this, 'Unknown date format "' . $sFormat . '"');
         }
@@ -205,223 +205,139 @@ class date extends \fan\core\base\service\multi
      * get Is the time in this date
      * @return boolean
      */
-    public function isTime() {
+    public function isTime()
+    {
         return $this->bIsTime;
     } // function isTime
 
     /**
-     * get date as array
-     * @param boolean $bFullValidate validate this date
+     * Get date as array
      * @return array
      */
-    public function getDateAsArray($bFullValidate = false) {
-        return $this->isValid($bFullValidate) ? $this->aDate : null;
+    public function getDateAsArray()
+    {
+        $aResult = array();
+        $sPattern = $this->_getPattern();
+        preg_match_all('/\w/', $sPattern, $aMatches);
+        foreach ($aMatches[0] as $v) {
+            $aResult[$v] = $this->oDate->format($v);
+        }
+        return $aResult;
     } // function getDateAsArray
 
     /**
      * get Unix timestamp by Date as string
-     * @param boolean $bFullValidate validate this date
      * @return number
      */
-    public function getTimeStamp($bFullValidate = false) {
-        return $this->isValid($bFullValidate) ? $this->nTimeStamp : null;
+    public function getTimeStamp()
+    {
+        return $this->oDate->getTimestamp();
     } // function getTimeStamp
 
     /**
      * get Difference (in second) between two dates
      * @param string $sDate2
-     * @param boolean $bFullValidate validate this date
+     * @param boolean $bAbs true - absolute value
      * @return number
      */
-    public function getDifference($sDate2, $bFullValidate = false, $bNotAbs = false) {
-        if (!$this->isValid($bFullValidate)) {
-            return null;
-        }
-        $oDate2 = \fan\project\service\date::instance($sDate2, $this->sFormat);
-        $nRet = $this->getTimeStamp() - $oDate2->getTimeStamp($bFullValidate);
-        return $oDate2->isValid($bFullValidate) ? ($bNotAbs ? $nRet : abs($nRet)) : null;
+    public function getDifference($sDate2, $bAbs = true)
+    {
+        $oDate2 = service('date', array($sDate2, $this->sFormat, $this->sTimezone, $this->bSave));
+        $nRet = $this->getTimeStamp() - $oDate2->getTimeStamp();
+        return $bAbs ? abs($nRet) : $nRet;
     } // function getDifference
 
     /**
      * Shift Date to some second Before or Later
+     * Return formated string with new date
      * @param number $nShift (in second)
-     * @param boolean $bFullValidate validate this date
      * @return string
      */
-    public function shiftDate($nShift, $bFullValidate = false) {
-        if (!$this->isValid($bFullValidate)) {
-            return null;
-        }
-        return date($this->_getPattern($this->sFormat), $this->getTimeStamp() + $nShift);
+    public function shiftDate($nShift)
+    {
+        return date($this->_getPattern(), $this->getTimeStamp() + $nShift);
     } // function shiftDate
 
     /**
-     * Conver Date from MySQL-format to local-format
-     * @param string $sFormat
-     * @param boolean $bFullValidate validate this date
-     * @return string
+     * Make New object of Date by "modify string"
+     * @param string $sModify modify string
+     * @return \fan\core\service\date
      */
-    public function get($sFormat = null, $bFullValidate = false) {
-        if (!$sFormat) {
-            $sFormat = $this->sFormat;
-        } elseif (!isset($this->oConfig['FORMAT'][$sFormat])) {
-            throw new fatalException($this, 'Unknown data format "' . $sFormat . '"');
+    public function modify($sModify)
+    {
+        $oDate = clone $this->oDate;
+        $oResult = $oDate->modify($sModify);
+        if (is_bool($oResult)) {
+            throw new fatalException($this, 'Can\'t modify date by "' . $sModify . '"');
         }
 
-        if (!$this->isValid($bFullValidate)) {
-            return null;
+        $sKey0 = $this->bIsTime ? 1 : 0;
+        $sKey3 = $oDate->format('YmdHisu');
+        if (!$this->bSave || !isset(self::$aInstances[$sKey0][$this->sTimezone][$this->sFormat][$sKey3])) {
+            return new self($oResult, $this->sFormat, $this->bIsTime, $this->sTimezone, $this->bSave);
         }
-
-        return date($this->_getPattern($sFormat), $this->getTimeStamp());
-    } // function get
-
-    /**
-     * Get string of date by Custom (arbitrary) pattern
-     * @param string $sPattern
-     * @param boolean $bFullValidate
-     * @return string
-     */
-    public function getCustom($sPattern, $bFullValidate = false) {
-        if (!$this->isValid($bFullValidate)) {
-            return null;
-        }
-
-        return date($sPattern, $this->getTimeStamp());
-    } // function get
+        return self::$aInstances[$sKey0][$this->sTimezone][$this->sFormat][$sKey3];
+    } // function modify
 
     /**
      * Get source data as array
      * @return array
      */
-    public function toArray() {
-        return $this->aDate;
+    public function toArray()
+    {
+        return $this->getDateAsArray();
     } // function toArray
+
+    /**
+     * Get Validate of date
+     * Deprecated function - for compatibility with old version
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return true;
+    } // function isValid
 
     // ======== Private/Protected methods ======== \\
 
     /**
-     * Init config data for set ORDER-list by pattern
-     * @return boolean
-     * @throws fatalException
+     * Save service's Instance
+     * @return \fan\core\service\date
      */
-    protected function _globalInit()
+    protected function _saveInstance()
     {
-        foreach ($this->oConfig['FORMAT'] as $sFormat => $oConf) {
-            if (!isset($oConf['short_pattern'])) {
-                throw new fatalException($this, 'Date format "' . $sFormat . '" doesn\'t have "short_pattern".');
-            }
-            $this->_parsePattern($sFormat, $oConf, 'short');
-            $aTmp = array_flip($oConf['short_order']->toArray());
-            if (!isset($aTmp['y']) || !isset($aTmp['m']) || !isset($aTmp['d'])) {
-                throw new fatalException($this, 'Date format "' . $sFormat . '" has incomplete "short_pattern".');
-            }
-
-            $this->_parsePattern($sFormat, $oConf, 'full');
+        if ($this->bSave) {
+            $sKey0 = $this->bIsTime ? 1 : 0;
+            $sKey3 = $this->oDate->format('YmdHisu');
+            self::$aInstances[$sKey0][$this->sTimezone][$this->sFormat][$sKey3] = $this;
         }
-        return true;
-    }
+        return $this;
+    } // function _saveInstance
 
     /**
-     * Parse Pattern of config Date-format
-     * @param string $sFormat
-     * @param \fan\core\service\config\row $oConf
-     * @param string $sType
-     * @throws fatalException
+     * Get pattern fo r format date
+     * @param string|null $sFormat
+     * @return string
      */
-    protected function _parsePattern($sFormat, \fan\core\service\config\row $oConf, $sType)
+    protected function _getPattern($sFormat = null)
     {
-        if ($oConf[$sType . '_pattern']) {
-            $aMatches = array();
-            if (preg_match_all('/([djmnYyaAghGHis])\W*/', $oConf[$sType . '_pattern'], $aMatches)) {
-                $aTmp = array();
-                foreach ($aMatches[1] as $nPos => $sLetter) {
-                    $aTmp[$nPos + 1] = self::$aMapping[$sLetter];
-                }
-                $oConf[$sType . '_order'] = $aTmp;
-            } else {
-                throw new fatalException($this, 'Date format "' . $sFormat . '" has incorrect "' . $sType . '_pattern".');
-            }
+        if (is_null($sFormat)) {
+            $sFormat = $this->sFormat;
+        } elseif (!isset($this->oConfig['FORMAT'][$sFormat])) {
+            throw new fatalException($this, 'Unknown data format "' . $sFormat . '"');
         }
-    }
-
-    protected function _between($nVal, $nMin, $nMax)
-    {
-        return is_numeric($nVal) && $nVal >= $nMin && $nVal >= $nMax;
-    }
-
-    protected function _validate($aData, $bWithTime = null)
-    {
-        if (is_null($bWithTime)) {
-            $bWithTime = isset($aData['H']) && isset($aData['m']) &&isset($aData['s']);
-        }
-        $bResult = $this->_between($aData['Y'], 100, 3000) && $this->_between($aData['m'], 1, 12) && $this->_between($aData['d'], 1, 31);
-        $bResult = $bResult && checkdate($aData['m'], $aData['d'], $aData['Y']);
-        if ($bWithTime && $bResult) {
-            $bResult = $this->_between($aData['H'], 0, 23) && $this->_between($aData['m'], 0, 59) && $this->_between($aData['s'], 0, 59);
-        }
-        return $bResult;
-    }
-
-    /**
-     * Extract date value from preg_match-result
-     * @param array $aData
-     * @param string $sFormat
-     * @return array
-     */
-    protected function _extract($aData, $sFormat)
-    {
-        $oConfig = $this->oConfig['FORMAT'][$sFormat];
-        $bIsTime = !empty($oConfig['full_order']);
-        do {
-            if ($bIsTime) {
-                $aResult = $this->_extractByOrder($aData, $oConfig['full_order']);
-                if (!empty($aResult)) {
-                    break;
-                }
-            }
-            $bIsTime = false;
-            $aResult = $this->_extractByOrder($aData, $oConfig['short_order']);
-        } while(false);
-
-        if (empty($aResult)) {
-            return null;
-        }
-
-        if (isset($aResult['h'])) {
-            $aResult['H'] += isset($aResult['a']) && (strtolower($aResult['a']) == 'p' || strtolower($aResult['a']) == 'pm') ? 12 : 0;
-        }
-        isset($aResult['a']);
-        isset($aResult['h']);
-
-        if ($aResult['y'] < 99) {
-            $aResult['y'] += $aResult['y'] <= $this->oConfig['THIS_CENTURY_TO'] ? 2000 : 1900;
-        }
-        return array($bIsTime, $aResult);
-    }
-
-    protected function _extractByOrder($aData, $aOrder)
-    {
-        $aResult = array();
-        foreach ($aOrder as $k => $v) {
-            if (!isset($aData[$k])) {
-                return null;
-            }
-            $aResult[$v] = $aData[$k];
-        }
-        return $aResult;
-    }
-
-    protected function _getPattern($sFormat)
-    {
         return $this->oConfig['FORMAT'][$sFormat][$this->bIsTime ? 'full_pattern' : 'short_pattern'];
-    }
+    } // function _getPattern
 
     // ======== The magic methods ======== \\
-
+    /**
+     * Convert this object to string
+     * @return string
+     */
     public function __toString()
     {
-        return $this->get(null, false);
-    }
+        return $this->get(null);
+    } // function __toString
 
     // ======== Required Interface methods ======== \\
 
