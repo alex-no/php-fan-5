@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.007 (31.08.2015)
+ * @version of file: 05.02.009 (23.09.2015)
  */
 
 /**
@@ -463,24 +463,22 @@ function transfer_sham($sNewUrl, $sNewQueryString = null, $sDbOper = null)
  * Conver Date from local-format to local MySQL-format
  * @param string $sDate date
  * @param string $sFormat date format
- * @param boolean $bFullValidate validate this date
  * @return string
  */
-function dateL2M($sDate, $sFormat = 'euro', $bFullValidate = false)
+function dateL2M($sDate, $sFormat = 'euro')
 {
-    return service('date', array($sDate, $sFormat))->get('mysql', $bFullValidate);
+    return service('date', array($sDate, $sFormat))->get('mysql');
 } // function dateL2M
 
 /**
  * Conver Date from MySQL-format to local-format
  * @param string $sDate date
  * @param string $sFormat date format
- * @param boolean $bFullValidate validate this date
  * @return string
  */
-function dateM2L($sDate, $sFormat = 'euro', $bFullValidate = false)
+function dateM2L($sDate, $sFormat = 'euro')
 {
-    return service('date', array($sDate, 'mysql'))->get($sFormat, $bFullValidate);
+    return service('date', array($sDate, 'mysql'))->get($sFormat);
 } // function dateM2L
 
 /**

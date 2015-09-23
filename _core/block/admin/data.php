@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.009 (23.09.2015)
  */
 abstract class data extends base
 {
@@ -393,11 +393,10 @@ abstract class data extends base
     protected function rule_is_date($mValue, $aData)
     {
         $mValue = str_replace(',', '.', $mValue);
-
-        //$oDate = service('date', $mValue, 'mysql');
-        $oDate = service('date', $mValue);
-        /* @var $oDate \fan\core\service\date */
-        if (!$oDate->isValid()) {
+        try {
+            $oDate = service('date', $mValue);
+            /* @var $oDate \fan\core\service\date */
+        } catch (\fan\core\exception\base $e) {
             return false;
         }
         $sDate = $oDate->get('mysql');
@@ -515,9 +514,9 @@ abstract class data extends base
         if (isset($aData['compare_field'])) {
             $mValue2 = @$this->aFieldValue[$aData['compare_field']];
         }
-        if (@$aField['data_type']=='DATE' ||  @$aField['data_type']=='DATETIME') {
-            $mValue = service('string_format')->date_local2mysql($mValue, false);
-            $mValue2 = service('string_format')->date_local2mysql($mValue2, false);
+        if (@$aData['data_type']=='DATE' ||  @$aData['data_type']=='DATETIME') {
+            $mValue = dateL2M($mValue);
+            $mValue2 = dateL2M($mValue2);
         }
         if ($mValue <= $mValue2) {
             return false;
@@ -538,9 +537,9 @@ abstract class data extends base
         if (isset($aData['compare_field'])) {
             $mValue2 = @$this->aFieldValue[$aData['compare_field']];
         }
-        if (@$aField['data_type']=='DATE' ||  @$aField['data_type']=='DATETIME') {
-            $mValue = service('string_format')->date_local2mysql($mValue, false);
-            $mValue2 = service('string_format')->date_local2mysql($mValue2, false);
+        if (@$aData['data_type']=='DATE' ||  @$aData['data_type']=='DATETIME') {
+            $mValue = dateL2M($mValue);
+            $mValue2 = dateL2M($mValue2);
         }
         if ($mValue >= $mValue2) {
             return false;
