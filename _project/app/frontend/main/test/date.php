@@ -18,6 +18,9 @@ class date extends \fan\project\block\common\simple
 
         $this->view['date2']  = $oDate2;
         $this->view['shift2'] = $oDate2->shiftDate(60*60*24*31);
+
+        $this->view['modify1']  = $oDate1->modify('+1 month');
+        $this->view['modify2']  = $oDate2->modify('-1 hour');
     } // function init
 } // class \fan\app\frontend\main\date
 ?>
