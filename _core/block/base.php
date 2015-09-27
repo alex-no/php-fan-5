@@ -13,7 +13,7 @@ use fan\project\exception\block\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.007 (31.08.2015)
+ * @version of file: 05.02.010 (28.09.2015)
  *
  * @abstract
  *
@@ -680,7 +680,7 @@ abstract class base
         if (!$aRootKeys) {
             $aRootKeys = array(
                 'externalCss' => 'setExternalCss',
-                'embedCss'    => 'setEmbedCss',
+                'embedCss'    => 'setEmbedCssByMeta',
                 'externalJS'  => 'setExternalJs',
             );
         }

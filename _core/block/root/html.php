@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.008 (15.09.2015)
+ * @version of file: 05.02.010 (28.09.2015)
  * @abstract
  */
 abstract class html extends \fan\core\block\base
@@ -62,6 +62,12 @@ abstract class html extends \fan\core\block\base
         'head' => null,
         'body' => null,
     );
+
+    /**
+     * List of CSS-media type
+     * @var array
+     */
+    protected $aCssMedia = array('all', 'braille', 'handheld', 'print', 'screen', 'speech', 'projection', 'tty', 'tv');
 
     /**
      * Init block data
@@ -214,7 +220,7 @@ abstract class html extends \fan\core\block\base
             $tmp = explode('_', $k, 2);
             if (empty($tmp[1])) {
                 $tmp[1] = 'all';
-            } elseif (!in_array($tmp[1], array('all', 'braille', 'handheld', 'print', 'screen', 'speech', 'projection', 'tty', 'tv'))) {
+            } elseif (!in_array($tmp[1], $this->aCssMedia)) {
                 trigger_error('Unknown media "' . $tmp[1] .'" for External CSS "' . $sType .'".', E_USER_WARNING);
                 continue;
             }
@@ -238,7 +244,8 @@ abstract class html extends \fan\core\block\base
 
     /**
      * Set embed css
-     * @param string $sCss - array of css code
+     * @param string $sCss - string of css-code
+     * @param string $sMedia - Media-type of css
      * @return \fan\core\block\root\html
      */
     public function setEmbedCss($sCss, $sMedia = 'all')
@@ -250,6 +257,11 @@ abstract class html extends \fan\core\block\base
             }
             $sCss = $sCss->__toString();
         }
+        if (!in_array($sMedia, $this->aCssMedia)) {
+            error_log('Incorrect Media type of CSS: "' . $sMedia . '".', E_USER_WARNING);
+            return;
+        }
+
         if (isset($this->aEmbedCSS[$sMedia])) {
             $this->aEmbedCSS[$sMedia] = '';
         }
@@ -260,6 +272,24 @@ abstract class html extends \fan\core\block\base
         }
         return $this;
     } // function setEmbedCss
+
+    /**
+     * Set Embed CSS By data from Block Meta
+     * @param \fan\core\base\meta\row $aMeta
+     * @return \fan\core\block\root\html
+     */
+    public function setEmbedCssByMeta($aMeta)
+    {
+        if (is_array_alt($aMeta)) {
+            foreach ($aMeta as $k => $v) {
+                $this->setEmbedCss($v, $k);
+            }
+        } elseif (is_string($aMeta)) {
+            $this->setEmbedCss($aMeta);
+        }
+
+        return $this;
+    } // function setEmbedCssByMeta
 
     /**
      * Set external JavaScript

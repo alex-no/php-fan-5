@@ -163,10 +163,9 @@ class date extends \fan\core\base\service\multi
     // ======== Main Interface methods ======== \\
 
     /**
-     * Conver Date from MySQL-format to local-format
+     * Get value of Date in string-format
      * @param string $sFormat
      * @return string
-     * @throws \fan\core\exception\service\fatal
      */
     public function get($sFormat = null)
     {
@@ -202,7 +201,7 @@ class date extends \fan\core\base\service\multi
     } // function setFormat
 
     /**
-     * get Is the time in this date
+     * Get Is the time in this date
      * @return boolean
      */
     public function isTime()
