@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.011 (03.10.2015)
  */
 
 class runner
@@ -55,7 +55,7 @@ class runner
             ob_end_clean();
 
             if ($bIsEcho) {
-                \fan\project\service\header::instance()->sendHeaders();
+                service('header')->sendHeaders();
 
                 if (is_array($mRet) && is_callable($mRet)) {
                     call_user_func($mRet);
@@ -65,13 +65,11 @@ class runner
             }
 
             return $mRet;
-        } catch (\fan\core\exception\base $e) {
         } catch (\Exception $e) {
-            $this->_logError($e);
         }
-
+        $this->_logException($e);
         ob_end_clean();
-        $this->_parseException($e, $bIsEcho);
+        $this->_showExceptionError($e, $bIsEcho);
         return null;
     } // function run
 
@@ -92,12 +90,10 @@ class runner
             }
 
             return $mRet;
-        } catch (\fan\core\exception\base $e) {
         } catch (\Exception $e) {
-            $this->_logError($e);
         }
-
-        $this->_parseException($e, true);
+        $this->_logException($e);
+        $this->_showExceptionError($e, true);
         return null;
     } // function runCli
 
@@ -108,7 +104,7 @@ class runner
      */
     public function getHandler()
     {
-        $aHandler = \fan\project\service\matcher::instance()->getCurrentHandler();
+        $aHandler = service('matcher')->getCurrentHandler();
         return array($aHandler['method'], $aHandler['param']);
     } // function getHandler
 
@@ -134,8 +130,8 @@ class runner
                 $sErrNote = '';
             }
 
-            $sErrNote .= \fan\project\service\request::instance()->getInfoString();
-            \fan\project\service\error::instance()->logErrorMessage($sErrMessage, 'Intercepted fatal error', $sErrNote, false, true);
+            $sErrNote .= service('request')->getInfoString();
+            service('error')->logErrorMessage($sErrMessage, 'Intercepted fatal error', $sErrNote, false, true);
 
             $sRet = $this->showError(null, 'error_500', false);
             return $sRet ? $sRet : 'Error 500';
@@ -187,26 +183,32 @@ class runner
      * @param \Exception $e
      * @return \fan\core\bootstrap\runner
      */
-    protected function _logError(\Exception $e)
+    protected function _logException(\Exception $e)
     {
-        $sErrMsg  = method_exists($e, 'getMessageForShow') ? $e->getMessageForShow() . "\n" : '';
-        $sErrMsg .= method_exists($e, 'getErrorMessage')   ? $e->getErrorMessage() . "\n"   : '';
-        $sErrMsg .= $e->getMessage() . "\n";
-
-        if (method_exists($e, 'clearProperty')) {
-            $e->clearProperty();
-            $sErrMsg .= var_export($e, true); // ToDo: There can be out of memory when $e too bir or has recourcive properties
+        $sErrMsg  = 'Uncaught exception "' . get_class($e) . '" with message:' . "\n";
+        if (!($e instanceof \fan\core\exception\base)) {
+            $sErrMsg .= method_exists($e, 'getMessageForShow') ? $e->getMessageForShow() . "\n" : '';
+            $sErrMsg .= method_exists($e, 'getErrorMessage')   ? $e->getErrorMessage()   . "\n" : '';
         }
-        \bootstrap::logError("Unrecognized fatal error.\n" . $sErrMsg);
+        $sErrMsg .= $e->getMessage() . "\n \n";
+
+        if (method_exists($e, 'getLogVars')) {
+            $sErrMsg .= 'Properties: <pre>' . htmlspecialchars($e->getLogVars()) . "</pre>\n";
+        }
+
+        $sErrMsg .= 'Thrown in ' . $e->getFile() . ' on line ' . $e->getLine() . "\n";
+        $sErrMsg .= "Stack trace:<pre>" . $e->getTraceAsString() . '</pre>';
+
+        \bootstrap::logError($sErrMsg);
         return $this;
-    } // function showError
+    } // function _logException
 
     /**
      * Parse Exception
      * @param \Exception $e
      * @param boolean $bIsEcho
      */
-    public function _parseException(\Exception $e, $bIsEcho)
+    public function _showExceptionError(\Exception $e, $bIsEcho)
     {
         if (method_exists($e, 'getMessageForShow')) {
             $mErrMsg = $e->getMessageForShow();
@@ -223,7 +225,7 @@ class runner
         if ($bIsEcho) {
             exit();
         }
-    } // function _parseException
+    } // function _showExceptionError
 
 } // class \fan\core\bootstrap\runner
 ?>

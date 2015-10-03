@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.004 (25.12.2014)
+ * @version of file: 05.02.011 (03.10.2015)
  * @abstract
  */
 abstract class base extends \Exception
@@ -41,6 +41,18 @@ abstract class base extends \Exception
      * @var string
      */
     private $sDbOper = null;
+
+    /**
+     * Vars are excluded for Logging
+     * @var array
+     */
+    protected $aExcludeLogVars = array(
+        'aExcludeLogVars',
+        'message',
+        'file',
+        'line',
+        'xdebug_message',
+    );
 
     /**
      * Exception's constructor
@@ -107,6 +119,32 @@ abstract class base extends \Exception
     } // function getDbOper
 
     /**
+     * Make property of Exception for logging them
+     * @return string
+     */
+    public function getLogVars()
+    {
+        $aVars = array();
+        $aTmp  = get_object_vars($this);
+        foreach ($aTmp as $k => $v) {
+            if (in_array($k, $this->aExcludeLogVars)) {
+                continue;
+            } elseif (is_scalar($v)) {
+                $aVars[$k] = $v;
+            } elseif (is_null($v)) {
+                $aVars[$k] = 'NULL';
+            } elseif (is_array($v)) {
+                $aVars[$k] = 'array[' . count($v) . ']';
+            } elseif (is_object($v)) {
+                $aVars[$k] = 'object of "' . get_class($v) . '"';
+            } else {
+                $aVars[$k] = strval($v);
+            }
+        }
+        return var_export($aVars, true);
+    } // function getLogVars
+
+    /**
      * Log error by php
      * @param string $sErrMsg Logged error message
      * @param string $bExceptPos Fix or not exceptin position
@@ -131,29 +169,14 @@ abstract class base extends \Exception
     protected function _logByService($sErrMsg, $sErrTitle = '', $sNote = '')
     {
         if (!$sNote) {
-            $sNote = \fan\project\service\request::instance()->getInfoString();
+            $sNote = service('request')->getInfoString();
             if (!empty($_POST)) {
                 $sNote .= "\nPOST = " . var_export($_POST, true);
             }
         }
-        \fan\project\service\error::instance()->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
+        service('error')->logExceptionMessage($sErrMsg, $sErrTitle ? $sErrTitle : 'Log exception', $sNote);
         return $this;
     } // function _logByService
-
-    /**
-     * Remove Embeded Object before "var_export" this object
-     * @param string $sProperty
-     * @return \fan\core\exception\base
-     */
-    protected function _removeEmbededObject($sProperty)
-    {
-        if (is_object($this->$sProperty)) {
-            $this->$sProperty = 'Object ' . get_class($this->$sProperty);
-        } elseif (isset($this->$sProperty)) {
-            $this->$sProperty = null;
-        }
-        return $this;
-    } // function _removeEmbededObject
 
     /**
      * Get operation for Db (rollback, commit or nothing) when exception occured

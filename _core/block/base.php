@@ -13,7 +13,7 @@ use fan\project\exception\block\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.010 (28.09.2015)
+ * @version of file: 05.02.011 (03.10.2015)
  *
  * @abstract
  *
@@ -69,7 +69,7 @@ abstract class base
     private $oMetaMaker;
     /**
      * MetaData
-     * @var fan\core\base\meta\row[]
+     * @var \fan\core\base\meta\row[]
      */
     protected $aMeta;
     /**
@@ -152,8 +152,8 @@ abstract class base
         $this->_transferor(); // Unconditional transfer to another block
 
         $this->sBlockName = $sBlockName;
-        $this->oTab       = empty($oTab) ? \fan\project\service\tab::instance() : $oTab;
-        $this->oRequest   = \fan\project\service\request::instance();
+        $this->oTab       = empty($oTab) ? service('tab') : $oTab;
+        $this->oRequest   = service('request');
 
         if (!empty($sBlockName)) {
             $this->oTab->setCurrentBlock($this);
@@ -306,8 +306,8 @@ abstract class base
 
     /**
      * Add/mix new Meta-data (as array or \core\base\meta\row) with exist Meta-data
-     * @param array|\core\base\meta\row $mValue
-     * @return \core\block\base
+     * @param array|\fan\core\base\meta\row $mValue
+     * @return \fan\core\block\base
      */
     protected function addMeta($mValue)
     {
@@ -457,7 +457,7 @@ abstract class base
      * @param string $sTemplatePath
      * @param boolean $bAllowException
      * @return boolean
-     * @throws \fan\project\exception\block\fatal
+     * @throws \fan\core\exception\block\fatal
      */
     public function setTemplate($sTemplatePath, $bAllowException = true)
     {
@@ -528,7 +528,7 @@ abstract class base
      */
     public function getSession()
     {
-        return \fan\project\service\session::instance(get_class($this), 'block');
+        return service('session', array(get_class($this), 'block'));
     } // function getSession
 
     /**
@@ -546,7 +546,7 @@ abstract class base
     public function getDebugInfo()
     {
         $aMetaSourse = $this->oMetaMaker->getSource();
-        $aParentPaths  = \fan\project\service\reflector::instance()->getParentPaths($this);
+        $aParentPaths  = service('reflector')->getParentPaths($this);
         $sCurrentPath = substr(reset($aParentPaths), 0, -3);
 
         return array(
@@ -725,11 +725,11 @@ abstract class base
     /**
      * Set Template of block
      * @param string $sTemplateName
-     * @throws \fan\project\exception\block\fatal
+     * @throws \fan\core\exception\block\fatal
      */
     protected function _setTemplate($sTemplateName = '')
     {
-        $aPaths    = \fan\project\service\reflector::instance()->getParentPaths($this);
+        $aPaths    = service('reflector')->getParentPaths($this);
         $aSuffixes = $this->_getTplSuffixes();
 
         // If template-name isn't defined - try to get it from the Meta
@@ -771,7 +771,7 @@ abstract class base
     {
         $aSuffixes = array('');
         if ($this->getMeta('useMultiLanguage')) {
-            $sLng = \fan\project\service\locale::instance()->getLanguage();
+            $sLng = service('locale')->getLanguage();
             if (!empty($sLng)) {
                 array_unshift($aSuffixes, $sSeparator . $sLng);
             }
@@ -809,7 +809,7 @@ abstract class base
     /**
      * Set Embedded Blocks
      * @return \fan\core\block\base
-     * @throws \fan\project\exception\block\fatal
+     * @throws \fan\core\exception\block\fatal
      */
     protected function _setEmbeddedBlocks()
     {
@@ -877,7 +877,7 @@ abstract class base
      * Get other Blocks
      * @param sting $sBlockPath - name of block
      * @param boolean $bAllowException - Allow Exception if name of block is incorrect
-     * @throws \fan\project\exception\block\fatal
+     * @throws \fan\core\exception\block\fatal
      * @return string
      */
     protected function _parseClassName($sBlockPath, $bAllowException = true)

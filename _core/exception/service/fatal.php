@@ -12,7 +12,7 @@
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.003 (16.04.2014)
+ * @version of file: 05.02.011 (03.10.2015)
  */
 class fatal extends \fan\core\exception\base
 {
@@ -45,14 +45,6 @@ class fatal extends \fan\core\exception\base
     {
         return $this->oService;
     } // function getService
-
-    /**
-     * Remove property "oBlock" before "var_export" this object
-     */
-    public function clearProperty()
-    {
-        $this->_removeEmbededObject('oService');
-    } // function clearProperty
 
     /**
      * Get Instance of service

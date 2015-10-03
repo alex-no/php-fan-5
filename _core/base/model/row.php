@@ -13,7 +13,7 @@ use fan\project\exception\model\entity\fatal as fatalException;
  * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
  *
  * @author: Alexandr Nosov (alex@4n.com.ua)
- * @version of file: 05.02.007 (31.08.2015)
+ * @version of file: 05.02.011 (03.10.2015)
  */
 class row implements \ArrayAccess, \Serializable
 {
@@ -375,7 +375,7 @@ class row implements \ArrayAccess, \Serializable
      */
     public function getTopRow($sByField, $bLogEmptyVal = false)
     {
-        $oErr = \fan\project\service\error::instance();
+        $oErr = service('error');
         /* @var $oErr \fan\core\service\error */
         $sErrHeader = 'Error while get Top Row';
         $mVal = $this->get($sByField, null, false);
@@ -415,7 +415,7 @@ class row implements \ArrayAccess, \Serializable
      */
     public function getBottomRowset($sTableName, $nQtt = -1, $nOffset = -1, $sOrderBy = '')
     {
-        $oErr = \fan\project\service\error::instance();
+        $oErr = service('error');
         /* @var $oErr \fan\core\service\error */
         $sErrHeader = 'Error while get Bottom Rowset';
 
@@ -690,7 +690,7 @@ class row implements \ArrayAccess, \Serializable
 
             //ToDo: if ($this->bCacheIt) {}
         } elseif ($this->bShowError) {
-            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t inserted.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . var_export($aAdjParam, true));
+            service('error')->logErrorMessage($sErrMsg, 'Data isn\'t inserted.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . var_export($aAdjParam, true));
         }
         return $this;
     } // function _insertRow
@@ -723,7 +723,7 @@ class row implements \ArrayAccess, \Serializable
         if (!$sErrMsg) {
             $this->aChanged = array();
         } elseif ($this->bShowError) {
-            \fan\project\service\error::instance()->logErrorMessage($sErrMsg, 'Data isn\'t updated.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . var_export($aAdjParam, true));
+            service('error')->logErrorMessage($sErrMsg, 'Data isn\'t updated.', 'Entity name: ' . $oEtt->getName(true) . "\n\n" . $sQuery . "\nData: " . var_export($aAdjParam, true));
         }
         return $this;
     } // function _updateRow
@@ -871,7 +871,7 @@ class row implements \ArrayAccess, \Serializable
     protected function _getCurrentLocal()
     {
         if (!$this->sCurrentLocal) {
-            $this->sCurrentLocal = '_' . \fan\project\service\locale::instance()->getLanguage();
+            $this->sCurrentLocal = '_' . service('locale')->getLanguage();
         }
         return $this->sCurrentLocal;
     } // function _getCurrentLocal
@@ -884,7 +884,7 @@ class row implements \ArrayAccess, \Serializable
     protected function _getDefaultLocal()
     {
         if (!$this->sDefaultLocal) {
-            $this->sDefaultLocal = '_' . \fan\project\service\locale::instance()->getDefaultLanguage();
+            $this->sDefaultLocal = '_' . service('locale')->getDefaultLanguage();
         }
         return $this->sDefaultLocal;
     } // function _getDefaultLocal
@@ -1014,7 +1014,7 @@ class row implements \ArrayAccess, \Serializable
         $this->bInitIdOnly = $aData['initIdOnly'];
 
         $aParam = $aData['mainParam'];
-        $oServ  = \fan\project\service\entity::instance($aParam['collection']);
+        $oServ  = service('entity', $aParam['collection']);
         $this->oEntity = empty($aParam['name']) ?
                 $oServ->getAnonymous($aParam['class'], $aParam['param']) :
                 $oServ->get($aParam['name'], $aParam['param']);
